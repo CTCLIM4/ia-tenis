@@ -1,0 +1,126 @@
+from typing import Dict, List
+import numpy as np
+import pandas as pd
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, brier_score_loss, log_loss
+
+from src.features.engineering import FeatureBuilder
+from src.models.elo import EloSystem
+
+_FEATURE_COLS = [
+    "elo_diff",
+    "elo_prob",
+    "rank_diff",
+    "form_diff",
+    "surface_form_diff",
+    "h2h_rate",
+    "rest_diff",
+]
+
+
+def build_match_features(
+    df: pd.DataFrame,
+    elo_system: EloSystem,
+    feature_builder: FeatureBuilder,
+) -> pd.DataFrame:
+    """Process all matches sequentially. Returns feature dataframe with mirror rows."""
+    records = []
+    for _, row in df.iterrows():
+        winner = row["winner_name"]
+        loser = row["loser_name"]
+        surface = row["surface"]
+        match_date = row["match_date"].date()
+        w_rank = row.get("winner_rank", np.nan)
+        l_rank = row.get("loser_rank", np.nan)
+
+        # Pre-match Elo
+        elo_w = elo_system.get_effective_rating(winner, surface)
+        elo_l = elo_system.get_effective_rating(loser, surface)
+        elo_prob = elo_system.expected_score(elo_w, elo_l)
+
+        # Pre-match contextual features
+        wf = feature_builder.get_features(winner, loser, surface, match_date)
+        lf = feature_builder.get_features(loser, winner, surface, match_date)
+
+        rank_diff = (
+            (l_rank - w_rank)
+            if (not np.isnan(w_rank) and not np.isnan(l_rank))
+            else 0.0
+        )
+
+        records.append(
+            {
+                "match_date": match_date,
+                "year": match_date.year,
+                "winner": winner,
+                "loser": loser,
+                "surface": surface,
+                "elo_diff": elo_w - elo_l,
+                "elo_prob": elo_prob,
+                "rank_diff": float(rank_diff),
+                "form_diff": wf["recent_win_rate"] - lf["recent_win_rate"],
+                "surface_form_diff": wf["recent_win_rate_surface"] - lf["recent_win_rate_surface"],
+                "h2h_rate": wf["h2h_win_rate"],
+                "rest_diff": wf["rest_days"] - lf["rest_days"],
+                "outcome": 1,
+                "is_mirror": False,
+            }
+        )
+
+        # Post-match state update (no lookahead)
+        elo_system.update(winner, loser, surface, match_date)
+        feature_builder.update(winner, loser, surface, match_date)
+
+    original = pd.DataFrame(records)
+
+    # Mirror rows: swap perspectives so loser is player1 → outcome=0
+    mirror = original.copy()
+    for col in ("elo_diff", "rank_diff", "form_diff", "surface_form_diff", "rest_diff"):
+        mirror[col] = -mirror[col]
+    mirror["elo_prob"] = 1.0 - mirror["elo_prob"]
+    mirror["h2h_rate"] = 1.0 - mirror["h2h_rate"]
+    mirror["outcome"] = 0
+    mirror["is_mirror"] = True
+
+    return pd.concat([original, mirror], ignore_index=True)
+
+
+def walk_forward_backtest(
+    df: pd.DataFrame,
+    warmup_years: int = 10,
+) -> Dict[int, dict]:
+    """Walk-forward backtest. Train on all years before test_year; evaluate on test_year."""
+    all_years = sorted(df[~df["is_mirror"]]["year"].unique())
+    test_years = all_years[warmup_years:]
+
+    results: Dict[int, dict] = {}
+    for test_year in test_years:
+        train_df = df[df["year"] < test_year]
+        # Evaluate only on real matches (not mirrors)
+        test_df = df[(df["year"] == test_year) & (~df["is_mirror"])]
+
+        if len(train_df) < 200 or len(test_df) < 20:
+            continue
+
+        X_train = train_df[_FEATURE_COLS].fillna(0.0).values
+        y_train = train_df["outcome"].values
+        X_test = test_df[_FEATURE_COLS].fillna(0.0).values
+        y_test = test_df["outcome"].values  # always 1
+
+        clf = LogisticRegression(C=1.0, max_iter=1000, random_state=42)
+        clf.fit(X_train, y_train)
+
+        probs = clf.predict_proba(X_test)[:, 1]
+        preds = (probs >= 0.5).astype(int)
+        elo_probs = test_df["elo_prob"].clip(1e-6, 1 - 1e-6).values
+
+        results[test_year] = {
+            "accuracy": float(accuracy_score(y_test, preds)),
+            "log_loss": float(log_loss(y_test, probs, labels=[0, 1])),
+            "brier_score": float(brier_score_loss(y_test, probs)),
+            "n_matches": int(len(test_df)),
+            "elo_only_accuracy": float(accuracy_score(y_test, (elo_probs >= 0.5).astype(int))),
+            "elo_only_log_loss": float(log_loss(y_test, elo_probs, labels=[0, 1])),
+        }
+
+    return results
