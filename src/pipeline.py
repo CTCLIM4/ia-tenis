@@ -1,0 +1,70 @@
+"""End-to-end pipeline: load data -> features -> backtest."""
+import sys
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
+from src.backtest.walkforward import build_match_features, walk_forward_backtest
+from src.data.loader import load_atp_matches, load_wta_matches
+from src.features.engineering import FeatureBuilder
+from src.models.elo import EloSystem
+
+
+def run_pipeline(
+    tour: str = "atp",
+    start_year: int = 1990,
+    end_year: int = 2023,
+    warmup_years: int = 10,
+) -> None:
+    print(f"Loading {tour.upper()} matches {start_year}-{end_year}...")
+    loader = load_atp_matches if tour == "atp" else load_wta_matches
+    df = loader(start_year, end_year)
+    print(f"  Loaded {len(df):,} matches across {df['year'].nunique()} seasons")
+
+    elo = EloSystem()
+    fb = FeatureBuilder()
+
+    print("Building features (sequential, no lookahead)...")
+    match_df = build_match_features(df, elo, fb)
+    original = match_df[~match_df["is_mirror"]]
+    print(f"  {len(original):,} feature rows ({len(match_df):,} with mirrors)")
+
+    processed_dir = Path("data/processed")
+    processed_dir.mkdir(parents=True, exist_ok=True)
+    out_path = processed_dir / f"{tour}_features.csv"
+    original.to_csv(out_path, index=False)
+    print(f"  Saved to {out_path}")
+
+    print(f"\nWalk-forward backtest (warmup={warmup_years} years)...")
+    results = walk_forward_backtest(match_df, warmup_years=warmup_years)
+
+    header = f"{'Year':>6} | {'Acc':>7} | {'LogLoss':>8} | {'Brier':>7} | {'EloAcc':>7} | {'EloLL':>8} | {'N':>6}"
+    sep = "=" * len(header)
+    print(f"\n{sep}")
+    print("  BACKTEST RESULTS")
+    print(sep)
+    print(header)
+    print("-" * len(header))
+    for year, m in sorted(results.items()):
+        print(
+            f"{year:>6} | {m['accuracy']:>7.4f} | {m['log_loss']:>8.4f} | "
+            f"{m['brier_score']:>7.4f} | {m['elo_only_accuracy']:>7.4f} | "
+            f"{m['elo_only_log_loss']:>8.4f} | {m['n_matches']:>6}"
+        )
+    print(sep)
+
+    accs = [m["accuracy"] for m in results.values()]
+    elo_accs = [m["elo_only_accuracy"] for m in results.values()]
+    lls = [m["log_loss"] for m in results.values()]
+    elo_lls = [m["elo_only_log_loss"] for m in results.values()]
+    print(f"\n  Mean Accuracy : {np.mean(accs):.4f}  (Elo-only: {np.mean(elo_accs):.4f})")
+    print(f"  Mean Log-Loss : {np.mean(lls):.4f}  (Elo-only: {np.mean(elo_lls):.4f})")
+    print(f"  Years tested  : {len(results)}")
+
+
+if __name__ == "__main__":
+    tour = sys.argv[1] if len(sys.argv) > 1 else "atp"
+    start = int(sys.argv[2]) if len(sys.argv) > 2 else 1990
+    end = int(sys.argv[3]) if len(sys.argv) > 3 else 2023
+    run_pipeline(tour=tour, start_year=start, end_year=end)
