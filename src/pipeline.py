@@ -16,6 +16,7 @@ def run_pipeline(
     start_year: int = 1990,
     end_year: int = 2023,
     warmup_years: int = 10,
+    eval_start: int = None,
 ) -> None:
     print(f"Loading {tour.upper()} matches {start_year}-{end_year}...")
     loader = load_atp_matches if tour == "atp" else load_wta_matches
@@ -38,6 +39,11 @@ def run_pipeline(
 
     print(f"\nWalk-forward backtest (warmup={warmup_years} years)...")
     results = walk_forward_backtest(match_df, warmup_years=warmup_years)
+
+    # Optional filter: only report years >= eval_start
+    if eval_start is not None:
+        results = {y: m for y, m in results.items() if y >= eval_start}
+        print(f"  (reporting years >= {eval_start})")
 
     header = f"{'Year':>6} | {'Acc':>7} | {'LogLoss':>8} | {'Brier':>7} | {'EloAcc':>7} | {'EloLL':>8} | {'N':>6}"
     sep = "=" * len(header)
@@ -64,7 +70,20 @@ def run_pipeline(
 
 
 if __name__ == "__main__":
-    tour = sys.argv[1] if len(sys.argv) > 1 else "atp"
-    start = int(sys.argv[2]) if len(sys.argv) > 2 else 1990
-    end = int(sys.argv[3]) if len(sys.argv) > 3 else 2023
-    run_pipeline(tour=tour, start_year=start, end_year=end)
+    import argparse
+
+    parser = argparse.ArgumentParser(description="ia-tenis pipeline")
+    parser.add_argument("tour",        nargs="?", default="atp")
+    parser.add_argument("start_year",  nargs="?", type=int, default=1990)
+    parser.add_argument("end_year",    nargs="?", type=int, default=2023)
+    parser.add_argument("--warmup",    type=int,  default=10,   dest="warmup_years")
+    parser.add_argument("--eval-start", type=int, default=None, dest="eval_start")
+    args = parser.parse_args()
+
+    run_pipeline(
+        tour=args.tour,
+        start_year=args.start_year,
+        end_year=args.end_year,
+        warmup_years=args.warmup_years,
+        eval_start=args.eval_start,
+    )
