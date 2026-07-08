@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 from io import StringIO
-from src.data.loader import _clean
+from src.data.loader import _clean, _clean_wta
 
 SAMPLE_CSV = (
     "tourney_id,tourney_name,surface,draw_size,tourney_level,tourney_date,"
@@ -52,3 +52,69 @@ def test_clean_adds_tour_column_when_provided():
     raw["tour"] = "atp"
     df = _clean(raw)
     assert "tour" in df.columns
+
+
+# ── tennis-data.co.uk WTA loader ─────────────────────────────────────────────
+
+WTA_CSV = (
+    "Date,Surface,Winner,Loser,WRank,LRank,B365W,B365L\n"
+    "15/01/2023,Hard,Swiatek I.,Kvitova P.,1,6,1.15,5.50\n"
+    "16/01/2023,Clay,Sabalenka A.,Rybakina E.,5,25,1.80,1.95\n"
+    "17/01/2023,Grass,Gauff C.,Pegula J.,6,4,2.10,1.75\n"
+)
+
+
+def _wta_raw():
+    return pd.read_csv(StringIO(WTA_CSV))
+
+
+def test_clean_wta_renames_columns():
+    df = _clean_wta(_wta_raw(), 2023)
+    assert "winner_name" in df.columns
+    assert "loser_name" in df.columns
+    assert "winner_rank" in df.columns
+    assert "loser_rank" in df.columns
+
+
+def test_clean_wta_parses_dates():
+    df = _clean_wta(_wta_raw(), 2023)
+    assert str(df["match_date"].dtype).startswith("datetime64")
+    assert df.iloc[0]["match_date"].year == 2023
+    assert df.iloc[0]["match_date"].month == 1
+
+
+def test_clean_wta_normalizes_surface():
+    df = _clean_wta(_wta_raw(), 2023)
+    assert set(df["surface"].unique()).issubset({"hard", "clay", "grass", "carpet", "unknown"})
+
+
+def test_clean_wta_sets_tour_and_year():
+    df = _clean_wta(_wta_raw(), 2023)
+    assert (df["tour"] == "wta").all()
+    assert (df["year"] == 2023).all()
+
+
+def test_clean_wta_ranks_are_numeric():
+    df = _clean_wta(_wta_raw(), 2023)
+    assert pd.api.types.is_numeric_dtype(df["winner_rank"])
+    assert df.iloc[0]["winner_rank"] == 1
+
+
+def test_clean_wta_drops_rows_missing_players():
+    raw = _wta_raw()
+    raw.loc[0, "Winner"] = None
+    df = _clean_wta(raw, 2023)
+    assert len(df) == 2
+
+
+def test_clean_wta_sorts_by_date():
+    df = _clean_wta(_wta_raw(), 2023)
+    dates = df["match_date"].tolist()
+    assert dates == sorted(dates)
+
+
+def test_clean_wta_indoor_hard_maps_to_hard():
+    raw = _wta_raw()
+    raw.loc[0, "Surface"] = "Hard (I)"
+    df = _clean_wta(raw, 2023)
+    assert df.iloc[df["match_date"].argmin()]["surface"] == "hard"

@@ -45,6 +45,88 @@ def load_atp_matches(start_year: int = 1990, end_year: int = 2024) -> pd.DataFra
     return _clean(pd.concat(frames, ignore_index=True))
 
 
-def load_wta_matches(start_year: int = 1990, end_year: int = 2024) -> pd.DataFrame:
-    # TODO: find a WTA data source and implement this loader.
-    raise NotImplementedError("WTA data source not yet configured.")
+_TDUK_SURFACE_MAP = {
+    "Hard": "hard",
+    "hard": "hard",
+    "Clay": "clay",
+    "clay": "clay",
+    "Grass": "grass",
+    "grass": "grass",
+    "Carpet": "carpet",
+    "carpet": "carpet",
+    "Hard (I)": "hard",
+    "iHard": "hard",
+    "Hardcourt": "hard",
+    "Hardcourt (I)": "hard",
+}
+
+_TDUK_COL_ALIASES = {
+    "Winner": "winner_name",
+    "Loser": "loser_name",
+    "WRank": "winner_rank",
+    "LRank": "loser_rank",
+    "Surface": "_surface_raw",
+    "Date": "_date_raw",
+}
+
+
+def _clean_wta(df: pd.DataFrame, year: int) -> pd.DataFrame:
+    """Normalize tennis-data.co.uk WTA columns to the internal schema."""
+    df = df.copy()
+    df.columns = [c.strip() for c in df.columns]
+    df = df.rename(columns={k: v for k, v in _TDUK_COL_ALIASES.items() if k in df.columns})
+
+    # Date: tennis-data.co.uk uses DD/MM/YYYY
+    df["match_date"] = pd.to_datetime(df["_date_raw"], dayfirst=True, errors="coerce")
+    df["surface"] = df["_surface_raw"].map(_TDUK_SURFACE_MAP).fillna("unknown")
+
+    for col in ("winner_rank", "loser_rank"):
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors="coerce")
+        else:
+            df[col] = float("nan")
+
+    df["year"] = year
+    df["tour"] = "wta"
+
+    df = df.dropna(subset=["winner_name", "loser_name", "match_date"])
+    df = df[df["winner_name"].str.strip() != ""]
+    df = df[df["loser_name"].str.strip() != ""]
+    return df.sort_values("match_date").reset_index(drop=True)
+
+
+def _read_tduk_file(path: Path) -> pd.DataFrame:
+    suffix = path.suffix.lower()
+    if suffix == ".csv":
+        return pd.read_csv(path, low_memory=False, encoding="latin-1")
+    if suffix == ".xlsx":
+        return pd.read_excel(path, engine="openpyxl")
+    if suffix == ".xls":
+        return pd.read_excel(path, engine="xlrd")
+    raise ValueError(f"Unsupported file type: {path}")
+
+
+def load_wta_matches(start_year: int = 2007, end_year: int = 2024) -> pd.DataFrame:
+    """Load WTA matches from tennis-data.co.uk (data/raw/tennis_wta_tduk/{year}w.[xls|xlsx|csv]).
+
+    Download files from tennis-data.co.uk/wta.php and place them in
+    data/raw/tennis_wta_tduk/.  Run scripts/download_data.py to automate.
+    """
+    tour_dir = RAW_DATA_DIR / "tennis_wta_tduk"
+    frames = []
+    for year in range(start_year, end_year + 1):
+        for suffix in (f"{year}w.csv", f"{year}w.xlsx", f"{year}w.xls"):
+            path = tour_dir / suffix
+            if path.exists():
+                try:
+                    frames.append(_clean_wta(_read_tduk_file(path), year))
+                except Exception as e:
+                    print(f"  WARNING: could not read {path}: {e}")
+                break
+
+    if not frames:
+        raise FileNotFoundError(
+            f"No WTA match files found in {tour_dir} for years {start_year}-{end_year}. "
+            "Run scripts/download_data.py or download manually from tennis-data.co.uk/wta.php."
+        )
+    return pd.concat(frames, ignore_index=True)
