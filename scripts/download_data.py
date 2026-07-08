@@ -1,22 +1,70 @@
 """
 Download tennis datasets.
 
-ATP  → Tennismylife/TML-Database  (public)  → data/raw/tennis_atp_tml/{year}.csv
+ATP  → stats.tennismylife.org API  (public)  → data/raw/tennis_atp_tml/{year}.csv
+       Manifest: GET https://stats.tennismylife.org/api/data-files
+       Uses `requests` + certifi's bundled CA bundle explicitly (NOT urllib's
+       OS-trust-store default) — on Windows, urllib's default SSL context can
+       fall back to the OS certificate store (schannel), which has shown
+       flaky revocation-check behavior in prior diagnostics. requests, with
+       certifi installed, verifies against a bundled root CA list instead,
+       sidestepping that store entirely. Do not swap this back to urllib.
 WTA  → tennis-data.co.uk           (public)  → data/raw/tennis_wta_tduk/{year}w.xls
        URL pattern: http://www.tennis-data.co.uk/{year}w/{year}w.xls
        Available from 2007.  Verify exact URLs at tennis-data.co.uk/wta.php if
        downloads fail (the site occasionally restructures paths between seasons).
 """
+import datetime
+import re
+import shutil
 import subprocess
 import urllib.request
 from pathlib import Path
 
+import pandas as pd
+import requests
+
 DATA_RAW = Path("data/raw")
 
-ATP_REPO = {
-    "dest": "tennis_atp_tml",
-    "url": "https://github.com/Tennismylife/TML-Database.git",
-}
+# ── ATP ──────────────────────────────────────────────────────────────────────
+ATP_DIR = DATA_RAW / "tennis_atp_tml"
+ATP_MANIFEST_URL = "https://stats.tennismylife.org/api/data-files"
+
+ATP_SCHEMA_COLUMNS = [
+    "tourney_id", "tourney_name", "surface", "draw_size", "tourney_level", "indoor",
+    "tourney_date", "match_num", "winner_id", "winner_seed", "winner_entry", "winner_name",
+    "winner_hand", "winner_ht", "winner_ioc", "winner_age", "winner_rank", "winner_rank_points",
+    "loser_id", "loser_seed", "loser_entry", "loser_name", "loser_hand", "loser_ht", "loser_ioc",
+    "loser_age", "loser_rank", "loser_rank_points", "score", "best_of", "round", "minutes",
+    "w_ace", "w_df", "w_svpt", "w_1stIn", "w_1stWon", "w_2ndWon", "w_SvGms", "w_bpSaved",
+    "w_bpFaced", "l_ace", "l_df", "l_svpt", "l_1stIn", "l_1stWon", "l_2ndWon", "l_SvGms",
+    "l_bpSaved", "l_bpFaced",
+]
+
+_ATP_YEAR_FILE_RE = re.compile(r"^\d{4}\.csv$")
+_ATP_MERGE_KEY = ["tourney_id", "tourney_name", "round", "match_num"]
+_ATP_LEGACY_PATHS = [
+    ".git", ".github", "README.md", "logo.jpg", "ATP_Database.csv", "ongoing_tourneys.csv",
+]
+
+
+def _filter_atp_manifest(files: list[dict]) -> list[dict]:
+    """Keep only main-tour year files and the live ongoing-tourneys feed.
+
+    Drops challenger files, qualifying-draw files, and the ATP_Database.csv
+    aggregate — none of these are read by src/data/loader.py.
+    """
+    return [
+        f for f in files
+        if _ATP_YEAR_FILE_RE.match(f["name"]) or f["name"] == "ongoing_tourneys.csv"
+    ]
+
+
+def _fetch_atp_manifest() -> list[dict]:
+    """GET the file manifest from the API and return the filtered file list."""
+    resp = requests.get(ATP_MANIFEST_URL, timeout=30)
+    resp.raise_for_status()
+    return _filter_atp_manifest(resp.json()["files"])
 
 WTA_START_YEAR = 2007
 WTA_DIR = DATA_RAW / "tennis_wta_tduk"
