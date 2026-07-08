@@ -89,3 +89,58 @@ def find_match_odds(
         return None  # event matched but this bookmaker didn't quote it
 
     return None
+
+
+def fetch_odds_events(tour: str, api_key: str) -> list[dict]:
+    """Fetch raw upcoming h2h odds events for a tour from The Odds API."""
+    sport_key = f"tennis_{tour}"
+    url = (
+        f"{ODDS_API_BASE}/{sport_key}/odds/"
+        f"?apiKey={api_key}&regions=eu&markets=h2h&oddsFormat=decimal"
+    )
+    with urllib.request.urlopen(url, timeout=20) as resp:
+        return json.loads(resp.read())
+
+
+def _cache_path(tour: str) -> Path:
+    return CACHE_DIR / f"{tour}.json"
+
+
+def _load_cache(tour: str, max_age_minutes: int) -> Optional[list[dict]]:
+    path = _cache_path(tour)
+    if not path.exists():
+        return None
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    fetched_at = datetime.fromisoformat(payload["fetched_at"])
+    if datetime.now(timezone.utc) - fetched_at >= timedelta(minutes=max_age_minutes):
+        return None
+    return payload["events"]
+
+
+def _save_cache(tour: str, events: list[dict]) -> None:
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    payload = {"fetched_at": datetime.now(timezone.utc).isoformat(), "events": events}
+    _cache_path(tour).write_text(json.dumps(payload), encoding="utf-8")
+
+
+def get_events(tour: str, api_key: str, cache_minutes: int = DEFAULT_CACHE_MINUTES) -> list[dict]:
+    """Return cached events if fresh, otherwise fetch and cache."""
+    cached = _load_cache(tour, cache_minutes)
+    if cached is not None:
+        return cached
+    events = fetch_odds_events(tour, api_key)
+    _save_cache(tour, events)
+    return events
+
+
+def get_match_odds(
+    tour: str,
+    player_a: str,
+    player_b: str,
+    api_key: str,
+    bookmaker: str = DEFAULT_BOOKMAKER,
+    cache_minutes: int = DEFAULT_CACHE_MINUTES,
+) -> Optional[MatchOdds]:
+    """Top-level lookup: cached/fetched events -> matched odds for this pairing."""
+    events = get_events(tour, api_key, cache_minutes)
+    return find_match_odds(events, player_a, player_b, bookmaker)
