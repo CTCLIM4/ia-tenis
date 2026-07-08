@@ -2,6 +2,7 @@ tenis-env/
 data/raw/
 data/processed/
 data/model_cache/
+data/odds_cache/
 data/value_bets_log.csv
 __pycache__/
 *.pyc
