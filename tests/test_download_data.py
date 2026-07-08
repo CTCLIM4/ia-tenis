@@ -47,3 +47,68 @@ class TestShouldDownload:
         f = tmp_path / "2020.csv"
         f.write_bytes(b"a" * 100)
         assert dd._should_download(f, 100) is False
+
+
+class TestValidateAtpCsv:
+    def test_valid_header_passes(self):
+        header = ",".join(dd.ATP_SCHEMA_COLUMNS).encode("utf-8")
+        data = header + b"\n2026-001,Test Open,Hard,32,A,O,20260101,1,,,,\n"
+        assert dd._validate_atp_csv(data) is True
+
+    def test_html_error_page_fails(self):
+        data = b"<html><body>502 Bad Gateway</body></html>"
+        assert dd._validate_atp_csv(data) is False
+
+    def test_wrong_columns_fail(self):
+        data = b"foo,bar,baz\n1,2,3\n"
+        assert dd._validate_atp_csv(data) is False
+
+    def test_empty_bytes_fail(self):
+        assert dd._validate_atp_csv(b"") is False
+
+
+class _FakeResponse:
+    def __init__(self, content: bytes = b""):
+        self.content = content
+
+    def raise_for_status(self):
+        pass
+
+
+class TestDownloadFile:
+    def _valid_body(self) -> bytes:
+        header = ",".join(dd.ATP_SCHEMA_COLUMNS)
+        return (header + "\n2026-001,Test,Hard,32,A,O,20260101,1\n").encode("utf-8")
+
+    def test_successful_download_writes_dest_with_no_tmp_left_behind(self, tmp_path, monkeypatch):
+        dest = tmp_path / "2020.csv"
+        body = self._valid_body()
+        monkeypatch.setattr(dd.requests, "get", lambda url, timeout=None: _FakeResponse(content=body))
+
+        assert dd._download_file("http://x/2020.csv", dest) is True
+        assert dest.read_bytes() == body
+        assert not (tmp_path / "2020.csv.tmp").exists()
+
+    def test_invalid_schema_leaves_existing_file_untouched(self, tmp_path, monkeypatch):
+        dest = tmp_path / "2020.csv"
+        dest.write_bytes(b"good,old,data\n1,2,3\n")
+        monkeypatch.setattr(
+            dd.requests, "get",
+            lambda url, timeout=None: _FakeResponse(content=b"<html>error page</html>"),
+        )
+
+        assert dd._download_file("http://x/2020.csv", dest) is False
+        assert dest.read_bytes() == b"good,old,data\n1,2,3\n"
+        assert not (tmp_path / "2020.csv.tmp").exists()
+
+    def test_network_error_leaves_existing_file_untouched(self, tmp_path, monkeypatch):
+        dest = tmp_path / "2020.csv"
+        dest.write_bytes(b"good,old,data\n1,2,3\n")
+
+        def boom(url, timeout=None):
+            raise ConnectionError("network down")
+
+        monkeypatch.setattr(dd.requests, "get", boom)
+
+        assert dd._download_file("http://x/2020.csv", dest) is False
+        assert dest.read_bytes() == b"good,old,data\n1,2,3\n"

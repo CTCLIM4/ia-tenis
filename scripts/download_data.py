@@ -73,6 +73,44 @@ def _should_download(local_path: Path, remote_size: int) -> bool:
         return True
     return local_path.stat().st_size != remote_size
 
+
+def _validate_atp_csv(data: bytes) -> bool:
+    """Cheap check that `data` looks like a real ATP CSV: decodable, with a
+    header line matching ATP_SCHEMA_COLUMNS exactly. Catches truncated
+    downloads and HTML error pages served with a 200 status."""
+    if not data:
+        return False
+    try:
+        header_line = data.split(b"\n", 1)[0].decode("utf-8").strip()
+    except UnicodeDecodeError:
+        return False
+    return header_line.split(",") == ATP_SCHEMA_COLUMNS
+
+
+def _download_file(url: str, dest: Path) -> bool:
+    """Download url and atomically write it to dest. Returns True on success.
+
+    On any failure (network error or schema validation failure), dest is left
+    completely untouched — no partial or invalid file is ever written there,
+    and no .tmp file is left behind either way.
+    """
+    try:
+        resp = requests.get(url, timeout=30)
+        resp.raise_for_status()
+        data = resp.content
+    except Exception as e:
+        print(f"  WARNING: could not download {url}: {e}")
+        return False
+
+    if not _validate_atp_csv(data):
+        print(f"  WARNING: {dest.name} failed schema validation, skipping.")
+        return False
+
+    tmp = dest.with_suffix(dest.suffix + ".tmp")
+    tmp.write_bytes(data)
+    tmp.replace(dest)
+    return True
+
 WTA_START_YEAR = 2007
 WTA_DIR = DATA_RAW / "tennis_wta_tduk"
 _WTA_HEADERS = {
