@@ -11,6 +11,7 @@ import pytest
 from src.value_analysis import (
     FEATURE_COLS,
     KELLY_CAP,
+    _LOG_FIELDS,
     _is_elo_known,
     _resolve_player_name,
     apply_shrinkage,
@@ -334,3 +335,72 @@ class TestLogQueryOddsSource:
         row = _read_log(log_path)[0]
         assert row["odds_a_source"] == "auto"
         assert row["odds_b_source"] == "auto"
+
+    def test_migrates_old_header_and_preserves_old_row(self, log_path):
+        """Regression: a pre-existing log written under the old header (no
+        odds_a_source/odds_b_source) must be migrated in place, not silently
+        misaligned, the next time log_query() appends a row."""
+        old_fields = [f for f in _LOG_FIELDS if f not in ("odds_a_source", "odds_b_source")]
+        old_row = {
+            "timestamp": "2026-07-01T16:27:16",
+            "tour": "wta",
+            "tournament": "Wimbledon TEST",
+            "surface": "grass",
+            "match_date": "2026-07-01",
+            "player_a": "Aryna Sabalenka",
+            "player_b": "Iga Swiatek",
+            "rank_a": "1",
+            "rank_a_source": "manual",
+            "rank_b": "2",
+            "rank_b_source": "manual",
+            "p_a_raw": "0.3214",
+            "p_a_cal": "0.3214",
+            "p_b_raw": "0.6786",
+            "p_b_cal": "0.6786",
+            "odds_a": "2.1",
+            "odds_b": "1.8",
+            "implied_a": "0.4762",
+            "implied_b": "0.5556",
+            "edge_a": "-0.1548",
+            "ev_a": "-0.3251",
+            "kelly_a": "0.0",
+            "edge_b": "0.1231",
+            "ev_b": "0.2215",
+            "kelly_b": "0.05",
+            "shrinkage_applied": "False",
+            "status": "ok",
+            "result": "pending",
+            "profit": "",
+            "elo_diff": "-105.1327",
+            "elo_prob": "0.3532",
+            "rank_diff": "1.0",
+            "form_diff": "-0.4",
+            "surface_form_diff": "-0.1",
+            "h2h_rate": "0.3333",
+            "rest_diff": "1.0",
+        }
+        with open(log_path, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=old_fields)
+            writer.writeheader()
+            writer.writerow(old_row)
+
+        pred = _make_pred()
+        log_query("atp", "Test", "hard", date(2026, 7, 2),
+                  "Player C", "Player D", pred, _val(), _val(), 1.5, 2.5,
+                  odds_a_source="auto", odds_b_source="auto")
+
+        rows = _read_log(log_path)
+        assert len(rows) == 2
+
+        migrated = rows[0]
+        assert migrated["player_a"] == "Aryna Sabalenka"
+        assert migrated["odds_a"] == "2.1"
+        assert migrated["odds_b"] == "1.8"
+        assert migrated["odds_a_source"] == "manual"
+        assert migrated["odds_b_source"] == "manual"
+
+        new_row = rows[1]
+        assert new_row["odds_a"] == "1.5"
+        assert new_row["odds_b"] == "2.5"
+        assert new_row["odds_a_source"] == "auto"
+        assert new_row["odds_b_source"] == "auto"

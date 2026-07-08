@@ -477,6 +477,27 @@ _LOG_FIELDS = [
 ]
 
 
+def _migrate_log_header_if_needed() -> None:
+    """If LOG_PATH exists with an older header than _LOG_FIELDS (e.g. missing
+    odds_a_source/odds_b_source), rewrite it with the current header so old
+    rows stay readable instead of silently misaligning on the next append."""
+    if not LOG_PATH.exists():
+        return
+    with open(LOG_PATH, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        if reader.fieldnames == _LOG_FIELDS:
+            return
+        rows = list(reader)
+    for row in rows:
+        row.setdefault("odds_a_source", "manual")
+        row.setdefault("odds_b_source", "manual")
+    with open(LOG_PATH, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=_LOG_FIELDS)
+        writer.writeheader()
+        for row in rows:
+            writer.writerow({k: row.get(k, "") for k in _LOG_FIELDS})
+
+
 def log_query(tour, tournament, surface, match_date,
               player_a, player_b,
               pred, val_a, val_b, odds_a, odds_b,
@@ -487,6 +508,7 @@ def log_query(tour, tournament, surface, match_date,
     with status='invalid_missing_elo' instead of 'ok', so they can be
     filtered out during analysis without contaminating the pick history.
     """
+    _migrate_log_header_if_needed()
     LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
     feats  = pred["features"]
     shrink = abs(pred["p_a_cal"] - pred["p_a_raw"]) > 0.001
