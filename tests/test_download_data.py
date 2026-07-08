@@ -127,3 +127,58 @@ class TestDownloadFile:
         assert dd._download_file("http://x/2020.csv", dest) is False
         assert dest.read_bytes() == b"good,old,data\n1,2,3\n"
         assert not (tmp_path / "2020.csv.tmp").exists()
+
+
+def _atp_row(**overrides) -> dict:
+    row = {col: "" for col in dd.ATP_SCHEMA_COLUMNS}
+    row.update(overrides)
+    return row
+
+
+class TestMergeOngoingIntoYear:
+    def test_no_overlap_keeps_all_rows(self):
+        year_df = pd.DataFrame([
+            _atp_row(tourney_id="2026-580", tourney_name="Wimbledon", round="F",
+                     match_num=1, winner_name="A"),
+        ])
+        ongoing_df = pd.DataFrame([
+            _atp_row(tourney_id="2026-540", tourney_name="Wimbledon Q", round="R32",
+                     match_num=5, winner_name="B"),
+        ])
+        merged = dd._merge_ongoing_into_year(year_df, ongoing_df)
+        assert len(merged) == 2
+
+    def test_conflicting_row_year_file_wins(self):
+        year_df = pd.DataFrame([
+            _atp_row(tourney_id="2026-540", tourney_name="Wimbledon", round="F",
+                     match_num=1, winner_name="ARCHIVED_WINNER"),
+        ])
+        ongoing_df = pd.DataFrame([
+            _atp_row(tourney_id="2026-540", tourney_name="Wimbledon", round="F",
+                     match_num=1, winner_name="LIVE_WINNER"),
+        ])
+        merged = dd._merge_ongoing_into_year(year_df, ongoing_df)
+        assert len(merged) == 1
+        assert merged.iloc[0]["winner_name"] == "ARCHIVED_WINNER"
+
+    def test_tourney_id_collision_across_different_tournaments_not_collapsed(self):
+        # Real bug seen live in the API's 2026.csv: tourney_id "2026-416" is
+        # reused by both Munich and Rome Masters, both with match_num=1.
+        # (tourney_id, match_num) alone would wrongly collapse these into one
+        # row; the composite key must not.
+        year_df = pd.DataFrame([
+            _atp_row(tourney_id="2026-416", tourney_name="Munich", round="R32",
+                     match_num=1, winner_name="MUNICH_WINNER"),
+        ])
+        ongoing_df = pd.DataFrame([
+            _atp_row(tourney_id="2026-416", tourney_name="Rome Masters", round="R128",
+                     match_num=1, winner_name="ROME_WINNER"),
+        ])
+        merged = dd._merge_ongoing_into_year(year_df, ongoing_df)
+        assert len(merged) == 2
+
+    def test_result_column_order_matches_schema(self):
+        year_df = pd.DataFrame([_atp_row(tourney_id="A", tourney_name="X", round="F", match_num=1)])
+        ongoing_df = pd.DataFrame([_atp_row(tourney_id="B", tourney_name="Y", round="F", match_num=1)])
+        merged = dd._merge_ongoing_into_year(year_df, ongoing_df)
+        assert list(merged.columns) == dd.ATP_SCHEMA_COLUMNS

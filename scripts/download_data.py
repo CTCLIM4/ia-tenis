@@ -116,6 +116,25 @@ def _download_file(url: str, dest: Path) -> bool:
         return False
     return True
 
+
+def _merge_ongoing_into_year(year_df: pd.DataFrame, ongoing_df: pd.DataFrame) -> pd.DataFrame:
+    """Concatenate the archived year file with the live ongoing-tourneys feed,
+    deduplicating on a composite key that's robust to tourney_id being reused
+    across unrelated tournaments (observed live: "2026-416" used by both
+    Munich and Rome Masters). On a genuine duplicate match, the archived
+    year_df row wins over the live ongoing_df row.
+    """
+    year_df = year_df.copy()
+    ongoing_df = ongoing_df.copy()
+    year_df["_source_priority"] = 0
+    ongoing_df["_source_priority"] = 1
+
+    combined = pd.concat([year_df, ongoing_df], ignore_index=True)
+    combined = combined.sort_values("_source_priority", kind="stable")
+    combined = combined.drop_duplicates(subset=_ATP_MERGE_KEY, keep="first")
+    combined = combined.drop(columns=["_source_priority"])
+    return combined[ATP_SCHEMA_COLUMNS].reset_index(drop=True)
+
 WTA_START_YEAR = 2007
 WTA_DIR = DATA_RAW / "tennis_wta_tduk"
 _WTA_HEADERS = {
