@@ -426,3 +426,45 @@ class TestLogQueryOddsSource:
         assert new_row["odds_b"] == "2.5"
         assert new_row["odds_a_source"] == "auto"
         assert new_row["odds_b_source"] == "auto"
+
+
+class TestCacheRoundTripsLastMatchDate:
+    def test_last_match_date_round_trips(self, tmp_path, monkeypatch):
+        import src.value_analysis as va
+        monkeypatch.setattr(va, "_CACHE_DIR", tmp_path)
+
+        fake_elo = _fake_elo({"A": 1500.0})
+        fake_fb = SimpleNamespace()
+        fake_clf = SimpleNamespace()
+        rank_lookup = {"A": 10}
+        last_match_date = date(2025, 12, 22)
+
+        va._save_cache("atp", fake_elo, fake_fb, fake_clf, rank_lookup, last_match_date)
+        cached = va._load_cache("atp")
+
+        assert cached is not None
+        elo, fb, clf, rank_lkp, cached_date = cached
+        assert cached_date == last_match_date
+        assert rank_lkp == rank_lookup
+
+    def test_missing_last_match_date_treated_as_cache_miss(self, tmp_path, monkeypatch):
+        import pickle
+        from datetime import datetime
+        import src.value_analysis as va
+        monkeypatch.setattr(va, "_CACHE_DIR", tmp_path)
+
+        # Simulate a cache file written before this feature existed: no
+        # "last_match_date" key in the payload.
+        old_payload = {
+            "elo":         _fake_elo({"A": 1500.0}),
+            "fb":          SimpleNamespace(),
+            "clf":         SimpleNamespace(),
+            "rank_lookup": {"A": 10},
+            "timestamp":   datetime.now(),
+            "tour":        "atp",
+        }
+        path = tmp_path / "atp.pkl"
+        with open(path, "wb") as f:
+            pickle.dump(old_payload, f)
+
+        assert va._load_cache("atp") is None

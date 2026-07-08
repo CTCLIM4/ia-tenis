@@ -265,15 +265,16 @@ def _check_staleness(tour: str, last_match_date: date) -> None:
         print("  *** Las predicciones no incorporan resultados posteriores a esa fecha.")
 
 
-def _save_cache(tour: str, elo, fb, clf, rank_lookup: dict) -> None:
+def _save_cache(tour: str, elo, fb, clf, rank_lookup: dict, last_match_date: date) -> None:
     _CACHE_DIR.mkdir(parents=True, exist_ok=True)
     payload = {
-        "elo":          elo,
-        "fb":           fb,
-        "clf":          clf,
-        "rank_lookup":  rank_lookup,
-        "timestamp":    datetime.now(),
-        "tour":         tour,
+        "elo":              elo,
+        "fb":               fb,
+        "clf":              clf,
+        "rank_lookup":      rank_lookup,
+        "timestamp":        datetime.now(),
+        "tour":             tour,
+        "last_match_date":  last_match_date,
     }
     with open(_cache_path(tour), "wb") as f:
         pickle.dump(payload, f, protocol=pickle.HIGHEST_PROTOCOL)
@@ -281,7 +282,7 @@ def _save_cache(tour: str, elo, fb, clf, rank_lookup: dict) -> None:
 
 
 def _load_cache(tour: str):
-    """Return (elo, fb, clf, rank_lookup) from cache, or None if stale/missing."""
+    """Return (elo, fb, clf, rank_lookup, last_match_date) from cache, or None if stale/missing."""
     path = _cache_path(tour)
     if not path.exists():
         return None
@@ -292,6 +293,10 @@ def _load_cache(tour: str):
         print(f"  Advertencia: no se pudo leer cache ({e}). Reentrenando...")
         return None
 
+    if "last_match_date" not in payload:
+        print("  Cache de formato antiguo (sin last_match_date). Reentrenando...")
+        return None
+
     age = datetime.now() - payload["timestamp"]
     if age >= timedelta(days=CACHE_MAX_AGE_DAYS):
         print(f"  Cache expirado ({age.days}d {age.seconds//3600}h). Reentrenando...")
@@ -299,7 +304,10 @@ def _load_cache(tour: str):
 
     age_str = (f"{age.days}d " if age.days else "") + f"{age.seconds//3600}h {(age.seconds%3600)//60}m"
     print(f"  Cache cargado ({age_str} de antiguedad — maximo {CACHE_MAX_AGE_DAYS}d).")
-    return payload["elo"], payload["fb"], payload["clf"], payload["rank_lookup"]
+    return (
+        payload["elo"], payload["fb"], payload["clf"],
+        payload["rank_lookup"], payload["last_match_date"],
+    )
 
 
 # ── model loading ─────────────────────────────────────────────────────────────
@@ -307,8 +315,9 @@ def _load_cache(tour: str):
 def _build_elo_fb(tour: str):
     """Rebuild EloSystem + FeatureBuilder from raw matches.
 
-    Returns (elo, fb, rank_lookup) where rank_lookup maps player names to
-    their most recently observed ATP/WTA ranking.
+    Returns (elo, fb, rank_lookup, last_match_date) where rank_lookup maps
+    player names to their most recently observed ATP/WTA ranking, and
+    last_match_date is the most recent match_date seen in the raw data.
     """
     from src.data.loader import load_atp_matches, load_wta_matches
     from src.features.engineering import FeatureBuilder
@@ -323,12 +332,13 @@ def _build_elo_fb(tour: str):
     # Sort by date so rank lookup iteration is chronological
     df_raw   = df_raw.sort_values("match_date").reset_index(drop=True)
     rank_lkp = _build_rank_lookup(df_raw)
+    last_match_date = df_raw["match_date"].max().date()
     elo      = EloSystem()
     fb       = FeatureBuilder()
     build_match_features(df_raw, elo, fb)   # mutates elo and fb in-place
     print(f"  Listo: {len(elo.general_ratings):,} jugadores, "
           f"{len(rank_lkp):,} con ranking conocido.")
-    return elo, fb, rank_lkp
+    return elo, fb, rank_lkp, last_match_date
 
 
 def _train_lr(tour: str) -> LogisticRegression:
@@ -368,12 +378,15 @@ def load_model(tour: str = "atp", retrain: bool = False):
     if not retrain:
         cached = _load_cache(tour)
         if cached is not None:
-            return cached   # (elo, fb, clf, rank_lookup)
+            elo, fb, clf, rank_lookup, last_match_date = cached
+            _check_staleness(tour, last_match_date)
+            return elo, fb, clf, rank_lookup
 
     print(f"Construyendo modelo desde cero ({tour.upper()}) — primera vez ~30-60 s...")
-    elo, fb, rank_lkp = _build_elo_fb(tour)
+    elo, fb, rank_lkp, last_match_date = _build_elo_fb(tour)
     clf               = _train_lr(tour)
-    _save_cache(tour, elo, fb, clf, rank_lkp)
+    _save_cache(tour, elo, fb, clf, rank_lkp, last_match_date)
+    _check_staleness(tour, last_match_date)
     return elo, fb, clf, rank_lkp
 
 
