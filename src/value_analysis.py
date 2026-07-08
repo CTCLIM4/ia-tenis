@@ -685,9 +685,9 @@ def try_auto_odds(tour: str, player_a: str, player_b: str) -> Optional[MatchOdds
     api_key = os.environ.get("ODDS_API_KEY")
     if not api_key:
         return None
-    bookmaker = os.environ.get("ODDS_API_BOOKMAKER", DEFAULT_BOOKMAKER)
-    cache_minutes = int(os.environ.get("ODDS_API_CACHE_MINUTES", DEFAULT_CACHE_MINUTES))
     try:
+        bookmaker = os.environ.get("ODDS_API_BOOKMAKER", DEFAULT_BOOKMAKER)
+        cache_minutes = int(os.environ.get("ODDS_API_CACHE_MINUTES", DEFAULT_CACHE_MINUTES))
         return get_match_odds(tour, player_a, player_b, api_key, bookmaker, cache_minutes)
     except Exception as e:
         if not _odds_warned:
@@ -700,6 +700,7 @@ def try_auto_odds(tour: str, player_a: str, player_b: str) -> Optional[MatchOdds
 def _ask_odds(player: str, default: Optional[float] = None) -> tuple[float, str]:
     """Ask for decimal odds. Returns (value, source); source is 'auto' when the
     caller-supplied default (from the Odds API) was accepted via Enter."""
+    # 2dp display rounding; bookmakers already quote at ~2dp precision
     dflt_str = f"{default:.2f}" if default is not None else ""
     while True:
         raw = _ask(f"Cuota decimal para {player}", dflt_str)
