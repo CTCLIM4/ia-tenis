@@ -254,6 +254,9 @@ def _check_staleness(tour: str, last_match_date: date) -> None:
     warning reflects true data age (how recent is the underlying match data)
     rather than cache age (how old is the pickle file) — those are different
     things and a week-old cache can still wrap multi-month-old match data.
+
+    last_match_date must be a plain date (not datetime/Timestamp) — callers
+    deriving this from a pandas column should call .date() first.
     """
     days_stale = (date.today() - last_match_date).days
     if days_stale > STALENESS_WARNING_DAYS:
