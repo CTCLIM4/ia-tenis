@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import csv
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -11,7 +11,9 @@ import pytest
 from src.value_analysis import (
     FEATURE_COLS,
     KELLY_CAP,
+    STALENESS_WARNING_DAYS,
     _LOG_FIELDS,
+    _check_staleness,
     _is_elo_known,
     _resolve_player_name,
     apply_shrinkage,
@@ -133,6 +135,26 @@ class TestApplyShrinkage:
 
     def test_boundary_010_not_shrunk(self):
         assert apply_shrinkage(0.10) == pytest.approx(0.10)
+
+
+class TestCheckStaleness:
+    def test_warns_when_data_older_than_threshold(self, capsys):
+        old_date = date.today() - timedelta(days=STALENESS_WARNING_DAYS + 15)
+        _check_staleness("atp", old_date)
+        out = capsys.readouterr().out
+        assert "ADVERTENCIA" in out
+        assert "ATP" in out
+        assert str(old_date) in out
+
+    def test_no_warning_when_data_recent(self, capsys):
+        recent_date = date.today() - timedelta(days=5)
+        _check_staleness("wta", recent_date)
+        assert capsys.readouterr().out == ""
+
+    def test_no_warning_exactly_at_threshold(self, capsys):
+        boundary_date = date.today() - timedelta(days=STALENESS_WARNING_DAYS)
+        _check_staleness("atp", boundary_date)
+        assert capsys.readouterr().out == ""
 
 
 # ── 3. _resolve_player_name / disambiguation ───────────────────────────────────

@@ -49,6 +49,7 @@ FEATURE_COLS = [
 ]
 KELLY_CAP         = 0.05   # max 5% of bankroll (conservative)
 CACHE_MAX_AGE_DAYS = 7     # rebuild if cache older than this
+STALENESS_WARNING_DAYS = 30  # warn if newest match in the data is older than this
 
 _odds_warned = False       # print the auto-fetch failure warning once per session
 
@@ -243,6 +244,22 @@ def lookup_rank(player: str, rank_lookup: Dict[str, int]) -> Optional[int]:
 
 def _cache_path(tour: str) -> Path:
     return _CACHE_DIR / f"{tour}.pkl"
+
+
+def _check_staleness(tour: str, last_match_date: date) -> None:
+    """Warn when the newest match in the dataset is more than
+    STALENESS_WARNING_DAYS old relative to today.
+
+    Runs on every load_model() call regardless of cache hit/miss, so the
+    warning reflects true data age (how recent is the underlying match data)
+    rather than cache age (how old is the pickle file) — those are different
+    things and a week-old cache can still wrap multi-month-old match data.
+    """
+    days_stale = (date.today() - last_match_date).days
+    if days_stale > STALENESS_WARNING_DAYS:
+        print(f"\n  *** ADVERTENCIA: dataset {tour.upper()} desactualizado ***")
+        print(f"  *** Ultimo partido en los datos: {last_match_date} ({days_stale} dias atras).")
+        print("  *** Las predicciones no incorporan resultados posteriores a esa fecha.")
 
 
 def _save_cache(tour: str, elo, fb, clf, rank_lookup: dict) -> None:
