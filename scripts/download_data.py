@@ -15,8 +15,10 @@ WTA  → tennis-data.co.uk           (public)  → data/raw/tennis_wta_tduk/{yea
        downloads fail (the site occasionally restructures paths between seasons).
 """
 import datetime
+import os
 import re
 import shutil
+import stat
 import subprocess
 import urllib.request
 from pathlib import Path
@@ -136,6 +138,18 @@ def _merge_ongoing_into_year(year_df: pd.DataFrame, ongoing_df: pd.DataFrame) ->
     return combined[ATP_SCHEMA_COLUMNS].reset_index(drop=True)
 
 
+def _force_remove_readonly(func, path, exc):
+    """shutil.rmtree onexc callback: clear the read-only bit and retry.
+
+    Git marks packed/loose objects under .git/objects read-only on Windows,
+    which makes plain os.unlink/os.rmdir raise PermissionError. Clearing
+    stat.S_IWRITE before retrying the failed operation is the standard
+    workaround.
+    """
+    os.chmod(path, stat.S_IWRITE)
+    func(path)
+
+
 def _cleanup_legacy_git_clone(dest: Path) -> None:
     """Remove artifacts from the old git-clone-based ATP source, if present.
 
@@ -143,16 +157,26 @@ def _cleanup_legacy_git_clone(dest: Path) -> None:
     safe to call on every run. Existing {year}.csv files are never touched
     here — the download loop (download_atp) decides whether each gets
     refreshed, based on remote size.
+
+    Git marks packed/loose objects under .git/objects read-only on Windows,
+    which would otherwise crash a plain shutil.rmtree/Path.unlink here. Each
+    path removal is made resilient to that (and to any other filesystem
+    hiccup, e.g. a locked file) so one stuck path can't abort cleanup of the
+    rest, matching the "never let a filesystem hiccup abort the whole run"
+    convention used by _download_file.
     """
     if not (dest / ".git").exists():
         return
     print("  Migrating away from git clone: removing legacy artifacts...")
     for name in _ATP_LEGACY_PATHS:
         path = dest / name
-        if path.is_dir():
-            shutil.rmtree(path)
-        elif path.exists():
-            path.unlink()
+        try:
+            if path.is_dir():
+                shutil.rmtree(path, onexc=_force_remove_readonly)
+            elif path.exists():
+                path.unlink()
+        except Exception as e:
+            print(f"  WARNING: could not remove {path.name}: {e}")
 
 WTA_START_YEAR = 2007
 WTA_DIR = DATA_RAW / "tennis_wta_tduk"

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import datetime
+import stat
 
 import pandas as pd
 
@@ -214,4 +215,41 @@ class TestCleanupLegacyGitClone:
 
         dd._cleanup_legacy_git_clone(dest)
 
+        assert (dest / "2025.csv").exists()
+
+    def test_removes_readonly_git_objects_on_windows(self, tmp_path):
+        # Git marks packed/loose objects read-only on Windows. Plain
+        # shutil.rmtree() crashes with PermissionError on these; the
+        # cleanup must tolerate and clear that bit.
+        dest = tmp_path / "tennis_atp_tml"
+        dest.mkdir()
+        objects_dir = dest / ".git" / "objects" / "info"
+        objects_dir.mkdir(parents=True)
+        readonly_file = objects_dir / "commit-graph-chain"
+        readonly_file.write_text("deadbeef")
+        readonly_file.chmod(stat.S_IREAD)
+        (dest / "2025.csv").write_text("keep,me")
+
+        try:
+            dd._cleanup_legacy_git_clone(dest)
+        finally:
+            # Safety net: if the test fails partway, don't leave a
+            # read-only file behind to break tmp_path cleanup.
+            if readonly_file.exists():
+                readonly_file.chmod(stat.S_IWRITE)
+
+        assert not (dest / ".git").exists()
+        assert (dest / "2025.csv").exists()
+
+    def test_idempotent_when_called_twice(self, tmp_path):
+        dest = tmp_path / "tennis_atp_tml"
+        dest.mkdir()
+        (dest / ".git").mkdir()
+        (dest / ".git" / "HEAD").write_text("ref: refs/heads/master")
+        (dest / "2025.csv").write_text("keep,me")
+
+        dd._cleanup_legacy_git_clone(dest)
+        dd._cleanup_legacy_git_clone(dest)
+
+        assert not (dest / ".git").exists()
         assert (dest / "2025.csv").exists()
