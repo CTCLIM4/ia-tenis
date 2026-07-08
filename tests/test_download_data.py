@@ -182,3 +182,36 @@ class TestMergeOngoingIntoYear:
         ongoing_df = pd.DataFrame([_atp_row(tourney_id="B", tourney_name="Y", round="F", match_num=1)])
         merged = dd._merge_ongoing_into_year(year_df, ongoing_df)
         assert list(merged.columns) == dd.ATP_SCHEMA_COLUMNS
+
+
+class TestCleanupLegacyGitClone:
+    def test_removes_git_clone_artifacts_but_keeps_year_files(self, tmp_path):
+        dest = tmp_path / "tennis_atp_tml"
+        dest.mkdir()
+        (dest / ".git").mkdir()
+        (dest / ".git" / "HEAD").write_text("ref: refs/heads/master")
+        (dest / ".github").mkdir()
+        (dest / "README.md").write_text("readme")
+        (dest / "logo.jpg").write_bytes(b"\xff\xd8")
+        (dest / "ATP_Database.csv").write_text("old,aggregate")
+        (dest / "ongoing_tourneys.csv").write_text("stale,ongoing")
+        (dest / "2025.csv").write_text("keep,me")
+
+        dd._cleanup_legacy_git_clone(dest)
+
+        assert not (dest / ".git").exists()
+        assert not (dest / ".github").exists()
+        assert not (dest / "README.md").exists()
+        assert not (dest / "logo.jpg").exists()
+        assert not (dest / "ATP_Database.csv").exists()
+        assert not (dest / "ongoing_tourneys.csv").exists()
+        assert (dest / "2025.csv").exists()
+
+    def test_noop_when_not_a_git_clone(self, tmp_path):
+        dest = tmp_path / "tennis_atp_tml"
+        dest.mkdir()
+        (dest / "2025.csv").write_text("keep,me")
+
+        dd._cleanup_legacy_git_clone(dest)
+
+        assert (dest / "2025.csv").exists()

@@ -135,6 +135,25 @@ def _merge_ongoing_into_year(year_df: pd.DataFrame, ongoing_df: pd.DataFrame) ->
     combined = combined.drop(columns=["_source_priority"])
     return combined[ATP_SCHEMA_COLUMNS].reset_index(drop=True)
 
+
+def _cleanup_legacy_git_clone(dest: Path) -> None:
+    """Remove artifacts from the old git-clone-based ATP source, if present.
+
+    `.git` is the migration marker: if it's gone, this is a no-op, so it's
+    safe to call on every run. Existing {year}.csv files are never touched
+    here — the download loop (download_atp) decides whether each gets
+    refreshed, based on remote size.
+    """
+    if not (dest / ".git").exists():
+        return
+    print("  Migrating away from git clone: removing legacy artifacts...")
+    for name in _ATP_LEGACY_PATHS:
+        path = dest / name
+        if path.is_dir():
+            shutil.rmtree(path)
+        elif path.exists():
+            path.unlink()
+
 WTA_START_YEAR = 2007
 WTA_DIR = DATA_RAW / "tennis_wta_tduk"
 _WTA_HEADERS = {
