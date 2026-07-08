@@ -790,7 +790,7 @@ def _ask_rank_with_hint(player: str, auto_rank: Optional[int]) -> Optional[float
             return None
 
 
-def interactive_cli(tour: str = "atp", retrain: bool = False) -> None:
+def interactive_cli(tour: str = "atp", retrain: bool = False, halt_on_suspicious: bool = False) -> None:
     """Run the interactive CLI session."""
     elo, fb, clf, rank_lookup = load_model(tour, retrain=retrain)
 
@@ -916,7 +916,13 @@ def interactive_cli(tour: str = "atp", retrain: bool = False) -> None:
         _print_prediction(pred, val_a, val_b, odds_a, odds_b)
 
         elo_ok = pred.get("elo_found_a", True) and pred.get("elo_found_b", True)
-        if not elo_ok:
+        if _should_halt_on_suspicious_edge(val_a, val_b, halt_on_suspicious):
+            best_edge = max(val_a["edge"], val_b["edge"])
+            print(f"\n  *** BLOQUEADO: edge sospechoso ({best_edge*100:.1f}% > "
+                  f"{SUSPICIOUS_EDGE_THRESHOLD*100:.0f}%) ***")
+            print("  *** Posible dato stale o error de matching. Revisa manualmente.")
+            print("  *** No se guarda en esta sesion. Corre sin --halt-on-suspicious para loguear igual.")
+        elif not elo_ok:
             print("\n  Log bloqueado: prediccion invalida (Elo faltante). Corrige el nombre del jugador.")
         else:
             save = _ask("\n  Guardar en log? (s/n)", "s").lower()
@@ -945,9 +951,13 @@ def main() -> None:
                         help="Usar modelo WTA en lugar de ATP (default)")
     parser.add_argument("--retrain", action="store_true",
                         help="Ignorar cache y reentrenar modelo desde cero")
+    parser.add_argument("--halt-on-suspicious", action="store_true",
+                        dest="halt_on_suspicious",
+                        help="Bloquea el guardado en log si el edge supera "
+                             f"{SUSPICIOUS_EDGE_THRESHOLD*100:.0f}%% (posible dato stale)")
     args = parser.parse_args()
     tour = "wta" if args.wta else "atp"
-    interactive_cli(tour, retrain=args.retrain)
+    interactive_cli(tour, retrain=args.retrain, halt_on_suspicious=args.halt_on_suspicious)
 
 
 if __name__ == "__main__":
