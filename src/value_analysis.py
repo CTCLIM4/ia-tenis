@@ -1,5 +1,5 @@
 """
-Tennis value-bet analysis — manual odds input.
+Tennis value-bet analysis — auto-fetched odds with manual fallback.
 
 Calcula Edge / EV / Kelly para un partido dado, usando el modelo
 LR+features entrenado sobre el histórico completo de ATP o WTA.
@@ -12,17 +12,18 @@ Uso:
 El modelo se reconstruye desde cero la primera vez (~30-60 s ATP),
 y luego queda cacheado 7 días en data/model_cache/{tour}.pkl.
 
-TODO: enchufar The Odds API (free tier, 500 req/mes) para poblar las
-cuotas automáticamente en lugar de pedirlas al usuario:
-  Base URL: https://api.the-odds-api.com/v4/sports/tennis/odds/
-  Param: apiKey, regions=eu, markets=h2h, oddsFormat=decimal
-  Ver: https://the-odds-api.com/liveapi/guides/v4/
-  Filtrar por event que coincida con tournament + player names.
+Cuotas: si ODDS_API_KEY esta configurada en el entorno, se intenta
+autocompletar la cuota de cada jugador via The Odds API (bookmaker fijo,
+default "bet365" — configurable con ODDS_API_BOOKMAKER, cache de eventos
+configurable con ODDS_API_CACHE_MINUTES). Si no hay key, no hay match, o
+falla la llamada, se pide la cuota a mano igual que antes — el auto-fetch
+nunca bloquea el flujo.
 """
 from __future__ import annotations
 
 import argparse
 import csv
+import os
 import pickle
 import sys
 from datetime import date, datetime, timedelta
@@ -32,6 +33,8 @@ from typing import Dict, Optional
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
+
+from src.odds_api import DEFAULT_BOOKMAKER, DEFAULT_CACHE_MINUTES, MatchOdds, get_match_odds
 
 # ── paths ────────────────────────────────────────────────────────────────────
 _ROOT      = Path(__file__).resolve().parent.parent
@@ -46,6 +49,8 @@ FEATURE_COLS = [
 ]
 KELLY_CAP         = 0.05   # max 5% of bankroll (conservative)
 CACHE_MAX_AGE_DAYS = 7     # rebuild if cache older than this
+
+_odds_warned = False       # print the auto-fetch failure warning once per session
 
 # ── calibration shrinkage (Section 13: reliability analysis, ATP+WTA 2016-23) ─
 # LR with 7 features shows overconfidence at p > 0.90 (~7pp bias) and
@@ -668,30 +673,49 @@ def _ask(prompt: str, default: str = "") -> str:
     return val if val else default
 
 
-def _ask_float(prompt: str, default: Optional[float] = None,
-               min_val: float = 0.0, max_val: float = 9999.0) -> Optional[float]:
-    dflt_str = str(int(default)) if default is not None else ""
+def try_auto_odds(tour: str, player_a: str, player_b: str) -> Optional[MatchOdds]:
+    """Best-effort odds auto-fill via The Odds API. Never raises, never blocks.
+
+    Returns None silently when ODDS_API_KEY isn't set or no match/bookmaker
+    quote was found. Prints a one-time-per-session warning on genuine
+    failures (network error, bad key, rate limit) so the user knows why
+    it's not filling in — the manual flow always still works.
+    """
+    global _odds_warned
+    api_key = os.environ.get("ODDS_API_KEY")
+    if not api_key:
+        return None
+    bookmaker = os.environ.get("ODDS_API_BOOKMAKER", DEFAULT_BOOKMAKER)
+    cache_minutes = int(os.environ.get("ODDS_API_CACHE_MINUTES", DEFAULT_CACHE_MINUTES))
+    try:
+        return get_match_odds(tour, player_a, player_b, api_key, bookmaker, cache_minutes)
+    except Exception as e:
+        if not _odds_warned:
+            print(f"\n  Aviso: no se pudieron obtener cuotas automaticas ({e}). "
+                  f"Se pediran las cuotas a mano el resto de la sesion.")
+            _odds_warned = True
+        return None
+
+
+def _ask_odds(player: str, default: Optional[float] = None) -> tuple[float, str]:
+    """Ask for decimal odds. Returns (value, source); source is 'auto' when the
+    caller-supplied default (from the Odds API) was accepted via Enter."""
+    dflt_str = f"{default:.2f}" if default is not None else ""
     while True:
-        raw = _ask(prompt, dflt_str)
-        if not raw:
-            return None
+        raw = _ask(f"Cuota decimal para {player}", dflt_str)
         if raw.lower() == "q":
             raise KeyboardInterrupt
+        if not raw:
+            print("    Cuota requerida (> 1.0).")
+            continue
+        source = "auto" if (default is not None and raw == dflt_str) else "manual"
         try:
             v = float(raw)
-            if min_val < v <= max_val:
-                return v
-            print(f"    Valor fuera de rango ({min_val} < v <= {max_val}). Reintenta.")
+            if 1.0 < v <= 100.0:
+                return v, source
+            print("    Cuota fuera de rango (1.0 < v <= 100.0). Reintenta.")
         except ValueError:
             print("    Valor invalido. Ingresa un numero.")
-
-
-def _ask_odds(player: str) -> float:
-    while True:
-        val = _ask_float(f"Cuota decimal para {player}", min_val=1.0, max_val=100.0)
-        if val is not None:
-            return val
-        print("    Cuota requerida (> 1.0).")
 
 
 def _ask_rank_with_hint(player: str, auto_rank: Optional[int]) -> Optional[float]:
@@ -783,6 +807,13 @@ def interactive_cli(tour: str = "atp", retrain: bool = False) -> None:
                           f"Si esto es incorrecto, escribe el nombre exacto del indice "
                           f"(ej. '{example_key}').")
 
+            # Cuotas automaticas (best-effort, nunca bloquea el flujo)
+            auto_odds = try_auto_odds(tour, player_a, player_b)
+            if auto_odds is not None:
+                bookmaker_label = os.environ.get("ODDS_API_BOOKMAKER", DEFAULT_BOOKMAKER)
+                print(f"\n  Cuotas encontradas ({bookmaker_label}): "
+                      f"{auto_odds.matched_home} vs {auto_odds.matched_away}")
+
             # Rankings — show auto-found values as defaults
             auto_a = lookup_rank(player_a, rank_lookup)
             auto_b = lookup_rank(player_b, rank_lookup)
@@ -828,8 +859,12 @@ def interactive_cli(tour: str = "atp", retrain: bool = False) -> None:
         # Odds input
         try:
             print(f"\n  Ingresa las cuotas decimales:")
-            odds_a = _ask_odds(player_a)
-            odds_b = _ask_odds(player_b)
+            odds_a, odds_a_source = _ask_odds(
+                player_a, default=auto_odds.odds_a if auto_odds else None
+            )
+            odds_b, odds_b_source = _ask_odds(
+                player_b, default=auto_odds.odds_b if auto_odds else None
+            )
         except KeyboardInterrupt:
             break
 
@@ -848,6 +883,7 @@ def interactive_cli(tour: str = "atp", retrain: bool = False) -> None:
                     tour, tournament, surface, match_date,
                     player_a, player_b,
                     pred, val_a, val_b, odds_a, odds_b,
+                    odds_a_source, odds_b_source,
                 )
 
         again = _ask("  Analizar otro partido? (s/n)", "s").lower()
