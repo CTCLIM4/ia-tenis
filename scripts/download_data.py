@@ -19,7 +19,6 @@ import os
 import re
 import shutil
 import stat
-import subprocess
 import urllib.request
 from pathlib import Path
 
@@ -178,6 +177,52 @@ def _cleanup_legacy_git_clone(dest: Path) -> None:
         except Exception as e:
             print(f"  WARNING: could not remove {path.name}: {e}")
 
+
+def download_atp() -> None:
+    """Download ATP main-tour year files + ongoing_tourneys.csv from the
+    stats.tennismylife.org API, then merge the live ongoing feed into the
+    current year's file so load_atp_matches() sees it with zero changes."""
+    ATP_DIR.mkdir(parents=True, exist_ok=True)
+    _cleanup_legacy_git_clone(ATP_DIR)
+
+    try:
+        manifest = _fetch_atp_manifest()
+    except Exception as e:
+        print(f"  ERROR: could not fetch ATP manifest: {e}")
+        return
+
+    current_year_name = f"{datetime.date.today().year}.csv"
+    downloaded, skipped = 0, 0
+    have_ongoing = have_current_year = False
+
+    for entry in manifest:
+        dest = ATP_DIR / entry["name"]
+        if entry["name"] == "ongoing_tourneys.csv":
+            have_ongoing = True
+        elif entry["name"] == current_year_name:
+            have_current_year = True
+
+        if not _should_download(dest, entry["size"]):
+            skipped += 1
+            continue
+        if _download_file(entry["url"], dest):
+            downloaded += 1
+        elif dest.exists():
+            skipped += 1
+
+    print(f"  ATP: {downloaded} downloaded, {skipped} already current or unchanged.")
+
+    year_path = ATP_DIR / current_year_name
+    ongoing_path = ATP_DIR / "ongoing_tourneys.csv"
+    if have_ongoing and have_current_year and year_path.exists() and ongoing_path.exists():
+        year_df = pd.read_csv(year_path, low_memory=False)
+        ongoing_df = pd.read_csv(ongoing_path, low_memory=False)
+        merged = _merge_ongoing_into_year(year_df, ongoing_df)
+        tmp = year_path.with_suffix(year_path.suffix + ".tmp")
+        merged.to_csv(tmp, index=False)
+        tmp.replace(year_path)
+        print(f"  Merged ongoing_tourneys.csv into {current_year_name} ({len(merged)} rows).")
+
 WTA_START_YEAR = 2007
 WTA_DIR = DATA_RAW / "tennis_wta_tduk"
 _WTA_HEADERS = {
@@ -245,24 +290,10 @@ def download():
     DATA_RAW.mkdir(parents=True, exist_ok=True)
 
     # ── ATP ──────────────────────────────────────────────────────────────────
-    dest = DATA_RAW / ATP_REPO["dest"]
-    url = ATP_REPO["url"]
-    if dest.exists():
-        print("tennis_atp_tml: already exists, pulling latest...")
-        try:
-            subprocess.run(["git", "-C", str(dest), "pull"], check=True)
-        except subprocess.CalledProcessError as e:
-            print(f"  WARNING: pull failed — {e}")
-    else:
-        print("Cloning Tennismylife/TML-Database (ATP)...")
-        try:
-            subprocess.run(["git", "clone", "--depth=1", url, str(dest)], check=True)
-            print(f"  Done: {dest}")
-        except subprocess.CalledProcessError:
-            print(f"\n  ERROR: could not clone {url}\n")
+    print("Downloading ATP data from stats.tennismylife.org...")
+    download_atp()
 
     # ── WTA ──────────────────────────────────────────────────────────────────
-    import datetime
     current_year = datetime.date.today().year
     WTA_DIR.mkdir(parents=True, exist_ok=True)
     print(f"\nDownloading WTA data ({WTA_START_YEAR}-{current_year}) from tennis-data.co.uk...")

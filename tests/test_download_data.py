@@ -253,3 +253,93 @@ class TestCleanupLegacyGitClone:
 
         assert not (dest / ".git").exists()
         assert (dest / "2025.csv").exists()
+
+
+class TestDownloadAtpOrchestration:
+    def test_full_flow_downloads_merges_and_skips_unchanged(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(dd, "ATP_DIR", tmp_path / "tennis_atp_tml")
+        current_year = datetime.date.today().year
+        current_year_name = f"{current_year}.csv"
+
+        header = ",".join(dd.ATP_SCHEMA_COLUMNS)
+
+        def make_row(**overrides):
+            vals = {col: "" for col in dd.ATP_SCHEMA_COLUMNS}
+            vals.update(overrides)
+            return ",".join(str(vals[c]) for c in dd.ATP_SCHEMA_COLUMNS)
+
+        year_csv = (header + "\n" + make_row(
+            tourney_id="Y-1", tourney_name="Old Open", round="F",
+            match_num=1, winner_name="OLD_WINNER") + "\n").encode("utf-8")
+        ongoing_csv = (header + "\n" + make_row(
+            tourney_id="Y-2", tourney_name="Live Open", round="R16",
+            match_num=1, winner_name="LIVE_WINNER") + "\n").encode("utf-8")
+
+        manifest_json = {
+            "count": 3,
+            "files": [
+                {"name": "1990.csv", "url": "http://x/1990.csv", "size": 999999, "mtime": "t"},
+                {"name": current_year_name, "url": "http://x/year.csv", "size": len(year_csv), "mtime": "t"},
+                {"name": "ongoing_tourneys.csv", "url": "http://x/ongoing.csv", "size": len(ongoing_csv), "mtime": "t"},
+            ],
+        }
+
+        class FakeManifestResponse:
+            def raise_for_status(self):
+                pass
+
+            def json(self):
+                return manifest_json
+
+        class FakeFileResponse:
+            def __init__(self, content):
+                self.content = content
+
+            def raise_for_status(self):
+                pass
+
+        def fake_get(url, timeout=None):
+            if url == dd.ATP_MANIFEST_URL:
+                return FakeManifestResponse()
+            if url == "http://x/year.csv":
+                return FakeFileResponse(year_csv)
+            if url == "http://x/ongoing.csv":
+                return FakeFileResponse(ongoing_csv)
+            if url == "http://x/1990.csv":
+                raise AssertionError("1990.csv should have been skipped: size already matches")
+            raise AssertionError(f"unexpected url requested: {url}")
+
+        monkeypatch.setattr(dd.requests, "get", fake_get)
+
+        dd.ATP_DIR.mkdir(parents=True)
+        (dd.ATP_DIR / "1990.csv").write_bytes(b"x" * 999999)
+
+        dd.download_atp()
+
+        result = pd.read_csv(dd.ATP_DIR / current_year_name)
+        assert set(result["winner_name"]) == {"OLD_WINNER", "LIVE_WINNER"}
+        assert (dd.ATP_DIR / "ongoing_tourneys.csv").exists()
+        assert (dd.ATP_DIR / "1990.csv").stat().st_size == 999999
+
+    def test_removes_legacy_git_clone_before_downloading(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(dd, "ATP_DIR", tmp_path / "tennis_atp_tml")
+        dd.ATP_DIR.mkdir(parents=True)
+        (dd.ATP_DIR / ".git").mkdir()
+        (dd.ATP_DIR / "README.md").write_text("readme")
+
+        def fake_get(url, timeout=None):
+            class Empty:
+                def raise_for_status(self_inner):
+                    pass
+
+                def json(self_inner):
+                    return {"count": 0, "files": []}
+
+            return Empty()
+
+        monkeypatch.setattr(dd.requests, "get", fake_get)
+
+        dd.download_atp()
+
+        assert not (dd.ATP_DIR / ".git").exists()
+        assert not (dd.ATP_DIR / "README.md").exists()
