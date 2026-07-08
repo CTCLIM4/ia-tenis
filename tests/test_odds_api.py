@@ -80,7 +80,6 @@ class TestFindMatchOdds:
         assert result.matched_home == "Sabalenka A."
 
 
-import json as _json  # only for clarity in fixtures below; json already stdlib
 from datetime import datetime, timedelta, timezone
 
 
