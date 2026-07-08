@@ -66,6 +66,13 @@ def _fetch_atp_manifest() -> list[dict]:
     resp.raise_for_status()
     return _filter_atp_manifest(resp.json()["files"])
 
+
+def _should_download(local_path: Path, remote_size: int) -> bool:
+    """True if local_path is missing or its size differs from remote_size."""
+    if not local_path.exists():
+        return True
+    return local_path.stat().st_size != remote_size
+
 WTA_START_YEAR = 2007
 WTA_DIR = DATA_RAW / "tennis_wta_tduk"
 _WTA_HEADERS = {

@@ -32,3 +32,18 @@ class TestFilterAtpManifest:
         assert len(dd.ATP_SCHEMA_COLUMNS) == 50
         assert dd.ATP_SCHEMA_COLUMNS[0] == "tourney_id"
         assert dd.ATP_SCHEMA_COLUMNS[-1] == "l_bpFaced"
+
+
+class TestShouldDownload:
+    def test_missing_local_file(self, tmp_path):
+        assert dd._should_download(tmp_path / "missing.csv", 100) is True
+
+    def test_size_mismatch_triggers_download(self, tmp_path):
+        f = tmp_path / "2020.csv"
+        f.write_bytes(b"a" * 50)
+        assert dd._should_download(f, 100) is True
+
+    def test_size_match_skips_download(self, tmp_path):
+        f = tmp_path / "2020.csv"
+        f.write_bytes(b"a" * 100)
+        assert dd._should_download(f, 100) is False
