@@ -12,10 +12,12 @@ from src.value_analysis import (
     FEATURE_COLS,
     KELLY_CAP,
     STALENESS_WARNING_DAYS,
+    SUSPICIOUS_EDGE_THRESHOLD,
     _LOG_FIELDS,
     _check_staleness,
     _is_elo_known,
     _resolve_player_name,
+    _should_halt_on_suspicious_edge,
     apply_shrinkage,
     calculate_value,
     log_query,
@@ -468,3 +470,30 @@ class TestCacheRoundTripsLastMatchDate:
             pickle.dump(old_payload, f)
 
         assert va._load_cache("atp") is None
+
+
+class TestShouldHaltOnSuspiciousEdge:
+    def test_true_when_edge_above_threshold_and_flag_on(self):
+        val_a = {"edge": 0.15}
+        val_b = {"edge": -0.05}
+        assert _should_halt_on_suspicious_edge(val_a, val_b, halt_on_suspicious=True) is True
+
+    def test_false_when_flag_off_even_if_edge_high(self):
+        val_a = {"edge": 0.20}
+        val_b = {"edge": -0.05}
+        assert _should_halt_on_suspicious_edge(val_a, val_b, halt_on_suspicious=False) is False
+
+    def test_false_when_edge_below_threshold(self):
+        val_a = {"edge": 0.05}
+        val_b = {"edge": 0.02}
+        assert _should_halt_on_suspicious_edge(val_a, val_b, halt_on_suspicious=True) is False
+
+    def test_false_exactly_at_threshold(self):
+        val_a = {"edge": SUSPICIOUS_EDGE_THRESHOLD}
+        val_b = {"edge": 0.0}
+        assert _should_halt_on_suspicious_edge(val_a, val_b, halt_on_suspicious=True) is False
+
+    def test_checks_both_sides_takes_max(self):
+        val_a = {"edge": -0.5}
+        val_b = {"edge": 0.11}
+        assert _should_halt_on_suspicious_edge(val_a, val_b, halt_on_suspicious=True) is True

@@ -50,6 +50,7 @@ FEATURE_COLS = [
 KELLY_CAP         = 0.05   # max 5% of bankroll (conservative)
 CACHE_MAX_AGE_DAYS = 7     # rebuild if cache older than this
 STALENESS_WARNING_DAYS = 30  # warn if newest match in the data is older than this
+SUSPICIOUS_EDGE_THRESHOLD = 0.10  # hard-block logging above this when --halt-on-suspicious
 
 _odds_warned = False       # print the auto-fetch failure warning once per session
 
@@ -109,6 +110,13 @@ def calculate_value(model_prob: float, odds_decimal: float) -> dict:
         "kelly_fraction": kelly,
         "has_value":      edge > 0,
     }
+
+
+def _should_halt_on_suspicious_edge(val_a: dict, val_b: dict, halt_on_suspicious: bool) -> bool:
+    """True when --halt-on-suspicious is active and either side's edge exceeds
+    SUSPICIOUS_EDGE_THRESHOLD — a signal the prediction may be based on stale
+    data or a name-matching error rather than genuine market inefficiency."""
+    return halt_on_suspicious and max(val_a["edge"], val_b["edge"]) > SUSPICIOUS_EDGE_THRESHOLD
 
 
 # ── rank lookup ───────────────────────────────────────────────────────────────
