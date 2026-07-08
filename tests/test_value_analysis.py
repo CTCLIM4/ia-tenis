@@ -315,3 +315,22 @@ class TestLogQueryStatus:
         rows = _read_log(log_path)
         assert len(rows) == 3
         assert all("status" in r for r in rows)
+
+
+class TestLogQueryOddsSource:
+    def test_odds_source_defaults_to_manual(self, log_path):
+        pred = _make_pred()
+        log_query("atp", "Test", "hard", date(2026, 7, 1),
+                  "Player A", "Player B", pred, _val(), _val(), 1.90, 2.10)
+        row = _read_log(log_path)[0]
+        assert row["odds_a_source"] == "manual"
+        assert row["odds_b_source"] == "manual"
+
+    def test_odds_source_records_auto_when_provided(self, log_path):
+        pred = _make_pred()
+        log_query("atp", "Test", "hard", date(2026, 7, 1),
+                  "Player A", "Player B", pred, _val(), _val(), 1.90, 2.10,
+                  odds_a_source="auto", odds_b_source="auto")
+        row = _read_log(log_path)[0]
+        assert row["odds_a_source"] == "auto"
+        assert row["odds_b_source"] == "auto"
