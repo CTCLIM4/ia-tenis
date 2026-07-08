@@ -107,8 +107,13 @@ def _download_file(url: str, dest: Path) -> bool:
         return False
 
     tmp = dest.with_suffix(dest.suffix + ".tmp")
-    tmp.write_bytes(data)
-    tmp.replace(dest)
+    try:
+        tmp.write_bytes(data)
+        tmp.replace(dest)
+    except Exception as e:
+        print(f"  WARNING: could not write {dest.name}: {e}")
+        tmp.unlink(missing_ok=True)
+        return False
     return True
 
 WTA_START_YEAR = 2007

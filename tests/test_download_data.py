@@ -112,3 +112,18 @@ class TestDownloadFile:
 
         assert dd._download_file("http://x/2020.csv", dest) is False
         assert dest.read_bytes() == b"good,old,data\n1,2,3\n"
+
+    def test_write_failure_after_validation_returns_false_and_cleans_up_tmp(self, tmp_path, monkeypatch):
+        dest = tmp_path / "2020.csv"
+        dest.write_bytes(b"good,old,data\n1,2,3\n")
+        body = self._valid_body()
+        monkeypatch.setattr(dd.requests, "get", lambda url, timeout=None: _FakeResponse(content=body))
+
+        def boom(self, data):
+            raise OSError("disk full")
+
+        monkeypatch.setattr(dd.Path, "write_bytes", boom)
+
+        assert dd._download_file("http://x/2020.csv", dest) is False
+        assert dest.read_bytes() == b"good,old,data\n1,2,3\n"
+        assert not (tmp_path / "2020.csv.tmp").exists()
