@@ -192,7 +192,7 @@ def download_atp() -> None:
         return
 
     current_year_name = f"{datetime.date.today().year}.csv"
-    downloaded, skipped = 0, 0
+    downloaded, skipped, failed = 0, 0, 0
     have_ongoing = have_current_year = False
 
     for entry in manifest:
@@ -207,21 +207,24 @@ def download_atp() -> None:
             continue
         if _download_file(entry["url"], dest):
             downloaded += 1
-        elif dest.exists():
-            skipped += 1
+        else:
+            failed += 1
 
-    print(f"  ATP: {downloaded} downloaded, {skipped} already current or unchanged.")
+    print(f"  ATP: {downloaded} downloaded, {skipped} already current or unchanged, {failed} failed.")
 
     year_path = ATP_DIR / current_year_name
     ongoing_path = ATP_DIR / "ongoing_tourneys.csv"
     if have_ongoing and have_current_year and year_path.exists() and ongoing_path.exists():
-        year_df = pd.read_csv(year_path, low_memory=False)
-        ongoing_df = pd.read_csv(ongoing_path, low_memory=False)
-        merged = _merge_ongoing_into_year(year_df, ongoing_df)
-        tmp = year_path.with_suffix(year_path.suffix + ".tmp")
-        merged.to_csv(tmp, index=False)
-        tmp.replace(year_path)
-        print(f"  Merged ongoing_tourneys.csv into {current_year_name} ({len(merged)} rows).")
+        try:
+            year_df = pd.read_csv(year_path, low_memory=False)
+            ongoing_df = pd.read_csv(ongoing_path, low_memory=False)
+            merged = _merge_ongoing_into_year(year_df, ongoing_df)
+            tmp = year_path.with_suffix(year_path.suffix + ".tmp")
+            merged.to_csv(tmp, index=False)
+            tmp.replace(year_path)
+            print(f"  Merged ongoing_tourneys.csv into {current_year_name} ({len(merged)} rows).")
+        except Exception as e:
+            print(f"  WARNING: could not merge ongoing_tourneys.csv into {current_year_name}: {e}")
 
 WTA_START_YEAR = 2007
 WTA_DIR = DATA_RAW / "tennis_wta_tduk"

@@ -343,3 +343,115 @@ class TestDownloadAtpOrchestration:
 
         assert not (dd.ATP_DIR / ".git").exists()
         assert not (dd.ATP_DIR / "README.md").exists()
+
+
+class TestDownloadAtpFailureIsolation:
+    def test_wta_still_runs_when_atp_manifest_fetch_fails(self, tmp_path, monkeypatch):
+        # The single most important property of download_atp(): an ATP-side
+        # failure must never prevent the WTA section of download() from
+        # running afterward.
+        monkeypatch.setattr(dd, "DATA_RAW", tmp_path / "raw")
+        monkeypatch.setattr(dd, "ATP_DIR", tmp_path / "raw" / "tennis_atp_tml")
+        monkeypatch.setattr(dd, "WTA_DIR", tmp_path / "raw" / "tennis_wta_tduk")
+
+        def boom(url, timeout=None):
+            raise ConnectionError("network down")
+
+        monkeypatch.setattr(dd.requests, "get", boom)
+
+        wta_years_called = []
+
+        def fake_wta_year(year):
+            wta_years_called.append(year)
+            return True
+
+        monkeypatch.setattr(dd, "_download_wta_year", fake_wta_year)
+
+        dd.download()
+
+        assert wta_years_called, "WTA section never ran after the ATP manifest fetch failed"
+        assert wta_years_called[0] == dd.WTA_START_YEAR
+        assert wta_years_called[-1] == datetime.date.today().year
+
+    def test_download_failure_counted_as_failed_not_skipped(self, tmp_path, monkeypatch, capsys):
+        monkeypatch.setattr(dd, "ATP_DIR", tmp_path / "tennis_atp_tml")
+
+        manifest_json = {
+            "count": 1,
+            "files": [
+                {"name": "2020.csv", "url": "http://x/2020.csv", "size": 999, "mtime": "t"},
+            ],
+        }
+
+        class FakeManifestResponse:
+            def raise_for_status(self):
+                pass
+
+            def json(self):
+                return manifest_json
+
+        class FakeBadFileResponse:
+            content = b"<html>502 Bad Gateway</html>"
+
+            def raise_for_status(self):
+                pass
+
+        def fake_get(url, timeout=None):
+            if url == dd.ATP_MANIFEST_URL:
+                return FakeManifestResponse()
+            if url == "http://x/2020.csv":
+                return FakeBadFileResponse()
+            raise AssertionError(f"unexpected url requested: {url}")
+
+        monkeypatch.setattr(dd.requests, "get", fake_get)
+
+        dd.download_atp()
+
+        assert not (dd.ATP_DIR / "2020.csv").exists()
+        captured = capsys.readouterr()
+        assert "0 downloaded, 0 already current or unchanged, 1 failed." in captured.out
+
+    def test_merge_failure_is_caught_and_does_not_propagate(self, tmp_path, monkeypatch, capsys):
+        monkeypatch.setattr(dd, "ATP_DIR", tmp_path / "tennis_atp_tml")
+        dd.ATP_DIR.mkdir(parents=True)
+        current_year_name = f"{datetime.date.today().year}.csv"
+
+        # Both on-disk files are malformed (neither has any ATP_SCHEMA_COLUMNS),
+        # simulating a stale legacy-clone file whose size coincidentally
+        # matches the manifest so the download loop skips re-fetching it.
+        year_bytes = b"malformed,data\n1,2\n"
+        ongoing_bytes = b"also,malformed\n3,4\n"
+        (dd.ATP_DIR / current_year_name).write_bytes(year_bytes)
+        (dd.ATP_DIR / "ongoing_tourneys.csv").write_bytes(ongoing_bytes)
+
+        manifest_json = {
+            "count": 2,
+            "files": [
+                {"name": current_year_name, "url": "http://x/year.csv",
+                 "size": len(year_bytes), "mtime": "t"},
+                {"name": "ongoing_tourneys.csv", "url": "http://x/ongoing.csv",
+                 "size": len(ongoing_bytes), "mtime": "t"},
+            ],
+        }
+
+        class FakeManifestResponse:
+            def raise_for_status(self):
+                pass
+
+            def json(self):
+                return manifest_json
+
+        def fake_get(url, timeout=None):
+            if url == dd.ATP_MANIFEST_URL:
+                return FakeManifestResponse()
+            raise AssertionError(
+                f"unexpected download for {url}: both files should be skipped as unchanged"
+            )
+
+        monkeypatch.setattr(dd.requests, "get", fake_get)
+
+        dd.download_atp()  # must not raise
+
+        captured = capsys.readouterr()
+        assert "WARNING" in captured.out
+        assert "merge" in captured.out.lower()
