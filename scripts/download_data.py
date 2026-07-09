@@ -196,18 +196,23 @@ def download_atp() -> None:
     have_ongoing = have_current_year = False
 
     for entry in manifest:
-        dest = ATP_DIR / entry["name"]
-        if entry["name"] == "ongoing_tourneys.csv":
-            have_ongoing = True
-        elif entry["name"] == current_year_name:
-            have_current_year = True
+        try:
+            name = entry["name"]
+            dest = ATP_DIR / name
+            if name == "ongoing_tourneys.csv":
+                have_ongoing = True
+            elif name == current_year_name:
+                have_current_year = True
 
-        if not _should_download(dest, entry["size"]):
-            skipped += 1
-            continue
-        if _download_file(entry["url"], dest):
-            downloaded += 1
-        else:
+            if not _should_download(dest, entry["size"]):
+                skipped += 1
+                continue
+            if _download_file(entry["url"], dest):
+                downloaded += 1
+            else:
+                failed += 1
+        except Exception as e:
+            print(f"  WARNING: could not process {entry.get('name', '?')}: {e}")
             failed += 1
 
     print(f"  ATP: {downloaded} downloaded, {skipped} already current or unchanged, {failed} failed.")

@@ -455,3 +455,65 @@ class TestDownloadAtpFailureIsolation:
         captured = capsys.readouterr()
         assert "WARNING" in captured.out
         assert "merge" in captured.out.lower()
+
+    def test_should_download_exception_is_isolated_and_loop_continues(self, tmp_path, monkeypatch, capsys):
+        # A transient filesystem hiccup (antivirus lock, permissions blip -
+        # the same bug class fixed in Task 3's atomic write and Task 5's
+        # read-only .git cleanup) raised mid-loop must not abort the whole
+        # download_atp() call, and entries after the failing one must still
+        # be processed.
+        monkeypatch.setattr(dd, "ATP_DIR", tmp_path / "tennis_atp_tml")
+
+        manifest_json = {
+            "count": 2,
+            "files": [
+                {"name": "1990.csv", "url": "http://x/1990.csv", "size": 100, "mtime": "t"},
+                {"name": "1991.csv", "url": "http://x/1991.csv", "size": 200, "mtime": "t"},
+            ],
+        }
+
+        class FakeManifestResponse:
+            def raise_for_status(self):
+                pass
+
+            def json(self):
+                return manifest_json
+
+        header = ",".join(dd.ATP_SCHEMA_COLUMNS)
+        good_body = (header + "\n").encode("utf-8")
+
+        class FakeFileResponse:
+            def __init__(self, content):
+                self.content = content
+
+            def raise_for_status(self):
+                pass
+
+        def fake_get(url, timeout=None):
+            if url == dd.ATP_MANIFEST_URL:
+                return FakeManifestResponse()
+            if url == "http://x/1991.csv":
+                return FakeFileResponse(good_body)
+            raise AssertionError(f"unexpected url requested: {url}")
+
+        monkeypatch.setattr(dd.requests, "get", fake_get)
+
+        real_should_download = dd._should_download
+
+        def flaky_should_download(local_path, remote_size):
+            if local_path.name == "1990.csv":
+                raise PermissionError("locked by antivirus")
+            return real_should_download(local_path, remote_size)
+
+        monkeypatch.setattr(dd, "_should_download", flaky_should_download)
+
+        dd.download_atp()  # must not raise
+
+        # The failing entry (1990.csv) must not have been downloaded, but the
+        # loop must have continued and successfully processed 1991.csv after it.
+        assert not (dd.ATP_DIR / "1990.csv").exists()
+        assert (dd.ATP_DIR / "1991.csv").exists()
+
+        captured = capsys.readouterr()
+        assert "WARNING" in captured.out
+        assert "  ATP: 1 downloaded, 0 already current or unchanged, 1 failed." in captured.out
