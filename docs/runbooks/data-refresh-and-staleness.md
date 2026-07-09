@@ -33,20 +33,42 @@ cd D:\ia-tenis
 ./tenis-env/Scripts/python.exe scripts/download_data.py
 ```
 
-This runs `git pull` against `Tennismylife/TML-Database`. **"Already up to
-date" does not necessarily mean the data is current** — it means *our local
-clone* matches the *upstream repo*, which may itself not have been updated in
-a while. Before assuming a bug, check the upstream repo's own last commit:
+As of 2026-07-08 this downloads from the `stats.tennismylife.org` API (the
+previous source, `git clone` against `Tennismylife/TML-Database`, froze on
+2026-01-27 and was migrated away from — see
+`docs/superpowers/specs/2026-07-08-tml-api-migration-design.md`). Each file's
+local size is compared against the API manifest's reported size; **a file
+being skipped ("N already current or unchanged") is the expected, normal
+case for historical years, not a failure** — most years' data never changes
+between runs. The current year's file and `ongoing_tourneys.csv` (live,
+in-progress tournaments) do re-download on essentially every run, since their
+sizes change as new matches are played; the script automatically merges
+`ongoing_tourneys.csv` into the current year's `{year}.csv` afterward, so
+`load_atp_matches()` sees it with no extra steps.
+
+If the manifest fetch itself fails (`ERROR: could not fetch ATP manifest`),
+that's a real problem worth investigating — check connectivity to
+`https://stats.tennismylife.org/api/data-files` directly:
 
 ```bash
-git -C data/raw/tennis_atp_tml log -1 --format="%ci %s"
+curl -sS -o /dev/null -w "%{http_code}\n" https://stats.tennismylife.org/api/data-files
 ```
 
-If that commit date is old (e.g. months ago), there is nothing more to refresh
-— the public data source simply hasn't published newer matches yet. This is
-not fixable from this repo; note it in your analysis and treat predictions for
-recent time periods as based on stale ATP data until the upstream source
-catches up.
+A non-200 here means the API itself is down; wait and retry. This is
+different from the old failure mode ("upstream repo hasn't published new
+matches") — the API is a live service, not a snapshot repo, so a persistent
+failure here is either an outage or a genuine bug, not just "no new data yet."
+
+**Windows TLS note:** the ATP download code uses `requests` with `certifi`'s
+bundled CA file explicitly, not `urllib`'s OS-trust-store default. This is
+deliberate: prior diagnostics on this machine found that tools routing
+through Windows' schannel (native `curl.exe`, PowerShell's
+`Invoke-WebRequest`, or Python's `ssl` module falling back to the OS cert
+store) can intermittently fail revocation checks against otherwise-healthy
+HTTPS endpoints. `requests` + `certifi` sidesteps the OS store entirely. If
+you ever see `curl.exe` or PowerShell fail TLS against this endpoint while
+Python succeeds, that's this known Windows quirk — not a reason to add
+`verify=False` anywhere in this codebase.
 
 ## 3. Refreshing WTA
 
