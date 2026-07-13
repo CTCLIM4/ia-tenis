@@ -257,17 +257,29 @@ def _detect_format(data: bytes):
     return None
 
 
+def _wta_remote_size(url: str) -> int | None:
+    """HEAD `url` and return its Content-Length if the server reports one,
+    else None (network error or missing header)."""
+    try:
+        req = urllib.request.Request(url, method="HEAD", headers=_WTA_HEADERS)
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            length = resp.headers.get("Content-Length")
+        return int(length) if length is not None else None
+    except Exception:
+        return None
+
+
 def _download_wta_year(year: int) -> bool:
     """Download one year of WTA data from tennis-data.co.uk. Returns True on success.
 
     tennis-data.co.uk uses inconsistent naming across years; try all known patterns.
-    """
-    # Skip if any format already present
-    for ext in (".xls", ".xlsx", ".csv"):
-        if (WTA_DIR / f"{year}w{ext}").exists():
-            print(f"  {year}w already present, skipping.")
-            return True
 
+    Mirrors the ATP path's remote-size comparison (_should_download): an
+    already-present local file is only skipped once its size is confirmed to
+    still match the remote's reported size, so the current, in-progress
+    season's file keeps getting refreshed instead of being skipped forever
+    once it first exists locally.
+    """
     base = "http://www.tennis-data.co.uk"
     patterns = [
         f"{base}/{year}w/{year}w.xls",
@@ -277,6 +289,20 @@ def _download_wta_year(year: int) -> bool:
         f"{base}/{year}w/{year}w.csv",
         f"{base}/{year}w/{year}.csv",
     ]
+
+    for ext in (".xls", ".xlsx", ".csv"):
+        local = WTA_DIR / f"{year}w{ext}"
+        if not local.exists():
+            continue
+        for url in patterns:
+            if not url.endswith(ext):
+                continue
+            remote_size = _wta_remote_size(url)
+            if remote_size is not None and not _should_download(local, remote_size):
+                print(f"  {year}w already current ({local.stat().st_size} bytes), skipping.")
+                return True
+        break  # a local file exists for this extension; fall through to re-download
+
     for url in patterns:
         try:
             req = urllib.request.Request(url, headers=_WTA_HEADERS)

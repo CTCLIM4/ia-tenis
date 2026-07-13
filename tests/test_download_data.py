@@ -517,3 +517,124 @@ class TestDownloadAtpFailureIsolation:
         captured = capsys.readouterr()
         assert "WARNING" in captured.out
         assert "  ATP: 1 downloaded, 0 already current or unchanged, 1 failed." in captured.out
+
+
+class _FakeHeadResponse:
+    def __init__(self, content_length):
+        self.headers = {} if content_length is None else {"Content-Length": str(content_length)}
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        return False
+
+
+class _FakeGetResponse:
+    def __init__(self, data: bytes):
+        self._data = data
+        self.headers = {}
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        return False
+
+    def read(self):
+        return self._data
+
+
+def _wta_xlsx_body() -> bytes:
+    return dd._XLSX_MAGIC + b"fake xlsx payload"
+
+
+class TestWtaRemoteSize:
+    def test_returns_content_length_when_present(self, monkeypatch):
+        def fake_urlopen(req, timeout=None):
+            assert req.get_method() == "HEAD"
+            return _FakeHeadResponse(content_length=12345)
+
+        monkeypatch.setattr(dd.urllib.request, "urlopen", fake_urlopen)
+        assert dd._wta_remote_size("http://x/2026w.xlsx") == 12345
+
+    def test_returns_none_when_header_missing(self, monkeypatch):
+        monkeypatch.setattr(
+            dd.urllib.request, "urlopen",
+            lambda req, timeout=None: _FakeHeadResponse(content_length=None),
+        )
+        assert dd._wta_remote_size("http://x/2026w.xlsx") is None
+
+    def test_returns_none_on_network_error(self, monkeypatch):
+        def boom(req, timeout=None):
+            raise ConnectionError("network down")
+
+        monkeypatch.setattr(dd.urllib.request, "urlopen", boom)
+        assert dd._wta_remote_size("http://x/2026w.xlsx") is None
+
+
+class TestDownloadWtaYearSizeComparison:
+    """The known bug (memory: project-wta-download-size-bug): _download_wta_year
+    skipped any year whose local file already existed, with no comparison
+    against the remote — unlike the ATP path's _should_download. These tests
+    pin the fixed behavior: mirror _should_download so the current year's
+    file is re-fetched whenever its remote size changes, and only skipped
+    when the size still matches.
+    """
+
+    def test_redownloads_when_remote_size_differs_from_local(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(dd, "WTA_DIR", tmp_path)
+        local = tmp_path / "2026w.xlsx"
+        local.write_bytes(dd._XLSX_MAGIC + b"stale old content")
+
+        new_body = _wta_xlsx_body()
+
+        def fake_urlopen(req, timeout=None):
+            if req.get_method() == "HEAD":
+                # Remote size differs from the stale local file's size.
+                return _FakeHeadResponse(content_length=len(new_body) + 999)
+            return _FakeGetResponse(new_body)
+
+        monkeypatch.setattr(dd.urllib.request, "urlopen", fake_urlopen)
+
+        assert dd._download_wta_year(2026) is True
+        assert local.read_bytes() == new_body
+
+    def test_skips_when_remote_size_matches_local(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(dd, "WTA_DIR", tmp_path)
+        local = tmp_path / "2026w.xlsx"
+        body = dd._XLSX_MAGIC + b"already current content"
+        local.write_bytes(body)
+
+        def fake_urlopen(req, timeout=None):
+            if req.get_method() == "HEAD":
+                return _FakeHeadResponse(content_length=len(body))
+            raise AssertionError(
+                "GET should never be called: remote size matches local, must skip"
+            )
+
+        monkeypatch.setattr(dd.urllib.request, "urlopen", fake_urlopen)
+
+        assert dd._download_wta_year(2026) is True
+        assert local.read_bytes() == body  # untouched
+
+    def test_parity_with_atp_missing_file_always_downloads(self, tmp_path, monkeypatch):
+        # Mirrors TestShouldDownload.test_missing_local_file: no local file
+        # means no skip decision to make at all, same as the ATP path.
+        monkeypatch.setattr(dd, "WTA_DIR", tmp_path)
+        new_body = _wta_xlsx_body()
+
+        head_calls = []
+
+        def fake_urlopen(req, timeout=None):
+            if req.get_method() == "HEAD":
+                head_calls.append(req.full_url)
+                return _FakeHeadResponse(content_length=len(new_body))
+            return _FakeGetResponse(new_body)
+
+        monkeypatch.setattr(dd.urllib.request, "urlopen", fake_urlopen)
+
+        assert dd._download_wta_year(2026) is True
+        assert (tmp_path / "2026w.xlsx").read_bytes() == new_body
+        # No pre-existing file, so there is nothing to size-compare against.
+        assert head_calls == []
