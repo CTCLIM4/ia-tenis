@@ -515,8 +515,8 @@ _LOG_FIELDS = [
     "edge_a", "ev_a", "kelly_a",
     "edge_b", "ev_b", "kelly_b",
     "shrinkage_applied",
-    "status",    # ok / invalid_missing_elo
-    "result",    # pending / A_win / B_win
+    "status",    # ok / invalid_missing_elo / test_never_played
+    "result",    # pending / A_win / B_win / excluded (test_never_played rows)
     "profit",    # filled in later
     "elo_diff", "elo_prob", "rank_diff", "form_diff",
     "surface_form_diff", "h2h_rate", "rest_diff",
