@@ -8,19 +8,26 @@ from types import SimpleNamespace
 
 import pytest
 
+import pandas as pd
+
+from src.features.decay import EloHistoryTracker
 from src.value_analysis import (
     FEATURE_COLS,
     KELLY_CAP,
     STALENESS_WARNING_DAYS,
     SUSPICIOUS_EDGE_THRESHOLD,
     _LOG_FIELDS,
+    _build_age_lookup,
     _check_staleness,
+    _current_age,
     _is_elo_known,
     _resolve_player_name,
     _should_halt_on_suspicious_edge,
     apply_shrinkage,
+    build_prediction_features,
     calculate_value,
     log_query,
+    predict_match,
 )
 
 
@@ -440,14 +447,25 @@ class TestCacheRoundTripsLastMatchDate:
         fake_clf = SimpleNamespace()
         rank_lookup = {"A": 10}
         last_match_date = date(2025, 12, 22)
+        fake_tracker = EloHistoryTracker()
+        for v in [1500, 1510, 1520, 1530, 1540]:
+            fake_tracker.record("A", "clay", v)
+        age_lookup = {"A": (28.5, date(2025, 12, 1))}
 
-        va._save_cache("atp", fake_elo, fake_fb, fake_clf, rank_lookup, last_match_date)
+        va._save_cache(
+            "atp", fake_elo, fake_fb, fake_clf, rank_lookup, last_match_date,
+            fake_tracker, age_lookup,
+        )
         cached = va._load_cache("atp")
 
         assert cached is not None
-        elo, fb, clf, rank_lkp, cached_date = cached
+        elo, fb, clf, rank_lkp, cached_date, tracker, age_lkp = cached
         assert cached_date == last_match_date
         assert rank_lkp == rank_lookup
+        # Pickle round-trips always produce a new object — compare behavior,
+        # not identity: the recorded snapshot must survive the round trip.
+        assert tracker.rolling_elo("A", "clay") == fake_tracker.rolling_elo("A", "clay")
+        assert age_lkp == age_lookup
 
     def test_missing_last_match_date_treated_as_cache_miss(self, tmp_path, monkeypatch):
         import pickle
@@ -470,6 +488,118 @@ class TestCacheRoundTripsLastMatchDate:
             pickle.dump(old_payload, f)
 
         assert va._load_cache("atp") is None
+
+
+class TestBuildAgeLookup:
+    def test_returns_most_recent_age_and_date_per_player(self):
+        df = pd.DataFrame([
+            {"winner_name": "A", "winner_age": 28.0, "loser_name": "B", "loser_age": 24.0,
+             "match_date": pd.Timestamp("2023-01-01")},
+            {"winner_name": "B", "winner_age": 24.5, "loser_name": "A", "loser_age": 28.5,
+             "match_date": pd.Timestamp("2023-06-01")},
+        ])
+        lookup = _build_age_lookup(df)
+        assert lookup["A"] == (28.5, date(2023, 6, 1))
+        assert lookup["B"] == (24.5, date(2023, 6, 1))
+
+    def test_empty_when_no_age_columns_present(self):
+        # WTA-shaped data: no winner_age/loser_age columns at all.
+        df = pd.DataFrame([
+            {"winner_name": "A", "loser_name": "B", "match_date": pd.Timestamp("2023-01-01")},
+        ])
+        assert _build_age_lookup(df) == {}
+
+
+class TestCurrentAge:
+    def test_extrapolates_forward_from_observed_date(self):
+        lookup = {"A": (30.0, date(2026, 1, 1))}
+        # 365 days later -> ~+1 year
+        result = _current_age("A", lookup, date(2027, 1, 1))
+        assert abs(result - 31.0) < 0.01
+
+    def test_returns_none_for_unknown_player(self):
+        assert _current_age("Ghost", {}, date(2026, 1, 1)) is None
+
+
+class TestBuildPredictionFeaturesDecay:
+    def test_includes_neutral_decay_keys_by_default(self):
+        elo = _fake_elo({"A": 1500.0, "B": 1500.0})
+        fb = SimpleNamespace(
+            get_features=lambda p, o, s, d: {
+                "recent_win_rate": 0.5, "recent_win_rate_surface": 0.5,
+                "h2h_win_rate": 0.5, "h2h_matches": 0, "rest_days": 14.0,
+            },
+            match_dates=lambda p: [],
+        )
+        elo.get_effective_rating = lambda p, s: 1500.0
+        elo.expected_score = lambda a, b: 0.5
+
+        feats = build_prediction_features(elo, fb, "A", "B", "clay", date(2026, 7, 21))
+        assert feats["rolling_elo_diff"] == 0.0
+        assert feats["age_multiplier_diff"] == 0.0
+        assert feats["rust_factor_diff"] == 0.0
+        assert feats["adjusted_elo_diff"] == 0.0
+
+    def test_penalizes_older_rustier_player_in_adjusted_elo_diff(self):
+        elo = _fake_elo({"Veteran": 1700.0, "Young": 1500.0})
+        elo.get_effective_rating = lambda p, s: 1700.0 if p == "Veteran" else 1500.0
+        elo.expected_score = lambda a, b: 1.0 / (1.0 + 10 ** (-(a - b) / 400))
+        fb = SimpleNamespace(
+            get_features=lambda p, o, s, d: {
+                "recent_win_rate": 0.5, "recent_win_rate_surface": 0.5,
+                "h2h_win_rate": 0.5, "h2h_matches": 0, "rest_days": 14.0,
+            },
+            match_dates=lambda p: [] if p == "Young" else [date(2018, 1, 1)],
+        )
+
+        feats = build_prediction_features(
+            elo, fb, "Veteran", "Young", "clay", date(2026, 7, 21),
+            age_a=41, age_b=24,
+        )
+        # Raw elo_diff favors the veteran, but adjusted_elo_diff should not
+        assert feats["elo_diff"] == 200.0
+        assert feats["adjusted_elo_diff"] < feats["elo_diff"]
+
+
+class TestPredictMatchAgeLookup:
+    def test_auto_fills_age_from_lookup_and_lowers_veterans_win_prob(self):
+        """An aging, rusty veteran with a big historical Elo edge should get
+        a materially lower win probability than raw Elo alone implies, once
+        age_lookup supplies his age and the model can apply the decay
+        features — the Wawrinka-vs-Burruchaga scenario this feature set
+        exists for."""
+        elo = _fake_elo({"Veteran": 1700.0, "Young": 1500.0})
+        elo.get_effective_rating = lambda p, s: 1700.0 if p == "Veteran" else 1500.0
+        elo.expected_score = lambda a, b: 1.0 / (1.0 + 10 ** (-(a - b) / 400))
+        fb = SimpleNamespace(
+            get_features=lambda p, o, s, d: {
+                "recent_win_rate": 0.5, "recent_win_rate_surface": 0.5,
+                "h2h_win_rate": 0.5, "h2h_matches": 0, "rest_days": 14.0,
+            },
+            match_dates=lambda p: [] if p == "Young" else [date(2018, 1, 1)],
+        )
+
+        class _StubClf:
+            """Returns P(Veteran wins) driven mostly by adjusted_elo_diff,
+            so the test observes the decay features actually reaching the
+            LR input vector rather than asserting on internal feature dicts."""
+            def predict_proba(self, X):
+                import numpy as _np
+                idx = FEATURE_COLS.index("adjusted_elo_diff")
+                adjusted_diff = X[0][idx]
+                p = 1.0 / (1.0 + 10 ** (-adjusted_diff / 400))
+                return _np.array([[1 - p, p]])
+
+        age_lookup = {"Veteran": (41.0, date(2026, 7, 21))}
+
+        pred = predict_match(
+            elo, fb, _StubClf(),
+            "Veteran", "Young", "clay", date(2026, 7, 21),
+            rank_lookup=None, age_lookup=age_lookup,
+        )
+        # Raw Elo alone (200pp gap) would give the veteran ~76%; the decayed
+        # adjusted_elo_diff must pull that down substantially.
+        assert pred["p_a_raw"] < 0.60
 
 
 class TestShouldHaltOnSuspiciousEdge:

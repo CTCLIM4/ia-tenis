@@ -28,12 +28,14 @@ import pickle
 import sys
 from datetime import date, datetime, timedelta
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple
 
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 
+from src.backtest.walkforward import _MIRROR_FLIP_COLS
+from src.features.decay import EloHistoryTracker, calculate_decay_features
 from src.odds_api import DEFAULT_BOOKMAKER, DEFAULT_CACHE_MINUTES, MatchOdds, get_match_odds
 
 # ── paths ────────────────────────────────────────────────────────────────────
@@ -46,6 +48,7 @@ LOG_PATH   = _DATA_DIR / "value_bets_log.csv"
 FEATURE_COLS = [
     "elo_diff", "elo_prob", "rank_diff",
     "form_diff", "surface_form_diff", "h2h_rate", "rest_diff",
+    "rolling_elo_diff", "age_multiplier_diff", "rust_factor_diff", "adjusted_elo_diff",
 ]
 KELLY_CAP         = 0.05   # max 5% of bankroll (conservative)
 CACHE_MAX_AGE_DAYS = 7     # rebuild if cache older than this
@@ -140,6 +143,43 @@ def _build_rank_lookup(df_raw: pd.DataFrame) -> Dict[str, int]:
         if pd.notna(l_rank) and l_rank > 0:
             lookup[row["loser_name"]] = int(l_rank)
     return lookup
+
+
+# ── age lookup (ATP only — WTA's tennis-data.co.uk source has no age column) ─
+
+def _build_age_lookup(df_raw: pd.DataFrame) -> Dict[str, Tuple[float, date]]:
+    """Extract each player's most recently observed age + the date it was
+    observed, so a later prediction can extrapolate their current age.
+
+    Returns {} for tours without an age column (WTA) — callers must treat a
+    missing entry as "age unknown", not an error; age_multiplier() already
+    treats None as neutral (1.0).
+    """
+    lookup: Dict[str, Tuple[float, date]] = {}
+    if "winner_age" not in df_raw.columns or "loser_age" not in df_raw.columns:
+        return lookup
+    for _, row in df_raw.iterrows():
+        match_date = row["match_date"]
+        if hasattr(match_date, "date"):
+            match_date = match_date.date()
+        w_age = row.get("winner_age")
+        l_age = row.get("loser_age")
+        if pd.notna(w_age):
+            lookup[row["winner_name"]] = (float(w_age), match_date)
+        if pd.notna(l_age):
+            lookup[row["loser_name"]] = (float(l_age), match_date)
+    return lookup
+
+
+def _current_age(
+    player: str, age_lookup: Dict[str, Tuple[float, date]], as_of_date: date,
+) -> Optional[float]:
+    """Extrapolate a player's age forward from their last observed match."""
+    entry = age_lookup.get(player)
+    if entry is None:
+        return None
+    observed_age, observed_date = entry
+    return observed_age + (as_of_date - observed_date).days / 365.25
 
 
 def _to_wta_key(full_name: str) -> str:
@@ -273,7 +313,10 @@ def _check_staleness(tour: str, last_match_date: date) -> None:
         print("  *** Las predicciones no incorporan resultados posteriores a esa fecha.")
 
 
-def _save_cache(tour: str, elo, fb, clf, rank_lookup: dict, last_match_date: date) -> None:
+def _save_cache(
+    tour: str, elo, fb, clf, rank_lookup: dict, last_match_date: date,
+    elo_tracker: EloHistoryTracker, age_lookup: dict,
+) -> None:
     _CACHE_DIR.mkdir(parents=True, exist_ok=True)
     payload = {
         "elo":              elo,
@@ -283,6 +326,8 @@ def _save_cache(tour: str, elo, fb, clf, rank_lookup: dict, last_match_date: dat
         "timestamp":        datetime.now(),
         "tour":             tour,
         "last_match_date":  last_match_date,
+        "elo_tracker":      elo_tracker,
+        "age_lookup":       age_lookup,
     }
     with open(_cache_path(tour), "wb") as f:
         pickle.dump(payload, f, protocol=pickle.HIGHEST_PROTOCOL)
@@ -290,7 +335,8 @@ def _save_cache(tour: str, elo, fb, clf, rank_lookup: dict, last_match_date: dat
 
 
 def _load_cache(tour: str):
-    """Return (elo, fb, clf, rank_lookup, last_match_date) from cache, or None if stale/missing."""
+    """Return (elo, fb, clf, rank_lookup, last_match_date, elo_tracker,
+    age_lookup) from cache, or None if stale/missing."""
     path = _cache_path(tour)
     if not path.exists():
         return None
@@ -315,6 +361,8 @@ def _load_cache(tour: str):
     return (
         payload["elo"], payload["fb"], payload["clf"],
         payload["rank_lookup"], payload["last_match_date"],
+        payload.get("elo_tracker") or EloHistoryTracker(),
+        payload.get("age_lookup") or {},
     )
 
 
@@ -323,9 +371,13 @@ def _load_cache(tour: str):
 def _build_elo_fb(tour: str):
     """Rebuild EloSystem + FeatureBuilder from raw matches.
 
-    Returns (elo, fb, rank_lookup, last_match_date) where rank_lookup maps
-    player names to their most recently observed ATP/WTA ranking, and
-    last_match_date is the most recent match_date seen in the raw data.
+    Returns (elo, fb, rank_lookup, last_match_date, elo_tracker, age_lookup)
+    where rank_lookup maps player names to their most recently observed
+    ATP/WTA ranking, last_match_date is the most recent match_date seen in
+    the raw data, elo_tracker holds each player's rolling pre-match Elo
+    snapshots (see src/features/decay.py), and age_lookup maps player names
+    to their most recently observed age + the date it was observed (empty
+    for WTA — tennis-data.co.uk has no age column).
     """
     from src.data.loader import load_atp_matches, load_wta_matches
     from src.features.engineering import FeatureBuilder
@@ -340,13 +392,15 @@ def _build_elo_fb(tour: str):
     # Sort by date so rank lookup iteration is chronological
     df_raw   = df_raw.sort_values("match_date").reset_index(drop=True)
     rank_lkp = _build_rank_lookup(df_raw)
+    age_lkp  = _build_age_lookup(df_raw)
     last_match_date = df_raw["match_date"].max().date()
-    elo      = EloSystem()
-    fb       = FeatureBuilder()
-    build_match_features(df_raw, elo, fb)   # mutates elo and fb in-place
+    elo         = EloSystem()
+    fb          = FeatureBuilder()
+    elo_tracker = EloHistoryTracker()
+    build_match_features(df_raw, elo, fb, elo_tracker=elo_tracker)   # mutates in-place
     print(f"  Listo: {len(elo.general_ratings):,} jugadores, "
           f"{len(rank_lkp):,} con ranking conocido.")
-    return elo, fb, rank_lkp, last_match_date
+    return elo, fb, rank_lkp, last_match_date, elo_tracker, age_lkp
 
 
 def _train_lr(tour: str) -> LogisticRegression:
@@ -360,7 +414,7 @@ def _train_lr(tour: str) -> LogisticRegression:
     df = pd.read_csv(path)
 
     mirror = df.copy()
-    for col in ("elo_diff", "rank_diff", "form_diff", "surface_form_diff", "rest_diff"):
+    for col in _MIRROR_FLIP_COLS:
         mirror[col] = -mirror[col]
     mirror["elo_prob"]  = 1 - mirror["elo_prob"]
     mirror["h2h_rate"]  = 1 - mirror["h2h_rate"]
@@ -382,20 +436,22 @@ def load_model(tour: str = "atp", retrain: bool = False):
         fb           – FeatureBuilder with full historical state
         clf          – LogisticRegression trained on all available data
         rank_lookup  – dict {player_name: most_recent_rank}
+        elo_tracker  – EloHistoryTracker (rolling pre-match Elo snapshots)
+        age_lookup   – dict {player_name: (age, observed_date)}, empty for WTA
     """
     if not retrain:
         cached = _load_cache(tour)
         if cached is not None:
-            elo, fb, clf, rank_lookup, last_match_date = cached
+            elo, fb, clf, rank_lookup, last_match_date, elo_tracker, age_lookup = cached
             _check_staleness(tour, last_match_date)
-            return elo, fb, clf, rank_lookup
+            return elo, fb, clf, rank_lookup, elo_tracker, age_lookup
 
     print(f"Construyendo modelo desde cero ({tour.upper()}) — primera vez ~30-60 s...")
-    elo, fb, rank_lkp, last_match_date = _build_elo_fb(tour)
+    elo, fb, rank_lkp, last_match_date, elo_tracker, age_lkp = _build_elo_fb(tour)
     clf               = _train_lr(tour)
-    _save_cache(tour, elo, fb, clf, rank_lkp, last_match_date)
+    _save_cache(tour, elo, fb, clf, rank_lkp, last_match_date, elo_tracker, age_lkp)
     _check_staleness(tour, last_match_date)
-    return elo, fb, clf, rank_lkp
+    return elo, fb, clf, rank_lkp, elo_tracker, age_lkp
 
 
 # ── feature builder for a new match ──────────────────────────────────────────
@@ -409,8 +465,20 @@ def build_prediction_features(
     match_date: date,
     rank_a: Optional[float] = None,
     rank_b: Optional[float] = None,
+    elo_tracker: Optional[EloHistoryTracker] = None,
+    age_a: Optional[float] = None,
+    age_b: Optional[float] = None,
 ) -> dict:
-    """Compute the 7 feature values for a future match from player_a's perspective."""
+    """Compute the feature values for a future match from player_a's perspective.
+
+    elo_tracker: rolling pre-match Elo history (see src/features/decay.py).
+        When omitted, an empty ephemeral tracker is used, which makes
+        rolling_elo_diff neutral (0.0) for both players — matches the
+        "insufficient history" fallback in calculate_decay_features.
+    age_a / age_b: current age of each player, or None if unknown (always
+        the case for WTA — no birthdate in the current data source) —
+        None makes age_multiplier neutral (1.0) for that player.
+    """
     # Resolve to internal keys (WTA uses 'Lastname I.' format internally)
     pa_key = _resolve_player_name(player_a, elo)
     pb_key = _resolve_player_name(player_b, elo)
@@ -429,6 +497,14 @@ def build_prediction_features(
     else:
         rank_diff = 0.0
 
+    tracker = elo_tracker if elo_tracker is not None else EloHistoryTracker()
+    decay_a = calculate_decay_features(
+        elo_a, tracker, pa_key, surface, fb.match_dates(pa_key), match_date, age_a,
+    )
+    decay_b = calculate_decay_features(
+        elo_b, tracker, pb_key, surface, fb.match_dates(pb_key), match_date, age_b,
+    )
+
     return {
         "elo_diff":          elo_diff,
         "elo_prob":          p_elo,
@@ -437,6 +513,10 @@ def build_prediction_features(
         "surface_form_diff": fa["recent_win_rate_surface"] - fb_["recent_win_rate_surface"],
         "h2h_rate":          fa["h2h_win_rate"],
         "rest_diff":         fa["rest_days"]               - fb_["rest_days"],
+        "rolling_elo_diff":    decay_a["rolling_elo_diff"]     - decay_b["rolling_elo_diff"],
+        "age_multiplier_diff": decay_a["age_multiplier"]       - decay_b["age_multiplier"],
+        "rust_factor_diff":    decay_a["rust_factor"]          - decay_b["rust_factor"],
+        "adjusted_elo_diff":   decay_a["adjusted_elo_surface"] - decay_b["adjusted_elo_surface"],
     }
 
 
@@ -449,12 +529,21 @@ def predict_match(
     rank_a: Optional[float] = None,
     rank_b: Optional[float] = None,
     rank_lookup: Optional[Dict[str, int]] = None,
+    elo_tracker: Optional[EloHistoryTracker] = None,
+    age_lookup: Optional[Dict[str, Tuple[float, date]]] = None,
 ) -> dict:
     """Return win probabilities for both players (raw + calibrated).
 
     If rank_a or rank_b is None and rank_lookup is provided, the lookup
     is used to fill in the most recently observed ranking automatically.
     Falls back to rank_diff=0 only when both sources are unavailable.
+
+    elo_tracker / age_lookup: passed straight through to
+    build_prediction_features for the decay features (rolling_elo_diff,
+    age_multiplier_diff, rust_factor_diff, adjusted_elo_diff). age_lookup
+    entries are extrapolated to match_date via _current_age(); omitted for
+    a player (or the whole tour, e.g. WTA) means age_multiplier stays
+    neutral (1.0) for that side.
     """
     # Auto-fill ranks from lookup when caller did not supply them
     rank_a_used = rank_a
@@ -474,9 +563,13 @@ def predict_match(
                 rank_b_used   = found
                 rank_b_source = "auto"
 
+    age_a = _current_age(player_a, age_lookup, match_date) if age_lookup is not None else None
+    age_b = _current_age(player_b, age_lookup, match_date) if age_lookup is not None else None
+
     feats = build_prediction_features(
         elo, fb, player_a, player_b, surface, match_date,
         rank_a_used, rank_b_used,
+        elo_tracker=elo_tracker, age_a=age_a, age_b=age_b,
     )
     X       = np.array([[feats[c] for c in FEATURE_COLS]])
     p_a_raw = float(clf.predict_proba(X)[0, 1])
@@ -520,6 +613,7 @@ _LOG_FIELDS = [
     "profit",    # filled in later
     "elo_diff", "elo_prob", "rank_diff", "form_diff",
     "surface_form_diff", "h2h_rate", "rest_diff",
+    "rolling_elo_diff", "age_multiplier_diff", "rust_factor_diff", "adjusted_elo_diff",
 ]
 
 
@@ -792,7 +886,7 @@ def _ask_rank_with_hint(player: str, auto_rank: Optional[int]) -> Optional[float
 
 def interactive_cli(tour: str = "atp", retrain: bool = False, halt_on_suspicious: bool = False) -> None:
     """Run the interactive CLI session."""
-    elo, fb, clf, rank_lookup = load_model(tour, retrain=retrain)
+    elo, fb, clf, rank_lookup, elo_tracker, age_lookup = load_model(tour, retrain=retrain)
 
     print()
     print("=" * 64)
@@ -884,6 +978,8 @@ def interactive_cli(tour: str = "atp", retrain: bool = False, halt_on_suspicious
                 rank_a=rank_a,
                 rank_b=rank_b,
                 rank_lookup=None,   # already resolved above
+                elo_tracker=elo_tracker,
+                age_lookup=age_lookup,
             )
             # Store source info for display and logging
             pred["rank_a_source"] = (

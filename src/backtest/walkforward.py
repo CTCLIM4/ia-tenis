@@ -1,9 +1,10 @@
-from typing import Dict, List
+from typing import Dict, List, Optional
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, brier_score_loss, log_loss
 
+from src.features.decay import EloHistoryTracker, calculate_decay_features
 from src.features.engineering import FeatureBuilder
 from src.models.elo import EloSystem
 
@@ -15,15 +16,41 @@ _FEATURE_COLS = [
     "surface_form_diff",
     "h2h_rate",
     "rest_diff",
+    "rolling_elo_diff",
+    "age_multiplier_diff",
+    "rust_factor_diff",
+    "adjusted_elo_diff",
 ]
+
+_MIRROR_FLIP_COLS = (
+    "elo_diff", "rank_diff", "form_diff", "surface_form_diff", "rest_diff",
+    "rolling_elo_diff", "age_multiplier_diff", "rust_factor_diff", "adjusted_elo_diff",
+)
+
+
+def _age_or_none(value) -> Optional[float]:
+    if value is None or (isinstance(value, float) and np.isnan(value)):
+        return None
+    return float(value)
 
 
 def build_match_features(
     df: pd.DataFrame,
     elo_system: EloSystem,
     feature_builder: FeatureBuilder,
+    elo_tracker: Optional[EloHistoryTracker] = None,
 ) -> pd.DataFrame:
-    """Process all matches sequentially. Returns feature dataframe with mirror rows."""
+    """Process all matches sequentially. Returns feature dataframe with mirror rows.
+
+    elo_tracker: optional EloHistoryTracker, mutated in place as matches are
+        processed (same no-lookahead pattern as elo_system/feature_builder).
+        Pass one in when the caller needs it afterward (e.g. live prediction
+        reusing the full historical replay); otherwise an internal one is
+        used and discarded.
+    """
+    if elo_tracker is None:
+        elo_tracker = EloHistoryTracker()
+
     records = []
     for _, row in df.iterrows():
         winner = row["winner_name"]
@@ -32,6 +59,8 @@ def build_match_features(
         match_date = row["match_date"].date()
         w_rank = row.get("winner_rank", np.nan)
         l_rank = row.get("loser_rank", np.nan)
+        w_age = _age_or_none(row.get("winner_age"))
+        l_age = _age_or_none(row.get("loser_age"))
 
         # Pre-match Elo
         elo_w = elo_system.get_effective_rating(winner, surface)
@@ -41,6 +70,16 @@ def build_match_features(
         # Pre-match contextual features
         wf = feature_builder.get_features(winner, loser, surface, match_date)
         lf = feature_builder.get_features(loser, winner, surface, match_date)
+
+        # Pre-match decay features (rolling form, age, inactivity rust)
+        w_decay = calculate_decay_features(
+            elo_w, elo_tracker, winner, surface,
+            feature_builder.match_dates(winner), match_date, w_age,
+        )
+        l_decay = calculate_decay_features(
+            elo_l, elo_tracker, loser, surface,
+            feature_builder.match_dates(loser), match_date, l_age,
+        )
 
         rank_diff = (
             (l_rank - w_rank)
@@ -62,6 +101,10 @@ def build_match_features(
                 "surface_form_diff": wf["recent_win_rate_surface"] - lf["recent_win_rate_surface"],
                 "h2h_rate": wf["h2h_win_rate"],
                 "rest_diff": wf["rest_days"] - lf["rest_days"],
+                "rolling_elo_diff": w_decay["rolling_elo_diff"] - l_decay["rolling_elo_diff"],
+                "age_multiplier_diff": w_decay["age_multiplier"] - l_decay["age_multiplier"],
+                "rust_factor_diff": w_decay["rust_factor"] - l_decay["rust_factor"],
+                "adjusted_elo_diff": w_decay["adjusted_elo_surface"] - l_decay["adjusted_elo_surface"],
                 "outcome": 1,
                 "is_mirror": False,
             }
@@ -70,12 +113,14 @@ def build_match_features(
         # Post-match state update (no lookahead)
         elo_system.update(winner, loser, surface, match_date)
         feature_builder.update(winner, loser, surface, match_date)
+        elo_tracker.record(winner, surface, elo_w)
+        elo_tracker.record(loser, surface, elo_l)
 
     original = pd.DataFrame(records)
 
     # Mirror rows: swap perspectives so loser is player1 → outcome=0
     mirror = original.copy()
-    for col in ("elo_diff", "rank_diff", "form_diff", "surface_form_diff", "rest_diff"):
+    for col in _MIRROR_FLIP_COLS:
         mirror[col] = -mirror[col]
     mirror["elo_prob"] = 1.0 - mirror["elo_prob"]
     mirror["h2h_rate"] = 1.0 - mirror["h2h_rate"]

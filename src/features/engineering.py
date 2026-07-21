@@ -40,6 +40,10 @@ class FeatureBuilder:
             "rest_days": float(rest_days),
         }
 
+    def match_dates(self, player: str) -> List[date]:
+        """This player's own past match dates (any surface), oldest first."""
+        return [d for d, _, _ in self._history[player]]
+
     def update(self, winner: str, loser: str, surface: str, match_date: date) -> None:
         self._history[winner].append((match_date, surface, True))
         self._history[loser].append((match_date, surface, False))
