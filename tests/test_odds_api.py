@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import json
 
-from src.odds_api import MatchOdds, _normalize_name, find_match_odds
+from src.odds_api import MatchOdds, _first_initial, _normalize_name, find_match_odds
 
 
 # ── _normalize_name ──────────────────────────────────────────────────────────
@@ -20,6 +20,26 @@ class TestNormalizeName:
 
     def test_collapses_whitespace(self):
         assert _normalize_name("Novak   Djokovic") == "novak djokovic"
+
+
+# ── _first_initial ───────────────────────────────────────────────────────────
+
+class TestFirstInitial:
+    def test_extracts_from_full_name_first_last(self):
+        assert _first_initial("Aryna Sabalenka") == "a"
+
+    def test_extracts_from_abbreviated_last_first(self):
+        assert _first_initial("Sabalenka A.") == "a"
+
+    def test_empty_for_single_token_name(self):
+        assert _first_initial("Djokovic") == ""
+
+    def test_strips_accents(self):
+        assert _first_initial("Alcaraz Garfía") == "a"
+
+    def test_different_first_names_give_different_initials(self):
+        # Zverev brothers: same surname, must not resolve to the same initial.
+        assert _first_initial("Alexander Zverev") != _first_initial("Mischa Zverev")
 
 
 # ── find_match_odds ───────────────────────────────────────────────────────────
@@ -78,6 +98,26 @@ class TestFindMatchOdds:
         result = find_match_odds(events, "Aryna Sabalenka", "Iga Swiatek")
         assert result is not None
         assert result.matched_home == "Sabalenka A."
+
+    def test_rejects_surname_match_with_different_first_initial(self):
+        # Zverev brothers: same surname, different first name. Querying for
+        # Alexander must not silently return odds for a Mischa Zverev event —
+        # surname alone was enough to false-positive-match before this check.
+        events = [_event("Mischa Zverev", "Novak Djokovic")]
+        result = find_match_odds(events, "Alexander Zverev", "Novak Djokovic")
+        assert result is None
+
+    def test_accepts_surname_match_when_first_initial_also_matches(self):
+        events = [_event("Alexander Zverev", "Novak Djokovic")]
+        result = find_match_odds(events, "Alexander Zverev", "Novak Djokovic")
+        assert result is not None
+
+    def test_first_initial_check_skipped_when_name_has_no_first_name_info(self):
+        # A bare surname-only name carries no initial to compare — must fall
+        # back to surname-only matching rather than always rejecting.
+        events = [_event("Zverev", "Novak Djokovic")]
+        result = find_match_odds(events, "Zverev", "Novak Djokovic")
+        assert result is not None
 
 
 from datetime import datetime, timedelta, timezone

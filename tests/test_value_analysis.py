@@ -23,6 +23,7 @@ from src.value_analysis import (
     _is_elo_known,
     _resolve_player_name,
     _should_halt_on_suspicious_edge,
+    _should_log_prediction,
     apply_shrinkage,
     build_prediction_features,
     calculate_value,
@@ -600,6 +601,32 @@ class TestPredictMatchAgeLookup:
         # Raw Elo alone (200pp gap) would give the veteran ~76%; the decayed
         # adjusted_elo_diff must pull that down substantially.
         assert pred["p_a_raw"] < 0.60
+
+
+class TestShouldLogPrediction:
+    """Regression coverage for the CLI flow bug: a missing-Elo prediction
+    must still be logged (as status='invalid_missing_elo' via log_query)
+    when the user opts in — the old elif branch made that path
+    unreachable, silently breaking the documented invalid-status feature."""
+
+    def test_suspicious_edge_never_logs_even_on_yes(self):
+        assert _should_log_prediction(suspicious=True, save_response="s") is False
+
+    def test_suspicious_edge_never_logs_regardless_of_response_case(self):
+        assert _should_log_prediction(suspicious=True, save_response="") is False
+
+    def test_logs_on_affirmative_answer(self):
+        assert _should_log_prediction(suspicious=False, save_response="s") is True
+
+    def test_skips_on_negative_answer(self):
+        assert _should_log_prediction(suspicious=False, save_response="n") is False
+
+    def test_empty_answer_counts_as_affirmative(self):
+        assert _should_log_prediction(suspicious=False, save_response="") is True
+
+    def test_response_is_case_insensitive(self):
+        assert _should_log_prediction(suspicious=False, save_response="S") is True
+        assert _should_log_prediction(suspicious=False, save_response="N") is False
 
 
 class TestShouldHaltOnSuspiciousEdge:

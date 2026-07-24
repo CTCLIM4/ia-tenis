@@ -122,6 +122,21 @@ def _should_halt_on_suspicious_edge(val_a: dict, val_b: dict, halt_on_suspicious
     return halt_on_suspicious and max(val_a["edge"], val_b["edge"]) > SUSPICIOUS_EDGE_THRESHOLD
 
 
+def _should_log_prediction(suspicious: bool, save_response: str) -> bool:
+    """True when the CLI should persist a prediction via log_query().
+
+    Suspicious edges are always blocked, regardless of the answer. A
+    missing-Elo prediction is NOT blocked here — log_query() itself
+    downgrades it to status='invalid_missing_elo', preserving traceability
+    instead of discarding the row outright. (Previously the CLI had a
+    dedicated `elif not elo_ok` branch that printed a message and never
+    called log_query at all, making that documented status unreachable.)
+    """
+    if suspicious:
+        return False
+    return save_response.strip().lower() in ("s", "si", "y", "yes", "")
+
+
 # ── rank lookup ───────────────────────────────────────────────────────────────
 
 def _build_rank_lookup(df_raw: pd.DataFrame) -> Dict[str, int]:
@@ -1012,23 +1027,28 @@ def interactive_cli(tour: str = "atp", retrain: bool = False, halt_on_suspicious
         _print_prediction(pred, val_a, val_b, odds_a, odds_b)
 
         elo_ok = pred.get("elo_found_a", True) and pred.get("elo_found_b", True)
-        if _should_halt_on_suspicious_edge(val_a, val_b, halt_on_suspicious):
+        suspicious = _should_halt_on_suspicious_edge(val_a, val_b, halt_on_suspicious)
+
+        if suspicious:
             best_edge = max(val_a["edge"], val_b["edge"])
             print(f"\n  *** BLOQUEADO: edge sospechoso ({best_edge*100:.1f}% > "
                   f"{SUSPICIOUS_EDGE_THRESHOLD*100:.0f}%) ***")
             print("  *** Posible dato stale o error de matching. Revisa manualmente.")
             print("  *** No se guarda en esta sesion. Corre sin --halt-on-suspicious para loguear igual.")
+            save = ""
         elif not elo_ok:
-            print("\n  Log bloqueado: prediccion invalida (Elo faltante). Corrige el nombre del jugador.")
+            print("\n  *** Elo faltante para uno o ambos jugadores — la prediccion no es confiable.")
+            save = _ask("  Guardar como invalida para mantener trazabilidad? (s/n)", "n").lower()
         else:
             save = _ask("\n  Guardar en log? (s/n)", "s").lower()
-            if save in ("s", "si", "y", "yes", ""):
-                log_query(
-                    tour, tournament, surface, match_date,
-                    player_a, player_b,
-                    pred, val_a, val_b, odds_a, odds_b,
-                    odds_a_source, odds_b_source,
-                )
+
+        if _should_log_prediction(suspicious, save):
+            log_query(
+                tour, tournament, surface, match_date,
+                player_a, player_b,
+                pred, val_a, val_b, odds_a, odds_b,
+                odds_a_source, odds_b_source,
+            )
 
         again = _ask("  Analizar otro partido? (s/n)", "s").lower()
         if again not in ("s", "si", "y", "yes", ""):
