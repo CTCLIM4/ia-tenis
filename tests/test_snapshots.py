@@ -131,3 +131,29 @@ class TestCreateSnapshot:
         snapshot_dir = snapshots.create_snapshot(snapshot_id="2026-07-24", tours=("atp",))
         assert (snapshot_dir / "processed" / "atp_features.csv").exists()
         assert not (snapshot_dir / "processed" / "wta_features.csv").exists()
+
+
+class TestListSnapshots:
+    def test_empty_when_no_snapshots_dir(self, fake_data_dirs):
+        assert snapshots.list_snapshots() == []
+
+    def test_lists_created_snapshots_sorted(self, fake_data_dirs):
+        snapshots.create_snapshot(snapshot_id="2026-07-20")
+        snapshots.create_snapshot(snapshot_id="2026-07-10")
+        assert snapshots.list_snapshots() == ["2026-07-10", "2026-07-20"]
+
+    def test_ignores_directories_without_metadata_json(self, fake_data_dirs):
+        fake_data_dirs["snapshot_root"].mkdir(parents=True)
+        (fake_data_dirs["snapshot_root"] / "not-a-snapshot").mkdir()
+        assert snapshots.list_snapshots() == []
+
+
+class TestLoadSnapshotMetadata:
+    def test_loads_written_metadata(self, fake_data_dirs):
+        snapshots.create_snapshot(snapshot_id="2026-07-24")
+        meta = snapshots.load_snapshot_metadata("2026-07-24")
+        assert meta["snapshot_id"] == "2026-07-24"
+
+    def test_raises_for_unknown_snapshot(self, fake_data_dirs):
+        with pytest.raises(snapshots.SnapshotNotFoundError):
+            snapshots.load_snapshot_metadata("does-not-exist")

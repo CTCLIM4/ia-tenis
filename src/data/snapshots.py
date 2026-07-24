@@ -143,3 +143,26 @@ def create_snapshot(snapshot_id: str | None = None, tours: tuple[str, ...] = ("a
         raise
 
     return snapshot_dir
+
+
+def list_snapshots() -> list[str]:
+    """Sorted list of snapshot ids found under SNAPSHOT_ROOT (ISO date ids
+    sort chronologically as plain strings). A directory only counts as a
+    snapshot if it has a metadata.json — an incomplete/manually-created
+    directory without one is silently skipped rather than raising."""
+    if not SNAPSHOT_ROOT.exists():
+        return []
+    return sorted(
+        p.name for p in SNAPSHOT_ROOT.iterdir()
+        if p.is_dir() and (p / "metadata.json").exists()
+    )
+
+
+def load_snapshot_metadata(snapshot_id: str) -> dict:
+    import json
+
+    path = SNAPSHOT_ROOT / snapshot_id / "metadata.json"
+    if not path.exists():
+        raise SnapshotNotFoundError(f"No metadata.json for snapshot '{snapshot_id}' at {path}")
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
