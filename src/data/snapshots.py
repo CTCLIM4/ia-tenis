@@ -159,6 +159,13 @@ def list_snapshots() -> list[str]:
 
 
 def load_snapshot_metadata(snapshot_id: str) -> dict:
+    """Load and parse SNAPSHOT_ROOT/{snapshot_id}/metadata.json.
+
+    Raises SnapshotNotFoundError specifically when metadata.json is missing
+    — not when the snapshot directory itself is missing, which produces the
+    same error since a snapshot without metadata.json isn't a valid
+    snapshot (see list_snapshots()'s matching skip logic).
+    """
     import json
 
     path = SNAPSHOT_ROOT / snapshot_id / "metadata.json"
