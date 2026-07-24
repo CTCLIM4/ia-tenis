@@ -184,6 +184,66 @@ class TestCheckDatasetStalenessDataFrameHandling:
             check_dataset_staleness(df)
 
 
+# ── Future-date guard (regression) ──────────────────────────────────────────
+
+class TestFutureDateGuard:
+    """A last_match_date after reference_date is never 'fresh' — it's invalid
+    data, not a signal of freshness. Regression for a real bug found
+    2026-07-24: the WTA raw file (data/raw/tennis_wta_tduk/2026w.xlsx) had
+    one row's date typo'd as 2029-07-20 instead of 2026-07-20 (Iasi Open
+    final, Sherif def. Badosa), which made
+    (reference_date - last_match_date).days come out negative — and the
+    plain regular_week classification (days_stale > threshold) let a
+    negative number sail through as OK, masking the data corruption instead
+    of flagging it."""
+
+    def test_future_last_match_date_is_critical(self):
+        ref = date(2026, 7, 24)
+        last_match = date(2029, 7, 20)  # the actual corrupt value found
+        df = _df(last_match)
+        report = check_dataset_staleness(df, reference_date=ref)
+        assert report.level == StalenessLevel.CRITICAL
+
+    def test_future_last_match_date_rule_label(self):
+        ref = date(2026, 7, 24)
+        last_match = date(2029, 7, 20)
+        df = _df(last_match)
+        report = check_dataset_staleness(df, reference_date=ref)
+        assert report.rule == "invalid_future_date"
+
+    def test_future_date_guard_overrides_live_tournament_mode(self):
+        ref = date(2026, 7, 24)
+        last_match = ref + timedelta(days=1)
+        df = _df(last_match)
+        report = check_dataset_staleness(df, reference_date=ref, live_tournament_mode=True)
+        assert report.rule == "invalid_future_date"
+        assert report.level == StalenessLevel.CRITICAL
+
+    def test_future_date_guard_overrides_offseason_leniency(self):
+        ref = date(2026, 12, 20)
+        last_match = ref + timedelta(days=1)
+        df = _df(last_match)
+        report = check_dataset_staleness(df, reference_date=ref)
+        assert report.rule == "invalid_future_date"
+        assert report.level == StalenessLevel.CRITICAL
+
+    def test_same_day_match_is_not_flagged_as_future(self):
+        # last_match_date == reference_date (days_stale=0) is valid, not future.
+        ref = date(2026, 7, 24)
+        df = _df(ref)
+        report = check_dataset_staleness(df, reference_date=ref)
+        assert report.rule != "invalid_future_date"
+        assert report.level == StalenessLevel.OK
+
+    def test_message_flags_invalid_data_not_freshness(self):
+        ref = date(2026, 7, 24)
+        last_match = date(2029, 7, 20)
+        df = _df(last_match)
+        report = check_dataset_staleness(df, reference_date=ref)
+        lowered = report.message.lower()
+        assert "invalid" in lowered or "futur" in lowered
+
+
 # ── evaluate_staleness: low-level pure function ─────────────────────────────
 
 class TestEvaluateStaleness:

@@ -84,6 +84,14 @@ def evaluate_staleness(
     """Classify how stale `last_match_date` is as of `reference_date`.
 
     Rules, in priority order:
+      0. last_match_date is AFTER reference_date: always CRITICAL,
+         rule="invalid_future_date", regardless of every other rule below.
+         A future match date is never a sign of freshness — it's invalid
+         data (e.g. a typo'd year in the source spreadsheet). Without this
+         guard, (reference_date - last_match_date).days comes out negative,
+         which then trivially satisfies "not > threshold" in every other
+         rule and silently reports OK — masking the corruption instead of
+         flagging it (found via a real WTA row dated 2029 instead of 2026).
       1. live_tournament_mode=True: strict — WARNING >1 day, CRITICAL >2 days.
          Overrides the off-season grace even if reference_date falls inside
          the off-season calendar window (an explicit live-tracking flag from
@@ -97,6 +105,18 @@ def evaluate_staleness(
       3. Otherwise (regular tournament weeks): WARNING >3 days, CRITICAL >7 days.
     """
     days_stale = (reference_date - last_match_date).days
+
+    if last_match_date > reference_date:
+        rule = "invalid_future_date"
+        message = (
+            f"*** CRITICO: last_match_date ({last_match_date}) es posterior a "
+            f"reference_date ({reference_date}) — dato invalido, no una senal "
+            f"de frescura (probable error de fecha en la fuente, ej. un typo "
+            f"de anio) ***"
+        )
+        return StalenessReport(
+            level=StalenessLevel.CRITICAL, days_stale=days_stale, rule=rule, message=message,
+        )
 
     if live_tournament_mode:
         rule = "live_tournament"
