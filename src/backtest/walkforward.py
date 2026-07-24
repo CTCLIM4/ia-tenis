@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, brier_score_loss, log_loss
+from sklearn.preprocessing import StandardScaler
 
 from src.features.decay import EloHistoryTracker, calculate_decay_features
 from src.features.engineering import FeatureBuilder
@@ -50,6 +51,11 @@ def build_match_features(
     """
     if elo_tracker is None:
         elo_tracker = EloHistoryTracker()
+
+    # Defensive: the sequential no-lookahead processing below assumes
+    # chronological order. Callers (src/data/loader.py) already sort, but
+    # don't trust that invariant to hold at every call site.
+    df = df.sort_values("match_date").reset_index(drop=True)
 
     records = []
     for _, row in df.iterrows():
@@ -152,10 +158,16 @@ def walk_forward_backtest(
         X_test = test_df[_FEATURE_COLS].fillna(0.0).values
         y_test = test_df["outcome"].values  # always 1
 
-        clf = LogisticRegression(C=1.0, max_iter=1000, random_state=42)
-        clf.fit(X_train, y_train)
+        # Fit only on X_train — X_test must never influence the scaler,
+        # or the test year's own distribution would leak into training.
+        scaler = StandardScaler()
+        X_train_scaled = scaler.fit_transform(X_train)
+        X_test_scaled = scaler.transform(X_test)
 
-        probs = clf.predict_proba(X_test)[:, 1]
+        clf = LogisticRegression(C=1.0, max_iter=1000, random_state=42)
+        clf.fit(X_train_scaled, y_train)
+
+        probs = clf.predict_proba(X_test_scaled)[:, 1]
         preds = (probs >= 0.5).astype(int)
         elo_probs = test_df["elo_prob"].clip(1e-6, 1 - 1e-6).values
 

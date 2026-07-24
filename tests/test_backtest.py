@@ -1,7 +1,10 @@
 import numpy as np
 import pandas as pd
 import pytest
-from src.backtest.walkforward import walk_forward_backtest
+from sklearn.preprocessing import StandardScaler
+
+import src.backtest.walkforward as walkforward_module
+from src.backtest.walkforward import _FEATURE_COLS, walk_forward_backtest
 
 
 def _synthetic_features(n: int = 2000, n_years: int = 12, start_year: int = 2010) -> pd.DataFrame:
@@ -80,3 +83,67 @@ def test_n_matches_correct_per_year():
     for year, m in results.items():
         expected = int(((df["year"] == year) & (~df["is_mirror"])).sum())
         assert m["n_matches"] == expected
+
+
+class _SpyScaler:
+    """Records exactly what raw data each fit_transform/transform call
+    received, then delegates to a real StandardScaler — lets tests assert
+    the scaler was fit on X_train only (no leakage from X_test) without
+    reimplementing StandardScaler's math."""
+
+    instances: list["_SpyScaler"] = []
+
+    def __init__(self):
+        self.fit_transform_calls: list[np.ndarray] = []
+        self.transform_calls: list[np.ndarray] = []
+        self._real = StandardScaler()
+        _SpyScaler.instances.append(self)
+
+    def fit_transform(self, X):
+        self.fit_transform_calls.append(np.array(X, copy=True))
+        return self._real.fit_transform(X)
+
+    def transform(self, X):
+        self.transform_calls.append(np.array(X, copy=True))
+        return self._real.transform(X)
+
+
+class TestFeatureScaling:
+    def test_scaler_is_fit_on_train_and_applied_to_test_with_no_leakage(self, monkeypatch):
+        _SpyScaler.instances = []
+        monkeypatch.setattr(walkforward_module, "StandardScaler", _SpyScaler)
+
+        df = _synthetic_features()
+        results = walk_forward_backtest(df, warmup_years=5)
+
+        assert len(_SpyScaler.instances) == len(results), (
+            "expected one fresh scaler per evaluated year, matching the "
+            "existing per-year LogisticRegression retraining pattern"
+        )
+
+        for test_year, spy in zip(sorted(results.keys()), _SpyScaler.instances):
+            train_df = df[df["year"] < test_year]
+            test_df = df[(df["year"] == test_year) & (~df["is_mirror"])]
+            expected_X_train = train_df[_FEATURE_COLS].fillna(0.0).values
+            expected_X_test = test_df[_FEATURE_COLS].fillna(0.0).values
+
+            assert len(spy.fit_transform_calls) == 1
+            assert len(spy.transform_calls) == 1
+            np.testing.assert_array_equal(spy.fit_transform_calls[0], expected_X_train)
+            np.testing.assert_array_equal(spy.transform_calls[0], expected_X_test)
+
+    def test_scaled_train_features_are_approximately_standardized(self):
+        # Sanity check that scaling actually happens (not silently unused):
+        # each feature column of X_train should end up ~zero-mean/unit-variance
+        # after StandardScaler, verified directly against the real scaler.
+        df = _synthetic_features()
+        warmup_years = 5
+        test_year = sorted(df[~df["is_mirror"]]["year"].unique())[warmup_years]
+        train_df = df[df["year"] < test_year]
+        X_train = train_df[_FEATURE_COLS].fillna(0.0).values
+
+        scaler = StandardScaler()
+        X_train_scaled = scaler.fit_transform(X_train)
+
+        np.testing.assert_allclose(X_train_scaled.mean(axis=0), 0.0, atol=1e-8)
+        np.testing.assert_allclose(X_train_scaled.std(axis=0), 1.0, atol=1e-8)

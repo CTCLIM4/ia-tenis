@@ -83,3 +83,42 @@ def test_elo_tracker_argument_gets_populated():
     build_match_features(df, EloSystem(), FeatureBuilder(), elo_tracker=tracker)
 
     assert tracker.rolling_elo("A", "clay") is not None
+
+
+class TestDefensiveSort:
+    """build_match_features processes rows sequentially assuming chronological
+    order (no-lookahead requirement) — it must not trust the caller to have
+    sorted the input, or an out-of-order df silently corrupts every Elo/form
+    feature computed from it."""
+
+    @staticmethod
+    def _chronological_rows():
+        d0 = date(2023, 1, 1)
+        return [
+            _row("A", "B", "clay", d0),
+            _row("A", "C", "clay", d0 + timedelta(days=30)),
+            _row("A", "D", "clay", d0 + timedelta(days=60)),
+        ]
+
+    def test_output_is_ordered_by_match_date_even_if_input_is_not(self):
+        rows = self._chronological_rows()
+        shuffled = pd.DataFrame([rows[2], rows[0], rows[1]]).reset_index(drop=True)
+
+        result = build_match_features(shuffled, EloSystem(), FeatureBuilder())
+        original = result[~result["is_mirror"]]
+
+        assert list(original["match_date"]) == sorted(original["match_date"])
+
+    def test_shuffled_input_produces_same_result_as_presorted_input(self):
+        rows = self._chronological_rows()
+        df_sorted = pd.DataFrame(rows)
+        df_shuffled = pd.DataFrame([rows[2], rows[0], rows[1]]).reset_index(drop=True)
+
+        result_sorted = build_match_features(df_sorted, EloSystem(), FeatureBuilder())
+        result_shuffled = build_match_features(df_shuffled, EloSystem(), FeatureBuilder())
+
+        cols = ["winner", "loser", "elo_diff", "elo_prob"]
+        original_sorted = result_sorted[~result_sorted["is_mirror"]][cols].reset_index(drop=True)
+        original_shuffled = result_shuffled[~result_shuffled["is_mirror"]][cols].reset_index(drop=True)
+
+        pd.testing.assert_frame_equal(original_sorted, original_shuffled)
