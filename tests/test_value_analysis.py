@@ -14,7 +14,6 @@ from src.features.decay import EloHistoryTracker
 from src.value_analysis import (
     FEATURE_COLS,
     KELLY_CAP,
-    STALENESS_WARNING_DAYS,
     SUSPICIOUS_EDGE_THRESHOLD,
     _LOG_FIELDS,
     _build_age_lookup,
@@ -148,23 +147,46 @@ class TestApplyShrinkage:
 
 
 class TestCheckStaleness:
-    def test_warns_when_data_older_than_threshold(self, capsys):
-        old_date = date.today() - timedelta(days=STALENESS_WARNING_DAYS + 15)
-        _check_staleness("atp", old_date)
+    """_check_staleness delegates to src.data.staleness.evaluate_staleness for
+    the OK/WARNING/CRITICAL decision (see tests/test_staleness.py for full
+    rule coverage) — these tests only check the CLI's print-adaptation of
+    that report, using an explicit reference_date so behavior doesn't depend
+    on which calendar day the suite happens to run on."""
+
+    def test_no_warning_within_regular_week_tolerance(self, capsys):
+        ref = date(2026, 7, 20)
+        recent_date = ref - timedelta(days=2)
+        _check_staleness("wta", recent_date, reference_date=ref)
+        assert capsys.readouterr().out == ""
+
+    def test_warns_when_beyond_regular_week_critical_threshold(self, capsys):
+        ref = date(2026, 7, 20)
+        old_date = ref - timedelta(days=45)
+        _check_staleness("atp", old_date, reference_date=ref)
         out = capsys.readouterr().out
-        assert "ADVERTENCIA" in out
+        assert "CRITICO" in out
         assert "ATP" in out
         assert str(old_date) in out
 
-    def test_no_warning_when_data_recent(self, capsys):
-        recent_date = date.today() - timedelta(days=5)
-        _check_staleness("wta", recent_date)
+    def test_warning_level_prints_advertencia_tag(self, capsys):
+        ref = date(2026, 7, 20)
+        old_date = ref - timedelta(days=5)  # WARNING band: >3, <=7
+        _check_staleness("atp", old_date, reference_date=ref)
+        out = capsys.readouterr().out
+        assert "ADVERTENCIA" in out
+
+    def test_no_warning_within_offseason_tolerance(self, capsys):
+        ref = date(2026, 12, 20)
+        last_match = ref - timedelta(days=40)  # Nov -> end of season, within 45d grace
+        _check_staleness("atp", last_match, reference_date=ref)
         assert capsys.readouterr().out == ""
 
-    def test_no_warning_exactly_at_threshold(self, capsys):
-        boundary_date = date.today() - timedelta(days=STALENESS_WARNING_DAYS)
-        _check_staleness("atp", boundary_date)
-        assert capsys.readouterr().out == ""
+    def test_live_tournament_mode_warns_sooner_than_regular_week(self, capsys):
+        ref = date(2026, 7, 20)
+        last_match = ref - timedelta(days=2)  # OK under regular-week, WARNING under live mode
+        _check_staleness("wta", last_match, live_tournament_mode=True, reference_date=ref)
+        out = capsys.readouterr().out
+        assert "ADVERTENCIA" in out
 
 
 # ── 3. _resolve_player_name / disambiguation ───────────────────────────────────

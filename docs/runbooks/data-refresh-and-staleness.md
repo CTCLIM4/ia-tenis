@@ -8,19 +8,35 @@ to diagnose and fix that, so it doesn't have to be reconstructed from scratch.
 
 ## 1. How staleness shows up
 
-Every `load_model(tour)` call (in `src/value_analysis.py`) now prints a warning
-automatically when the newest match in the dataset is more than 30 days old
-relative to today:
+Every `load_model(tour)` call (in `src/value_analysis.py`) prints a warning
+automatically when the newest match in the dataset is stale, using
+context-aware thresholds (`src/data/staleness.py`, `_check_staleness`)
+instead of one flat number — the old flat 30-day rule missed a dataset that
+was functionally stale mid-Wimbledon at only 16 days old (see
+`docs/superpowers/specs/2026-07-13-staleness-context-aware-design.md`):
+
+- **Off-season (Dec 1 - Jan 15), last match from the season's tail end
+  (Oct-Dec):** lenient — OK up to 45 days, CRITICAL beyond that.
+- **Live-tournament mode** (`live_tournament_mode=True`, not currently wired
+  to a CLI flag — pass it directly if calling `_check_staleness`/
+  `evaluate_staleness` programmatically): strict — WARNING >1 day, CRITICAL
+  >2 days.
+- **Otherwise (regular tournament weeks):** WARNING >3 days, CRITICAL >7 days
+  — tighter than the old flat 30-day threshold by design.
 
 ```
-*** ADVERTENCIA: dataset ATP desactualizado ***
-*** Ultimo partido en los datos: 2026-01-27 (162 dias atras).
+*** ADVERTENCIA: dataset ATP desactualizado (regla: regular_week) ***
+*** Ultimo partido en los datos: 2026-07-14 (6 dias atras).
 *** Las predicciones no incorporan resultados posteriores a esa fecha.
 ```
 
 This fires whether the model came from cache or was freshly rebuilt — it's
 about the age of the *match data*, not the age of the *cache file* (a separate,
-already-existing 7-day cache-expiry concept, `CACHE_MAX_AGE_DAYS`).
+already-existing 7-day cache-expiry concept, `CACHE_MAX_AGE_DAYS`). Because
+the regular-week window is now much tighter (3d/7d vs. the old 30d), expect
+to see this warning routinely between tournaments — it's advisory only
+(never blocks the CLI), so don't treat every appearance as an emergency,
+just as a prompt to check section 2-3 before trusting a pick.
 
 If you see this warning before a prediction you're about to trust, refresh
 that tour's data first (sections 2-3), then retrain (section 4), then

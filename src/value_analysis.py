@@ -35,6 +35,7 @@ import pandas as pd
 from sklearn.linear_model import LogisticRegression
 
 from src.backtest.walkforward import _MIRROR_FLIP_COLS
+from src.data.staleness import StalenessLevel, evaluate_staleness
 from src.features.decay import EloHistoryTracker, calculate_decay_features
 from src.odds_api import DEFAULT_BOOKMAKER, DEFAULT_CACHE_MINUTES, MatchOdds, get_match_odds
 
@@ -52,7 +53,6 @@ FEATURE_COLS = [
 ]
 KELLY_CAP         = 0.05   # max 5% of bankroll (conservative)
 CACHE_MAX_AGE_DAYS = 7     # rebuild if cache older than this
-STALENESS_WARNING_DAYS = 30  # warn if newest match in the data is older than this
 SUSPICIOUS_EDGE_THRESHOLD = 0.10  # hard-block logging above this when --halt-on-suspicious
 
 _odds_warned = False       # print the auto-fetch failure warning once per session
@@ -309,9 +309,19 @@ def _cache_path(tour: str) -> Path:
     return _CACHE_DIR / f"{tour}.pkl"
 
 
-def _check_staleness(tour: str, last_match_date: date) -> None:
-    """Warn when the newest match in the dataset is more than
-    STALENESS_WARNING_DAYS old relative to today.
+def _check_staleness(
+    tour: str,
+    last_match_date: date,
+    live_tournament_mode: bool = False,
+    reference_date: Optional[date] = None,
+) -> None:
+    """Warn when the dataset's newest match is stale, using context-aware
+    thresholds (see src/data/staleness.py) instead of one flat number:
+    lenient during the Dec-early-Jan off-season, strict in --live-tournament
+    scenarios, and a tighter default (3d warning / 7d critical) otherwise
+    than the old flat 30-day rule — that flat rule missed a dataset that was
+    functionally stale mid-Slam at only 16 days old (see
+    docs/superpowers/specs/2026-07-13-staleness-context-aware-design.md).
 
     Runs on every load_model() call regardless of cache hit/miss, so the
     warning reflects true data age (how recent is the underlying match data)
@@ -321,11 +331,17 @@ def _check_staleness(tour: str, last_match_date: date) -> None:
     last_match_date must be a plain date (not datetime/Timestamp) — callers
     deriving this from a pandas column should call .date() first.
     """
-    days_stale = (date.today() - last_match_date).days
-    if days_stale > STALENESS_WARNING_DAYS:
-        print(f"\n  *** ADVERTENCIA: dataset {tour.upper()} desactualizado ***")
-        print(f"  *** Ultimo partido en los datos: {last_match_date} ({days_stale} dias atras).")
-        print("  *** Las predicciones no incorporan resultados posteriores a esa fecha.")
+    report = evaluate_staleness(
+        last_match_date,
+        reference_date or date.today(),
+        live_tournament_mode,
+    )
+    if report.level == StalenessLevel.OK:
+        return
+    tag = "ADVERTENCIA" if report.level == StalenessLevel.WARNING else "CRITICO"
+    print(f"\n  *** {tag}: dataset {tour.upper()} desactualizado (regla: {report.rule}) ***")
+    print(f"  *** Ultimo partido en los datos: {last_match_date} ({report.days_stale} dias atras).")
+    print("  *** Las predicciones no incorporan resultados posteriores a esa fecha.")
 
 
 def _save_cache(
