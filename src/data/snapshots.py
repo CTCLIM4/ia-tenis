@@ -129,17 +129,17 @@ def create_snapshot(snapshot_id: str | None = None, tours: tuple[str, ...] = ("a
                 "n_rows": int(len(df)),
                 "files": files_meta,
             }
+
+        metadata = {
+            "snapshot_id": snapshot_id,
+            "created_at": datetime.now().astimezone().isoformat(timespec="seconds"),
+            "git_commit": _current_git_commit(),
+            "tours": tours_meta,
+        }
+        with open(snapshot_dir / "metadata.json", "w", encoding="utf-8") as f:
+            json.dump(metadata, f, indent=2)
     except Exception:
         shutil.rmtree(snapshot_dir, ignore_errors=True)
         raise
-
-    metadata = {
-        "snapshot_id": snapshot_id,
-        "created_at": datetime.now().astimezone().isoformat(timespec="seconds"),
-        "git_commit": _current_git_commit(),
-        "tours": tours_meta,
-    }
-    with open(snapshot_dir / "metadata.json", "w", encoding="utf-8") as f:
-        json.dump(metadata, f, indent=2)
 
     return snapshot_dir
