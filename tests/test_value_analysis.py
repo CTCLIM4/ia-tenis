@@ -8,7 +8,11 @@ from types import SimpleNamespace
 
 import pytest
 
+import numpy as np
 import pandas as pd
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 
 from src.features.decay import EloHistoryTracker
 from src.value_analysis import (
@@ -676,3 +680,104 @@ class TestShouldHaltOnSuspiciousEdge:
         val_a = {"edge": -0.5}
         val_b = {"edge": 0.11}
         assert _should_halt_on_suspicious_edge(val_a, val_b, halt_on_suspicious=True) is True
+
+
+class TestTrainLRPipeline:
+    """_train_lr must scale features the same way walk_forward_backtest does
+    (StandardScaler fit on the training data, applied before LogisticRegression)
+    — see project_pending_deferred_items.md item 3: the backtest was scaled
+    first, leaving production predictions on an unscaled model, an asymmetry
+    this closes."""
+
+    @staticmethod
+    def _write_synthetic_features_csv(tmp_path: Path, tour: str = "atp", n: int = 200) -> Path:
+        rng = np.random.default_rng(7)
+        elo_diff = rng.normal(0, 200, n)
+        df = pd.DataFrame({
+            "elo_diff":            elo_diff,
+            "elo_prob":            1 / (1 + 10 ** (-elo_diff / 400)),
+            "rank_diff":           rng.normal(0, 50, n),
+            "form_diff":           rng.uniform(-0.5, 0.5, n),
+            "surface_form_diff":   rng.uniform(-0.5, 0.5, n),
+            "h2h_rate":            rng.uniform(0.3, 0.7, n),
+            "rest_diff":           rng.normal(0, 5, n),
+            "rolling_elo_diff":    rng.normal(0, 30, n),
+            "age_multiplier_diff": rng.uniform(-0.3, 0.3, n),
+            "rust_factor_diff":    rng.uniform(-0.5, 0.5, n),
+            "adjusted_elo_diff":   elo_diff * rng.uniform(0.6, 1.0, n),
+            "outcome":             1,
+        })
+        processed_dir = tmp_path / "processed"
+        processed_dir.mkdir(parents=True, exist_ok=True)
+        path = processed_dir / f"{tour}_features.csv"
+        df.to_csv(path, index=False)
+        return path
+
+    def test_returns_pipeline_with_scaler_and_logistic_regression(self, tmp_path, monkeypatch):
+        import src.value_analysis as va
+        monkeypatch.setattr(va, "_DATA_DIR", tmp_path)
+        self._write_synthetic_features_csv(tmp_path)
+
+        clf = va._train_lr("atp")
+
+        assert isinstance(clf, Pipeline)
+        assert list(clf.named_steps.keys()) == ["standardscaler", "logisticregression"]
+        assert isinstance(clf.named_steps["standardscaler"], StandardScaler)
+        assert isinstance(clf.named_steps["logisticregression"], LogisticRegression)
+
+    def test_predict_proba_returns_valid_probabilities(self, tmp_path, monkeypatch):
+        import src.value_analysis as va
+        monkeypatch.setattr(va, "_DATA_DIR", tmp_path)
+        self._write_synthetic_features_csv(tmp_path)
+
+        clf = va._train_lr("atp")
+        X = np.array([[100.0, 0.7, 20.0, 0.1, 0.05, 0.6, 1.0, 10.0, 0.0, 0.0, 80.0]])
+        probs = clf.predict_proba(X)
+
+        assert probs.shape == (1, 2)
+        np.testing.assert_allclose(probs.sum(), 1.0, atol=1e-8)
+        assert 0.0 <= probs[0, 1] <= 1.0
+
+    def test_predictions_are_deterministic_across_calls(self, tmp_path, monkeypatch):
+        import src.value_analysis as va
+        monkeypatch.setattr(va, "_DATA_DIR", tmp_path)
+        self._write_synthetic_features_csv(tmp_path)
+
+        clf = va._train_lr("atp")
+        X = np.array([[50.0, 0.6, 10.0, 0.2, 0.1, 0.55, 0.0, 5.0, 0.0, 0.0, 40.0]])
+        p1 = clf.predict_proba(X)
+        p2 = clf.predict_proba(X)
+        np.testing.assert_array_equal(p1, p2)
+
+    def test_scaling_actually_applied_matches_manual_pipeline(self, tmp_path, monkeypatch):
+        """Proves the pipeline genuinely scales (not a no-op wrapper):
+        predictions must match a manually-built StandardScaler +
+        LogisticRegression fit on the same data with the same random_state —
+        this is the assertion that actually fails against the old unscaled
+        _train_lr, unlike the determinism/shape checks above which would
+        pass either way."""
+        import src.value_analysis as va
+        monkeypatch.setattr(va, "_DATA_DIR", tmp_path)
+        path = self._write_synthetic_features_csv(tmp_path)
+
+        clf = va._train_lr("atp")
+
+        df = pd.read_csv(path)
+        mirror = df.copy()
+        for col in va._MIRROR_FLIP_COLS:
+            mirror[col] = -mirror[col]
+        mirror["elo_prob"] = 1 - mirror["elo_prob"]
+        mirror["h2h_rate"] = 1 - mirror["h2h_rate"]
+        mirror["outcome"] = 0
+        full = pd.concat([df, mirror], ignore_index=True)
+
+        manual_scaler = StandardScaler()
+        X_scaled = manual_scaler.fit_transform(full[va.FEATURE_COLS].fillna(0).values)
+        manual_lr = LogisticRegression(C=1.0, max_iter=1000, random_state=42)
+        manual_lr.fit(X_scaled, full["outcome"].values)
+
+        X_query = np.array([[30.0, 0.55, 5.0, 0.05, 0.02, 0.5, 2.0, 3.0, 0.0, 0.0, 20.0]])
+        pipeline_probs = clf.predict_proba(X_query)
+        manual_probs = manual_lr.predict_proba(manual_scaler.transform(X_query))
+
+        np.testing.assert_allclose(pipeline_probs, manual_probs, atol=1e-10)

@@ -33,6 +33,8 @@ from typing import Dict, Optional, Tuple
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import Pipeline, make_pipeline
+from sklearn.preprocessing import StandardScaler
 
 from src.backtest.walkforward import _MIRROR_FLIP_COLS
 from src.data.staleness import StalenessLevel, evaluate_staleness
@@ -434,8 +436,17 @@ def _build_elo_fb(tour: str):
     return elo, fb, rank_lkp, last_match_date, elo_tracker, age_lkp
 
 
-def _train_lr(tour: str) -> LogisticRegression:
-    """Load pre-computed features CSV and train LR on the full history."""
+def _train_lr(tour: str) -> Pipeline:
+    """Load pre-computed features CSV and train a scaled LR on the full history.
+
+    StandardScaler + LogisticRegression, matching walk_forward_backtest's
+    per-year scaling (src/backtest/walkforward.py) — before this, the
+    backtest reported metrics for a scaled-feature LR while this function
+    (which trains the model actually serving live predictions) fit on raw,
+    unscaled features. Fitting the scaler here uses the exact same full
+    training set the LR itself sees, same as the backtest's per-year
+    fit-on-train-only scaler.
+    """
     path = _DATA_DIR / "processed" / f"{tour}_features.csv"
     if not path.exists():
         raise FileNotFoundError(
@@ -453,8 +464,15 @@ def _train_lr(tour: str) -> LogisticRegression:
     mirror["is_mirror"] = True
     full = pd.concat([df, mirror], ignore_index=True)
 
-    clf = LogisticRegression(C=1.0, max_iter=1000, random_state=42)
-    clf.fit(full[FEATURE_COLS].fillna(0), full["outcome"])
+    clf = make_pipeline(
+        StandardScaler(),
+        LogisticRegression(C=1.0, max_iter=1000, random_state=42),
+    )
+    # .values strips DataFrame column names before fit, matching the plain
+    # ndarray predict_match() passes to predict_proba() later — fitting on a
+    # named DataFrame and predicting on an unnamed array triggers a sklearn
+    # UserWarning otherwise.
+    clf.fit(full[FEATURE_COLS].fillna(0).values, full["outcome"].values)
     print(f"  LR entrenado sobre {len(df):,} partidos ({tour.upper()}).")
     return clf
 
@@ -465,7 +483,7 @@ def load_model(tour: str = "atp", retrain: bool = False):
     Returns:
         elo          – EloSystem with full historical state
         fb           – FeatureBuilder with full historical state
-        clf          – LogisticRegression trained on all available data
+        clf          – Pipeline(StandardScaler, LogisticRegression) trained on all available data
         rank_lookup  – dict {player_name: most_recent_rank}
         elo_tracker  – EloHistoryTracker (rolling pre-match Elo snapshots)
         age_lookup   – dict {player_name: (age, observed_date)}, empty for WTA
