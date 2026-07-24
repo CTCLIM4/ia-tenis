@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Dict, List, Optional
 import numpy as np
 import pandas as pd
@@ -27,6 +28,30 @@ _MIRROR_FLIP_COLS = (
     "elo_diff", "rank_diff", "form_diff", "surface_form_diff", "rest_diff",
     "rolling_elo_diff", "age_multiplier_diff", "rust_factor_diff", "adjusted_elo_diff",
 )
+
+
+def load_features_with_mirror(path: Path) -> pd.DataFrame:
+    """Load a {tour}_features.csv (as saved by src/pipeline.py's
+    run_pipeline — original rows only, is_mirror=False for every row) and
+    reconstruct the mirrored rows (loser's perspective, outcome=0) exactly
+    as build_match_features() does internally.
+
+    The saved CSV only persists 'original' rows to avoid doubling file size
+    on disk — every consumer that needs the full mirrored training set
+    (LR fitting in src/value_analysis.py's _train_lr, walk_forward_backtest
+    when reading a pinned snapshot in src/pipeline.py) reconstructs it via
+    this single function instead of duplicating the mirroring logic.
+    """
+    df = pd.read_csv(path)
+    df["is_mirror"] = False
+    mirror = df.copy()
+    for col in _MIRROR_FLIP_COLS:
+        mirror[col] = -mirror[col]
+    mirror["elo_prob"] = 1 - mirror["elo_prob"]
+    mirror["h2h_rate"] = 1 - mirror["h2h_rate"]
+    mirror["outcome"] = 0
+    mirror["is_mirror"] = True
+    return pd.concat([df, mirror], ignore_index=True)
 
 
 def _age_or_none(value) -> Optional[float]:

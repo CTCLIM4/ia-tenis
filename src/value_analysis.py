@@ -36,7 +36,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline, make_pipeline
 from sklearn.preprocessing import StandardScaler
 
-from src.backtest.walkforward import _MIRROR_FLIP_COLS
+from src.backtest.walkforward import _MIRROR_FLIP_COLS, load_features_with_mirror
 from src.data.staleness import StalenessLevel, evaluate_staleness
 from src.features.decay import EloHistoryTracker, calculate_decay_features
 from src.odds_api import DEFAULT_BOOKMAKER, DEFAULT_CACHE_MINUTES, MatchOdds, get_match_odds
@@ -436,8 +436,8 @@ def _build_elo_fb(tour: str):
     return elo, fb, rank_lkp, last_match_date, elo_tracker, age_lkp
 
 
-def _train_lr(tour: str) -> Pipeline:
-    """Load pre-computed features CSV and train a scaled LR on the full history.
+def _train_lr(tour: str, features_path: Optional[Path] = None) -> Pipeline:
+    """Load a features CSV and train a scaled LR on the full history.
 
     StandardScaler + LogisticRegression, matching walk_forward_backtest's
     per-year scaling (src/backtest/walkforward.py) — before this, the
@@ -446,23 +446,19 @@ def _train_lr(tour: str) -> Pipeline:
     unscaled features. Fitting the scaler here uses the exact same full
     training set the LR itself sees, same as the backtest's per-year
     fit-on-train-only scaler.
+
+    features_path: read from here instead of the default
+    data/processed/{tour}_features.csv — used for snapshot-pinned training
+    (src/data/snapshots.py's resolve_snapshot_path).
     """
-    path = _DATA_DIR / "processed" / f"{tour}_features.csv"
+    path = features_path or (_DATA_DIR / "processed" / f"{tour}_features.csv")
     if not path.exists():
         raise FileNotFoundError(
             f"No se encontro {path}. "
             f"Corre primero: python -m src.pipeline {tour}"
         )
-    df = pd.read_csv(path)
-
-    mirror = df.copy()
-    for col in _MIRROR_FLIP_COLS:
-        mirror[col] = -mirror[col]
-    mirror["elo_prob"]  = 1 - mirror["elo_prob"]
-    mirror["h2h_rate"]  = 1 - mirror["h2h_rate"]
-    mirror["outcome"]   = 0
-    mirror["is_mirror"] = True
-    full = pd.concat([df, mirror], ignore_index=True)
+    full = load_features_with_mirror(path)
+    n_original = int((~full["is_mirror"]).sum())
 
     clf = make_pipeline(
         StandardScaler(),
@@ -473,7 +469,7 @@ def _train_lr(tour: str) -> Pipeline:
     # named DataFrame and predicting on an unnamed array triggers a sklearn
     # UserWarning otherwise.
     clf.fit(full[FEATURE_COLS].fillna(0).values, full["outcome"].values)
-    print(f"  LR entrenado sobre {len(df):,} partidos ({tour.upper()}).")
+    print(f"  LR entrenado sobre {n_original:,} partidos ({tour.upper()}).")
     return clf
 
 

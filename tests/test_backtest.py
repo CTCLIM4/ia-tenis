@@ -4,7 +4,7 @@ import pytest
 from sklearn.preprocessing import StandardScaler
 
 import src.backtest.walkforward as walkforward_module
-from src.backtest.walkforward import _FEATURE_COLS, walk_forward_backtest
+from src.backtest.walkforward import _FEATURE_COLS, _MIRROR_FLIP_COLS, load_features_with_mirror, walk_forward_backtest
 
 
 def _synthetic_features(n: int = 2000, n_years: int = 12, start_year: int = 2010) -> pd.DataFrame:
@@ -41,6 +41,42 @@ def _synthetic_features(n: int = 2000, n_years: int = 12, start_year: int = 2010
     mirror["outcome"] = 0
     mirror["is_mirror"] = True
     return pd.concat([original, mirror], ignore_index=True)
+
+
+class TestLoadFeaturesWithMirror:
+    def test_returns_equal_original_and_mirror_counts(self, tmp_path):
+        path = tmp_path / "atp_features.csv"
+        full = _synthetic_features(n=50)
+        full[~full["is_mirror"]].to_csv(path, index=False)
+
+        result = load_features_with_mirror(path)
+
+        n_original = int((~result["is_mirror"]).sum())
+        n_mirror = int(result["is_mirror"].sum())
+        assert n_original == n_mirror == 50
+        assert len(result) == 100
+
+    def test_mirror_rows_have_flipped_diff_columns(self, tmp_path):
+        path = tmp_path / "atp_features.csv"
+        full = _synthetic_features(n=10)
+        full[~full["is_mirror"]].to_csv(path, index=False)
+
+        result = load_features_with_mirror(path)
+        original = result[~result["is_mirror"]].reset_index(drop=True)
+        mirror = result[result["is_mirror"]].reset_index(drop=True)
+
+        for col in _MIRROR_FLIP_COLS:
+            assert (mirror[col] == -original[col]).all()
+
+    def test_mirror_rows_have_outcome_zero_original_have_one(self, tmp_path):
+        path = tmp_path / "atp_features.csv"
+        full = _synthetic_features(n=10)
+        full[~full["is_mirror"]].to_csv(path, index=False)
+
+        result = load_features_with_mirror(path)
+
+        assert (result[result["is_mirror"]]["outcome"] == 0).all()
+        assert (result[~result["is_mirror"]]["outcome"] == 1).all()
 
 
 def test_returns_metrics_dict_with_one_entry_per_test_year():

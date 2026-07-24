@@ -781,3 +781,15 @@ class TestTrainLRPipeline:
         manual_probs = manual_lr.predict_proba(manual_scaler.transform(X_query))
 
         np.testing.assert_allclose(pipeline_probs, manual_probs, atol=1e-10)
+
+    def test_features_path_override_takes_precedence_over_default_location(self, tmp_path, monkeypatch):
+        """Proves the (currently unused by any caller) features_path param
+        actually overrides the default data/processed/{tour}_features.csv
+        lookup — the seam a later task in the snapshot plan wires up."""
+        import src.value_analysis as va
+        monkeypatch.setattr(va, "_DATA_DIR", tmp_path / "does_not_exist")
+        custom_path = self._write_synthetic_features_csv(tmp_path, tour="atp")
+
+        clf = va._train_lr("atp", features_path=custom_path)
+
+        assert isinstance(clf, Pipeline)
