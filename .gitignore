@@ -4,6 +4,8 @@ data/processed/
 data/model_cache/
 data/odds_cache/
 data/value_bets_log.csv
+data/snapshots/*/processed/
+data/snapshots/*/raw/
 __pycache__/
 *.pyc
 .ipynb_checkpoints/
