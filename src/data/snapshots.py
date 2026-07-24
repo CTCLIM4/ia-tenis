@@ -173,3 +173,41 @@ def load_snapshot_metadata(snapshot_id: str) -> dict:
         raise SnapshotNotFoundError(f"No metadata.json for snapshot '{snapshot_id}' at {path}")
     with open(path, encoding="utf-8") as f:
         return json.load(f)
+
+
+def resolve_snapshot_path(snapshot_id: str, tour: str, kind: Literal["processed", "raw"]) -> Path:
+    """Path to a snapshot's data for one tour.
+
+    kind="processed" -> the {tour}_features.csv copy (for backtest reuse,
+    src/pipeline.py's --snapshot).
+    kind="raw" -> the tour's raw match-file directory copy (for
+    _build_elo_fb-style live Elo/FeatureBuilder replay,
+    src/value_analysis.py's load_model(snapshot=...)).
+    """
+    snapshot_dir = SNAPSHOT_ROOT / snapshot_id
+    if not snapshot_dir.exists():
+        raise SnapshotNotFoundError(f"Snapshot '{snapshot_id}' not found at {snapshot_dir}")
+    if kind == "processed":
+        return snapshot_dir / "processed" / f"{tour}_features.csv"
+    if kind == "raw":
+        return snapshot_dir / "raw" / _RAW_TOUR_DIRS[tour]
+    raise ValueError(f"Unknown kind: {kind!r} (expected 'processed' or 'raw')")
+
+
+def verify_snapshot_integrity(snapshot_id: str) -> bool:
+    """Re-hash every file recorded in metadata.json and compare. True only
+    if every file exists and matches its recorded sha256/bytes exactly —
+    this is what makes the hashes in metadata.json useful for detecting
+    local corruption or manual tampering, not just decorative."""
+    metadata = load_snapshot_metadata(snapshot_id)
+    snapshot_dir = SNAPSHOT_ROOT / snapshot_id
+    for tour_meta in metadata["tours"].values():
+        for rel_path, recorded in tour_meta["files"].items():
+            actual_path = snapshot_dir / rel_path
+            if not actual_path.exists():
+                return False
+            if actual_path.stat().st_size != recorded["bytes"]:
+                return False
+            if _sha256_file(actual_path) != recorded["sha256"]:
+                return False
+    return True

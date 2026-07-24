@@ -157,3 +157,43 @@ class TestLoadSnapshotMetadata:
     def test_raises_for_unknown_snapshot(self, fake_data_dirs):
         with pytest.raises(snapshots.SnapshotNotFoundError):
             snapshots.load_snapshot_metadata("does-not-exist")
+
+
+class TestResolveSnapshotPath:
+    def test_processed_path(self, fake_data_dirs):
+        snapshots.create_snapshot(snapshot_id="2026-07-24")
+        path = snapshots.resolve_snapshot_path("2026-07-24", "atp", "processed")
+        assert path == fake_data_dirs["snapshot_root"] / "2026-07-24" / "processed" / "atp_features.csv"
+        assert path.exists()
+
+    def test_raw_path(self, fake_data_dirs):
+        snapshots.create_snapshot(snapshot_id="2026-07-24")
+        path = snapshots.resolve_snapshot_path("2026-07-24", "wta", "raw")
+        assert path == fake_data_dirs["snapshot_root"] / "2026-07-24" / "raw" / "tennis_wta_tduk"
+        assert path.is_dir()
+
+    def test_raises_for_unknown_snapshot(self, fake_data_dirs):
+        with pytest.raises(snapshots.SnapshotNotFoundError):
+            snapshots.resolve_snapshot_path("does-not-exist", "atp", "processed")
+
+    def test_raises_for_unknown_kind(self, fake_data_dirs):
+        snapshots.create_snapshot(snapshot_id="2026-07-24")
+        with pytest.raises(ValueError):
+            snapshots.resolve_snapshot_path("2026-07-24", "atp", "bogus")
+
+
+class TestVerifySnapshotIntegrity:
+    def test_true_for_untouched_snapshot(self, fake_data_dirs):
+        snapshots.create_snapshot(snapshot_id="2026-07-24")
+        assert snapshots.verify_snapshot_integrity("2026-07-24") is True
+
+    def test_false_when_file_content_tampered(self, fake_data_dirs):
+        snapshot_dir = snapshots.create_snapshot(snapshot_id="2026-07-24")
+        target = snapshot_dir / "processed" / "atp_features.csv"
+        target.write_text(target.read_text() + "\nTAMPERED,ROW,HERE")
+        assert snapshots.verify_snapshot_integrity("2026-07-24") is False
+
+    def test_false_when_file_missing(self, fake_data_dirs):
+        snapshot_dir = snapshots.create_snapshot(snapshot_id="2026-07-24")
+        (snapshot_dir / "processed" / "wta_features.csv").unlink()
+        assert snapshots.verify_snapshot_integrity("2026-07-24") is False
