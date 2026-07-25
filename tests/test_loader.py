@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 from io import StringIO
-from src.data.loader import _clean, _clean_wta
+from src.data.loader import _clean, _clean_wta, load_atp_matches, load_wta_matches
 
 SAMPLE_CSV = (
     "tourney_id,tourney_name,surface,draw_size,tourney_level,tourney_date,"
@@ -118,3 +118,34 @@ def test_clean_wta_indoor_hard_maps_to_hard():
     raw.loc[0, "Surface"] = "Hard (I)"
     df = _clean_wta(raw, 2023)
     assert df.iloc[df["match_date"].argmin()]["surface"] == "hard"
+
+
+# ── raw_dir_override (snapshot-pinned loading) ──────────────────────────────
+
+class TestLoadAtpMatchesRawDirOverride:
+    def test_reads_from_override_directory_instead_of_default(self, tmp_path):
+        override_dir = tmp_path / "custom_atp"
+        override_dir.mkdir()
+        (override_dir / "2023.csv").write_text(SAMPLE_CSV)
+
+        df = load_atp_matches(2023, 2023, raw_dir_override=override_dir)
+
+        assert len(df) == 2
+        assert set(df["winner_name"]) == {"Djokovic", "Nadal"}
+
+    def test_raises_when_override_directory_has_no_matching_year_files(self, tmp_path):
+        override_dir = tmp_path / "empty_atp"
+        override_dir.mkdir()
+        with pytest.raises(FileNotFoundError):
+            load_atp_matches(2023, 2023, raw_dir_override=override_dir)
+
+
+class TestLoadWtaMatchesRawDirOverride:
+    def test_reads_from_override_directory_instead_of_default(self, tmp_path):
+        override_dir = tmp_path / "custom_wta"
+        override_dir.mkdir()
+        (override_dir / "2023w.csv").write_text(WTA_CSV)
+
+        df = load_wta_matches(2023, 2023, raw_dir_override=override_dir)
+
+        assert len(df) == 3

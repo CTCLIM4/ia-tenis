@@ -1,4 +1,6 @@
 from pathlib import Path
+from typing import Optional
+
 import pandas as pd
 
 RAW_DATA_DIR = Path("data/raw")
@@ -26,9 +28,17 @@ def _clean(df: pd.DataFrame) -> pd.DataFrame:
     return df.sort_values("match_date").reset_index(drop=True)
 
 
-def load_atp_matches(start_year: int = 1990, end_year: int = 2024) -> pd.DataFrame:
-    """Load ATP matches from Tennismylife/TML-Database (data/raw/tennis_atp_tml/{year}.csv)."""
-    tour_dir = RAW_DATA_DIR / "tennis_atp_tml"
+def load_atp_matches(
+    start_year: int = 1990, end_year: int = 2024, raw_dir_override: Optional[Path] = None,
+) -> pd.DataFrame:
+    """Load ATP matches from Tennismylife/TML-Database (data/raw/tennis_atp_tml/{year}.csv).
+
+    raw_dir_override: read from this directory instead of the default
+    data/raw/tennis_atp_tml — used for snapshot-pinned loading
+    (src/data/snapshots.py's resolve_snapshot_path), where the directory is
+    a frozen copy under data/snapshots/{id}/raw/tennis_atp_tml.
+    """
+    tour_dir = raw_dir_override if raw_dir_override is not None else (RAW_DATA_DIR / "tennis_atp_tml")
     frames = []
     for year in range(start_year, end_year + 1):
         path = tour_dir / f"{year}.csv"
@@ -106,13 +116,18 @@ def _read_tduk_file(path: Path) -> pd.DataFrame:
     raise ValueError(f"Unsupported file type: {path}")
 
 
-def load_wta_matches(start_year: int = 2007, end_year: int = 2024) -> pd.DataFrame:
+def load_wta_matches(
+    start_year: int = 2007, end_year: int = 2024, raw_dir_override: Optional[Path] = None,
+) -> pd.DataFrame:
     """Load WTA matches from tennis-data.co.uk (data/raw/tennis_wta_tduk/{year}w.[xls|xlsx|csv]).
 
     Download files from tennis-data.co.uk/wta.php and place them in
     data/raw/tennis_wta_tduk/.  Run scripts/download_data.py to automate.
+
+    raw_dir_override: same as load_atp_matches's, for
+    data/raw/tennis_wta_tduk — used for snapshot-pinned loading.
     """
-    tour_dir = RAW_DATA_DIR / "tennis_wta_tduk"
+    tour_dir = raw_dir_override if raw_dir_override is not None else (RAW_DATA_DIR / "tennis_wta_tduk")
     frames = []
     for year in range(start_year, end_year + 1):
         for suffix in (f"{year}w.csv", f"{year}w.xlsx", f"{year}w.xls"):
