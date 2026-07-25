@@ -37,6 +37,7 @@ from sklearn.pipeline import Pipeline, make_pipeline
 from sklearn.preprocessing import StandardScaler
 
 from src.backtest.walkforward import _MIRROR_FLIP_COLS, load_features_with_mirror
+from src.data.snapshots import resolve_snapshot_path
 from src.data.staleness import StalenessLevel, evaluate_staleness
 from src.features.decay import EloHistoryTracker, calculate_decay_features
 from src.odds_api import DEFAULT_BOOKMAKER, DEFAULT_CACHE_MINUTES, MatchOdds, get_match_odds
@@ -307,7 +308,9 @@ def lookup_rank(player: str, rank_lookup: Dict[str, int]) -> Optional[int]:
 
 # ── cache ─────────────────────────────────────────────────────────────────────
 
-def _cache_path(tour: str) -> Path:
+def _cache_path(tour: str, snapshot: Optional[str] = None) -> Path:
+    if snapshot is not None:
+        return _CACHE_DIR / f"{tour}__snapshot-{snapshot}.pkl"
     return _CACHE_DIR / f"{tour}.pkl"
 
 
@@ -348,7 +351,7 @@ def _check_staleness(
 
 def _save_cache(
     tour: str, elo, fb, clf, rank_lookup: dict, last_match_date: date,
-    elo_tracker: EloHistoryTracker, age_lookup: dict,
+    elo_tracker: EloHistoryTracker, age_lookup: dict, snapshot: Optional[str] = None,
 ) -> None:
     _CACHE_DIR.mkdir(parents=True, exist_ok=True)
     payload = {
@@ -362,15 +365,21 @@ def _save_cache(
         "elo_tracker":      elo_tracker,
         "age_lookup":       age_lookup,
     }
-    with open(_cache_path(tour), "wb") as f:
+    path = _cache_path(tour, snapshot)
+    with open(path, "wb") as f:
         pickle.dump(payload, f, protocol=pickle.HIGHEST_PROTOCOL)
-    print(f"  Cache guardado en {_cache_path(tour)}")
+    print(f"  Cache guardado en {path}")
 
 
-def _load_cache(tour: str):
+def _load_cache(tour: str, snapshot: Optional[str] = None):
     """Return (elo, fb, clf, rank_lookup, last_match_date, elo_tracker,
-    age_lookup) from cache, or None if stale/missing."""
-    path = _cache_path(tour)
+    age_lookup) from cache, or None if stale/missing.
+
+    When snapshot is set, the cache never expires (CACHE_MAX_AGE_DAYS is
+    ignored) — a snapshot-pinned cache reflects an immutable dataset, so
+    there's nothing for it to go stale relative to.
+    """
+    path = _cache_path(tour, snapshot)
     if not path.exists():
         return None
     try:
@@ -384,13 +393,16 @@ def _load_cache(tour: str):
         print("  Cache de formato antiguo (sin last_match_date). Reentrenando...")
         return None
 
-    age = datetime.now() - payload["timestamp"]
-    if age >= timedelta(days=CACHE_MAX_AGE_DAYS):
-        print(f"  Cache expirado ({age.days}d {age.seconds//3600}h). Reentrenando...")
-        return None
+    if snapshot is None:
+        age = datetime.now() - payload["timestamp"]
+        if age >= timedelta(days=CACHE_MAX_AGE_DAYS):
+            print(f"  Cache expirado ({age.days}d {age.seconds//3600}h). Reentrenando...")
+            return None
+        age_str = (f"{age.days}d " if age.days else "") + f"{age.seconds//3600}h {(age.seconds%3600)//60}m"
+        print(f"  Cache cargado ({age_str} de antiguedad — maximo {CACHE_MAX_AGE_DAYS}d).")
+    else:
+        print(f"  Cache de snapshot '{snapshot}' cargado (sin expiracion).")
 
-    age_str = (f"{age.days}d " if age.days else "") + f"{age.seconds//3600}h {(age.seconds%3600)//60}m"
-    print(f"  Cache cargado ({age_str} de antiguedad — maximo {CACHE_MAX_AGE_DAYS}d).")
     return (
         payload["elo"], payload["fb"], payload["clf"],
         payload["rank_lookup"], payload["last_match_date"],
@@ -401,7 +413,7 @@ def _load_cache(tour: str):
 
 # ── model loading ─────────────────────────────────────────────────────────────
 
-def _build_elo_fb(tour: str):
+def _build_elo_fb(tour: str, raw_dir_override: Optional[Path] = None):
     """Rebuild EloSystem + FeatureBuilder from raw matches.
 
     Returns (elo, fb, rank_lookup, last_match_date, elo_tracker, age_lookup)
@@ -411,6 +423,10 @@ def _build_elo_fb(tour: str):
     snapshots (see src/features/decay.py), and age_lookup maps player names
     to their most recently observed age + the date it was observed (empty
     for WTA — tennis-data.co.uk has no age column).
+
+    raw_dir_override: read raw matches from here instead of the live
+    data/raw/{tour dir} — used for snapshot-pinned loading
+    (load_model(snapshot=...)).
     """
     from src.data.loader import load_atp_matches, load_wta_matches
     from src.features.engineering import FeatureBuilder
@@ -421,7 +437,7 @@ def _build_elo_fb(tour: str):
     loader   = load_atp_matches if tour == "atp" else load_wta_matches
     start    = 1990 if tour == "atp" else 2007
     end      = date.today().year
-    df_raw   = loader(start, end)
+    df_raw   = loader(start, end, raw_dir_override=raw_dir_override)
     # Sort by date so rank lookup iteration is chronological
     df_raw   = df_raw.sort_values("match_date").reset_index(drop=True)
     rank_lkp = _build_rank_lookup(df_raw)
@@ -473,8 +489,15 @@ def _train_lr(tour: str, features_path: Optional[Path] = None) -> Pipeline:
     return clf
 
 
-def load_model(tour: str = "atp", retrain: bool = False):
+def load_model(tour: str = "atp", retrain: bool = False, snapshot: Optional[str] = None):
     """Load or rebuild model, with transparent cache management.
+
+    snapshot: when set, pin loading to data/snapshots/{snapshot}/ instead of
+    live data/raw/ + data/processed/. Uses its own cache file
+    ({tour}__snapshot-{id}.pkl, no expiry — an immutable snapshot can't go
+    stale relative to a cache-age clock) and skips the staleness check
+    entirely, since a deliberately old, pinned dataset isn't "stale" — that
+    it's old relative to today is the whole point of asking for it.
 
     Returns:
         elo          – EloSystem with full historical state
@@ -485,17 +508,27 @@ def load_model(tour: str = "atp", retrain: bool = False):
         age_lookup   – dict {player_name: (age, observed_date)}, empty for WTA
     """
     if not retrain:
-        cached = _load_cache(tour)
+        cached = _load_cache(tour, snapshot)
         if cached is not None:
             elo, fb, clf, rank_lookup, last_match_date, elo_tracker, age_lookup = cached
-            _check_staleness(tour, last_match_date)
+            if snapshot is None:
+                _check_staleness(tour, last_match_date)
             return elo, fb, clf, rank_lookup, elo_tracker, age_lookup
 
-    print(f"Construyendo modelo desde cero ({tour.upper()}) — primera vez ~30-60 s...")
-    elo, fb, rank_lkp, last_match_date, elo_tracker, age_lkp = _build_elo_fb(tour)
-    clf               = _train_lr(tour)
-    _save_cache(tour, elo, fb, clf, rank_lkp, last_match_date, elo_tracker, age_lkp)
-    _check_staleness(tour, last_match_date)
+    if snapshot is not None:
+        print(f"Construyendo modelo pinned a snapshot '{snapshot}' ({tour.upper()})...")
+        raw_dir       = resolve_snapshot_path(snapshot, tour, "raw")
+        features_path = resolve_snapshot_path(snapshot, tour, "processed")
+    else:
+        print(f"Construyendo modelo desde cero ({tour.upper()}) — primera vez ~30-60 s...")
+        raw_dir       = None
+        features_path = None
+
+    elo, fb, rank_lkp, last_match_date, elo_tracker, age_lkp = _build_elo_fb(tour, raw_dir_override=raw_dir)
+    clf = _train_lr(tour, features_path=features_path)
+    _save_cache(tour, elo, fb, clf, rank_lkp, last_match_date, elo_tracker, age_lkp, snapshot=snapshot)
+    if snapshot is None:
+        _check_staleness(tour, last_match_date)
     return elo, fb, clf, rank_lkp, elo_tracker, age_lkp
 
 

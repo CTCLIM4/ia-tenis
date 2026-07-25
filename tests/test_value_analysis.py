@@ -793,3 +793,90 @@ class TestTrainLRPipeline:
         clf = va._train_lr("atp", features_path=custom_path)
 
         assert isinstance(clf, Pipeline)
+
+
+class TestLoadModelSnapshot:
+    """load_model(snapshot=...) pins loading to data/snapshots/{id}/ instead
+    of live data, uses a separate never-expiring cache file, and skips the
+    staleness check (a deliberately old pinned dataset isn't 'stale')."""
+
+    _ATP_ROW = (
+        "tourney_id,tourney_name,surface,draw_size,tourney_level,tourney_date,"
+        "match_num,winner_id,winner_seed,winner_entry,winner_name,winner_hand,"
+        "winner_ht,winner_ioc,winner_age,winner_rank,winner_rank_points,"
+        "loser_id,loser_seed,loser_entry,loser_name,loser_hand,loser_ht,"
+        "loser_ioc,loser_age,loser_rank,loser_rank_points,score,best_of,round,minutes\n"
+        "2020-1,AO,Hard,128,G,20200115,1,101,,,PlayerA,R,188,USA,25.0,1,10000,"
+        "102,,,PlayerB,R,190,USA,26.0,2,9000,6-3 6-4,3,R32,85\n"
+    )
+
+    @staticmethod
+    def _write_features_csv(path):
+        rng = np.random.default_rng(11)
+        n = 300
+        elo_diff = rng.normal(0, 150, n)
+        pd.DataFrame({
+            "year": rng.integers(2000, 2015, n),
+            "elo_diff": elo_diff,
+            "elo_prob": 1 / (1 + 10 ** (-elo_diff / 400)),
+            "rank_diff": rng.normal(0, 50, n),
+            "form_diff": rng.uniform(-0.5, 0.5, n),
+            "surface_form_diff": rng.uniform(-0.5, 0.5, n),
+            "h2h_rate": rng.uniform(0.3, 0.7, n),
+            "rest_diff": rng.normal(0, 5, n),
+            "rolling_elo_diff": rng.normal(0, 30, n),
+            "age_multiplier_diff": rng.uniform(-0.3, 0.3, n),
+            "rust_factor_diff": rng.uniform(-0.5, 0.5, n),
+            "adjusted_elo_diff": elo_diff * rng.uniform(0.6, 1.0, n),
+            "outcome": 1,
+            "is_mirror": False,
+        }).to_csv(path, index=False)
+
+    @pytest.fixture()
+    def fake_snapshot(self, tmp_path, monkeypatch):
+        import src.data.snapshots as snap_mod
+        import src.value_analysis as va
+        monkeypatch.setattr(snap_mod, "SNAPSHOT_ROOT", tmp_path / "snapshots")
+        monkeypatch.setattr(va, "_CACHE_DIR", tmp_path / "model_cache")
+
+        snapshot_dir = tmp_path / "snapshots" / "2020-01-01"
+        raw_dir = snapshot_dir / "raw" / "tennis_atp_tml"
+        processed_dir = snapshot_dir / "processed"
+        raw_dir.mkdir(parents=True)
+        processed_dir.mkdir(parents=True)
+
+        (raw_dir / "2020.csv").write_text(self._ATP_ROW)
+        self._write_features_csv(processed_dir / "atp_features.csv")
+        (snapshot_dir / "metadata.json").write_text("{}")
+        return "2020-01-01"
+
+    def test_builds_from_snapshot_and_caches_separately(self, fake_snapshot):
+        import src.value_analysis as va
+        elo, fb, clf, rank_lookup, elo_tracker, age_lookup = va.load_model("atp", snapshot=fake_snapshot)
+
+        assert "PlayerA" in elo.general_ratings
+        assert va._cache_path("atp", fake_snapshot).exists()
+        assert not va._cache_path("atp").exists()  # live cache untouched
+
+    def test_snapshot_cache_never_expires(self, fake_snapshot):
+        import pickle
+        from datetime import datetime, timedelta
+        import src.value_analysis as va
+
+        va.load_model("atp", snapshot=fake_snapshot)  # first build, writes cache
+        path = va._cache_path("atp", fake_snapshot)
+        with open(path, "rb") as f:
+            payload = pickle.load(f)
+        payload["timestamp"] = datetime.now() - timedelta(days=999)
+        with open(path, "wb") as f:
+            pickle.dump(payload, f)
+
+        result = va._load_cache("atp", fake_snapshot)
+        assert result is not None  # not treated as expired
+
+    def test_skips_staleness_check_under_snapshot(self, fake_snapshot, capsys):
+        import src.value_analysis as va
+        va.load_model("atp", snapshot=fake_snapshot)
+        out = capsys.readouterr().out
+        assert "ADVERTENCIA" not in out
+        assert "CRITICO" not in out
