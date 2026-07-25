@@ -194,3 +194,63 @@ A large edge is not proof of a bug or of real market value by itself — it's a
 prompt to check: is the data for both players current (section 1)? Does the
 player-name match the right person (see the WTA disambiguation logic in
 `_resolve_player_name`)? Only log it once you can answer both confidently.
+
+## 7. Dataset snapshots (reproducibility)
+
+Full design: `docs/superpowers/specs/2026-07-24-snapshot-persistence-design.md`.
+
+`tennis-data.co.uk`/TML can silently revise historical data (see
+[[project-tennis-data-couk-silent-historical-updates]] in project memory) —
+a backtest or a live prediction run today against `data/raw/`/`data/processed/`
+is not guaranteed to be reproducible next month. A snapshot freezes a copy.
+
+**Create a snapshot** (requires `data/processed/{tour}_features.csv` to
+already exist for each tour — run `python -m src.pipeline {tour}` first if not):
+
+```bash
+./tenis-env/Scripts/python.exe scripts/create_snapshot.py                  # id = today
+./tenis-env/Scripts/python.exe scripts/create_snapshot.py --id 2026-07-24  # explicit id
+./tenis-env/Scripts/python.exe scripts/create_snapshot.py --tours atp      # one tour only
+```
+
+This copies both `data/raw/{tour dir}/` and `data/processed/{tour}_features.csv`
+into `data/snapshots/{id}/`, and writes `data/snapshots/{id}/metadata.json`
+(per-tour `last_match_date`, row count, and a sha256+byte-count per file).
+
+**Run a backtest against a pinned snapshot** instead of live data:
+
+```bash
+./tenis-env/Scripts/python.exe -m src.pipeline atp --snapshot 2026-07-24
+```
+
+This skips loading/rebuilding features entirely — it reads the snapshot's
+`{tour}_features.csv` directly and does **not** touch the live
+`data/processed/{tour}_features.csv`.
+
+**Load a value-bet model pinned to a snapshot**:
+
+```bash
+./tenis-env/Scripts/python.exe -m src.value_analysis --snapshot 2026-07-24
+./tenis-env/Scripts/python.exe -m src.value_analysis --wta --snapshot 2026-07-24
+```
+
+A snapshot-pinned model uses its own cache file
+(`data/model_cache/{tour}__snapshot-{id}.pkl`) that never expires — it
+can't collide with or be evicted by a live `--retrain`. The usual staleness
+warning (section 1) is skipped under `--snapshot`: a deliberately old,
+pinned dataset isn't "stale" in the sense that warning exists to catch.
+
+**What's tracked in git:** only `data/snapshots/{id}/metadata.json` — the
+copied CSV/xlsx files themselves are gitignored, same as `data/raw/` and
+`data/processed/` already are (see `.gitignore`). This keeps a permanent,
+lightweight, diffable record of every snapshot ever taken without
+versioning tens of MB of data per snapshot.
+
+**Verify a snapshot hasn't been locally corrupted or tampered with:**
+
+```bash
+./tenis-env/Scripts/python.exe -c "
+from src.data.snapshots import verify_snapshot_integrity
+print(verify_snapshot_integrity('2026-07-24'))
+"
+```
