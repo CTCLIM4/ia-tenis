@@ -254,3 +254,42 @@ from src.data.snapshots import verify_snapshot_integrity
 print(verify_snapshot_integrity('2026-07-24'))
 "
 ```
+
+## 8. Calibration audit log
+
+Full design: `docs/superpowers/specs/2026-07-25-calibration-persistence-design.md`.
+
+`value_bets_log.csv` only ever contained rows a human chose to save — a
+biased sample that can't support a real reliability/calibration analysis
+(you need the full population of predictions the model made, not just the
+ones that looked interesting enough to log). `data/prediction_audit_log.csv`
+fixes this: **every** prediction the CLI evaluates (once odds are entered)
+is appended here automatically, no prompt, regardless of whether it was
+also saved to `value_bets_log.csv`.
+
+Each row's `decision` column says what happened to that prediction:
+
+- `logged` — also saved to `value_bets_log.csv` (you said yes).
+- `passed_low_edge` — neither side had positive edge; nothing to log.
+- `passed_user_declined` — at least one side had positive edge, but you
+  said no.
+- `blocked_suspicious` — `--halt-on-suspicious` blocked it (edge >10%).
+  These never appear in `value_bets_log.csv` at all; this is the only
+  record they leave anywhere.
+- `invalid_missing_elo` — one or both players had no trained Elo rating.
+
+Each row also carries `shrink_hi`/`shrink_lo`/`shrink_rate` (the exact
+calibration constants active when `p_a_cal` was computed — see
+`apply_shrinkage()` in `src/value_analysis.py`) and `model_commit` (the git
+commit of the code that produced the prediction) plus `model_snapshot_id`
+(set when the session was pinned via `--snapshot {id}`, empty for a live
+model) — so a future recalibration study can tell exactly which model
+version and which calibration constants produced any given historical row,
+even after those constants change.
+
+This file is gitignored, same as `value_bets_log.csv` — it's local
+prediction history, not something to commit. Writing to it is best-effort:
+a failure (disk full, permissions) prints a warning and the interactive
+session continues rather than crashing — it never blocks or interferes
+with the `value_bets_log.csv` save that happens moments earlier in the
+same prompt.
