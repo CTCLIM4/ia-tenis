@@ -1,0 +1,347 @@
+{
+  "snapshot_id": "2026-07-25",
+  "created_at": "2026-07-25T15:52:06-05:00",
+  "git_commit": "1a50c57",
+  "tours": {
+    "atp": {
+      "last_match_date": "2026-07-21",
+      "n_rows": 116913,
+      "files": {
+        "processed/atp_features.csv": {
+          "sha256": "0e39e4834ecf9c9891977f76dd82805a8e960eba7035dc4b42dfd3b90edfb5f1",
+          "bytes": 22236213
+        },
+        "raw/tennis_atp_tml/1968.csv": {
+          "sha256": "eeec6a5184b63c02636360d3a9ab3af29b96ee479ec8c755441a4ad372d4ab38",
+          "bytes": 578543
+        },
+        "raw/tennis_atp_tml/1969.csv": {
+          "sha256": "7f830dfd6be257cd222766b796f0dec9817a653fb6e86a5f0e9820a1a0f3c827",
+          "bytes": 561838
+        },
+        "raw/tennis_atp_tml/1970.csv": {
+          "sha256": "100f13357ce0a3ba15db8bdc178d4942c45d9127aaf3623421723059774b2ad2",
+          "bytes": 506663
+        },
+        "raw/tennis_atp_tml/1971.csv": {
+          "sha256": "6d11e6a61a03525e4a964355bd4a18edc8bdf060b2078cb376fa9b91a32cc2f7",
+          "bytes": 595343
+        },
+        "raw/tennis_atp_tml/1972.csv": {
+          "sha256": "e4a864b1204b4ba376bd1fb7bfa3f4620e7b35b98751c3103460730af8373505",
+          "bytes": 602542
+        },
+        "raw/tennis_atp_tml/1973.csv": {
+          "sha256": "e4a7ce8f2db8ecc4921085c728c2dc802ef3c4e4c2fa99b84abf593455c3515a",
+          "bytes": 686986
+        },
+        "raw/tennis_atp_tml/1974.csv": {
+          "sha256": "8e5e4d18bd2b9ed2c311e1898f0b0897fcd3c9a0ed76711b9a5ee81f9692c4da",
+          "bytes": 698997
+        },
+        "raw/tennis_atp_tml/1975.csv": {
+          "sha256": "64df6cf1c5a7bbfb4d933d72b2ffac78bdda21d547398b1c17ba9798d21da9b2",
+          "bytes": 692011
+        },
+        "raw/tennis_atp_tml/1976.csv": {
+          "sha256": "9c783e673941366a9dd3fb68893870e19eb5bac32b66eacab9a9c69e04cf232f",
+          "bytes": 662280
+        },
+        "raw/tennis_atp_tml/1977.csv": {
+          "sha256": "0827aebaf440409ad57d93e99939b4f5ad003506fa286b7b73672389b0cca2f6",
+          "bytes": 700865
+        },
+        "raw/tennis_atp_tml/1978.csv": {
+          "sha256": "fbdacbb4ca155a890d938da0a4c02d5a55880a0dec0649e8c703042f788ad071",
+          "bytes": 652214
+        },
+        "raw/tennis_atp_tml/1979.csv": {
+          "sha256": "321c5117cb053c7ba7b487c9ec349a53d07da5aa21d81e6030777c6022a7d0d8",
+          "bytes": 668941
+        },
+        "raw/tennis_atp_tml/1980.csv": {
+          "sha256": "fdefc507aba512fb1bfbdc356440347de07c38726e80695e2e386a4445643bf8",
+          "bytes": 661386
+        },
+        "raw/tennis_atp_tml/1981.csv": {
+          "sha256": "1eef045183c0c44c98f1497958094d90b2d70d4ca899e8789eab0b8288d92395",
+          "bytes": 663431
+        },
+        "raw/tennis_atp_tml/1982.csv": {
+          "sha256": "650b6539dba727c11d20e699d20dd7c1a43026aaf103aa7d9c5ec3ab9e7c1bb4",
+          "bytes": 694983
+        },
+        "raw/tennis_atp_tml/1983.csv": {
+          "sha256": "ba854d6d4500f077317741d35b967e32264b33982d375bf8de836a52cfde96ff",
+          "bytes": 592299
+        },
+        "raw/tennis_atp_tml/1984.csv": {
+          "sha256": "9cf4b6d5a309cd72212da31ef33359aa3e4ab88bc59c4177d48469cf61e7348b",
+          "bytes": 551221
+        },
+        "raw/tennis_atp_tml/1985.csv": {
+          "sha256": "0caed94b3e82a50e8351c940694c49f88fa597a6ad701e5a963ae5a556bbb243",
+          "bytes": 563753
+        },
+        "raw/tennis_atp_tml/1986.csv": {
+          "sha256": "8ed9c0507c14a9faa2428a2ada5ae883705c65448e022ecd56fc094ffe3d8542",
+          "bytes": 539100
+        },
+        "raw/tennis_atp_tml/1987.csv": {
+          "sha256": "4b631a057894a248cc2227466847da16e5e37a0fbd0a1623a673d0f5bbf7ecc6",
+          "bytes": 589988
+        },
+        "raw/tennis_atp_tml/1988.csv": {
+          "sha256": "3743cc9d635942770c8fc44241864158703af48f642a16223746430106dffab7",
+          "bytes": 621734
+        },
+        "raw/tennis_atp_tml/1989.csv": {
+          "sha256": "2256184f6388deb6ac89cdeccf9b48467636a45fb011dec0d324926af967f343",
+          "bytes": 598167
+        },
+        "raw/tennis_atp_tml/1990.csv": {
+          "sha256": "d662c193f4fce1a14f87db301c0278a27614c20742e3e29682214dee9ef64805",
+          "bytes": 640433
+        },
+        "raw/tennis_atp_tml/1991.csv": {
+          "sha256": "e248bf0ac2e59a8a98705c1db9efa8088e1bf4d2633f7688146fbed19dcbfaef",
+          "bytes": 761798
+        },
+        "raw/tennis_atp_tml/1992.csv": {
+          "sha256": "04fcea50d329c17c9ccc391cd043e74620fc825975d46d75f7cd8d4c8bd5bec2",
+          "bytes": 778217
+        },
+        "raw/tennis_atp_tml/1993.csv": {
+          "sha256": "3fbbb01df7084680d7fb3cca7f2db979d0e7e07921ac9c059c00cd48add8c4b9",
+          "bytes": 797659
+        },
+        "raw/tennis_atp_tml/1994.csv": {
+          "sha256": "76b745556ad13917a45a99235433492491682917012f628b6b866a3bb9cfe899",
+          "bytes": 807748
+        },
+        "raw/tennis_atp_tml/1995.csv": {
+          "sha256": "b860b1d11a017da6805fae800babe6f197934c964bf3e59fd34c2243e849626d",
+          "bytes": 779946
+        },
+        "raw/tennis_atp_tml/1996.csv": {
+          "sha256": "b4b3d5da5df80785e0504b261de658dbec8275ede5cb70142726ef26d3dee5ed",
+          "bytes": 773383
+        },
+        "raw/tennis_atp_tml/1997.csv": {
+          "sha256": "2639e81fa45e496829734a960da6eb8b3ca5b1305ab5f6d27556586fd7b91e7e",
+          "bytes": 745767
+        },
+        "raw/tennis_atp_tml/1998.csv": {
+          "sha256": "5a26dae69546901562d9e16c67363c01cad399342ad9c26140d10250456abc1b",
+          "bytes": 739713
+        },
+        "raw/tennis_atp_tml/1999.csv": {
+          "sha256": "ba3d7b2b15d93f3a9acf85825d7129a07a59aa53848d24baa370494ddc6e761e",
+          "bytes": 687799
+        },
+        "raw/tennis_atp_tml/2000.csv": {
+          "sha256": "b40e3a6b3a862193e655a223c7d25d11fb870408055489ffaec5fea339f4fda8",
+          "bytes": 694568
+        },
+        "raw/tennis_atp_tml/2001.csv": {
+          "sha256": "7aaaba9ad0b9c99afaa143da7d14443f786297bad66fb2f5b5c6e019c6ac364d",
+          "bytes": 682773
+        },
+        "raw/tennis_atp_tml/2002.csv": {
+          "sha256": "bcabd793c2bb93454bc877d858253dfa92c7a257454f37d6c8ff7d58fb12da72",
+          "bytes": 662582
+        },
+        "raw/tennis_atp_tml/2003.csv": {
+          "sha256": "cba4e727fda06fd40190fde5d82f3a778623139a3b23a32b1629b8087620871c",
+          "bytes": 663747
+        },
+        "raw/tennis_atp_tml/2004.csv": {
+          "sha256": "7fa541327d6646c722ac54f2c1bf340438f97bd3e3e8d1b94a8de612a48ac8b6",
+          "bytes": 675749
+        },
+        "raw/tennis_atp_tml/2005.csv": {
+          "sha256": "9ec6d9e3adc9abff4701599d2f1788fb973e7b5a940145c3058a1536b1fb60a4",
+          "bytes": 673102
+        },
+        "raw/tennis_atp_tml/2006.csv": {
+          "sha256": "7bb2b5848955f1a96e5d789ef1c2c8567efc40791cade9670de87978a00388a5",
+          "bytes": 673798
+        },
+        "raw/tennis_atp_tml/2007.csv": {
+          "sha256": "d117dd7b20ef1645c3d779f53107e9bd57b338682c41c1270332df756ec8ede7",
+          "bytes": 657590
+        },
+        "raw/tennis_atp_tml/2008.csv": {
+          "sha256": "91b823a170f4d58d3538f384c09996b2e613e717ec003511d09ab9f8f3f86459",
+          "bytes": 644158
+        },
+        "raw/tennis_atp_tml/2009.csv": {
+          "sha256": "120465276575377ba4b7ebaaeeddc3ef5b849385b1878647abf74661da8f86d2",
+          "bytes": 639118
+        },
+        "raw/tennis_atp_tml/2010.csv": {
+          "sha256": "83d9888229cd2e311dc36a1bc2917de77e34a410dfcfa0d34be2d54a6fc29d41",
+          "bytes": 626226
+        },
+        "raw/tennis_atp_tml/2011.csv": {
+          "sha256": "968e0aff2dfbf94a7d1f27b4a1b2f43d83bb94a587d74134f498ee9cbbb63d17",
+          "bytes": 624036
+        },
+        "raw/tennis_atp_tml/2012.csv": {
+          "sha256": "3a80e637f5259f533d24c7e38649c4cd55b21e43afe2a4630f2b1e23e305e91a",
+          "bytes": 620310
+        },
+        "raw/tennis_atp_tml/2013.csv": {
+          "sha256": "c5f948ccb2f044189f36138a391f9d9d311201d2bc872a21c928379c56c576e9",
+          "bytes": 608647
+        },
+        "raw/tennis_atp_tml/2014.csv": {
+          "sha256": "1fe41227a4bfe798721c4cd2ac7817a3d194a9d426b846cde08575c689a80bda",
+          "bytes": 600798
+        },
+        "raw/tennis_atp_tml/2015.csv": {
+          "sha256": "36e1868c2f31fb7c58d99948b3c544dd781ba3ec9c75ff94d437637d22eef56d",
+          "bytes": 609597
+        },
+        "raw/tennis_atp_tml/2016.csv": {
+          "sha256": "28a106544a50184c742263eed43a49ca725be735cbf640143c51ab32e40e8588",
+          "bytes": 630958
+        },
+        "raw/tennis_atp_tml/2017.csv": {
+          "sha256": "b55f12e9bf5220b694cd8954f65027f1b7e649ce4977da0316a1a3f4f2f20ea4",
+          "bytes": 622897
+        },
+        "raw/tennis_atp_tml/2018.csv": {
+          "sha256": "5abc0e80e83ddab9f04f682b6e72fa062ad11d523c88f3c105f690a555bacc4a",
+          "bytes": 620949
+        },
+        "raw/tennis_atp_tml/2019.csv": {
+          "sha256": "6821d93e92de9110b365cd3b4f8d30138c261bcf679de4a5ccaff6917c33335e",
+          "bytes": 590603
+        },
+        "raw/tennis_atp_tml/2020.csv": {
+          "sha256": "3c97228abeede853db0139e4b49699aecbadafd2e7000acaaf9a449d38da202d",
+          "bytes": 310299
+        },
+        "raw/tennis_atp_tml/2021.csv": {
+          "sha256": "1c7379578e624c7eb9693bc0c94e860fc3c177260da823a2b80fd60d419009d9",
+          "bytes": 579605
+        },
+        "raw/tennis_atp_tml/2022.csv": {
+          "sha256": "160874dd5e98e4a71980a02642ac663695bd2b3af88deb7b31dafd8d942e25ce",
+          "bytes": 615683
+        },
+        "raw/tennis_atp_tml/2023.csv": {
+          "sha256": "909931d63d2c92ba7c8dfca4c15f06062ab052e8ba4dc3812318f90e5180fd4b",
+          "bytes": 633602
+        },
+        "raw/tennis_atp_tml/2024.csv": {
+          "sha256": "e7c6e3e5dbf880c338252c2e80f5a3aba78ee98fe520850ce65caf0e766833d0",
+          "bytes": 656156
+        },
+        "raw/tennis_atp_tml/2025.csv": {
+          "sha256": "2b201025c9cf1a3c7842c289f825a637a28548dea7f92479510a060146df4fff",
+          "bytes": 623107
+        },
+        "raw/tennis_atp_tml/2026.csv": {
+          "sha256": "7f2941c21d7e51d83638b487939526b75691f127cd39fd2682880d792f02f34c",
+          "bytes": 476319
+        },
+        "raw/tennis_atp_tml/ongoing_tourneys.csv": {
+          "sha256": "5083b7063f95f0c303281f08a9f36fa7c135b3b9572fe01cb5658e4b81f95cd3",
+          "bytes": 5669
+        }
+      }
+    },
+    "wta": {
+      "last_match_date": "2026-07-20",
+      "n_rows": 47019,
+      "files": {
+        "processed/wta_features.csv": {
+          "sha256": "91f72b3730c0c97c5dc9580a288c4daddf45242cc5ced25116308026483463d7",
+          "bytes": 8435611
+        },
+        "raw/tennis_wta_tduk/2007w.xls": {
+          "sha256": "276b61366afe8016eb5b5822e0f83efe33b8449743ffc07781f0be48e2b8aa1a",
+          "bytes": 970752
+        },
+        "raw/tennis_wta_tduk/2008w.xls": {
+          "sha256": "eb745d440250d321f02353c135b91bc1fcb39d2c30757d116f60fd0f6a8902d9",
+          "bytes": 952832
+        },
+        "raw/tennis_wta_tduk/2009w.xls": {
+          "sha256": "20c2b846a5d20f4c297d5ea058503b12c8f8bfd9994ec298bdb64615e0f3234f",
+          "bytes": 947712
+        },
+        "raw/tennis_wta_tduk/2010w.xls": {
+          "sha256": "9eb750c4e8d17ea0255a9b9144f8e77460bd0926fdae992f5f47a650d8259039",
+          "bytes": 988160
+        },
+        "raw/tennis_wta_tduk/2011w.xls": {
+          "sha256": "bfa3c9803c8e2b4bc512f9d1a3938d0aed4a3079e0acc404f7f737359a4190f8",
+          "bytes": 996352
+        },
+        "raw/tennis_wta_tduk/2012w.xls": {
+          "sha256": "204e823154e57723ea8b7c00dd837e6eb319485373d59f82e41439abf8f87111",
+          "bytes": 969216
+        },
+        "raw/tennis_wta_tduk/2013w.xlsx": {
+          "sha256": "94b8c1033b45ebe01b25e6faf2f86a052c4c991ae1950d7100e1bb29d97ab492",
+          "bytes": 515133
+        },
+        "raw/tennis_wta_tduk/2014w.xlsx": {
+          "sha256": "0e1ae9ad8d781825ca79df0be18ebf861383b9f2b3630e4bcc0166a8adc9f047",
+          "bytes": 540026
+        },
+        "raw/tennis_wta_tduk/2015w.xlsx": {
+          "sha256": "f2625eb24820743514a635f2daf57945d40d0108c5aafd244345df8368197648",
+          "bytes": 496722
+        },
+        "raw/tennis_wta_tduk/2016w.xlsx": {
+          "sha256": "810ec9c7fe558614331cac2d9b328545ea6d3c0c840863ad5653efa0bbd9a40a",
+          "bytes": 496904
+        },
+        "raw/tennis_wta_tduk/2017w.xlsx": {
+          "sha256": "5476fa98ea38a885a5f7141e6aa6c4979dfb2d7f93715f7d13b46a17c1f140e0",
+          "bytes": 463132
+        },
+        "raw/tennis_wta_tduk/2018w.xlsx": {
+          "sha256": "e96cc8317a634f0238c51f375896bfc47f53de96554adb0291003cc9b26c7278",
+          "bytes": 488666
+        },
+        "raw/tennis_wta_tduk/2019w.xlsx": {
+          "sha256": "3302aa2b04e4873cd1079ef470d8b63778b35b9b821d2ca52621b933f88a567d",
+          "bytes": 383919
+        },
+        "raw/tennis_wta_tduk/2020w.xlsx": {
+          "sha256": "f7dd7c632d8fc3a02c259983ab2dfd83a2e4516a3011d9b70caef6cd49c3eae1",
+          "bytes": 168741
+        },
+        "raw/tennis_wta_tduk/2021w.xlsx": {
+          "sha256": "a364ca800b49b6ffc770b6766b8b15cec50ecfa9baf850c7973076dc936b1cc3",
+          "bytes": 382230
+        },
+        "raw/tennis_wta_tduk/2022w.xlsx": {
+          "sha256": "d173f08e2607e2a3259448261f50cbe5bed6f298dd204427ea07b7795b4cc155",
+          "bytes": 370069
+        },
+        "raw/tennis_wta_tduk/2023w.xlsx": {
+          "sha256": "ea4c4556c841ad696cd417885015fe0c63b7a2414c94d856f9515a238f2fef2a",
+          "bytes": 407251
+        },
+        "raw/tennis_wta_tduk/2024w.xlsx": {
+          "sha256": "0ce3a4e87c269253dd61e1ab4a3bbeb2d9acdd512f316189e5ad872c86c67b53",
+          "bytes": 406783
+        },
+        "raw/tennis_wta_tduk/2025w.xlsx": {
+          "sha256": "aac890b7465d0c74812578b2a962b4e5cb4c76455dccb6cece2efa5067448c13",
+          "bytes": 399398
+        },
+        "raw/tennis_wta_tduk/2026w.xlsx": {
+          "sha256": "c370ac3c90366e095cc22a4d4651c7c98bc0ed9b6855e9cd0b179fd1f93e67c8",
+          "bytes": 230361
+        }
+      }
+    }
+  }
+}
