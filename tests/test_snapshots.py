@@ -141,6 +141,31 @@ class TestCreateSnapshot:
         assert (snapshot_dir / "processed" / "atp_features.csv").exists()
         assert not (snapshot_dir / "processed" / "wta_features.csv").exists()
 
+    def test_skips_dotfiles_in_raw_directory(self, fake_data_dirs):
+        """Regression: a stray .gitignore left over from the old git-clone
+        ATP download method (pre stats.tennismylife.org API migration) got
+        copied into a real snapshot and hashed into metadata.json alongside
+        the real {year}.csv files — found 2026-07-25."""
+        (fake_data_dirs["raw_dir"] / "tennis_atp_tml" / ".gitignore").write_text(
+            "atp_matches_amateur.csv\nplayers_preopen.csv"
+        )
+        snapshot_dir = snapshots.create_snapshot(snapshot_id="2026-07-24", tours=("atp",))
+
+        assert not (snapshot_dir / "raw" / "tennis_atp_tml" / ".gitignore").exists()
+        meta = json.loads((snapshot_dir / "metadata.json").read_text())
+        assert not any(".gitignore" in key for key in meta["tours"]["atp"]["files"])
+
+    def test_skips_ds_store_and_unexpected_extensions_keeps_real_data_files(self, fake_data_dirs):
+        (fake_data_dirs["raw_dir"] / "tennis_atp_tml" / ".DS_Store").write_bytes(b"\x00\x01\x02")
+        (fake_data_dirs["raw_dir"] / "tennis_atp_tml" / "notes.txt").write_text("scratch notes")
+
+        snapshot_dir = snapshots.create_snapshot(snapshot_id="2026-07-24", tours=("atp",))
+
+        raw_files = {p.name for p in (snapshot_dir / "raw" / "tennis_atp_tml").iterdir()}
+        assert ".DS_Store" not in raw_files
+        assert "notes.txt" not in raw_files
+        assert "2026.csv" in raw_files  # the real fixture data file must still be copied
+
 
 class TestListSnapshots:
     def test_empty_when_no_snapshots_dir(self, fake_data_dirs):

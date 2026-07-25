@@ -21,6 +21,20 @@ _RAW_TOUR_DIRS = {
     "wta": "tennis_wta_tduk",
 }
 
+# Only these extensions are ever read by src/data/loader.py's load_atp_matches/
+# load_wta_matches — anything else in a raw tour directory (stray .gitignore
+# files left over from the pre-API-migration git-clone ATP download, OS
+# artifacts like .DS_Store, editor scratch files, etc.) is not real match
+# data and must not be copied into a snapshot.
+_ALLOWED_RAW_EXTENSIONS = {".csv", ".xls", ".xlsx"}
+
+
+def _is_real_raw_data_file(path: Path) -> bool:
+    """True if path should be included in a snapshot's raw/ copy: a
+    non-hidden file with an extension load_atp_matches/load_wta_matches
+    actually reads."""
+    return not path.name.startswith(".") and path.suffix.lower() in _ALLOWED_RAW_EXTENSIONS
+
 _HASH_CHUNK_SIZE = 1024 * 1024  # 1 MB, streamed so multi-MB CSVs don't need
                                  # to be fully loaded into memory to hash.
 
@@ -128,7 +142,7 @@ def create_snapshot(snapshot_id: str | None = None, tours: tuple[str, ...] = ("a
             }
             if raw_tour_src.exists():
                 for raw_file in sorted(raw_tour_src.iterdir()):
-                    if not raw_file.is_file():
+                    if not raw_file.is_file() or not _is_real_raw_data_file(raw_file):
                         continue
                     raw_dst = raw_tour_dst / raw_file.name
                     shutil.copy2(raw_file, raw_dst)
