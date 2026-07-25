@@ -37,6 +37,7 @@ from sklearn.pipeline import Pipeline, make_pipeline
 from sklearn.preprocessing import StandardScaler
 
 from src.backtest.walkforward import _MIRROR_FLIP_COLS, load_features_with_mirror
+from src.calibration_audit import classify_audit_decision, log_prediction_audit
 from src.data.snapshots import load_snapshot_metadata, resolve_snapshot_path
 from src.data.staleness import StalenessLevel, evaluate_staleness
 from src.features.decay import EloHistoryTracker, calculate_decay_features
@@ -1115,13 +1116,31 @@ def interactive_cli(
         else:
             save = _ask("\n  Guardar en log? (s/n)", "s").lower()
 
-        if _should_log_prediction(suspicious, save):
+        logged = _should_log_prediction(suspicious, save)
+        if logged:
             log_query(
                 tour, tournament, surface, match_date,
                 player_a, player_b,
                 pred, val_a, val_b, odds_a, odds_b,
                 odds_a_source, odds_b_source,
             )
+
+        # Audit log: every evaluated prediction, unconditionally — not just
+        # ones saved above. This is what makes future calibration/reliability
+        # analysis possible (the full population, not a human-selected
+        # subset). See docs/superpowers/specs/2026-07-25-calibration-persistence-design.md.
+        decision = classify_audit_decision(
+            suspicious, elo_ok, logged, val_a["has_value"], val_b["has_value"],
+        )
+        log_prediction_audit(
+            tour, tournament, surface, match_date,
+            player_a, player_b,
+            pred, val_a, val_b, odds_a, odds_b,
+            odds_a_source, odds_b_source,
+            decision=decision,
+            model_snapshot_id=snapshot,
+            shrink_hi=_SHRINK_HI, shrink_lo=_SHRINK_LO, shrink_rate=_SHRINK_RATE,
+        )
 
         again = _ask("  Analizar otro partido? (s/n)", "s").lower()
         if again not in ("s", "si", "y", "yes", ""):
