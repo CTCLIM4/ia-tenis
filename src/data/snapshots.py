@@ -11,6 +11,8 @@ import hashlib
 from pathlib import Path
 from typing import Literal
 
+from src.git_utils import current_git_commit
+
 _ROOT = Path(__file__).resolve().parent.parent.parent
 SNAPSHOT_ROOT = _ROOT / "data" / "snapshots"
 _RAW_DIR = _ROOT / "data" / "raw"
@@ -61,21 +63,6 @@ def _sha256_file(path: Path) -> str:
 
 def _file_record(path: Path) -> dict:
     return {"sha256": _sha256_file(path), "bytes": path.stat().st_size}
-
-
-def _current_git_commit() -> str | None:
-    """Best-effort short git commit hash, None if git is unavailable or
-    this isn't a git checkout — never blocks snapshot creation on this
-    being unavailable."""
-    import subprocess
-    try:
-        result = subprocess.run(
-            ["git", "rev-parse", "--short", "HEAD"],
-            cwd=_ROOT, capture_output=True, text=True, timeout=5, check=True,
-        )
-        return result.stdout.strip()
-    except Exception:
-        return None
 
 
 def create_snapshot(snapshot_id: str | None = None, tours: tuple[str, ...] = ("atp", "wta")) -> Path:
@@ -157,7 +144,7 @@ def create_snapshot(snapshot_id: str | None = None, tours: tuple[str, ...] = ("a
         metadata = {
             "snapshot_id": snapshot_id,
             "created_at": datetime.now().astimezone().isoformat(timespec="seconds"),
-            "git_commit": _current_git_commit(),
+            "git_commit": current_git_commit(),
             "tours": tours_meta,
         }
         with open(snapshot_dir / "metadata.json", "w", encoding="utf-8") as f:
