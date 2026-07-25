@@ -37,7 +37,7 @@ from sklearn.pipeline import Pipeline, make_pipeline
 from sklearn.preprocessing import StandardScaler
 
 from src.backtest.walkforward import _MIRROR_FLIP_COLS, load_features_with_mirror
-from src.data.snapshots import resolve_snapshot_path
+from src.data.snapshots import load_snapshot_metadata, resolve_snapshot_path
 from src.data.staleness import StalenessLevel, evaluate_staleness
 from src.features.decay import EloHistoryTracker, calculate_decay_features
 from src.odds_api import DEFAULT_BOOKMAKER, DEFAULT_CACHE_MINUTES, MatchOdds, get_match_odds
@@ -964,9 +964,17 @@ def _ask_rank_with_hint(player: str, auto_rank: Optional[int]) -> Optional[float
             return None
 
 
-def interactive_cli(tour: str = "atp", retrain: bool = False, halt_on_suspicious: bool = False) -> None:
+def interactive_cli(
+    tour: str = "atp", retrain: bool = False, halt_on_suspicious: bool = False,
+    snapshot: Optional[str] = None,
+) -> None:
     """Run the interactive CLI session."""
-    elo, fb, clf, rank_lookup, elo_tracker, age_lookup = load_model(tour, retrain=retrain)
+    elo, fb, clf, rank_lookup, elo_tracker, age_lookup = load_model(tour, retrain=retrain, snapshot=snapshot)
+
+    if snapshot is not None:
+        meta = load_snapshot_metadata(snapshot)
+        last_match = meta["tours"][tour]["last_match_date"]
+        print(f"\n  *** Usando snapshot pinned '{snapshot}' — datos como al {last_match}. ***")
 
     print()
     print("=" * 64)
@@ -1136,9 +1144,14 @@ def main() -> None:
                         dest="halt_on_suspicious",
                         help="Bloquea el guardado en log si el edge supera "
                              f"{SUSPICIOUS_EDGE_THRESHOLD*100:.0f}%% (posible dato stale)")
+    parser.add_argument("--snapshot", type=str, default=None,
+                        help="Usar un snapshot pinned (data/snapshots/{id}/) en vez de datos en vivo")
     args = parser.parse_args()
     tour = "wta" if args.wta else "atp"
-    interactive_cli(tour, retrain=args.retrain, halt_on_suspicious=args.halt_on_suspicious)
+    interactive_cli(
+        tour, retrain=args.retrain, halt_on_suspicious=args.halt_on_suspicious,
+        snapshot=args.snapshot,
+    )
 
 
 if __name__ == "__main__":
