@@ -1,12 +1,14 @@
 """End-to-end pipeline: load data -> features -> backtest."""
 import sys
 from pathlib import Path
+from typing import Optional
 
 import numpy as np
 import pandas as pd
 
-from src.backtest.walkforward import build_match_features, walk_forward_backtest
+from src.backtest.walkforward import build_match_features, load_features_with_mirror, walk_forward_backtest
 from src.data.loader import load_atp_matches, load_wta_matches
+from src.data.snapshots import resolve_snapshot_path
 from src.features.engineering import FeatureBuilder
 from src.models.elo import EloSystem
 
@@ -17,25 +19,33 @@ def run_pipeline(
     end_year: int = 2023,
     warmup_years: int = 10,
     eval_start: int = None,
+    snapshot: Optional[str] = None,
 ) -> None:
-    print(f"Loading {tour.upper()} matches {start_year}-{end_year}...")
-    loader = load_atp_matches if tour == "atp" else load_wta_matches
-    df = loader(start_year, end_year)
-    print(f"  Loaded {len(df):,} matches across {df['year'].nunique()} seasons")
+    if snapshot is not None:
+        features_path = resolve_snapshot_path(snapshot, tour, "processed")
+        print(f"Loading {tour.upper()} features from snapshot '{snapshot}' ({features_path})...")
+        match_df = load_features_with_mirror(features_path)
+        original = match_df[~match_df["is_mirror"]]
+        print(f"  {len(original):,} feature rows ({len(match_df):,} with mirrors) — pinned, not regenerated.")
+    else:
+        print(f"Loading {tour.upper()} matches {start_year}-{end_year}...")
+        loader = load_atp_matches if tour == "atp" else load_wta_matches
+        df = loader(start_year, end_year)
+        print(f"  Loaded {len(df):,} matches across {df['year'].nunique()} seasons")
 
-    elo = EloSystem()
-    fb = FeatureBuilder()
+        elo = EloSystem()
+        fb = FeatureBuilder()
 
-    print("Building features (sequential, no lookahead)...")
-    match_df = build_match_features(df, elo, fb)
-    original = match_df[~match_df["is_mirror"]]
-    print(f"  {len(original):,} feature rows ({len(match_df):,} with mirrors)")
+        print("Building features (sequential, no lookahead)...")
+        match_df = build_match_features(df, elo, fb)
+        original = match_df[~match_df["is_mirror"]]
+        print(f"  {len(original):,} feature rows ({len(match_df):,} with mirrors)")
 
-    processed_dir = Path("data/processed")
-    processed_dir.mkdir(parents=True, exist_ok=True)
-    out_path = processed_dir / f"{tour}_features.csv"
-    original.to_csv(out_path, index=False)
-    print(f"  Saved to {out_path}")
+        processed_dir = Path("data/processed")
+        processed_dir.mkdir(parents=True, exist_ok=True)
+        out_path = processed_dir / f"{tour}_features.csv"
+        original.to_csv(out_path, index=False)
+        print(f"  Saved to {out_path}")
 
     print(f"\nWalk-forward backtest (warmup={warmup_years} years)...")
     results = walk_forward_backtest(match_df, warmup_years=warmup_years)
@@ -78,6 +88,8 @@ if __name__ == "__main__":
     parser.add_argument("end_year",    nargs="?", type=int, default=2023)
     parser.add_argument("--warmup",    type=int,  default=10,   dest="warmup_years")
     parser.add_argument("--eval-start", type=int, default=None, dest="eval_start")
+    parser.add_argument("--snapshot",  type=str,  default=None,
+                        help="Usar un snapshot pinned (data/snapshots/{id}/) en vez de datos en vivo")
     args = parser.parse_args()
 
     run_pipeline(
@@ -86,4 +98,5 @@ if __name__ == "__main__":
         end_year=args.end_year,
         warmup_years=args.warmup_years,
         eval_start=args.eval_start,
+        snapshot=args.snapshot,
     )
