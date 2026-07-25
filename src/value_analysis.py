@@ -1129,18 +1129,25 @@ def interactive_cli(
         # ones saved above. This is what makes future calibration/reliability
         # analysis possible (the full population, not a human-selected
         # subset). See docs/superpowers/specs/2026-07-25-calibration-persistence-design.md.
-        decision = classify_audit_decision(
-            suspicious, elo_ok, logged, val_a["has_value"], val_b["has_value"],
-        )
-        log_prediction_audit(
-            tour, tournament, surface, match_date,
-            player_a, player_b,
-            pred, val_a, val_b, odds_a, odds_b,
-            odds_a_source, odds_b_source,
-            decision=decision,
-            model_snapshot_id=snapshot,
-            shrink_hi=_SHRINK_HI, shrink_lo=_SHRINK_LO, shrink_rate=_SHRINK_RATE,
-        )
+        # Best-effort, like try_auto_odds: this fires on every iteration now
+        # (not just on human opt-in like log_query), so a write failure here
+        # (disk full, permissions) must never crash the rest of the session
+        # or lose the value_bets_log.csv save that just happened above.
+        try:
+            decision = classify_audit_decision(
+                suspicious, elo_ok, logged, val_a["has_value"], val_b["has_value"],
+            )
+            log_prediction_audit(
+                tour, tournament, surface, match_date,
+                player_a, player_b,
+                pred, val_a, val_b, odds_a, odds_b,
+                odds_a_source, odds_b_source,
+                decision=decision,
+                model_snapshot_id=snapshot,
+                shrink_hi=_SHRINK_HI, shrink_lo=_SHRINK_LO, shrink_rate=_SHRINK_RATE,
+            )
+        except Exception as e:
+            print(f"\n  Aviso: no se pudo escribir en el audit log ({e}). Continuando sesion.")
 
         again = _ask("  Analizar otro partido? (s/n)", "s").lower()
         if again not in ("s", "si", "y", "yes", ""):
