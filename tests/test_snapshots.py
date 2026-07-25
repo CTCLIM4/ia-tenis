@@ -127,6 +127,15 @@ class TestCreateSnapshot:
             snapshots.create_snapshot(snapshot_id="2026-07-24")
         assert not (fake_data_dirs["snapshot_root"] / "2026-07-24").exists()
 
+    @pytest.mark.parametrize("bad_id", ["../escape", "..\\escape", "..", ".", "a/b", "a\\b"])
+    def test_rejects_path_traversal_snapshot_ids(self, fake_data_dirs, bad_id):
+        """snapshot_id flows straight into a directory path that's later
+        shutil.rmtree'd on failure — must reject anything that could escape
+        SNAPSHOT_ROOT, not just rely on the caller behaving."""
+        with pytest.raises(ValueError):
+            snapshots.create_snapshot(snapshot_id=bad_id)
+        assert not fake_data_dirs["snapshot_root"].exists()
+
     def test_can_snapshot_a_single_tour(self, fake_data_dirs):
         snapshot_dir = snapshots.create_snapshot(snapshot_id="2026-07-24", tours=("atp",))
         assert (snapshot_dir / "processed" / "atp_features.csv").exists()

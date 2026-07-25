@@ -75,14 +75,24 @@ def create_snapshot(snapshot_id: str | None = None, tours: tuple[str, ...] = ("a
     (run `python -m src.pipeline {tour}` first); the partial snapshot
     directory is cleaned up before the error propagates, so a failed
     creation never leaves a half-written snapshot behind.
+    Raises ValueError if snapshot_id isn't a plain directory-name-safe
+    string — it flows straight into a path that's later shutil.rmtree'd on
+    failure, so path separators and '.'/'..' are rejected outright rather
+    than trusting the caller not to pass something like '../elsewhere'.
     """
     import json
+    import re
     import shutil
     from datetime import date, datetime
 
     import pandas as pd
 
     snapshot_id = snapshot_id or date.today().isoformat()
+    if not re.fullmatch(r"[A-Za-z0-9_.-]+", snapshot_id) or snapshot_id in (".", ".."):
+        raise ValueError(
+            f"snapshot_id invalido: {snapshot_id!r}. Solo se permiten letras, "
+            "numeros, '-', '_' y '.' (sin separadores de ruta ni '..')."
+        )
     snapshot_dir = SNAPSHOT_ROOT / snapshot_id
     if snapshot_dir.exists():
         raise SnapshotExistsError(
