@@ -7,7 +7,11 @@ docs/superpowers/specs/2026-07-25-calibration-persistence-design.md.
 """
 from __future__ import annotations
 
+import csv
+from datetime import datetime
 from pathlib import Path
+
+from src import git_utils
 
 _ROOT = Path(__file__).resolve().parent.parent
 AUDIT_LOG_PATH = _ROOT / "data" / "prediction_audit_log.csv"
@@ -71,13 +75,13 @@ def log_prediction_audit(
     shrink_hi/shrink_lo/shrink_rate are passed in by the caller (rather
     than imported from src.value_analysis) to avoid a circular import —
     src.value_analysis imports from this module to call it, so this module
-    must not import back from src.value_analysis.
+    must not import back from src.value_analysis. git_utils.current_git_commit
+    has no such risk and is imported at module top; called as
+    git_utils.current_git_commit() (module-qualified, not
+    `from ... import current_git_commit`) so tests can monkeypatch it at
+    its source (`src.git_utils.current_git_commit`) and have this function
+    see the patched version.
     """
-    import csv
-    from datetime import datetime
-
-    from src.git_utils import current_git_commit
-
     AUDIT_LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
     shrink = abs(pred["p_a_cal"] - pred["p_a_raw"]) > 0.001
 
@@ -109,7 +113,7 @@ def log_prediction_audit(
         "edge_b":          round(val_b["edge"], 4),
         "ev_b":            round(val_b["ev"], 4),
         "kelly_b":         round(val_b["kelly_fraction"], 4),
-        "model_commit":       current_git_commit(),
+        "model_commit":       git_utils.current_git_commit(),
         "model_snapshot_id":  model_snapshot_id or "",
         "elo_found_a":     pred.get("elo_found_a", True),
         "elo_found_b":     pred.get("elo_found_b", True),

@@ -10,7 +10,7 @@ from datetime import date
 import pytest
 
 import src.calibration_audit as calibration_audit
-from src.value_analysis import FEATURE_COLS, calculate_value
+from src.value_analysis import calculate_value
 
 
 class TestClassifyAuditDecision:
@@ -86,12 +86,14 @@ def audit_log_path(tmp_path, monkeypatch):
 
 class TestLogPredictionAudit:
     def test_writes_one_row_with_expected_fields(self, audit_log_path, monkeypatch):
-        # NOTE the patch target: current_git_commit is imported *inside*
-        # log_prediction_audit's function body (a local import), so it must
-        # be patched where it's DEFINED (src.git_utils), not where it's
-        # locally imported into (src.calibration_audit) — patching the
-        # latter would silently no-op and this test would instead exercise
-        # the real subprocess call.
+        # NOTE the patch target: src/calibration_audit.py does
+        # `from src import git_utils` (module import, not
+        # `from src.git_utils import current_git_commit`) and calls
+        # `git_utils.current_git_commit()` — so patching the attribute on
+        # the shared src.git_utils module object is what log_prediction_audit
+        # actually sees. Patching a name on src.calibration_audit itself
+        # would silently no-op and this test would instead exercise the
+        # real subprocess call.
         monkeypatch.setattr("src.git_utils.current_git_commit", lambda: "abc1234")
         pred = _make_pred()
         val_a = calculate_value(0.58, 1.90)
