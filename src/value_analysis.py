@@ -328,10 +328,12 @@ def _check_staleness(
     functionally stale mid-Slam at only 16 days old (see
     docs/superpowers/specs/2026-07-13-staleness-context-aware-design.md).
 
-    Runs on every load_model() call regardless of cache hit/miss, so the
-    warning reflects true data age (how recent is the underlying match data)
-    rather than cache age (how old is the pickle file) — those are different
-    things and a week-old cache can still wrap multi-month-old match data.
+    Runs on every load_model() call that isn't pinned to a snapshot,
+    regardless of cache hit/miss, so the warning reflects true data age (how
+    recent is the underlying match data) rather than cache age (how old is
+    the pickle file) — those are different things and a week-old cache can
+    still wrap multi-month-old match data. load_model(snapshot=...) skips
+    this entirely — a deliberately old, pinned dataset isn't "stale."
 
     last_match_date must be a plain date (not datetime/Timestamp) — callers
     deriving this from a pandas column should call .date() first.
