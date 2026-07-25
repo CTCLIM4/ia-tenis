@@ -149,3 +149,9 @@ class TestLoadWtaMatchesRawDirOverride:
         df = load_wta_matches(2023, 2023, raw_dir_override=override_dir)
 
         assert len(df) == 3
+
+    def test_raises_when_override_directory_has_no_matching_year_files(self, tmp_path):
+        override_dir = tmp_path / "empty_wta"
+        override_dir.mkdir()
+        with pytest.raises(FileNotFoundError):
+            load_wta_matches(2023, 2023, raw_dir_override=override_dir)
