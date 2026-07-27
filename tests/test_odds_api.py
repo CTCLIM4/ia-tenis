@@ -3,7 +3,13 @@ from __future__ import annotations
 
 import json
 
-from src.odds_api import MatchOdds, _first_initial, _normalize_name, find_match_odds
+from src.odds_api import (
+    MatchOdds,
+    _first_initial,
+    _normalize_name,
+    find_match_odds,
+    list_tennis_sport_keys,
+)
 
 
 # ── _normalize_name ──────────────────────────────────────────────────────────
@@ -171,3 +177,32 @@ class TestGetEvents:
         events = odds_api.get_events("atp", api_key="fake", cache_minutes=15)
         assert events == fresh_events
         assert (tmp_path / "atp.json").exists()
+
+
+# ── list_tennis_sport_keys ───────────────────────────────────────────────────
+
+class TestListTennisSportKeys:
+    def test_filters_to_tennis_only(self):
+        sports_index = [
+            {"key": "tennis_atp_wimbledon", "title": "ATP Wimbledon"},
+            {"key": "basketball_nba", "title": "NBA"},
+        ]
+        result = list_tennis_sport_keys(sports_index)
+        assert result == [{"key": "tennis_atp_wimbledon", "title": "ATP Wimbledon", "tour": "atp"}]
+
+    def test_infers_atp_and_wta_tour(self):
+        sports_index = [
+            {"key": "tennis_atp_us_open", "title": "ATP US Open"},
+            {"key": "tennis_wta_us_open", "title": "WTA US Open"},
+        ]
+        result = list_tennis_sport_keys(sports_index)
+        tours = {s["key"]: s["tour"] for s in result}
+        assert tours == {"tennis_atp_us_open": "atp", "tennis_wta_us_open": "wta"}
+
+    def test_excludes_non_atp_wta_tennis_keys(self):
+        # e.g. an ITF key, if The Odds API ever lists one — no model for it.
+        sports_index = [{"key": "tennis_itf_men", "title": "ITF Men"}]
+        assert list_tennis_sport_keys(sports_index) == []
+
+    def test_empty_index_returns_empty_list(self):
+        assert list_tennis_sport_keys([]) == []

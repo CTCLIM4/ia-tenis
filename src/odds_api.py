@@ -2,13 +2,15 @@
 from __future__ import annotations
 
 import json
-import re
-import unicodedata
 import urllib.request
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Optional
+
+from src.name_matching import first_initial as _first_initial
+from src.name_matching import normalize_name as _normalize_name
+from src.name_matching import surname as _surname
 
 _ROOT = Path(__file__).resolve().parent.parent
 CACHE_DIR = _ROOT / "data" / "odds_cache"
@@ -24,50 +26,6 @@ class MatchOdds:
     odds_b: float
     matched_home: str
     matched_away: str
-
-
-def _normalize_name(name: str) -> str:
-    """Lowercase, strip accents/periods, collapse whitespace for name matching."""
-    nfkd = unicodedata.normalize("NFKD", name)
-    ascii_name = "".join(c for c in nfkd if not unicodedata.combining(c))
-    ascii_name = ascii_name.replace(".", "")
-    return re.sub(r"\s+", " ", ascii_name).strip().lower()
-
-
-def _surname(name: str) -> str:
-    parts = _normalize_name(name).split(" ")
-    # Drop single-character tokens (initials like "a" in "Sabalenka A.")
-    # so the surname is identified consistently regardless of whether the
-    # source lists it first ("Sabalenka A.") or last ("Aryna Sabalenka").
-    surname_parts = [p for p in parts if len(p) > 1]
-    return surname_parts[-1] if surname_parts else (parts[-1] if parts else "")
-
-
-def _first_initial(name: str) -> str:
-    """First letter of the player's first name, independent of whether the
-    source lists it as 'Sabalenka A.' (surname-first, abbreviated) or
-    'Aryna Sabalenka' (first-last, full) — the two formats seen in Odds API
-    events and user-typed names respectively.
-
-    Returns "" when the name has no separate first-name token (e.g. a bare
-    surname) — callers must treat that as "unknown" and not reject a match
-    on it, since there's nothing to compare.
-
-    Secondary check alongside _surname() in find_match_odds: surname alone
-    is not enough to disambiguate two players sharing one (e.g. the Zverev
-    brothers). Note this does NOT disambiguate siblings whose first names
-    also share an initial (e.g. Karolina/Kristyna Pliskova, both "K") —
-    that case still needs the fuller 2-letter-prefix heuristic used
-    elsewhere for WTA (_resolve_player_name in value_analysis.py), which
-    isn't available here since Odds API events carry full names, not
-    tennis-data.co.uk's abbreviated keys.
-    """
-    parts = [p for p in _normalize_name(name).split(" ") if p]
-    if len(parts) < 2:
-        return ""
-    surname = _surname(name)
-    first_name_token = next((p for p in parts if p != surname), parts[0])
-    return first_name_token[0]
 
 
 def find_match_odds(
@@ -135,15 +93,59 @@ def find_match_odds(
     return None
 
 
-def fetch_odds_events(tour: str, api_key: str) -> list[dict]:
-    """Fetch raw upcoming h2h odds events for a tour from The Odds API."""
-    sport_key = f"tennis_{tour}"
+def fetch_sports_index(api_key: str) -> list[dict]:
+    """Fetch the full list of sports/competitions currently offered by The
+    Odds API (GET /v4/sports). Tennis tournaments each get their own
+    sport_key here (e.g. 'tennis_atp_wimbledon') — there is no single key
+    that aggregates every tournament in progress for a tour."""
+    url = f"{ODDS_API_BASE}?apiKey={api_key}"
+    with urllib.request.urlopen(url, timeout=20) as resp:
+        return json.loads(resp.read())
+
+
+def list_tennis_sport_keys(sports_index: list[dict]) -> list[dict]:
+    """Filter a fetch_sports_index() response down to active ATP/WTA
+    tournaments.
+
+    Returns a list of {"key", "title", "tour"} dicts, "tour" being "atp" or
+    "wta" inferred from the key prefix. Non-ATP/WTA tennis keys (e.g. ITF,
+    if The Odds API ever lists them) are excluded since this project has no
+    model for them.
+    """
+    result = []
+    for sport in sports_index:
+        key = sport.get("key", "")
+        if key.startswith("tennis_atp"):
+            tour = "atp"
+        elif key.startswith("tennis_wta"):
+            tour = "wta"
+        else:
+            continue
+        result.append({"key": key, "title": sport.get("title", ""), "tour": tour})
+    return result
+
+
+def fetch_odds_events_by_key(sport_key: str, api_key: str) -> list[dict]:
+    """Fetch raw upcoming h2h odds events for an explicit sport_key."""
     url = (
         f"{ODDS_API_BASE}/{sport_key}/odds/"
         f"?apiKey={api_key}&regions=eu&markets=h2h&oddsFormat=decimal"
     )
     with urllib.request.urlopen(url, timeout=20) as resp:
         return json.loads(resp.read())
+
+
+def fetch_odds_events(tour: str, api_key: str) -> list[dict]:
+    """Fetch raw upcoming h2h odds events for a tour from The Odds API.
+
+    Kept for the interactive CLI's single-tour lookup, which assumes
+    'tennis_{tour}' is itself a queryable sport_key — unverified for
+    multi-tournament discovery. src/daily_scanner.py uses
+    fetch_odds_events_by_key with sport_keys from list_tennis_sport_keys
+    instead, since a real API key hasn't yet confirmed whether a generic
+    'tennis_atp'/'tennis_wta' key returns all in-progress tournaments.
+    """
+    return fetch_odds_events_by_key(f"tennis_{tour}", api_key)
 
 
 def _cache_path(tour: str) -> Path:
