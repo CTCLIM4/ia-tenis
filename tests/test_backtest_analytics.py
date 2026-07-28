@@ -4,7 +4,7 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-from src.backtest_analytics import load_resolved_bets
+from src.backtest_analytics import compute_financial_metrics, load_resolved_bets
 
 _BETS_HEADER = "tour,match_date,status,result,kelly_a,kelly_b,odds_a,odds_b,ev_a,ev_b,profit"
 
@@ -73,3 +73,41 @@ class TestLoadResolvedBets:
         df = load_resolved_bets(_write_bets_csv(tmp_path, rows))
         assert len(df) == 2
         assert set(df["match_date"].dt.strftime("%Y-%m-%d")) == {"2026-01-01", "2026-01-02"}
+
+
+def _synthetic_resolved_df():
+    """4 resolved bets with hand-computed expected metrics — see design spec
+    Task 2/3/4 comments below for the arithmetic behind each assertion."""
+    return pd.DataFrame({
+        "match_date": pd.to_datetime([
+            "2026-01-01", "2026-01-02", "2026-01-03", "2026-01-04",
+        ]),
+        "profit":         [0.05, 0.03, -0.04, -0.02],
+        "stake":          [0.05, 0.03, 0.04, 0.02],
+        "ev_theoretical": [0.10, 0.08, 0.05, 0.02],
+        "win":            [True, True, False, False],
+    })
+
+
+class TestComputeFinancialMetrics:
+    def test_metrics(self):
+        df = _synthetic_resolved_df()
+        m = compute_financial_metrics(df, bankroll=1000.0)
+        # total_profit=0.02, total_stake=0.14 -> roi = 0.02/0.14*100
+        assert m["roi_pct"] == pytest.approx(14.285714, rel=1e-4)
+        assert m["win_rate_pct"] == pytest.approx(50.0)
+        assert m["wins"] == 2
+        assert m["losses"] == 2
+        assert m["net_profit_usd"] == pytest.approx(20.0)
+        assert m["avg_stake_usd"] == pytest.approx(35.0)
+        assert m["avg_stake_pct"] == pytest.approx(3.5)
+        assert m["num_bets"] == 4
+
+    def test_zero_stake_does_not_divide_by_zero(self):
+        df = pd.DataFrame({
+            "match_date": pd.to_datetime(["2026-01-01"]),
+            "profit": [0.0], "stake": [0.0],
+            "ev_theoretical": [0.0], "win": [False],
+        })
+        m = compute_financial_metrics(df, bankroll=1000.0)
+        assert m["roi_pct"] == 0.0

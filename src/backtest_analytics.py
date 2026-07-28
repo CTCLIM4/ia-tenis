@@ -56,3 +56,25 @@ def load_resolved_bets(path: str, tour: Optional[str] = None) -> pd.DataFrame:
     df["match_date"] = pd.to_datetime(df["match_date"])
 
     return df.sort_values("match_date").reset_index(drop=True)
+
+
+def compute_financial_metrics(df: pd.DataFrame, bankroll: float) -> dict:
+    """Compute headline financial metrics from a resolved-bets DataFrame.
+
+    ROI es sum(profit)/sum(stake) — un ratio de fracciones de Kelly, así que
+    la banca se cancela y no afecta el resultado; solo se usa para convertir
+    a montos en USD (net_profit_usd, avg_stake_usd).
+    """
+    total_profit = df["profit"].sum()
+    total_stake = df["stake"].sum()
+    wins = int(df["win"].sum())
+    return {
+        "roi_pct": (total_profit / total_stake * 100) if total_stake else 0.0,
+        "win_rate_pct": df["win"].mean() * 100,
+        "wins": wins,
+        "losses": len(df) - wins,
+        "net_profit_usd": total_profit * bankroll,
+        "avg_stake_usd": df["stake"].mean() * bankroll,
+        "avg_stake_pct": df["stake"].mean() * 100,
+        "num_bets": len(df),
+    }
