@@ -15,6 +15,7 @@ diseño completo (fórmulas, filtros, y por qué).
 """
 from __future__ import annotations
 
+import argparse
 from pathlib import Path
 from typing import Optional
 
@@ -265,3 +266,21 @@ def run_report(
               "cobertura del audit log.")
 
     print_report(df, financial, risk, calibration, coverage, bankroll)
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Dashboard de rendimiento y analisis de banca (Modulo 2)"
+    )
+    parser.add_argument("--bankroll", type=float, default=DEFAULT_BANKROLL)
+    parser.add_argument("--tour", choices=["atp", "wta", "both"], default="both")
+    parser.add_argument("--bets-file", default=DEFAULT_BETS_PATH)
+    parser.add_argument("--audit-file", default=DEFAULT_AUDIT_PATH)
+    args = parser.parse_args()
+
+    tour = None if args.tour == "both" else args.tour
+    run_report(args.bets_file, args.audit_file, args.bankroll, tour)
+
+
+if __name__ == "__main__":
+    main()

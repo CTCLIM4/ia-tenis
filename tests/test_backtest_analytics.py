@@ -1,6 +1,8 @@
 """Tests for src/backtest_analytics.py — Módulo 2 (backtest analytics dashboard)."""
 from __future__ import annotations
 
+import sys
+
 import pandas as pd
 import pytest
 
@@ -11,6 +13,7 @@ from src.backtest_analytics import (
     compute_risk_metrics,
     load_audit_log,
     load_resolved_bets,
+    main,
     print_report,
     run_report,
 )
@@ -323,3 +326,23 @@ class TestRunReport:
         assert "REPORTE DE RENDIMIENTO Y BANCA" in out
         assert "$500.00" in out
         assert "COBERTURA DEL AUDIT LOG (prediction_audit_log.csv)" in out
+
+
+class TestMain:
+    def test_cli_wires_args_into_run_report(self, tmp_path, capsys, monkeypatch):
+        bets_path = _write_bets_csv(tmp_path)
+        audit_path = _write_audit_csv(tmp_path)
+        argv = [
+            "backtest_analytics",
+            "--bankroll", "2000",
+            "--tour", "wta",
+            "--bets-file", bets_path,
+            "--audit-file", audit_path,
+        ]
+        monkeypatch.setattr(sys, "argv", argv)
+
+        main()
+        out = capsys.readouterr().out
+
+        assert "$2,000.00" in out
+        assert "Apuestas: 1" in out  # only the wta row (B_win) survives --tour wta
