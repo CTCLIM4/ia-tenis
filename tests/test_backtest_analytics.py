@@ -12,6 +12,7 @@ from src.backtest_analytics import (
     load_audit_log,
     load_resolved_bets,
     print_report,
+    run_report,
 )
 
 _BETS_HEADER = "tour,match_date,status,result,kelly_a,kelly_b,odds_a,odds_b,ev_a,ev_b,profit"
@@ -291,3 +292,34 @@ class TestPrintReport:
         out = capsys.readouterr().out
 
         assert "COBERTURA DEL AUDIT LOG: no disponible" in out
+
+
+class TestRunReport:
+    def test_missing_bets_file(self, tmp_path, capsys):
+        run_report(bets_path=str(tmp_path / "nope.csv"), audit_path=str(tmp_path / "nope2.csv"))
+        out = capsys.readouterr().out
+        assert "No se encontro" in out
+
+    def test_zero_resolved_bets(self, tmp_path, capsys):
+        rows = ["atp,2026-01-05,ok,pending,0.05,0.0,2.0,1.9,0.1,-0.05,"]
+        bets_path = _write_bets_csv(tmp_path, rows)
+        run_report(bets_path=bets_path, audit_path=str(tmp_path / "nope.csv"))
+        out = capsys.readouterr().out
+        assert "No hay apuestas resueltas todavia" in out
+
+    def test_normal_run_without_audit_file(self, tmp_path, capsys):
+        bets_path = _write_bets_csv(tmp_path)  # 2 resolved rows (A_win, B_win)
+        run_report(bets_path=bets_path, audit_path=str(tmp_path / "missing_audit.csv"))
+        out = capsys.readouterr().out
+        assert "REPORTE DE RENDIMIENTO Y BANCA" in out
+        assert "Aviso: no se encontro" in out
+        assert "COBERTURA DEL AUDIT LOG: no disponible" in out
+
+    def test_normal_run_with_audit_file(self, tmp_path, capsys):
+        bets_path = _write_bets_csv(tmp_path)
+        audit_path = _write_audit_csv(tmp_path)
+        run_report(bets_path=bets_path, audit_path=audit_path, bankroll=500.0, tour="atp")
+        out = capsys.readouterr().out
+        assert "REPORTE DE RENDIMIENTO Y BANCA" in out
+        assert "$500.00" in out
+        assert "COBERTURA DEL AUDIT LOG (prediction_audit_log.csv)" in out

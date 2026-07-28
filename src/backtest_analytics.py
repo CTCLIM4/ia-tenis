@@ -15,11 +15,16 @@ diseño completo (fórmulas, filtros, y por qué).
 """
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Optional
 
 import pandas as pd
 
 DEFAULT_BANKROLL = 1000.0
+
+_ROOT = Path(__file__).resolve().parent.parent
+DEFAULT_BETS_PATH = str(_ROOT / "data" / "value_bets_log.csv")
+DEFAULT_AUDIT_PATH = str(_ROOT / "data" / "prediction_audit_log.csv")
 
 
 def load_resolved_bets(path: str, tour: Optional[str] = None) -> pd.DataFrame:
@@ -229,3 +234,34 @@ def print_report(
     else:
         print("\nCOBERTURA DEL AUDIT LOG: no disponible "
               "(prediction_audit_log.csv no encontrado).")
+
+
+def run_report(
+    bets_path: str = DEFAULT_BETS_PATH,
+    audit_path: str = DEFAULT_AUDIT_PATH,
+    bankroll: float = DEFAULT_BANKROLL,
+    tour: Optional[str] = None,
+) -> None:
+    if not Path(bets_path).exists():
+        print(f"No se encontro {bets_path}. Corre el modulo de value bets primero "
+              "para generar historial.")
+        return
+
+    df = load_resolved_bets(bets_path, tour)
+    if df.empty:
+        print("No hay apuestas resueltas todavia (status='ok' y result en A_win/B_win).")
+        return
+
+    financial = compute_financial_metrics(df, bankroll)
+    risk = compute_risk_metrics(df, bankroll)
+    calibration = compute_calibration_metrics(df)
+
+    coverage = None
+    if Path(audit_path).exists():
+        audit_df = load_audit_log(audit_path)
+        coverage = compute_audit_coverage(audit_df)
+    else:
+        print(f"Aviso: no se encontro {audit_path} - se omite la seccion de "
+              "cobertura del audit log.")
+
+    print_report(df, financial, risk, calibration, coverage, bankroll)
