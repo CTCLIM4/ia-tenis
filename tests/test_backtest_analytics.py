@@ -5,9 +5,11 @@ import pandas as pd
 import pytest
 
 from src.backtest_analytics import (
+    compute_audit_coverage,
     compute_calibration_metrics,
     compute_financial_metrics,
     compute_risk_metrics,
+    load_audit_log,
     load_resolved_bets,
 )
 
@@ -213,3 +215,39 @@ class TestComputeCalibrationMetrics:
         # real_return per row = profit/stake = [1.0, 1.0, -1.0, -1.0] -> mean 0.0
         assert c["real_return_avg"] == pytest.approx(0.0)
         assert c["difference"] == pytest.approx(-0.0625)
+
+
+_AUDIT_HEADER = "tour,decision"
+_AUDIT_ROWS = [
+    "atp,logged", "wta,logged",
+    "atp,passed_low_edge",
+    "wta,blocked_suspicious", "atp,blocked_suspicious", "atp,blocked_suspicious",
+]
+
+
+def _write_audit_csv(tmp_path):
+    path = tmp_path / "prediction_audit_log.csv"
+    path.write_text(_AUDIT_HEADER + "\n" + "\n".join(_AUDIT_ROWS) + "\n", encoding="utf-8")
+    return str(path)
+
+
+class TestLoadAuditLog:
+    def test_loads_all_rows(self, tmp_path):
+        df = load_audit_log(_write_audit_csv(tmp_path))
+        assert len(df) == 6
+
+
+class TestComputeAuditCoverage:
+    def test_counts_by_decision(self, tmp_path):
+        audit_df = load_audit_log(_write_audit_csv(tmp_path))
+        cov = compute_audit_coverage(audit_df)
+        assert cov["total"] == 6
+        assert cov["by_decision"] == {
+            "logged": 2,
+            "passed_low_edge": 1,
+            "passed_user_declined": 0,
+            "blocked_suspicious": 3,
+            "invalid_missing_elo": 0,
+        }
+        assert cov["logged"] == 2
+        assert cov["passed"] == 4

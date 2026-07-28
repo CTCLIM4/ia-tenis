@@ -145,3 +145,26 @@ def compute_calibration_metrics(df: pd.DataFrame) -> dict:
         "real_return_avg": real_return_avg,
         "difference": real_return_avg - ev_theoretical_avg,
     }
+
+
+_DECISION_CATEGORIES = [
+    "logged", "passed_low_edge", "passed_user_declined",
+    "blocked_suspicious", "invalid_missing_elo",
+]
+
+
+def load_audit_log(path: str) -> pd.DataFrame:
+    return pd.read_csv(path)
+
+
+def compute_audit_coverage(audit_df: pd.DataFrame) -> dict:
+    counts = audit_df["decision"].value_counts()
+    by_decision = {cat: int(counts.get(cat, 0)) for cat in _DECISION_CATEGORIES}
+    total = len(audit_df)
+    logged = by_decision["logged"]
+    return {
+        "total": total,
+        "by_decision": by_decision,
+        "logged": logged,
+        "passed": total - logged,
+    }
