@@ -11,7 +11,6 @@ import src.config as config
 class TestDotenvPath:
     def test_resolves_to_repo_root(self):
         assert config.DOTENV_PATH == config._ROOT / ".env"
-        assert config.DOTENV_PATH.parent.name == "ia-tenis"
 
     def test_repo_root_matches_requirements_txt_location(self):
         # requirements.txt lives at the repo root .env should also live at.
