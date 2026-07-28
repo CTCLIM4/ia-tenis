@@ -11,9 +11,10 @@ Uso:
   python -m src.daily_scanner --tour atp        # solo ATP
   python -m src.daily_scanner --days-ahead 2    # incluye partidos hasta 2 dias vista
 
-Requiere ODDS_API_KEY en el entorno — a diferencia de la CLI interactiva,
-este modulo no tiene fallback manual (no hay humano tipeando cuotas para
-cada partido descubierto).
+Requiere ODDS_API_KEY en el entorno (o en un archivo .env en la raiz del
+repo, ver .env.example — cargado automaticamente por src.config) — a
+diferencia de la CLI interactiva, este modulo no tiene fallback manual (no
+hay humano tipeando cuotas para cada partido descubierto).
 
 Descubrimiento: The Odds API publica el tenis con un sport_key por torneo
 activo (ej. 'tennis_atp_wimbledon'), no un key generico por tour. Este
@@ -48,6 +49,7 @@ from dataclasses import dataclass
 from datetime import date, datetime, timedelta, timezone
 from typing import Optional
 
+import src.config  # noqa: F401  (side effect: carga .env antes de leer ODDS_API_KEY)
 from src.calibration_audit import classify_audit_decision, log_prediction_audit
 from src.odds_api import (
     DEFAULT_BOOKMAKER,

@@ -36,6 +36,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline, make_pipeline
 from sklearn.preprocessing import StandardScaler
 
+import src.config  # noqa: F401  (side effect: carga .env antes de leer ODDS_API_KEY)
 from src.backtest.walkforward import _MIRROR_FLIP_COLS, load_features_with_mirror
 from src.calibration_audit import classify_audit_decision, log_prediction_audit
 from src.data.snapshots import load_snapshot_metadata, resolve_snapshot_path
