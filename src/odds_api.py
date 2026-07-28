@@ -16,7 +16,7 @@ _ROOT = Path(__file__).resolve().parent.parent
 CACHE_DIR = _ROOT / "data" / "odds_cache"
 
 ODDS_API_BASE = "https://api.the-odds-api.com/v4/sports"
-DEFAULT_BOOKMAKER = "bet365"
+DEFAULT_BOOKMAKER = "pinnacle"
 DEFAULT_CACHE_MINUTES = 15
 
 

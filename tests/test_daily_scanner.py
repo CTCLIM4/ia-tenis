@@ -13,6 +13,7 @@ from src.daily_scanner import (
     evaluate_matches,
     print_value_bets_table,
 )
+from src.odds_api import DEFAULT_BOOKMAKER
 from src.value_analysis import SUSPICIOUS_EDGE_THRESHOLD
 
 
@@ -79,7 +80,9 @@ class TestDiscoverMatches:
         ])
         monkeypatch.setattr(
             scanner, "fetch_odds_events_by_key",
-            lambda sport_key, api_key: [_event("Novak Djokovic", "Jannik Sinner")],
+            lambda sport_key, api_key: [
+                _event("Novak Djokovic", "Jannik Sinner", bookmaker_key=DEFAULT_BOOKMAKER)
+            ],
         )
         now = datetime(2026, 7, 27, 0, 0, tzinfo=timezone.utc)
         monkeypatch.setattr(scanner, "_now", lambda: now)

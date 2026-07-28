@@ -14,7 +14,7 @@ y luego queda cacheado 7 días en data/model_cache/{tour}.pkl.
 
 Cuotas: si ODDS_API_KEY esta configurada en el entorno, se intenta
 autocompletar la cuota de cada jugador via The Odds API (bookmaker fijo,
-default "bet365" — configurable con ODDS_API_BOOKMAKER, cache de eventos
+default "pinnacle" — configurable con ODDS_API_BOOKMAKER, cache de eventos
 configurable con ODDS_API_CACHE_MINUTES). Si no hay key, no hay match, o
 falla la llamada, se pide la cuota a mano igual que antes — el auto-fetch
 nunca bloquea el flujo.

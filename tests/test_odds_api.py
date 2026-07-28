@@ -4,12 +4,23 @@ from __future__ import annotations
 import json
 
 from src.odds_api import (
+    DEFAULT_BOOKMAKER,
     MatchOdds,
     _first_initial,
     _normalize_name,
     find_match_odds,
     list_tennis_sport_keys,
 )
+
+
+class TestDefaultBookmaker:
+    def test_is_pinnacle_not_bet365(self):
+        # bet365 does not appear in The Odds API's feed for any region
+        # (verified against a real API key on 2026-07-28, tennis_atp_washington_open,
+        # regions=eu,uk,us,us2,au combined) — a bookmaker=bet365 default silently
+        # finds zero events forever. pinnacle is used as the reference "sharp"
+        # book instead (lowest vig, closest proxy to true probability).
+        assert DEFAULT_BOOKMAKER == "pinnacle"
 
 
 # ── _normalize_name ──────────────────────────────────────────────────────────
@@ -50,7 +61,7 @@ class TestFirstInitial:
 
 # ── find_match_odds ───────────────────────────────────────────────────────────
 
-def _event(home, away, bookmaker_key="bet365", prices=None):
+def _event(home, away, bookmaker_key=DEFAULT_BOOKMAKER, prices=None):
     prices = prices or {home: 1.50, away: 2.60}
     return {
         "home_team": home,
