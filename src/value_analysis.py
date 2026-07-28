@@ -41,6 +41,7 @@ from src.backtest.walkforward import _MIRROR_FLIP_COLS, load_features_with_mirro
 from src.calibration_audit import classify_audit_decision, log_prediction_audit
 from src.data.snapshots import load_snapshot_metadata, resolve_snapshot_path
 from src.data.staleness import StalenessLevel, evaluate_staleness
+from src.features import FEATURE_COLS
 from src.features.decay import EloHistoryTracker, calculate_decay_features
 from src.odds_api import DEFAULT_BOOKMAKER, DEFAULT_CACHE_MINUTES, MatchOdds, get_match_odds
 
@@ -51,11 +52,6 @@ _CACHE_DIR = _DATA_DIR / "model_cache"
 LOG_PATH   = _DATA_DIR / "value_bets_log.csv"
 
 # ── model constants ──────────────────────────────────────────────────────────
-FEATURE_COLS = [
-    "elo_diff", "elo_prob", "rank_diff",
-    "form_diff", "surface_form_diff", "h2h_rate", "rest_diff",
-    "rolling_elo_diff", "age_multiplier_diff", "rust_factor_diff", "adjusted_elo_diff",
-]
 KELLY_CAP         = 0.05   # max 5% of bankroll (conservative)
 CACHE_MAX_AGE_DAYS = 7     # rebuild if cache older than this
 SUSPICIOUS_EDGE_THRESHOLD = 0.10  # hard-block logging above this when --halt-on-suspicious

@@ -6,23 +6,10 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, brier_score_loss, log_loss
 from sklearn.preprocessing import StandardScaler
 
+from src.features import FEATURE_COLS as _FEATURE_COLS
 from src.features.decay import EloHistoryTracker, calculate_decay_features
 from src.features.engineering import FeatureBuilder
 from src.models.elo import EloSystem
-
-_FEATURE_COLS = [
-    "elo_diff",
-    "elo_prob",
-    "rank_diff",
-    "form_diff",
-    "surface_form_diff",
-    "h2h_rate",
-    "rest_diff",
-    "rolling_elo_diff",
-    "age_multiplier_diff",
-    "rust_factor_diff",
-    "adjusted_elo_diff",
-]
 
 _MIRROR_FLIP_COLS = (
     "elo_diff", "rank_diff", "form_diff", "surface_form_diff", "rest_diff",
