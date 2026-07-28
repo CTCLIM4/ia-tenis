@@ -127,3 +127,21 @@ def compute_risk_metrics(df: pd.DataFrame, bankroll: float) -> dict:
         "max_win_streak": _max_streak(win_sequence, True),
         "max_loss_streak": _max_streak(win_sequence, False),
     }
+
+
+def compute_calibration_metrics(df: pd.DataFrame) -> dict:
+    """Compare theoretical EV against what actually happened, per unit risked.
+
+    ev_theoretical is expected return per unit staked (dimensionless, not
+    Kelly-scaled). profit IS Kelly-scaled, so it's normalized back to a
+    per-unit return via profit/stake before comparing — this is an unweighted
+    mean of per-row unit returns, deliberately different from
+    compute_financial_metrics's roi_pct (a stake-weighted aggregate).
+    """
+    ev_theoretical_avg = df["ev_theoretical"].mean()
+    real_return_avg = (df["profit"] / df["stake"]).mean()
+    return {
+        "ev_theoretical_avg": ev_theoretical_avg,
+        "real_return_avg": real_return_avg,
+        "difference": real_return_avg - ev_theoretical_avg,
+    }

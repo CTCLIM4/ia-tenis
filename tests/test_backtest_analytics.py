@@ -5,6 +5,7 @@ import pandas as pd
 import pytest
 
 from src.backtest_analytics import (
+    compute_calibration_metrics,
     compute_financial_metrics,
     compute_risk_metrics,
     load_resolved_bets,
@@ -201,3 +202,14 @@ class TestComputeRiskMetrics:
         r = compute_risk_metrics(df, bankroll=1000.0)
         assert r["max_drawdown_usd"] == pytest.approx(-100.0)
         assert r["max_drawdown_pct"] == pytest.approx(-10.0)
+
+
+class TestComputeCalibrationMetrics:
+    def test_metrics(self):
+        df = _synthetic_resolved_df()
+        c = compute_calibration_metrics(df)
+        # ev_theoretical mean = (.10+.08+.05+.02)/4 = 0.0625
+        assert c["ev_theoretical_avg"] == pytest.approx(0.0625)
+        # real_return per row = profit/stake = [1.0, 1.0, -1.0, -1.0] -> mean 0.0
+        assert c["real_return_avg"] == pytest.approx(0.0)
+        assert c["difference"] == pytest.approx(-0.0625)
