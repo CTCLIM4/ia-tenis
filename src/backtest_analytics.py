@@ -168,3 +168,64 @@ def compute_audit_coverage(audit_df: pd.DataFrame) -> dict:
         "logged": logged,
         "passed": total - logged,
     }
+
+
+SMALL_SAMPLE_THRESHOLD = 30
+
+
+def print_report(
+    df: pd.DataFrame,
+    financial: dict,
+    risk: dict,
+    calibration: dict,
+    coverage: Optional[dict],
+    bankroll: float,
+) -> None:
+    n = len(df)
+    period_start = df["match_date"].min().date().isoformat()
+    period_end = df["match_date"].max().date().isoformat()
+
+    print("=" * 60)
+    print(" REPORTE DE RENDIMIENTO Y BANCA - Modulo 2")
+    print(f" Banca base: ${bankroll:,.2f} | Periodo: {period_start} a {period_end} "
+          f"| Apuestas: {n}")
+    print("=" * 60)
+
+    if n < SMALL_SAMPLE_THRESHOLD:
+        print(f"\n  *** Muestra pequena (N={n} < {SMALL_SAMPLE_THRESHOLD}) - "
+              "metricas poco confiables todavia. ***")
+
+    print("\nMETRICAS FINANCIERAS")
+    print(f"  ROI acumulado:            {financial['roi_pct']:+.2f}%")
+    print(f"  Win Rate:                   {financial['win_rate_pct']:.1f}%   "
+          f"({financial['wins']}W / {financial['losses']}L)")
+    print(f"  Beneficio Neto:           {financial['net_profit_usd']:+,.2f}$")
+    print(f"  Stake promedio:            {financial['avg_stake_usd']:,.2f}$   "
+          f"({financial['avg_stake_pct']:.2f}% banca)")
+    print(f"  Apuestas procesadas:      {financial['num_bets']:>5}")
+
+    print("\nMETRICAS DE RIESGO")
+    print(f"  Drawdown maximo:          {risk['max_drawdown_usd']:+,.2f}$   "
+          f"({risk['max_drawdown_pct']:+.1f}%)")
+    print(f"  Varianza (profit):        {risk['variance']:.5f}")
+    print(f"  Racha ganadora maxima:    {risk['max_win_streak']:>5}")
+    print(f"  Racha perdedora maxima:   {risk['max_loss_streak']:>5}")
+
+    print("\nCALIBRACION: EV TEORICO vs BENEFICIO REAL")
+    print(f"  EV teorico promedio (por unidad):    "
+          f"{calibration['ev_theoretical_avg'] * 100:+.1f}%")
+    print(f"  Retorno real promedio (por unidad):  "
+          f"{calibration['real_return_avg'] * 100:+.1f}%")
+    print(f"  Diferencia (real - teorico):         "
+          f"{calibration['difference'] * 100:+.1f} pp")
+
+    if coverage is not None:
+        print("\nCOBERTURA DEL AUDIT LOG (prediction_audit_log.csv)")
+        print(f"  Predicciones evaluadas totales: {coverage['total']:>4}")
+        for cat, count in coverage["by_decision"].items():
+            pct = (count / coverage["total"] * 100) if coverage["total"] else 0.0
+            print(f"    {cat:<22}{count:>4} ({pct:.1f}%)")
+        print(f"  Logged (apostadas) vs resto:  {coverage['logged']} vs {coverage['passed']}")
+    else:
+        print("\nCOBERTURA DEL AUDIT LOG: no disponible "
+              "(prediction_audit_log.csv no encontrado).")

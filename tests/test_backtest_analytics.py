@@ -11,6 +11,7 @@ from src.backtest_analytics import (
     compute_risk_metrics,
     load_audit_log,
     load_resolved_bets,
+    print_report,
 )
 
 _BETS_HEADER = "tour,match_date,status,result,kelly_a,kelly_b,odds_a,odds_b,ev_a,ev_b,profit"
@@ -251,3 +252,42 @@ class TestComputeAuditCoverage:
         }
         assert cov["logged"] == 2
         assert cov["passed"] == 4
+
+
+class TestPrintReport:
+    def test_report_contains_all_sections(self, capsys):
+        df = _synthetic_resolved_df()
+        financial = compute_financial_metrics(df, bankroll=1000.0)
+        risk = compute_risk_metrics(df, bankroll=1000.0)
+        calibration = compute_calibration_metrics(df)
+        coverage = {
+            "total": 6,
+            "by_decision": {
+                "logged": 2, "passed_low_edge": 1, "passed_user_declined": 0,
+                "blocked_suspicious": 3, "invalid_missing_elo": 0,
+            },
+            "logged": 2, "passed": 4,
+        }
+
+        print_report(df, financial, risk, calibration, coverage, bankroll=1000.0)
+        out = capsys.readouterr().out
+
+        assert "REPORTE DE RENDIMIENTO Y BANCA" in out
+        assert "$1,000.00" in out
+        assert "2026-01-01 a 2026-01-04" in out
+        assert "METRICAS FINANCIERAS" in out
+        assert "METRICAS DE RIESGO" in out
+        assert "CALIBRACION" in out
+        assert "COBERTURA DEL AUDIT LOG" in out
+        assert "Muestra pequena" in out  # N=4 < 30
+
+    def test_report_without_coverage(self, capsys):
+        df = _synthetic_resolved_df()
+        financial = compute_financial_metrics(df, bankroll=1000.0)
+        risk = compute_risk_metrics(df, bankroll=1000.0)
+        calibration = compute_calibration_metrics(df)
+
+        print_report(df, financial, risk, calibration, None, bankroll=1000.0)
+        out = capsys.readouterr().out
+
+        assert "COBERTURA DEL AUDIT LOG: no disponible" in out
