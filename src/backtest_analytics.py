@@ -98,6 +98,15 @@ def compute_risk_metrics(df: pd.DataFrame, bankroll: float) -> dict:
     chronologically by match_date, then derives max drawdown (both in USD
     and as a % of the running peak) and the longest win/loss streaks.
     """
+    if df.empty:
+        return {
+            "max_drawdown_usd": 0.0,
+            "max_drawdown_pct": 0.0,
+            "variance": 0.0,
+            "max_win_streak": 0,
+            "max_loss_streak": 0,
+        }
+
     ordered = df.sort_values("match_date")
     equity = bankroll + ordered["profit"].cumsum() * bankroll
     running_max = equity.cummax()

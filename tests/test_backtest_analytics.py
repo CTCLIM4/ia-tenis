@@ -152,3 +152,52 @@ class TestComputeRiskMetrics:
         })
         r = compute_risk_metrics(df, bankroll=1000.0)
         assert r["variance"] == 0.0
+
+    def test_empty_df_returns_zeros(self):
+        df = pd.DataFrame({
+            "match_date": pd.to_datetime([]),
+            "profit": pd.Series(dtype=float),
+            "stake": pd.Series(dtype=float),
+            "ev_theoretical": pd.Series(dtype=float),
+            "win": pd.Series(dtype=bool),
+        })
+        r = compute_risk_metrics(df, bankroll=1000.0)
+        assert r == {
+            "max_drawdown_usd": 0.0,
+            "max_drawdown_pct": 0.0,
+            "variance": 0.0,
+            "max_win_streak": 0,
+            "max_loss_streak": 0,
+        }
+
+    def test_zero_drawdown_when_all_wins(self):
+        df = pd.DataFrame({
+            "match_date": pd.to_datetime(["2026-01-01", "2026-01-02", "2026-01-03"]),
+            "profit": [0.02, 0.03, 0.01],
+            "stake": [0.02, 0.03, 0.01],
+            "ev_theoretical": [0.02, 0.03, 0.01],
+            "win": [True, True, True],
+        })
+        r = compute_risk_metrics(df, bankroll=1000.0)
+        assert r["max_drawdown_usd"] == pytest.approx(0.0)
+        assert r["max_drawdown_pct"] == pytest.approx(0.0)
+
+    def test_drawdown_tie_break_picks_larger_magnitude_pct(self):
+        # peak $1000 -> dip $900 (-$100, -10%); later peak $2000 -> dip $1900
+        # (-$100, -5%). Both troughs tie on dollar drawdown; idxmin() picks
+        # the first occurrence, whose running_max (peak) is <= the later
+        # tied trough's peak (cummax is monotonically non-decreasing), so
+        # the earlier/lower-peak trough is always the equal-or-more-severe
+        # % reading.
+        df = pd.DataFrame({
+            "match_date": pd.to_datetime([
+                "2026-01-01", "2026-01-02", "2026-01-03", "2026-01-04",
+            ]),
+            "profit": [0.0, -0.1, 1.0, -0.1],
+            "stake": [0.0, 0.1, 1.0, 0.1],
+            "ev_theoretical": [0.0, 0.1, 1.0, 0.1],
+            "win": [False, False, True, False],
+        })
+        r = compute_risk_metrics(df, bankroll=1000.0)
+        assert r["max_drawdown_usd"] == pytest.approx(-100.0)
+        assert r["max_drawdown_pct"] == pytest.approx(-10.0)
