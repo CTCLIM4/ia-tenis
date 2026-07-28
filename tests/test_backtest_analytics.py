@@ -21,6 +21,12 @@ _BETS_ROWS = [
     "atp,2026-01-06,test_never_played,excluded,0.0,0.0,1.5,2.5,0.0,0.0,",
 ]
 
+# Row F: excluded — resolved, status ok, but no edge on either side (both Kelly
+# fractions 0), meaning no real stake was ever placed. Reachable via the
+# interactive CLI's "Guardar en log? (s/n)" prompt, which defaults to yes with
+# no has_value gate (see src/value_analysis.py around line 1114).
+_ZERO_STAKE_ROW = "atp,2026-01-07,ok,A_win,0.0,0.0,2.0,1.9,0.0,0.0,0.0"
+
 
 def _write_bets_csv(tmp_path, rows=_BETS_ROWS):
     path = tmp_path / "value_bets_log.csv"
@@ -61,3 +67,9 @@ class TestLoadResolvedBets:
         rows = list(reversed(_BETS_ROWS[:2]))  # B before A in the file
         df = load_resolved_bets(_write_bets_csv(tmp_path, rows))
         assert list(df["result"]) == ["A_win", "B_win"]
+
+    def test_excludes_zero_stake_rows(self, tmp_path):
+        rows = _BETS_ROWS + [_ZERO_STAKE_ROW]
+        df = load_resolved_bets(_write_bets_csv(tmp_path, rows))
+        assert len(df) == 2
+        assert set(df["match_date"].dt.strftime("%Y-%m-%d")) == {"2026-01-01", "2026-01-02"}

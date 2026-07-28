@@ -28,7 +28,9 @@ def load_resolved_bets(path: str, tour: Optional[str] = None) -> pd.DataFrame:
     Keeps only status=='ok' and result in {'A_win','B_win'} — excludes test
     rows, missing-Elo rows, and unresolved/discarded rows, which would
     otherwise contaminate financial/risk metrics with data that isn't a real
-    settled bet.
+    settled bet. Also excludes resolved rows where neither side has a
+    positive Kelly stake (kelly_a == kelly_b == 0): a no-edge match logged
+    without a real bet — reachable via the interactive CLI's save prompt.
 
     Derives per-row bet_side/stake/odds_taken/ev_theoretical/win from
     whichever side (a/b) actually has kelly_<side> > 0 — deterministic since
@@ -39,6 +41,11 @@ def load_resolved_bets(path: str, tour: Optional[str] = None) -> pd.DataFrame:
     df = df[(df["status"] == "ok") & (df["result"].isin(["A_win", "B_win"]))].copy()
     if tour and tour != "both":
         df = df[df["tour"] == tour]
+
+    # Exclude rows where neither side has a positive Kelly stake: no real bet
+    # was placed (e.g. the interactive CLI's "Guardar en log?" prompt can log
+    # a no-edge match), so there's nothing to attribute a bet_side/stake to.
+    df = df[(df["kelly_a"] > 0) | (df["kelly_b"] > 0)].copy()
 
     bet_side = df["kelly_a"].gt(0).map({True: "a", False: "b"})
     df["bet_side"] = bet_side
