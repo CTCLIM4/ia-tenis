@@ -39,6 +39,10 @@ class TestTournamentDictionaryFallback:
     def test_prague(self):
         assert resolve_surface("WTA Prague", "tennis_wta_prague") == "hard"
 
+    def test_washington_open(self):
+        assert resolve_surface("ATP Washington Open", "tennis_atp_washington_open") == "hard"
+        assert resolve_surface("WTA Washington Open", "tennis_wta_washington_open") == "hard"
+
 
 class TestUnknownSurface:
     def test_unknown_tournament_returns_none(self):

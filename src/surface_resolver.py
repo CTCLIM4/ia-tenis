@@ -40,6 +40,7 @@ TOURNAMENT_SURFACES = {
     "estoril": "clay",
     "hamburg": "clay",
     "prague": "hard",
+    "washington": "hard",
 }
 
 
