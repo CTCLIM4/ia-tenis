@@ -78,3 +78,43 @@ def compute_financial_metrics(df: pd.DataFrame, bankroll: float) -> dict:
         "avg_stake_pct": df["stake"].mean() * 100,
         "num_bets": len(df),
     }
+
+
+def _max_streak(values: list, target: bool) -> int:
+    best = current = 0
+    for v in values:
+        if v == target:
+            current += 1
+            best = max(best, current)
+        else:
+            current = 0
+    return best
+
+
+def compute_risk_metrics(df: pd.DataFrame, bankroll: float) -> dict:
+    """Compute equity-curve-derived risk metrics from a resolved-bets DataFrame.
+
+    Builds the equity curve as bankroll + cumsum(profit)*bankroll, ordered
+    chronologically by match_date, then derives max drawdown (both in USD
+    and as a % of the running peak) and the longest win/loss streaks.
+    """
+    ordered = df.sort_values("match_date")
+    equity = bankroll + ordered["profit"].cumsum() * bankroll
+    running_max = equity.cummax()
+    drawdown_usd = equity - running_max
+
+    max_drawdown_usd = drawdown_usd.min()
+    trough_idx = drawdown_usd.idxmin()
+    peak_at_trough = running_max.loc[trough_idx]
+    max_drawdown_pct = (max_drawdown_usd / peak_at_trough * 100) if peak_at_trough else 0.0
+
+    variance = ordered["profit"].var(ddof=1) if len(ordered) > 1 else 0.0
+
+    win_sequence = ordered["win"].tolist()
+    return {
+        "max_drawdown_usd": max_drawdown_usd,
+        "max_drawdown_pct": max_drawdown_pct,
+        "variance": 0.0 if pd.isna(variance) else variance,
+        "max_win_streak": _max_streak(win_sequence, True),
+        "max_loss_streak": _max_streak(win_sequence, False),
+    }

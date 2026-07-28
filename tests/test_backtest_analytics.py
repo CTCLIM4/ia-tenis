@@ -4,7 +4,11 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-from src.backtest_analytics import compute_financial_metrics, load_resolved_bets
+from src.backtest_analytics import (
+    compute_financial_metrics,
+    compute_risk_metrics,
+    load_resolved_bets,
+)
 
 _BETS_HEADER = "tour,match_date,status,result,kelly_a,kelly_b,odds_a,odds_b,ev_a,ev_b,profit"
 
@@ -111,3 +115,40 @@ class TestComputeFinancialMetrics:
         })
         m = compute_financial_metrics(df, bankroll=1000.0)
         assert m["roi_pct"] == 0.0
+
+
+class TestComputeRiskMetrics:
+    def test_metrics(self):
+        df = _synthetic_resolved_df()
+        r = compute_risk_metrics(df, bankroll=1000.0)
+        # equity = 1000 + cumsum([.05,.03,-.04,-.02])*1000 = [1050,1080,1040,1020]
+        # running_max = [1050,1080,1080,1080]; drawdown = [0,0,-40,-60]
+        assert r["max_drawdown_usd"] == pytest.approx(-60.0)
+        # -60 / 1080 * 100
+        assert r["max_drawdown_pct"] == pytest.approx(-5.555556, rel=1e-4)
+        # sample variance (ddof=1) of [0.05,0.03,-0.04,-0.02]
+        assert r["variance"] == pytest.approx(0.0017667, rel=1e-3)
+        # win sequence [T,T,F,F]
+        assert r["max_win_streak"] == 2
+        assert r["max_loss_streak"] == 2
+
+    def test_streak_breaks_correctly(self):
+        df = pd.DataFrame({
+            "match_date": pd.to_datetime([f"2026-01-0{i}" for i in range(1, 6)]),
+            "profit": [0.01, 0.01, 0.01, -0.01, 0.01],
+            "stake": [0.01] * 5,
+            "ev_theoretical": [0.05] * 5,
+            "win": [True, True, True, False, True],
+        })
+        r = compute_risk_metrics(df, bankroll=1000.0)
+        assert r["max_win_streak"] == 3
+        assert r["max_loss_streak"] == 1
+
+    def test_single_row_variance_is_zero(self):
+        df = pd.DataFrame({
+            "match_date": pd.to_datetime(["2026-01-01"]),
+            "profit": [0.02], "stake": [0.02],
+            "ev_theoretical": [0.02], "win": [True],
+        })
+        r = compute_risk_metrics(df, bankroll=1000.0)
+        assert r["variance"] == 0.0
