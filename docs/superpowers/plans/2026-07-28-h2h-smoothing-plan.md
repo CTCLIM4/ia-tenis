@@ -29,11 +29,21 @@ líneas finales:
   Mean Log-Loss : X.XXXX  (Elo-only: X.XXXX)
 ```
 
-- [ ] **Step 2: Guardar el baseline en el propio plan**
+- [x] **Step 2: Guardar el baseline en el propio plan**
 
-Pegar los 4 números (ATP accuracy/log-loss, WTA accuracy/log-loss) como
-comentario en este archivo de plan, junto a este task, para referencia en
-Task 6. No requiere commit — es solo registro de referencia.
+**Baseline capturado 2026-07-28** (worktree `feature/h2h-smoothing`, datos
+crudos copiados manualmente desde el checkout principal ya que `data/raw/`
+está gitignored):
+
+```
+ATP: Mean Accuracy : 0.6690  (Elo-only: 0.6549)
+     Mean Log-Loss : 0.6026  (Elo-only: 0.6219)
+     Years tested  : 24
+
+WTA: Mean Accuracy : 0.6449  (Elo-only: 0.6325)
+     Mean Log-Loss : 0.6263  (Elo-only: 0.6395)
+     Years tested  : 8
+```
 
 ---
 
@@ -507,18 +517,29 @@ git commit -m "test: verify h2h_rate reaches the LR input vector positionally"
 **Files:**
 - Regenerated (gitignored, no commit): `data/processed/atp_features.csv`, `data/processed/wta_features.csv`
 
-- [ ] **Step 1: Regenerar y correr el backtest para ambos tours**
+- [x] **Step 1: Regenerar y correr el backtest para ambos tours**
 
 Run: `./tenis-env/Scripts/python.exe -m src.pipeline atp`
 Run: `./tenis-env/Scripts/python.exe -m src.pipeline wta`
 
-- [ ] **Step 2: Comparar contra el baseline de Task 1**
+- [x] **Step 2: Comparar contra el baseline de Task 1**
 
-Para cada tour, comparar `Mean Accuracy` y `Mean Log-Loss` contra los números
-guardados en Task 1. Reportar la diferencia exacta (ej. "ATP accuracy
-0.6423 → 0.6431, +0.08pp; log-loss 0.6011 → 0.5998, -0.0013").
+**Resultados 2026-07-28:**
 
-- [ ] **Step 3: Decisión**
+```
+ATP: Accuracy 0.6690 -> 0.6688  (-0.02pp)
+     Log-Loss 0.6026 -> 0.6024  (-0.0002, mejora marginal)
+
+WTA: Accuracy 0.6449 -> 0.6443  (-0.06pp)
+     Log-Loss 0.6263 -> 0.6264  (+0.0001, empeora marginal)
+```
+
+Ambas diferencias están dentro del ruido (centésimas de punto porcentual) —
+no hay mejora ni empeoramiento claro en ninguno de los dos tours a nivel
+agregado (media de 24 años ATP / 8 años WTA). Resultado esencialmente neutro,
+no concluyente en ninguna dirección.
+
+- [x] **Step 3: Decisión**
 
 Si accuracy sube y/o log-loss baja en ambos tours (o al menos no empeora
 significativamente en ninguno): la feature se considera validada, queda tal
