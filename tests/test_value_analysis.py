@@ -588,6 +588,36 @@ class TestBuildPredictionFeaturesDecay:
         assert feats["adjusted_elo_diff"] < feats["elo_diff"]
 
 
+class TestPredictMatchH2hWiring:
+    def test_h2h_rate_reaches_lr_input_vector(self):
+        """Proves h2h_rate is positionally wired into the LR input, the same
+        way TestPredictMatchAgeLookup proves it for adjusted_elo_diff."""
+        elo = _fake_elo({"A": 1500.0, "B": 1500.0})
+        elo.get_effective_rating = lambda p, s: 1500.0
+        elo.expected_score = lambda a, b: 0.5
+        fb = SimpleNamespace(
+            get_features=lambda p, o, s, d: {
+                "recent_win_rate": 0.5, "recent_win_rate_surface": 0.5,
+                "h2h_win_rate": 0.9, "h2h_matches": 5, "rest_days": 14.0,
+            },
+            match_dates=lambda p: [],
+        )
+
+        class _StubClf:
+            def predict_proba(self, X):
+                import numpy as _np
+                idx = FEATURE_COLS.index("h2h_rate")
+                h2h = X[0][idx]
+                return _np.array([[1 - h2h, h2h]])
+
+        pred = predict_match(
+            elo, fb, _StubClf(),
+            "A", "B", "clay", date(2026, 7, 21),
+            rank_lookup=None, age_lookup=None,
+        )
+        assert pred["p_a_raw"] == pytest.approx(0.9)
+
+
 class TestPredictMatchAgeLookup:
     def test_auto_fills_age_from_lookup_and_lowers_veterans_win_prob(self):
         """An aging, rusty veteran with a big historical Elo edge should get
