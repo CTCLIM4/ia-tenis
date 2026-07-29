@@ -715,21 +715,29 @@ wiring, no un task aparte.)
 **Files:**
 - Regenerated (gitignored, no commit): `data/processed/atp_features.csv`, `data/processed/wta_features.csv`
 
-- [ ] **Step 1: Regenerar y correr el backtest para ambos tours**
+- [x] **Step 1: Regenerar y correr el backtest para ambos tours**
 
 Run: `./tenis-env/Scripts/python.exe -m src.pipeline atp`
 Run: `./tenis-env/Scripts/python.exe -m src.pipeline wta`
 
-- [ ] **Step 2: Comparar contra el baseline (reutilizado de 3a, ver arriba)**
+- [x] **Step 2: Comparar contra el baseline (reutilizado de 3a, ver arriba)**
+
+**Resultados 2026-07-28:**
 
 ```
-ATP baseline: Accuracy 0.6688, Log-Loss 0.6024
-WTA baseline: Accuracy 0.6443, Log-Loss 0.6264
+ATP: Accuracy 0.6688 -> 0.6692  (+0.04pp)
+     Log-Loss 0.6024 -> 0.6019  (-0.0005, mejora)
+
+WTA: Accuracy 0.6443 -> 0.6445  (+0.02pp)
+     Log-Loss 0.6264 -> 0.6261  (-0.0003, mejora)
 ```
 
-Reportar la diferencia exacta para cada tour.
+A diferencia de H2H (3a, resultado neutro/mixto), fatiga mejora **ambas
+métricas en ambos tours** — consistente, aunque la magnitud es pequeña
+(centésimas de punto), dentro de lo esperable para constantes sin calibrar
+(`FATIGUE_PENALTY_MAX=0.15` es un tope deliberadamente conservador).
 
-- [ ] **Step 3: Decisión**
+- [x] **Step 3: Decisión**
 
 Igual que en 3a — el usuario decide si mantener, ajustar las constantes
 (`FATIGUE_MATCH_TARGET_*`, `FATIGUE_SET_TARGET_*`, `FATIGUE_RECENT_WEIGHT`,
