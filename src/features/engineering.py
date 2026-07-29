@@ -74,6 +74,15 @@ class FeatureBuilder:
         """This player's own (match_date, sets_played) history, oldest first."""
         return list(self._workload_history[player])
 
+    def last_surface_and_date(self, player: str) -> Optional[Tuple[date, str]]:
+        """This player's most recent match's (date, surface), or None if
+        they have no history yet."""
+        history = self._history[player]
+        if not history:
+            return None
+        d, s, _ = history[-1]
+        return (d, s)
+
     def update(self, winner: str, loser: str, surface: str, match_date: date, sets_played: int = 0) -> None:
         self._history[winner].append((match_date, surface, True))
         self._history[loser].append((match_date, surface, False))

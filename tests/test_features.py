@@ -163,3 +163,21 @@ class TestWorkloadHistory:
         assert fb.workload_history("A") == [
             (date(2023, 1, 1), 2), (date(2023, 1, 10), 3),
         ]
+
+
+class TestLastSurfaceAndDate:
+    def test_none_for_new_player(self):
+        fb = FeatureBuilder()
+        assert fb.last_surface_and_date("A") is None
+
+    def test_returns_most_recent_match(self):
+        fb = FeatureBuilder()
+        fb.update("A", "B", "clay", date(2023, 1, 1))
+        fb.update("A", "C", "grass", date(2023, 1, 10))
+        assert fb.last_surface_and_date("A") == (date(2023, 1, 10), "grass")
+
+    def test_tracks_both_winner_and_loser(self):
+        fb = FeatureBuilder()
+        fb.update("A", "B", "hard", date(2023, 1, 1))
+        assert fb.last_surface_and_date("A") == (date(2023, 1, 1), "hard")
+        assert fb.last_surface_and_date("B") == (date(2023, 1, 1), "hard")
