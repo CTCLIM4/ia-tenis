@@ -578,9 +578,11 @@ def build_prediction_features(
     tracker = elo_tracker if elo_tracker is not None else EloHistoryTracker()
     decay_a = calculate_decay_features(
         elo_a, tracker, pa_key, surface, fb.match_dates(pa_key), match_date, age_a,
+        fb.workload_history(pa_key),
     )
     decay_b = calculate_decay_features(
         elo_b, tracker, pb_key, surface, fb.match_dates(pb_key), match_date, age_b,
+        fb.workload_history(pb_key),
     )
 
     return {
@@ -594,6 +596,7 @@ def build_prediction_features(
         "rolling_elo_diff":    decay_a["rolling_elo_diff"]     - decay_b["rolling_elo_diff"],
         "age_multiplier_diff": decay_a["age_multiplier"]       - decay_b["age_multiplier"],
         "rust_factor_diff":    decay_a["rust_factor"]          - decay_b["rust_factor"],
+        "fatigue_multiplier_diff": decay_a["fatigue_multiplier"] - decay_b["fatigue_multiplier"],
         "adjusted_elo_diff":   decay_a["adjusted_elo_surface"] - decay_b["adjusted_elo_surface"],
     }
 
@@ -691,7 +694,8 @@ _LOG_FIELDS = [
     "profit",    # filled in later
     "elo_diff", "elo_prob", "rank_diff", "form_diff",
     "surface_form_diff", "h2h_rate", "rest_diff",
-    "rolling_elo_diff", "age_multiplier_diff", "rust_factor_diff", "adjusted_elo_diff",
+    "rolling_elo_diff", "age_multiplier_diff", "rust_factor_diff",
+    "fatigue_multiplier_diff", "adjusted_elo_diff",
 ]
 
 
