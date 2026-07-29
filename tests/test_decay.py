@@ -248,3 +248,9 @@ class TestSurfaceTransitionMultiplier:
         # multiplier = 1 - 0.10*1.0*0.1 = 0.99
         last = (date(2023, 5, 23), "clay")
         assert surface_transition_multiplier(last, "grass", date(2023, 6, 1)) == pytest.approx(0.99)
+
+    def test_unlisted_surface_pair_uses_default_severity(self):
+        # carpet<->clay isn't in SURFACE_TRANSITION_SEVERITY -> falls back to 0.5
+        # days_since=0, severity=0.5, recency=1.0 -> multiplier = 1 - 0.10*0.5*1.0 = 0.95
+        last = (date(2023, 6, 1), "carpet")
+        assert surface_transition_multiplier(last, "clay", date(2023, 6, 1)) == pytest.approx(0.95)
