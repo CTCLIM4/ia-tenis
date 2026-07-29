@@ -13,7 +13,8 @@ from src.models.elo import EloSystem
 
 _MIRROR_FLIP_COLS = (
     "elo_diff", "rank_diff", "form_diff", "surface_form_diff", "rest_diff",
-    "rolling_elo_diff", "age_multiplier_diff", "rust_factor_diff", "adjusted_elo_diff",
+    "rolling_elo_diff", "age_multiplier_diff", "rust_factor_diff",
+    "fatigue_multiplier_diff", "adjusted_elo_diff",
 )
 
 
@@ -79,6 +80,7 @@ def build_match_features(
         l_rank = row.get("loser_rank", np.nan)
         w_age = _age_or_none(row.get("winner_age"))
         l_age = _age_or_none(row.get("loser_age"))
+        sets_played = int(row.get("sets_played", 0))
 
         # Pre-match Elo
         elo_w = elo_system.get_effective_rating(winner, surface)
@@ -93,10 +95,12 @@ def build_match_features(
         w_decay = calculate_decay_features(
             elo_w, elo_tracker, winner, surface,
             feature_builder.match_dates(winner), match_date, w_age,
+            feature_builder.workload_history(winner),
         )
         l_decay = calculate_decay_features(
             elo_l, elo_tracker, loser, surface,
             feature_builder.match_dates(loser), match_date, l_age,
+            feature_builder.workload_history(loser),
         )
 
         rank_diff = (
@@ -122,6 +126,7 @@ def build_match_features(
                 "rolling_elo_diff": w_decay["rolling_elo_diff"] - l_decay["rolling_elo_diff"],
                 "age_multiplier_diff": w_decay["age_multiplier"] - l_decay["age_multiplier"],
                 "rust_factor_diff": w_decay["rust_factor"] - l_decay["rust_factor"],
+                "fatigue_multiplier_diff": w_decay["fatigue_multiplier"] - l_decay["fatigue_multiplier"],
                 "adjusted_elo_diff": w_decay["adjusted_elo_surface"] - l_decay["adjusted_elo_surface"],
                 "outcome": 1,
                 "is_mirror": False,
@@ -130,7 +135,7 @@ def build_match_features(
 
         # Post-match state update (no lookahead)
         elo_system.update(winner, loser, surface, match_date)
-        feature_builder.update(winner, loser, surface, match_date)
+        feature_builder.update(winner, loser, surface, match_date, sets_played=sets_played)
         elo_tracker.record(winner, surface, elo_w)
         elo_tracker.record(loser, surface, elo_l)
 

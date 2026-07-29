@@ -9,7 +9,7 @@ from src.features.engineering import FeatureBuilder
 from src.models.elo import EloSystem
 
 
-def _row(winner, loser, surface, d, winner_age=None, loser_age=None):
+def _row(winner, loser, surface, d, winner_age=None, loser_age=None, sets_played: int = 0):
     return {
         "winner_name": winner,
         "loser_name": loser,
@@ -19,6 +19,7 @@ def _row(winner, loser, surface, d, winner_age=None, loser_age=None):
         "loser_rank": 20.0,
         "winner_age": winner_age,
         "loser_age": loser_age,
+        "sets_played": sets_played,
     }
 
 
@@ -103,6 +104,27 @@ def test_elo_tracker_argument_gets_populated():
     build_match_features(df, EloSystem(), FeatureBuilder(), elo_tracker=tracker)
 
     assert tracker.rolling_elo("A", "clay") is not None
+
+
+def test_mirror_row_negates_fatigue_multiplier_diff():
+    """fatigue_multiplier_diff is a plain signed a-b difference (unlike
+    h2h_rate) -- simple negation on the mirror row, same as age/rust."""
+    df = pd.DataFrame(
+        [
+            _row("A", "B", "clay", date(2023, 1, 1), sets_played=3),
+            _row("A", "C", "clay", date(2023, 1, 3), sets_played=3),
+            _row("A", "D", "clay", date(2023, 1, 5), sets_played=3),
+        ]
+    )
+    match_df = build_match_features(df, EloSystem(), FeatureBuilder())
+    original = match_df[~match_df["is_mirror"]]
+    mirror = match_df[match_df["is_mirror"]]
+
+    # A racked up 3 heavy matches in 5 days -> A's own fatigue_multiplier_diff
+    # (vs each fresh opponent) should be negative by the 3rd match.
+    assert original.iloc[-1]["fatigue_multiplier_diff"] < 0
+    for orig, mir in zip(original["fatigue_multiplier_diff"], mirror["fatigue_multiplier_diff"]):
+        assert mir == pytest.approx(-orig)
 
 
 class TestDefensiveSort:
