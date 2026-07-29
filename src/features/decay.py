@@ -19,6 +19,14 @@ RUST_TARGET_MATCHES   = 4
 AGE_PENALTY_START     = 30
 AGE_PENALTY_RATE      = 0.025
 AGE_PENALTY_FLOOR     = 0.60
+FATIGUE_WINDOW_SHORT_DAYS = 7
+FATIGUE_WINDOW_LONG_DAYS  = 14
+FATIGUE_MATCH_TARGET_7D   = 3
+FATIGUE_SET_TARGET_7D     = 6
+FATIGUE_MATCH_TARGET_14D  = 5
+FATIGUE_SET_TARGET_14D    = 10
+FATIGUE_RECENT_WEIGHT     = 0.6
+FATIGUE_PENALTY_MAX       = 0.15
 
 
 class EloHistoryTracker:
@@ -72,6 +80,38 @@ def rust_factor(
     cutoff = current_date - timedelta(days=window_days)
     n_recent = sum(1 for d in match_dates if cutoff <= d < current_date)
     return min(1.0, n_recent / RUST_TARGET_MATCHES)
+
+
+def _count_window(
+    workload_history: List[Tuple[date, int]], current_date: date, window_days: int,
+) -> Tuple[int, int]:
+    """(matches, sets) played strictly before current_date, within the
+    trailing window_days — same cutoff convention as rust_factor
+    (cutoff <= d < current_date, never includes the current match)."""
+    cutoff = current_date - timedelta(days=window_days)
+    sets_in_window = [sets for d, sets in workload_history if cutoff <= d < current_date]
+    return len(sets_in_window), sum(sets_in_window)
+
+
+def _window_load(matches: int, sets: int, match_target: int, set_target: int) -> float:
+    match_load = min(1.0, matches / match_target)
+    set_load = min(1.0, sets / set_target)
+    return 0.5 * match_load + 0.5 * set_load
+
+
+def fatigue_multiplier(workload_history: List[Tuple[date, int]], current_date: date) -> float:
+    """1.0 = fresh, down to (1 - FATIGUE_PENALTY_MAX) at maximum load in
+    both the 7-day and 14-day windows. A player with no history returns
+    1.0 (nothing to judge overload against — same convention as
+    rust_factor for brand-new players)."""
+    matches_7d, sets_7d = _count_window(workload_history, current_date, FATIGUE_WINDOW_SHORT_DAYS)
+    matches_14d, sets_14d = _count_window(workload_history, current_date, FATIGUE_WINDOW_LONG_DAYS)
+
+    load_7d = _window_load(matches_7d, sets_7d, FATIGUE_MATCH_TARGET_7D, FATIGUE_SET_TARGET_7D)
+    load_14d = _window_load(matches_14d, sets_14d, FATIGUE_MATCH_TARGET_14D, FATIGUE_SET_TARGET_14D)
+
+    fatigue_load = FATIGUE_RECENT_WEIGHT * load_7d + (1 - FATIGUE_RECENT_WEIGHT) * load_14d
+    return 1.0 - FATIGUE_PENALTY_MAX * fatigue_load
 
 
 def calculate_decay_features(
