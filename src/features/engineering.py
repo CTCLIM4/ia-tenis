@@ -37,6 +37,8 @@ class FeatureBuilder:
         self._history: Dict[str, List[Tuple[date, str, bool]]] = defaultdict(list)
         # (player, opponent) -> [(match_date, player_won)], both directions stored
         self._h2h_matches: Dict[Tuple[str, str], List[Tuple[date, bool]]] = defaultdict(list)
+        # player -> [(match_date, sets_played)] — for fatigue/workload
+        self._workload_history: Dict[str, List[Tuple[date, int]]] = defaultdict(list)
         self._last_match_date: Dict[str, Optional[date]] = {}
 
     def _win_rate(self, results: List[bool]) -> float:
@@ -68,10 +70,16 @@ class FeatureBuilder:
         """This player's own past match dates (any surface), oldest first."""
         return [d for d, _, _ in self._history[player]]
 
-    def update(self, winner: str, loser: str, surface: str, match_date: date) -> None:
+    def workload_history(self, player: str) -> List[Tuple[date, int]]:
+        """This player's own (match_date, sets_played) history, oldest first."""
+        return list(self._workload_history[player])
+
+    def update(self, winner: str, loser: str, surface: str, match_date: date, sets_played: int = 0) -> None:
         self._history[winner].append((match_date, surface, True))
         self._history[loser].append((match_date, surface, False))
         self._h2h_matches[(winner, loser)].append((match_date, True))
         self._h2h_matches[(loser, winner)].append((match_date, False))
+        self._workload_history[winner].append((match_date, sets_played))
+        self._workload_history[loser].append((match_date, sets_played))
         self._last_match_date[winner] = match_date
         self._last_match_date[loser] = match_date

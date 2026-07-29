@@ -136,3 +136,30 @@ class TestWeightedH2hRate:
         # Still not 1.0 even with 10 straight wins, but much closer than n=1's 0.6.
         matches = [(date(2023, 1, i + 1), True) for i in range(10)]
         assert _weighted_h2h_rate(matches) == pytest.approx(6 / 7)
+
+
+class TestWorkloadHistory:
+    def test_empty_for_new_player(self):
+        fb = FeatureBuilder()
+        assert fb.workload_history("A") == []
+
+    def test_records_sets_played_on_update(self):
+        fb = FeatureBuilder()
+        fb.update("A", "B", "hard", date(2023, 1, 1), sets_played=3)
+        assert fb.workload_history("A") == [(date(2023, 1, 1), 3)]
+        assert fb.workload_history("B") == [(date(2023, 1, 1), 3)]
+
+    def test_sets_played_defaults_to_zero(self):
+        """Existing update() call sites (H2H/form/rest tests) don't pass
+        sets_played -- must not break them."""
+        fb = FeatureBuilder()
+        fb.update("A", "B", "hard", date(2023, 1, 1))
+        assert fb.workload_history("A") == [(date(2023, 1, 1), 0)]
+
+    def test_accumulates_across_matches_in_order(self):
+        fb = FeatureBuilder()
+        fb.update("A", "B", "hard", date(2023, 1, 1), sets_played=2)
+        fb.update("A", "C", "hard", date(2023, 1, 10), sets_played=3)
+        assert fb.workload_history("A") == [
+            (date(2023, 1, 1), 2), (date(2023, 1, 10), 3),
+        ]
