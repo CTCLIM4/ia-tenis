@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 from io import StringIO
-from src.data.loader import _clean, _clean_wta, load_atp_matches, load_wta_matches
+from src.data.loader import _clean, _clean_wta, _count_sets_played, load_atp_matches, load_wta_matches
 
 SAMPLE_CSV = (
     "tourney_id,tourney_name,surface,draw_size,tourney_level,tourney_date,"
@@ -57,10 +57,10 @@ def test_clean_adds_tour_column_when_provided():
 # ── tennis-data.co.uk WTA loader ─────────────────────────────────────────────
 
 WTA_CSV = (
-    "Date,Surface,Winner,Loser,WRank,LRank,B365W,B365L\n"
-    "15/01/2023,Hard,Swiatek I.,Kvitova P.,1,6,1.15,5.50\n"
-    "16/01/2023,Clay,Sabalenka A.,Rybakina E.,5,25,1.80,1.95\n"
-    "17/01/2023,Grass,Gauff C.,Pegula J.,6,4,2.10,1.75\n"
+    "Date,Surface,Winner,Loser,WRank,LRank,Wsets,Lsets,B365W,B365L\n"
+    "15/01/2023,Hard,Swiatek I.,Kvitova P.,1,6,2,0,1.15,5.50\n"
+    "16/01/2023,Clay,Sabalenka A.,Rybakina E.,5,25,2,1,1.80,1.95\n"
+    "17/01/2023,Grass,Gauff C.,Pegula J.,6,4,2,0,2.10,1.75\n"
 )
 
 
@@ -155,3 +155,46 @@ class TestLoadWtaMatchesRawDirOverride:
         override_dir.mkdir()
         with pytest.raises(FileNotFoundError):
             load_wta_matches(2023, 2023, raw_dir_override=override_dir)
+
+
+# ── sets_played normalization ───────────────────────────────────────────────
+
+class TestCountSetsPlayed:
+    def test_two_straight_sets(self):
+        assert _count_sets_played("6-4 6-2") == 2
+
+    def test_tiebreak_set_counts_as_one(self):
+        assert _count_sets_played("7-6(5) 6-4") == 2
+
+    def test_three_sets(self):
+        assert _count_sets_played("6-4 3-6 6-2") == 3
+
+    def test_retirement_counts_the_partial_set(self):
+        # confirmed decision: a RET set still involved real games played
+        assert _count_sets_played("6-3 2-4 RET") == 2
+
+    def test_walkover_is_zero_sets(self):
+        assert _count_sets_played("W/O") == 0
+
+    def test_missing_score_is_zero_sets(self):
+        assert _count_sets_played(None) == 0
+        assert _count_sets_played(float("nan")) == 0
+
+
+def test_clean_computes_sets_played_for_atp():
+    df = _clean(pd.read_csv(StringIO(SAMPLE_CSV)))
+    # SAMPLE_CSV rows: "6-3 6-4" and "7-5 6-3" — both 2 sets
+    assert list(df["sets_played"]) == [2, 2]
+
+
+def test_clean_wta_computes_sets_played_from_wsets_lsets():
+    df = _clean_wta(_wta_raw(), 2023)
+    # WTA_CSV rows: Wsets/Lsets = (2,0), (2,1), (2,0) -> sets_played 2,3,2
+    assert list(df["sets_played"]) == [2, 3, 2]
+
+
+def test_clean_wta_sets_played_defaults_to_zero_when_columns_missing():
+    raw = pd.read_csv(StringIO(WTA_CSV))  # original fixture predates Wsets/Lsets addition test
+    raw = raw.drop(columns=["Wsets", "Lsets"], errors="ignore")
+    df = _clean_wta(raw, 2023)
+    assert list(df["sets_played"]) == [0, 0, 0]

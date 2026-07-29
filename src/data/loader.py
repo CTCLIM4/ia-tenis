@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 from typing import Optional
 
@@ -12,6 +13,19 @@ _SURFACE_MAP = {
     "Carpet": "carpet",
 }
 
+_SET_SCORE_PATTERN = re.compile(r"\d+-\d+(?:\(\d+\))?")
+
+
+def _count_sets_played(score) -> int:
+    """Count set-score tokens in a raw score string (e.g. "7-6(5) 6-4" -> 2).
+
+    Retirement scores ("6-3 2-4 RET") count the partial set — real games
+    were played. Walkovers ("W/O") and missing/non-string scores -> 0.
+    """
+    if not isinstance(score, str):
+        return 0
+    return len(_SET_SCORE_PATTERN.findall(score))
+
 
 def _clean(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
@@ -25,6 +39,7 @@ def _clean(df: pd.DataFrame) -> pd.DataFrame:
             df[col] = pd.to_numeric(df[col], errors="coerce")
         else:
             df[col] = float("nan")
+    df["sets_played"] = df["score"].apply(_count_sets_played)
     return df.sort_values("match_date").reset_index(drop=True)
 
 
@@ -98,6 +113,10 @@ def _clean_wta(df: pd.DataFrame, year: int) -> pd.DataFrame:
 
     df["year"] = year
     df["tour"] = "wta"
+
+    w_sets = pd.to_numeric(df["Wsets"], errors="coerce") if "Wsets" in df.columns else pd.Series(0.0, index=df.index)
+    l_sets = pd.to_numeric(df["Lsets"], errors="coerce") if "Lsets" in df.columns else pd.Series(0.0, index=df.index)
+    df["sets_played"] = (w_sets.fillna(0) + l_sets.fillna(0)).astype(int)
 
     df = df.dropna(subset=["winner_name", "loser_name", "match_date"])
     df = df[df["winner_name"].str.strip() != ""]
