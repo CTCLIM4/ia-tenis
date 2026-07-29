@@ -26,6 +26,7 @@ def _synthetic_features(n: int = 2000, n_years: int = 12, start_year: int = 2010
             "age_multiplier_diff": rng.uniform(-0.3, 0.3, n),
             "rust_factor_diff": rng.uniform(-0.5, 0.5, n),
             "fatigue_multiplier_diff": rng.uniform(-0.15, 0.15, n),
+            "surface_transition_multiplier_diff": rng.uniform(-0.10, 0.10, n),
             "adjusted_elo_diff": elo_diff * rng.uniform(0.6, 1.0, n),
             "outcome": 1,
             "is_mirror": False,
@@ -35,7 +36,7 @@ def _synthetic_features(n: int = 2000, n_years: int = 12, start_year: int = 2010
     for col in (
         "elo_diff", "rank_diff", "form_diff", "surface_form_diff", "rest_diff",
         "rolling_elo_diff", "age_multiplier_diff", "rust_factor_diff",
-        "fatigue_multiplier_diff", "adjusted_elo_diff",
+        "fatigue_multiplier_diff", "surface_transition_multiplier_diff", "adjusted_elo_diff",
     ):
         mirror[col] = -mirror[col]
     mirror["elo_prob"] = 1.0 - mirror["elo_prob"]

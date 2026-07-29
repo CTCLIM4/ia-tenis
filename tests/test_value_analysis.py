@@ -558,6 +558,7 @@ class TestBuildPredictionFeaturesDecay:
             },
             match_dates=lambda p: [],
             workload_history=lambda p: [],
+            last_surface_and_date=lambda p: None,
         )
         elo.get_effective_rating = lambda p, s: 1500.0
         elo.expected_score = lambda a, b: 0.5
@@ -579,6 +580,7 @@ class TestBuildPredictionFeaturesDecay:
             },
             match_dates=lambda p: [] if p == "Young" else [date(2018, 1, 1)],
             workload_history=lambda p: [],
+            last_surface_and_date=lambda p: None,
         )
 
         feats = build_prediction_features(
@@ -604,6 +606,7 @@ class TestPredictMatchH2hWiring:
             },
             match_dates=lambda p: [],
             workload_history=lambda p: [],
+            last_surface_and_date=lambda p: None,
         )
 
         class _StubClf:
@@ -636,6 +639,7 @@ class TestPredictMatchFatigueWiring:
                 [(date(2026, 7, 18), 3), (date(2026, 7, 19), 2), (date(2026, 7, 20), 3)]
                 if p == "A" else []
             ),
+            last_surface_and_date=lambda p: None,
         )
 
         class _StubClf:
@@ -656,6 +660,39 @@ class TestPredictMatchFatigueWiring:
         assert pred["p_a_raw"] < 0.5  # A's heavier recent workload should pull this below neutral
 
 
+class TestPredictMatchSurfaceTransitionWiring:
+    def test_surface_transition_multiplier_diff_reaches_lr_input_vector(self):
+        elo = _fake_elo({"A": 1500.0, "B": 1500.0})
+        elo.get_effective_rating = lambda p, s: 1500.0
+        elo.expected_score = lambda a, b: 0.5
+        fb = SimpleNamespace(
+            get_features=lambda p, o, s, d: {
+                "recent_win_rate": 0.5, "recent_win_rate_surface": 0.5,
+                "h2h_win_rate": 0.5, "h2h_matches": 0, "rest_days": 14.0,
+            },
+            match_dates=lambda p: [],
+            workload_history=lambda p: [],
+            last_surface_and_date=lambda p: (
+                (date(2026, 7, 18), "clay") if p == "A" else None
+            ),
+        )
+
+        class _StubClf:
+            def predict_proba(self, X):
+                import numpy as _np
+                idx = FEATURE_COLS.index("surface_transition_multiplier_diff")
+                diff = X[0][idx]
+                p = 0.5 + diff
+                return _np.array([[1 - p, p]])
+
+        pred = predict_match(
+            elo, fb, _StubClf(),
+            "A", "B", "grass", date(2026, 7, 21),
+            rank_lookup=None, age_lookup=None,
+        )
+        assert pred["p_a_raw"] < 0.5  # A just switched clay->grass 3 days ago
+
+
 class TestPredictMatchAgeLookup:
     def test_auto_fills_age_from_lookup_and_lowers_veterans_win_prob(self):
         """An aging, rusty veteran with a big historical Elo edge should get
@@ -673,6 +710,7 @@ class TestPredictMatchAgeLookup:
             },
             match_dates=lambda p: [] if p == "Young" else [date(2018, 1, 1)],
             workload_history=lambda p: [],
+            last_surface_and_date=lambda p: None,
         )
 
         class _StubClf:
@@ -774,6 +812,7 @@ class TestTrainLRPipeline:
             "age_multiplier_diff": rng.uniform(-0.3, 0.3, n),
             "rust_factor_diff":    rng.uniform(-0.5, 0.5, n),
             "fatigue_multiplier_diff": rng.uniform(-0.15, 0.15, n),
+            "surface_transition_multiplier_diff": rng.uniform(-0.10, 0.10, n),
             "adjusted_elo_diff":   elo_diff * rng.uniform(0.6, 1.0, n),
             "outcome":             1,
         })
@@ -801,7 +840,7 @@ class TestTrainLRPipeline:
         self._write_synthetic_features_csv(tmp_path)
 
         clf = va._train_lr("atp")
-        X = np.array([[100.0, 0.7, 20.0, 0.1, 0.05, 0.6, 1.0, 10.0, 0.0, 0.0, 0.0, 80.0]])
+        X = np.array([[100.0, 0.7, 20.0, 0.1, 0.05, 0.6, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 80.0]])
         probs = clf.predict_proba(X)
 
         assert probs.shape == (1, 2)
@@ -814,7 +853,7 @@ class TestTrainLRPipeline:
         self._write_synthetic_features_csv(tmp_path)
 
         clf = va._train_lr("atp")
-        X = np.array([[50.0, 0.6, 10.0, 0.2, 0.1, 0.55, 0.0, 5.0, 0.0, 0.0, 0.0, 40.0]])
+        X = np.array([[50.0, 0.6, 10.0, 0.2, 0.1, 0.55, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 40.0]])
         p1 = clf.predict_proba(X)
         p2 = clf.predict_proba(X)
         np.testing.assert_array_equal(p1, p2)
@@ -846,7 +885,7 @@ class TestTrainLRPipeline:
         manual_lr = LogisticRegression(C=1.0, max_iter=1000, random_state=42)
         manual_lr.fit(X_scaled, full["outcome"].values)
 
-        X_query = np.array([[30.0, 0.55, 5.0, 0.05, 0.02, 0.5, 2.0, 3.0, 0.0, 0.0, 0.0, 20.0]])
+        X_query = np.array([[30.0, 0.55, 5.0, 0.05, 0.02, 0.5, 2.0, 3.0, 0.0, 0.0, 0.0, 0.0, 20.0]])
         pipeline_probs = clf.predict_proba(X_query)
         manual_probs = manual_lr.predict_proba(manual_scaler.transform(X_query))
 
@@ -898,6 +937,7 @@ class TestLoadModelSnapshot:
             "age_multiplier_diff": rng.uniform(-0.3, 0.3, n),
             "rust_factor_diff": rng.uniform(-0.5, 0.5, n),
             "fatigue_multiplier_diff": rng.uniform(-0.15, 0.15, n),
+            "surface_transition_multiplier_diff": rng.uniform(-0.10, 0.10, n),
             "adjusted_elo_diff": elo_diff * rng.uniform(0.6, 1.0, n),
             "outcome": 1,
             "is_mirror": False,

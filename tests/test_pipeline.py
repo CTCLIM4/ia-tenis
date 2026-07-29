@@ -35,6 +35,7 @@ def fake_snapshot(tmp_path, monkeypatch):
         "age_multiplier_diff": rng.uniform(-0.3, 0.3, n),
         "rust_factor_diff": rng.uniform(-0.5, 0.5, n),
         "fatigue_multiplier_diff": rng.uniform(-0.15, 0.15, n),
+        "surface_transition_multiplier_diff": rng.uniform(-0.10, 0.10, n),
         "adjusted_elo_diff": elo_diff * rng.uniform(0.6, 1.0, n),
         "outcome": 1,
         "is_mirror": False,
