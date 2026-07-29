@@ -1,6 +1,6 @@
 import pytest
 from datetime import date
-from src.features.engineering import FeatureBuilder
+from src.features.engineering import FeatureBuilder, _weighted_h2h_rate
 
 
 def test_new_player_returns_defaults():
@@ -39,7 +39,9 @@ def test_recent_win_rate_uses_only_last_n():
     assert f["recent_win_rate"] == 1.0
 
 
-def test_h2h_tracks_wins_per_direction():
+def test_h2h_matches_counts_both_directions():
+    """h2h_matches (total count) is unaffected by the weighted/shrunk rate
+    formula change — still a plain count of meetings either direction."""
     fb = FeatureBuilder()
     fb.update("A", "B", "hard", date(2023, 1, 1))
     fb.update("A", "B", "hard", date(2023, 2, 1))
@@ -49,8 +51,7 @@ def test_h2h_tracks_wins_per_direction():
     fb_ = fb.get_features("B", "A", "hard", date(2023, 6, 1))
 
     assert fa["h2h_matches"] == 3
-    assert abs(fa["h2h_win_rate"] - 2 / 3) < 1e-10
-    assert abs(fb_["h2h_win_rate"] - 1 / 3) < 1e-10
+    assert fb_["h2h_matches"] == 3
 
 
 def test_rest_days_calculated_correctly():
@@ -83,3 +84,55 @@ def test_update_does_not_affect_features_for_current_match():
     # h2h before update should be 0, after should be 1
     assert f_before["h2h_matches"] == 0
     assert f_after["h2h_matches"] == 1
+
+
+# ── _weighted_h2h_rate ────────────────────────────────────────────────────────
+# Hand-computed expected values — see docs/superpowers/specs/2026-07-28-h2h-smoothing-design.md
+# for the formula: shrink = n/(n+4), rate = shrink*weighted_rate + (1-shrink)*0.5,
+# weighted_rate = weighted_average(wins, weights=linspace(0.5, 1.0, n)).
+
+class TestWeightedH2hRate:
+    def test_no_matches_returns_neutral(self):
+        assert _weighted_h2h_rate([]) == 0.5
+
+    def test_single_win_shrinks_toward_neutral(self):
+        # n=1: weighted_rate=1.0 (single point, weight cancels), shrink=1/5=0.2
+        # rate = 0.2*1.0 + 0.8*0.5 = 0.6 (not 1.0 — one win isn't strong evidence)
+        matches = [(date(2023, 1, 1), True)]
+        assert _weighted_h2h_rate(matches) == pytest.approx(0.6)
+
+    def test_single_loss_shrinks_toward_neutral(self):
+        matches = [(date(2023, 1, 1), False)]
+        assert _weighted_h2h_rate(matches) == pytest.approx(0.4)
+
+    def test_recency_weighting_favors_more_recent_result(self):
+        # Same 1-1 record, opposite chronological order -> different rate.
+        # n=2, weights=[0.5,1.0]: recent win -> weighted_rate=1.0/1.5=2/3,
+        # shrink=2/6=1/3, rate=1/3*2/3 + 2/3*0.5 = 2/9+1/3 = 5/9.
+        lost_old_won_recent = [(date(2023, 1, 1), False), (date(2023, 2, 1), True)]
+        won_old_lost_recent = [(date(2023, 1, 1), True), (date(2023, 2, 1), False)]
+
+        recent_win_rate = _weighted_h2h_rate(lost_old_won_recent)
+        recent_loss_rate = _weighted_h2h_rate(won_old_lost_recent)
+
+        assert recent_win_rate == pytest.approx(5 / 9)
+        assert recent_loss_rate == pytest.approx(4 / 9)
+        assert recent_win_rate > recent_loss_rate
+
+    def test_opponent_perspective_is_exact_complement(self):
+        # h2h_rate(B,A) must equal 1 - h2h_rate(A,B) for any history — the
+        # mirror-row rule (h2h_rate -> 1-h2h_rate) depends on this holding
+        # exactly, not approximately.
+        player_view = [(date(2023, 1, 1), True), (date(2023, 2, 1), False), (date(2023, 3, 1), True)]
+        opponent_view = [(date(2023, 1, 1), False), (date(2023, 2, 1), True), (date(2023, 3, 1), False)]
+
+        assert _weighted_h2h_rate(opponent_view) == pytest.approx(
+            1 - _weighted_h2h_rate(player_view)
+        )
+
+    def test_larger_sample_still_shrinks_but_less(self):
+        # n=10, all wins: weighted_rate=1.0 (uniform result regardless of
+        # weights), shrink=10/14=5/7, rate = 5/7*1.0 + 2/7*0.5 = 6/7.
+        # Still not 1.0 even with 10 straight wins, but much closer than n=1's 0.6.
+        matches = [(date(2023, 1, i + 1), True) for i in range(10)]
+        assert _weighted_h2h_rate(matches) == pytest.approx(6 / 7)
