@@ -127,6 +127,28 @@ def test_mirror_row_negates_fatigue_multiplier_diff():
         assert mir == pytest.approx(-orig)
 
 
+def test_mirror_row_negates_surface_transition_multiplier_diff():
+    """surface_transition_multiplier_diff is a plain signed a-b difference
+    (like age/rust/fatigue) -- simple negation on the mirror row."""
+    df = pd.DataFrame(
+        [
+            _row("A", "B", "clay", date(2023, 1, 1)),
+            _row("A", "C", "grass", date(2023, 1, 5)),
+        ]
+    )
+    match_df = build_match_features(df, EloSystem(), FeatureBuilder())
+    original = match_df[~match_df["is_mirror"]]
+    mirror = match_df[match_df["is_mirror"]]
+
+    # A switched clay (1/1) -> grass (1/5), 4 days later; C is a fresh
+    # opponent -> A's diff should be negative on the 2nd match.
+    assert original.iloc[-1]["surface_transition_multiplier_diff"] < 0
+    for orig, mir in zip(
+        original["surface_transition_multiplier_diff"], mirror["surface_transition_multiplier_diff"]
+    ):
+        assert mir == pytest.approx(-orig)
+
+
 class TestDefensiveSort:
     """build_match_features processes rows sequentially assuming chronological
     order (no-lookahead requirement) — it must not trust the caller to have
