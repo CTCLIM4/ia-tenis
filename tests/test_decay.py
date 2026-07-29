@@ -254,3 +254,31 @@ class TestSurfaceTransitionMultiplier:
         # days_since=0, severity=0.5, recency=1.0 -> multiplier = 1 - 0.10*0.5*1.0 = 0.95
         last = (date(2023, 6, 1), "carpet")
         assert surface_transition_multiplier(last, "clay", date(2023, 6, 1)) == pytest.approx(0.95)
+
+
+# ── calculate_decay_features + surface_transition_multiplier integration ──────
+
+class TestCalculateDecayFeaturesSurfaceTransition:
+    def test_includes_surface_transition_multiplier_and_folds_into_adjusted_elo(self):
+        tracker = EloHistoryTracker()
+        result = calculate_decay_features(
+            historical_elo_surface=1700.0, tracker=tracker, player="P",
+            surface="grass", match_dates=[], current_date=date(2023, 6, 1),
+            player_age=None, last_surface_and_date=(date(2023, 5, 29), "clay"),
+        )
+        assert result["surface_transition_multiplier"] < 1.0
+        assert result["adjusted_elo_surface"] == pytest.approx(
+            1700.0 * result["age_multiplier"] * result["rust_factor"]
+            * result["fatigue_multiplier"] * result["surface_transition_multiplier"]
+        )
+
+    def test_last_surface_and_date_defaults_to_none_and_stays_neutral(self):
+        """Backward compatibility: existing callers (this file's other
+        tests) don't pass last_surface_and_date -- must keep working."""
+        tracker = EloHistoryTracker()
+        result = calculate_decay_features(
+            historical_elo_surface=1700.0, tracker=tracker, player="P",
+            surface="clay", match_dates=[], current_date=date(2023, 6, 1),
+            player_age=None,
+        )
+        assert result["surface_transition_multiplier"] == 1.0
