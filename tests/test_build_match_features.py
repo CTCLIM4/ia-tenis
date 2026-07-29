@@ -1,6 +1,7 @@
 from datetime import date, timedelta
 
 import pandas as pd
+import pytest
 
 from src.backtest.walkforward import build_match_features
 from src.features.decay import EloHistoryTracker
@@ -49,6 +50,25 @@ def test_mirror_rows_negate_decay_columns():
 
     for col in ("rolling_elo_diff", "age_multiplier_diff", "rust_factor_diff", "adjusted_elo_diff"):
         assert list(mirror[col]) == [-v for v in original[col]]
+
+
+def test_mirror_row_negates_h2h_rate_as_one_minus_rate():
+    """h2h_rate isn't in _MIRROR_FLIP_COLS (it's a bounded [0,1] rate, not a
+    signed diff) — the mirror row must instead show 1 - original, and this
+    must still hold exactly under the new weighted+shrunk formula."""
+    df = pd.DataFrame(
+        [
+            _row("A", "B", "clay", date(2023, 1, 1)),
+            _row("B", "A", "clay", date(2023, 2, 1)),
+            _row("A", "B", "clay", date(2023, 3, 1)),
+        ]
+    )
+    match_df = build_match_features(df, EloSystem(), FeatureBuilder())
+    original = match_df[~match_df["is_mirror"]]
+    mirror = match_df[match_df["is_mirror"]]
+
+    for orig_rate, mirror_rate in zip(original["h2h_rate"], mirror["h2h_rate"]):
+        assert mirror_rate == pytest.approx(1 - orig_rate)
 
 
 def test_adjusted_elo_diff_penalizes_inactive_aging_veteran():
