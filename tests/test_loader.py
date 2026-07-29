@@ -176,6 +176,14 @@ class TestCountSetsPlayed:
     def test_walkover_is_zero_sets(self):
         assert _count_sets_played("W/O") == 0
 
+    def test_davis_cup_match_tiebreak_bracket_not_counted_as_a_set(self):
+        # [10-7] is a 10-point match-tiebreak played instead of a 3rd set, not
+        # an actual set -- must not be counted.
+        assert _count_sets_played("6-4 5-7 [10-7]") == 2
+
+    def test_davis_cup_partial_match_tiebreak_with_retirement(self):
+        assert _count_sets_played("4-6 6-3 [6-7] RET") == 2
+
     def test_missing_score_is_zero_sets(self):
         assert _count_sets_played(None) == 0
         assert _count_sets_played(float("nan")) == 0

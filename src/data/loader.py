@@ -14,6 +14,7 @@ _SURFACE_MAP = {
 }
 
 _SET_SCORE_PATTERN = re.compile(r"\d+-\d+(?:\(\d+\))?")
+_BRACKETED_PATTERN = re.compile(r"\[.*?\]")
 
 
 def _count_sets_played(score) -> int:
@@ -21,10 +22,13 @@ def _count_sets_played(score) -> int:
 
     Retirement scores ("6-3 2-4 RET") count the partial set — real games
     were played. Walkovers ("W/O") and missing/non-string scores -> 0.
+    Bracketed tokens (e.g. Davis Cup match-tiebreaks like "[10-7]", played
+    instead of a 3rd set) are stripped before counting — they aren't a
+    real extra set.
     """
     if not isinstance(score, str):
         return 0
-    return len(_SET_SCORE_PATTERN.findall(score))
+    return len(_SET_SCORE_PATTERN.findall(_BRACKETED_PATTERN.sub("", score)))
 
 
 def _clean(df: pd.DataFrame) -> pd.DataFrame:
