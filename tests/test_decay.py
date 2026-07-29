@@ -175,3 +175,34 @@ class TestFatigueMultiplier:
         # multiplier = 1 - 0.15*0.08 = 0.988
         history = [(date(2023, 5, 22), 2)]
         assert fatigue_multiplier(history, date(2023, 6, 1)) == pytest.approx(0.988)
+
+
+# ── calculate_decay_features + fatigue_multiplier integration ─────────────────
+
+class TestCalculateDecayFeaturesFatigue:
+    def test_includes_fatigue_multiplier_and_folds_into_adjusted_elo(self):
+        tracker = EloHistoryTracker()
+        heavy_workload = [
+            (date(2023, 5, 27), 1), (date(2023, 5, 28), 2), (date(2023, 5, 30), 3),
+        ]  # matches Task 3's max-load-7d case in spirit (not exact — just needs < 1.0)
+        result = calculate_decay_features(
+            historical_elo_surface=1700.0, tracker=tracker, player="P",
+            surface="clay", match_dates=[], current_date=date(2023, 6, 1),
+            player_age=None, workload_history=heavy_workload,
+        )
+        assert result["fatigue_multiplier"] < 1.0
+        assert result["adjusted_elo_surface"] == pytest.approx(
+            1700.0 * result["age_multiplier"] * result["rust_factor"] * result["fatigue_multiplier"]
+        )
+
+    def test_workload_history_defaults_to_empty_and_stays_neutral(self):
+        """Backward compatibility: existing callers that don't pass
+        workload_history (this file's other tests, walkforward/value_analysis
+        before Tasks 6-7 wire it up) must keep working with neutral fatigue."""
+        tracker = EloHistoryTracker()
+        result = calculate_decay_features(
+            historical_elo_surface=1700.0, tracker=tracker, player="P",
+            surface="clay", match_dates=[], current_date=date(2023, 6, 1),
+            player_age=None,
+        )
+        assert result["fatigue_multiplier"] == 1.0

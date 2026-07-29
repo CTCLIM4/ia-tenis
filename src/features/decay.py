@@ -122,6 +122,7 @@ def calculate_decay_features(
     match_dates: List[date],
     current_date: date,
     player_age: Optional[float],
+    workload_history: Optional[List[Tuple[date, int]]] = None,
 ) -> dict:
     """Per-player decay-adjustment features for one side of a matchup.
 
@@ -130,17 +131,22 @@ def calculate_decay_features(
         recomputed here since callers already have it for elo_diff.
     match_dates: this player's own past match dates (any surface), used
         only for the rust_factor recency window.
+    workload_history: this player's own (match_date, sets_played) history,
+        used for fatigue_multiplier — defaults to empty (neutral fatigue)
+        for callers that don't track it yet.
     """
     rolling = tracker.rolling_elo(player, surface)
     rolling_elo_diff = 0.0 if rolling is None else historical_elo_surface - rolling
 
     mult = age_multiplier(player_age)
     rust = rust_factor(match_dates, current_date)
-    adjusted_elo_surface = historical_elo_surface * mult * rust
+    fatigue = fatigue_multiplier(workload_history or [], current_date)
+    adjusted_elo_surface = historical_elo_surface * mult * rust * fatigue
 
     return {
         "rolling_elo_diff":     rolling_elo_diff,
         "age_multiplier":       mult,
         "rust_factor":          rust,
+        "fatigue_multiplier":   fatigue,
         "adjusted_elo_surface": adjusted_elo_surface,
     }
