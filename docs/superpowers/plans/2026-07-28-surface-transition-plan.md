@@ -609,21 +609,28 @@ git commit -m "feat: wire surface_transition_multiplier_diff into build_predicti
 **Files:**
 - Regenerated (gitignored, no commit): `data/processed/atp_features.csv`, `data/processed/wta_features.csv`
 
-- [ ] **Step 1: Regenerar y correr el backtest para ambos tours**
+- [x] **Step 1: Regenerar y correr el backtest para ambos tours**
 
 Run: `./tenis-env/Scripts/python.exe -m src.pipeline atp`
 Run: `./tenis-env/Scripts/python.exe -m src.pipeline wta`
 
-- [ ] **Step 2: Comparar contra el baseline (Task 1, reutilizado de 3b)**
+- [x] **Step 2: Comparar contra el baseline (Task 1, reutilizado de 3b)**
+
+**Resultados 2026-07-28:**
 
 ```
-ATP baseline: Accuracy 0.6692, Log-Loss 0.6019
-WTA baseline: Accuracy 0.6445, Log-Loss 0.6261
+ATP: Accuracy 0.6692 -> 0.6694  (+0.02pp)
+     Log-Loss 0.6019 -> 0.6017  (-0.0002, mejora marginal)
+
+WTA: Accuracy 0.6445 -> 0.6450  (+0.05pp)
+     Log-Loss 0.6261 -> 0.6262  (+0.0001, empeora marginal)
 ```
 
-Reportar la diferencia exacta para cada tour.
+Resultado esencialmente neutro (deltas dentro del ruido), similar en
+magnitud al de H2H (3a) — a diferencia de Fatiga (3b), que mejoró las 4
+métricas de forma consistente.
 
-- [ ] **Step 3: Decisión**
+- [x] **Step 3: Decisión**
 
 Igual que en 3a/3b — el usuario decide si mantener, ajustar las constantes
 (`SURFACE_TRANSITION_PENALTY_MAX`, la tabla `SURFACE_TRANSITION_SEVERITY`,
