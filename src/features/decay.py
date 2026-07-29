@@ -27,6 +27,14 @@ FATIGUE_MATCH_TARGET_14D  = 5
 FATIGUE_SET_TARGET_14D    = 10
 FATIGUE_RECENT_WEIGHT     = 0.6
 FATIGUE_PENALTY_MAX       = 0.15
+SURFACE_TRANSITION_WINDOW_DAYS  = 10
+SURFACE_TRANSITION_PENALTY_MAX  = 0.10
+SURFACE_TRANSITION_SEVERITY = {
+    frozenset({"clay", "grass"}): 1.0,
+    frozenset({"clay", "hard"}): 0.5,
+    frozenset({"grass", "hard"}): 0.5,
+}
+_DEFAULT_TRANSITION_SEVERITY = 0.5   # carpet/unknown pairs — rare, safe default
 
 
 class EloHistoryTracker:
@@ -112,6 +120,30 @@ def fatigue_multiplier(workload_history: List[Tuple[date, int]], current_date: d
 
     fatigue_load = FATIGUE_RECENT_WEIGHT * load_7d + (1 - FATIGUE_RECENT_WEIGHT) * load_14d
     return 1.0 - FATIGUE_PENALTY_MAX * fatigue_load
+
+
+def surface_transition_multiplier(
+    last_surface_and_date: Optional[Tuple[date, str]],
+    current_surface: str,
+    current_date: date,
+) -> float:
+    """1.0 = no recent surface change (no history, same surface, or the
+    switch happened more than SURFACE_TRANSITION_WINDOW_DAYS ago). Down to
+    (1 - SURFACE_TRANSITION_PENALTY_MAX * severity) immediately after
+    switching, linearly decaying back to 1.0 over the window."""
+    if last_surface_and_date is None:
+        return 1.0
+    last_date, last_surface = last_surface_and_date
+    if last_surface == current_surface:
+        return 1.0
+    days_since = (current_date - last_date).days
+    if not (0 <= days_since < SURFACE_TRANSITION_WINDOW_DAYS):
+        return 1.0
+    severity = SURFACE_TRANSITION_SEVERITY.get(
+        frozenset({last_surface, current_surface}), _DEFAULT_TRANSITION_SEVERITY
+    )
+    recency = (SURFACE_TRANSITION_WINDOW_DAYS - days_since) / SURFACE_TRANSITION_WINDOW_DAYS
+    return 1.0 - SURFACE_TRANSITION_PENALTY_MAX * severity * recency
 
 
 def calculate_decay_features(

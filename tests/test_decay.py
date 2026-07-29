@@ -8,6 +8,7 @@ from src.features.decay import (
     calculate_decay_features,
     fatigue_multiplier,
     rust_factor,
+    surface_transition_multiplier,
 )
 
 
@@ -206,3 +207,44 @@ class TestCalculateDecayFeaturesFatigue:
             player_age=None,
         )
         assert result["fatigue_multiplier"] == 1.0
+
+
+# ── surface_transition_multiplier ────────────────────────────────────────────
+# Hand-computed values — see docs/superpowers/specs/2026-07-28-surface-transition-design.md
+
+class TestSurfaceTransitionMultiplier:
+    def test_no_history_returns_neutral(self):
+        assert surface_transition_multiplier(None, "clay", date(2023, 6, 1)) == 1.0
+
+    def test_same_surface_returns_neutral_regardless_of_days(self):
+        last = (date(2023, 5, 20), "clay")
+        assert surface_transition_multiplier(last, "clay", date(2023, 6, 1)) == 1.0
+
+    def test_immediate_clay_to_grass_transition_is_max_penalty(self):
+        # days_since=0, severity=1.0 (clay<->grass), recency=(10-0)/10=1.0
+        # multiplier = 1 - 0.10*1.0*1.0 = 0.90
+        last = (date(2023, 6, 1), "clay")
+        assert surface_transition_multiplier(last, "grass", date(2023, 6, 1)) == pytest.approx(0.90)
+
+    def test_hard_transition_is_less_severe(self):
+        # days_since=0, severity=0.5 (hard<->clay), recency=1.0
+        # multiplier = 1 - 0.10*0.5*1.0 = 0.95
+        last = (date(2023, 6, 1), "hard")
+        assert surface_transition_multiplier(last, "clay", date(2023, 6, 1)) == pytest.approx(0.95)
+
+    def test_decays_linearly_at_midpoint(self):
+        # days_since=5, severity=1.0 (clay<->grass), recency=(10-5)/10=0.5
+        # multiplier = 1 - 0.10*1.0*0.5 = 0.95
+        last = (date(2023, 5, 27), "clay")
+        assert surface_transition_multiplier(last, "grass", date(2023, 6, 1)) == pytest.approx(0.95)
+
+    def test_boundary_day_10_is_neutral(self):
+        # days_since=10 -> outside [0,10), fully decayed
+        last = (date(2023, 5, 22), "clay")
+        assert surface_transition_multiplier(last, "grass", date(2023, 6, 1)) == 1.0
+
+    def test_day_9_still_has_small_penalty(self):
+        # days_since=9, severity=1.0, recency=(10-9)/10=0.1
+        # multiplier = 1 - 0.10*1.0*0.1 = 0.99
+        last = (date(2023, 5, 23), "clay")
+        assert surface_transition_multiplier(last, "grass", date(2023, 6, 1)) == pytest.approx(0.99)
