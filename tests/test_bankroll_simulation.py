@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import math
+import sys  # add to existing import block
 
 import numpy as np
 import pandas as pd
@@ -12,6 +13,7 @@ from src.bankroll_simulation import simulate_path  # add to existing import bloc
 from src.bankroll_simulation import run_monte_carlo  # add to existing import block
 from src.bankroll_simulation import print_report  # add to existing import block
 from src.bankroll_simulation import run_simulation  # add to existing import block
+from src.bankroll_simulation import main  # add to existing import block
 
 
 def _resolved_df_for_profile():
@@ -290,3 +292,41 @@ class TestRunSimulation:
                 bets_path=bets_path, n_simulations=20, n_bets=5,
                 kelly_multipliers=[1.0, 0.0],
             )
+
+
+class TestMain:
+    def test_cli_wires_args_from_bets_file(self, tmp_path, capsys, monkeypatch):
+        bets_path = _write_resolved_bets_csv(tmp_path)
+        argv = [
+            "bankroll_simulation",
+            "--bankroll", "500",
+            "--bets-file", bets_path,
+            "--bets", "5",
+            "--simulations", "20",
+            "--kelly-fractions", "1.0,0.5",
+            "--seed", "9",
+        ]
+        monkeypatch.setattr(sys, "argv", argv)
+
+        main()
+        out = capsys.readouterr().out
+
+        assert "SIMULACION MONTE CARLO" in out
+        assert "$500.00" in out
+        assert "Kelly completo" in out
+        assert "1/2 Kelly" in out
+        assert "1/4 Kelly" not in out  # only 2 fractions requested
+
+    def test_cli_with_manual_overrides(self, tmp_path, capsys, monkeypatch):
+        argv = [
+            "bankroll_simulation",
+            "--bets-file", str(tmp_path / "nope.csv"),
+            "--mean-edge", "0.05", "--std-edge", "0.01",
+            "--mean-odds", "2.0", "--std-odds", "0.2",
+            "--bets", "5", "--simulations", "20", "--seed", "1",
+        ]
+        monkeypatch.setattr(sys, "argv", argv)
+
+        main()
+        out = capsys.readouterr().out
+        assert "SIMULACION MONTE CARLO" in out

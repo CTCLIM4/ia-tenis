@@ -16,6 +16,7 @@ diseño completo (fórmulas y rationale).
 """
 from __future__ import annotations
 
+import argparse
 import math
 from pathlib import Path
 
@@ -270,3 +271,44 @@ def run_simulation(
         ruin_threshold, seed,
     )
     print_report(mc_result)
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Simulacion Monte Carlo de banca bajo Kelly (Modulo 4)"
+    )
+    parser.add_argument("--bankroll", type=float, default=DEFAULT_BANKROLL)
+    parser.add_argument("--tour", choices=["atp", "wta", "both"], default="both")
+    parser.add_argument("--bets-file", default=DEFAULT_BETS_PATH)
+    parser.add_argument("--bets", type=int, default=DEFAULT_N_BETS)
+    parser.add_argument("--simulations", type=int, default=DEFAULT_N_SIMULATIONS)
+    parser.add_argument("--kelly-fractions", default="1.0,0.5,0.25")
+    parser.add_argument("--ruin-threshold", type=float, default=DEFAULT_RUIN_THRESHOLD)
+    parser.add_argument("--seed", type=int, default=None)
+    parser.add_argument("--mean-edge", type=float, default=None)
+    parser.add_argument("--std-edge", type=float, default=None)
+    parser.add_argument("--mean-odds", type=float, default=None)
+    parser.add_argument("--std-odds", type=float, default=None)
+    args = parser.parse_args()
+
+    tour = None if args.tour == "both" else args.tour
+    kelly_multipliers = [float(x) for x in args.kelly_fractions.split(",")]
+
+    run_simulation(
+        bets_path=args.bets_file,
+        tour=tour,
+        bankroll=args.bankroll,
+        n_bets=args.bets,
+        n_simulations=args.simulations,
+        kelly_multipliers=kelly_multipliers,
+        ruin_threshold=args.ruin_threshold,
+        seed=args.seed,
+        mean_edge=args.mean_edge,
+        std_edge=args.std_edge,
+        mean_odds=args.mean_odds,
+        std_odds=args.std_odds,
+    )
+
+
+if __name__ == "__main__":
+    main()
