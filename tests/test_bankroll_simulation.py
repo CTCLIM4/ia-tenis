@@ -10,6 +10,7 @@ import pytest
 from src.bankroll_simulation import estimate_bet_profile, kelly_stake, sample_bet
 from src.bankroll_simulation import simulate_path  # add to existing import block
 from src.bankroll_simulation import run_monte_carlo  # add to existing import block
+from src.bankroll_simulation import print_report  # add to existing import block
 
 
 def _resolved_df_for_profile():
@@ -178,3 +179,38 @@ class TestRunMonteCarlo:
         r1 = run_monte_carlo(_MC_PROFILE, **kwargs)
         r2 = run_monte_carlo(_MC_PROFILE, **kwargs)
         assert r1 == r2
+
+
+def _mc_result(n=7):
+    return {
+        "profile": {"mean_edge": 0.058, "std_edge": 0.041, "mean_odds": 2.03, "std_odds": 0.60, "n": n},
+        "results": {
+            1.0:  {"p10": 612.34, "p50": 1340.55, "p90": 2850.90, "ruin_probability": 0.184, "median_max_drawdown_pct": -34.2},
+            0.5:  {"p10": 780.11, "p50": 1190.20, "p90": 1950.44, "ruin_probability": 0.062, "median_max_drawdown_pct": -19.8},
+            0.25: {"p10": 890.02, "p50": 1080.15, "p90": 1420.33, "ruin_probability": 0.011, "median_max_drawdown_pct": -10.5},
+        },
+        "n_simulations": 10000, "n_bets": 50,
+        "initial_bankroll": 1000.0, "ruin_threshold": 0.5,
+    }
+
+
+class TestPrintReport:
+    def test_report_contains_expected_sections(self, capsys):
+        print_report(_mc_result())
+        out = capsys.readouterr().out
+        assert "SIMULACION MONTE CARLO DE BANCA" in out
+        assert "$1,000.00" in out
+        assert "10000 simulaciones x 50 apuestas" in out
+        assert "N=7" in out
+        assert "Perfil estimado de muestra chica" in out
+        assert "Kelly completo" in out
+        assert "1/2 Kelly" in out
+        assert "1/4 Kelly" in out
+        assert "Prob. de ruina" in out
+
+    def test_manual_profile_omits_n_and_warning(self, capsys):
+        mc_result = _mc_result(n="manual")
+        print_report(mc_result)
+        out = capsys.readouterr().out
+        assert "N=" not in out
+        assert "muestra chica" not in out

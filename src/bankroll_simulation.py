@@ -21,6 +21,7 @@ import math
 import numpy as np
 import pandas as pd
 
+from src.backtest_analytics import SMALL_SAMPLE_THRESHOLD
 from src.value_analysis import KELLY_CAP
 
 
@@ -156,3 +157,48 @@ def run_monte_carlo(
         "initial_bankroll": initial_bankroll,
         "ruin_threshold": ruin_threshold,
     }
+
+
+_KELLY_LABELS = {1.0: "Kelly completo", 0.5: "1/2 Kelly", 0.25: "1/4 Kelly"}
+
+
+def _kelly_label(km: float) -> str:
+    return _KELLY_LABELS.get(km, f"{km:g}x Kelly")
+
+
+def print_report(mc_result: dict) -> None:
+    profile = mc_result["profile"]
+    results = mc_result["results"]
+    kellys = list(results.keys())
+
+    print("=" * 60)
+    print(" SIMULACION MONTE CARLO DE BANCA - Modulo 4")
+    print(f" Banca inicial: ${mc_result['initial_bankroll']:,.2f} | "
+          f"{mc_result['n_simulations']} simulaciones x {mc_result['n_bets']} apuestas")
+    print("=" * 60)
+
+    n = profile["n"]
+    n_suffix = f" | N={n}" if n != "manual" else ""
+    print(f"\n Perfil: edge medio {profile['mean_edge'] * 100:.1f}% "
+          f"(sd {profile['std_edge'] * 100:.1f}%) | odds medias "
+          f"{profile['mean_odds']:.2f} (sd {profile['std_odds']:.2f}){n_suffix}")
+
+    if n != "manual" and n < SMALL_SAMPLE_THRESHOLD:
+        print(f"\n  *** Perfil estimado de muestra chica (N={n} < "
+              f"{SMALL_SAMPLE_THRESHOLD}) - usar con cautela. ***")
+
+    labels = [_kelly_label(km) for km in kellys]
+    col_width = max(14, max(len(l) for l in labels) + 2)
+
+    header = " " * 28 + "".join(f"{l:>{col_width}}" for l in labels)
+    print("\n" + header)
+
+    def _row(title, fmt_fn):
+        cells = "".join(f"{fmt_fn(results[km]):>{col_width}}" for km in kellys)
+        print(f"  {title:<26}{cells}")
+
+    _row("Banca final P10", lambda r: f"${r['p10']:,.2f}")
+    _row("Banca final P50 (mediana)", lambda r: f"${r['p50']:,.2f}")
+    _row("Banca final P90", lambda r: f"${r['p90']:,.2f}")
+    _row("Prob. de ruina", lambda r: f"{r['ruin_probability'] * 100:.1f}%")
+    _row("Drawdown maximo esperado", lambda r: f"{r['median_max_drawdown_pct']:.1f}%")
