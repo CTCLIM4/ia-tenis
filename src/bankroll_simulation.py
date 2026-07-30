@@ -114,3 +114,45 @@ def simulate_path(
         bankroll = max(bankroll, 0.0)
         path.append(bankroll)
     return np.array(path)
+
+
+def run_monte_carlo(
+    profile: dict,
+    kelly_multipliers: list[float],
+    n_simulations: int,
+    n_bets: int,
+    initial_bankroll: float,
+    ruin_threshold: float,
+    seed: int | None = None,
+) -> dict:
+    rng = np.random.default_rng(seed)
+    results = {}
+    for km in kelly_multipliers:
+        finals = []
+        max_drawdowns_pct = []
+        ruined = 0
+        for _ in range(n_simulations):
+            path = simulate_path(rng, profile, km, n_bets, initial_bankroll)
+            finals.append(path[-1])
+            running_max = np.maximum.accumulate(path)
+            drawdown_pct = np.where(running_max > 0, (path - running_max) / running_max, 0.0)
+            max_drawdowns_pct.append(drawdown_pct.min())
+            if path.min() < ruin_threshold * initial_bankroll:
+                ruined += 1
+        finals = np.array(finals)
+        results[km] = {
+            "p10": float(np.percentile(finals, 10)),
+            "p50": float(np.percentile(finals, 50)),
+            "p90": float(np.percentile(finals, 90)),
+            "ruin_probability": ruined / n_simulations,
+            "median_max_drawdown_pct": float(np.median(max_drawdowns_pct)) * 100,
+        }
+
+    return {
+        "profile": profile,
+        "results": results,
+        "n_simulations": n_simulations,
+        "n_bets": n_bets,
+        "initial_bankroll": initial_bankroll,
+        "ruin_threshold": ruin_threshold,
+    }

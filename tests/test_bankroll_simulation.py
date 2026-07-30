@@ -9,6 +9,7 @@ import pytest
 
 from src.bankroll_simulation import estimate_bet_profile, kelly_stake, sample_bet
 from src.bankroll_simulation import simulate_path  # add to existing import block
+from src.bankroll_simulation import run_monte_carlo  # add to existing import block
 
 
 def _resolved_df_for_profile():
@@ -144,3 +145,36 @@ class TestSimulatePath:
         p1 = simulate_path(np.random.default_rng(7), profile, 1.0, n_bets=20, initial_bankroll=1000.0)
         p2 = simulate_path(np.random.default_rng(7), profile, 1.0, n_bets=20, initial_bankroll=1000.0)
         np.testing.assert_array_equal(p1, p2)
+
+
+_MC_PROFILE = {"mean_edge": 0.05, "std_edge": 0.02, "mean_odds": 2.0, "std_odds": 0.3, "n": 10}
+
+
+class TestRunMonteCarlo:
+    def test_output_structure_and_sane_ranges(self):
+        result = run_monte_carlo(
+            _MC_PROFILE, kelly_multipliers=[1.0, 0.5, 0.25],
+            n_simulations=200, n_bets=15, initial_bankroll=1000.0,
+            ruin_threshold=0.5, seed=42,
+        )
+        assert set(result["results"].keys()) == {1.0, 0.5, 0.25}
+        assert result["n_simulations"] == 200
+        assert result["n_bets"] == 15
+        assert result["initial_bankroll"] == 1000.0
+        assert result["ruin_threshold"] == 0.5
+        assert result["profile"] == _MC_PROFILE
+
+        for stats in result["results"].values():
+            assert stats["p10"] <= stats["p50"] <= stats["p90"]
+            assert stats["p10"] >= 0.0
+            assert 0.0 <= stats["ruin_probability"] <= 1.0
+            assert stats["median_max_drawdown_pct"] <= 0.0
+
+    def test_same_seed_is_reproducible(self):
+        kwargs = dict(
+            kelly_multipliers=[1.0], n_simulations=50, n_bets=10,
+            initial_bankroll=1000.0, ruin_threshold=0.5, seed=7,
+        )
+        r1 = run_monte_carlo(_MC_PROFILE, **kwargs)
+        r2 = run_monte_carlo(_MC_PROFILE, **kwargs)
+        assert r1 == r2
