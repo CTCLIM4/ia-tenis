@@ -331,6 +331,21 @@ class TestMain:
         out = capsys.readouterr().out
         assert "SIMULACION MONTE CARLO" in out
 
+    def test_cli_exits_cleanly_on_validation_error_from_run_simulation(self, tmp_path, capsys, monkeypatch):
+        bets_path = _write_resolved_bets_csv(tmp_path)
+        argv = [
+            "bankroll_simulation",
+            "--bets-file", bets_path,
+            "--bankroll", "-50",
+        ]
+        monkeypatch.setattr(sys, "argv", argv)
+
+        with pytest.raises(SystemExit):
+            main()
+        err = capsys.readouterr().err
+        assert "Traceback" not in err
+        assert "bankroll" in err
+
 
 class TestRunSimulationValidatesMoreInputs:
     def test_rejects_non_positive_bankroll(self, tmp_path):

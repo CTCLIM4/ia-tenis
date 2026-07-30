@@ -308,20 +308,23 @@ def main() -> None:
             "(debe ser una lista de numeros separados por comas, ej. '1.0,0.5,0.25')"
         )
 
-    run_simulation(
-        bets_path=args.bets_file,
-        tour=tour,
-        bankroll=args.bankroll,
-        n_bets=args.bets,
-        n_simulations=args.simulations,
-        kelly_multipliers=kelly_multipliers,
-        ruin_threshold=args.ruin_threshold,
-        seed=args.seed,
-        mean_edge=args.mean_edge,
-        std_edge=args.std_edge,
-        mean_odds=args.mean_odds,
-        std_odds=args.std_odds,
-    )
+    try:
+        run_simulation(
+            bets_path=args.bets_file,
+            tour=tour,
+            bankroll=args.bankroll,
+            n_bets=args.bets,
+            n_simulations=args.simulations,
+            kelly_multipliers=kelly_multipliers,
+            ruin_threshold=args.ruin_threshold,
+            seed=args.seed,
+            mean_edge=args.mean_edge,
+            std_edge=args.std_edge,
+            mean_odds=args.mean_odds,
+            std_odds=args.std_odds,
+        )
+    except ValueError as e:
+        parser.error(str(e))
 
 
 if __name__ == "__main__":
