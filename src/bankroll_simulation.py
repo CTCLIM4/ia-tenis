@@ -17,11 +17,12 @@ diseño completo (fórmulas y rationale).
 from __future__ import annotations
 
 import math
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
-from src.backtest_analytics import SMALL_SAMPLE_THRESHOLD
+from src.backtest_analytics import SMALL_SAMPLE_THRESHOLD, load_resolved_bets
 from src.value_analysis import KELLY_CAP
 
 
@@ -202,3 +203,70 @@ def print_report(mc_result: dict) -> None:
     _row("Banca final P90", lambda r: f"${r['p90']:,.2f}")
     _row("Prob. de ruina", lambda r: f"{r['ruin_probability'] * 100:.1f}%")
     _row("Drawdown maximo esperado", lambda r: f"{r['median_max_drawdown_pct']:.1f}%")
+
+
+_ROOT = Path(__file__).resolve().parent.parent
+DEFAULT_BETS_PATH = str(_ROOT / "data" / "value_bets_log.csv")
+DEFAULT_BANKROLL = 1000.0
+DEFAULT_N_BETS = 50
+DEFAULT_N_SIMULATIONS = 10000
+DEFAULT_RUIN_THRESHOLD = 0.5
+DEFAULT_KELLY_MULTIPLIERS = [1.0, 0.5, 0.25]
+
+
+def run_simulation(
+    bets_path: str = DEFAULT_BETS_PATH,
+    tour: str | None = None,
+    bankroll: float = DEFAULT_BANKROLL,
+    n_bets: int = DEFAULT_N_BETS,
+    n_simulations: int = DEFAULT_N_SIMULATIONS,
+    kelly_multipliers: list[float] | None = None,
+    ruin_threshold: float = DEFAULT_RUIN_THRESHOLD,
+    seed: int | None = None,
+    mean_edge: float | None = None,
+    std_edge: float | None = None,
+    mean_odds: float | None = None,
+    std_odds: float | None = None,
+) -> None:
+    if kelly_multipliers is None:
+        kelly_multipliers = list(DEFAULT_KELLY_MULTIPLIERS)
+
+    if n_bets <= 0:
+        raise ValueError(f"n_bets debe ser > 0, recibido {n_bets}")
+    if n_simulations <= 0:
+        raise ValueError(f"n_simulations debe ser > 0, recibido {n_simulations}")
+    if not (0 < ruin_threshold < 1):
+        raise ValueError(f"ruin_threshold debe estar en (0, 1), recibido {ruin_threshold}")
+    if any(km <= 0 for km in kelly_multipliers):
+        raise ValueError(f"kelly_multipliers deben ser > 0, recibido {kelly_multipliers}")
+
+    overrides = [mean_edge, std_edge, mean_odds, std_odds]
+    n_overrides = sum(o is not None for o in overrides)
+    if n_overrides not in (0, 4):
+        print("Debes dar los 4 overrides (--mean-edge --std-edge --mean-odds "
+              "--std-odds) juntos, o ninguno.")
+        return
+
+    if n_overrides == 4:
+        profile = {
+            "mean_edge": mean_edge, "std_edge": std_edge,
+            "mean_odds": mean_odds, "std_odds": std_odds, "n": "manual",
+        }
+    else:
+        if not Path(bets_path).exists():
+            print(f"No se encontro {bets_path} y no diste overrides manuales "
+                  "(--mean-edge/--std-edge/--mean-odds/--std-odds).")
+            return
+        df = load_resolved_bets(bets_path, tour)
+        if df.empty:
+            print("No hay apuestas resueltas todavia (status='ok' y result en "
+                  "A_win/B_win) para estimar el perfil; usa los overrides "
+                  "manuales o registra mas apuestas primero.")
+            return
+        profile = estimate_bet_profile(df)
+
+    mc_result = run_monte_carlo(
+        profile, kelly_multipliers, n_simulations, n_bets, bankroll,
+        ruin_threshold, seed,
+    )
+    print_report(mc_result)

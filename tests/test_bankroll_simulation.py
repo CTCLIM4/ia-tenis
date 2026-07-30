@@ -11,6 +11,7 @@ from src.bankroll_simulation import estimate_bet_profile, kelly_stake, sample_be
 from src.bankroll_simulation import simulate_path  # add to existing import block
 from src.bankroll_simulation import run_monte_carlo  # add to existing import block
 from src.bankroll_simulation import print_report  # add to existing import block
+from src.bankroll_simulation import run_simulation  # add to existing import block
 
 
 def _resolved_df_for_profile():
@@ -214,3 +215,78 @@ class TestPrintReport:
         out = capsys.readouterr().out
         assert "N=" not in out
         assert "muestra chica" not in out
+
+
+_RESOLVED_BETS_HEADER = "tour,match_date,status,result,kelly_a,kelly_b,odds_a,odds_b,ev_a,ev_b,profit,edge_a,edge_b"
+_RESOLVED_BETS_ROWS = [
+    "atp,2026-01-01,ok,A_win,0.05,0.0,2.0,1.9,0.1,-0.05,0.05,0.05,-0.08",
+    "wta,2026-01-02,ok,B_win,0.0,0.03,1.8,2.1,-0.02,0.08,0.03,-0.04,0.08",
+]
+
+
+def _write_resolved_bets_csv(tmp_path, rows=_RESOLVED_BETS_ROWS):
+    path = tmp_path / "value_bets_log.csv"
+    path.write_text(_RESOLVED_BETS_HEADER + "\n" + "\n".join(rows) + "\n", encoding="utf-8")
+    return str(path)
+
+
+class TestRunSimulation:
+    def test_missing_bets_file_without_overrides(self, tmp_path, capsys):
+        run_simulation(bets_path=str(tmp_path / "nope.csv"), n_simulations=10, n_bets=5)
+        out = capsys.readouterr().out
+        assert "No se encontro" in out
+
+    def test_zero_resolved_bets_without_overrides(self, tmp_path, capsys):
+        rows = ["atp,2026-01-05,ok,pending,0.05,0.0,2.0,1.9,0.1,-0.05,,0.05,-0.08"]
+        bets_path = _write_resolved_bets_csv(tmp_path, rows)
+        run_simulation(bets_path=bets_path, n_simulations=10, n_bets=5)
+        out = capsys.readouterr().out
+        assert "No hay apuestas resueltas todavia" in out
+
+    def test_partial_overrides_rejected(self, tmp_path, capsys):
+        run_simulation(
+            bets_path=str(tmp_path / "nope.csv"), n_simulations=10, n_bets=5,
+            mean_edge=0.05, std_edge=None, mean_odds=None, std_odds=None,
+        )
+        out = capsys.readouterr().out
+        assert "Debes dar los 4 overrides" in out
+
+    def test_full_overrides_skip_missing_file(self, tmp_path, capsys):
+        run_simulation(
+            bets_path=str(tmp_path / "nope.csv"), n_simulations=20, n_bets=5, seed=1,
+            mean_edge=0.05, std_edge=0.01, mean_odds=2.0, std_odds=0.2,
+        )
+        out = capsys.readouterr().out
+        assert "SIMULACION MONTE CARLO" in out
+
+    def test_normal_run_from_real_bets_csv(self, tmp_path, capsys):
+        bets_path = _write_resolved_bets_csv(tmp_path)  # 2 resolved rows
+        run_simulation(bets_path=bets_path, n_simulations=20, n_bets=5, seed=3)
+        out = capsys.readouterr().out
+        assert "SIMULACION MONTE CARLO" in out
+        assert "N=2" in out
+
+    def test_rejects_non_positive_n_bets(self, tmp_path):
+        bets_path = _write_resolved_bets_csv(tmp_path)
+        with pytest.raises(ValueError):
+            run_simulation(bets_path=bets_path, n_simulations=20, n_bets=0)
+
+    def test_rejects_non_positive_n_simulations(self, tmp_path):
+        bets_path = _write_resolved_bets_csv(tmp_path)
+        with pytest.raises(ValueError):
+            run_simulation(bets_path=bets_path, n_simulations=0, n_bets=5)
+
+    def test_rejects_ruin_threshold_out_of_range(self, tmp_path):
+        bets_path = _write_resolved_bets_csv(tmp_path)
+        with pytest.raises(ValueError):
+            run_simulation(bets_path=bets_path, n_simulations=20, n_bets=5, ruin_threshold=1.5)
+        with pytest.raises(ValueError):
+            run_simulation(bets_path=bets_path, n_simulations=20, n_bets=5, ruin_threshold=0.0)
+
+    def test_rejects_non_positive_kelly_multiplier(self, tmp_path):
+        bets_path = _write_resolved_bets_csv(tmp_path)
+        with pytest.raises(ValueError):
+            run_simulation(
+                bets_path=bets_path, n_simulations=20, n_bets=5,
+                kelly_multipliers=[1.0, 0.0],
+            )
