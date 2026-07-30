@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.bankroll_simulation import estimate_bet_profile
+from src.bankroll_simulation import estimate_bet_profile, sample_bet
 
 
 def _resolved_df_for_profile():
@@ -47,3 +47,27 @@ class TestEstimateBetProfile:
         df = pd.DataFrame({"bet_side": [], "edge_a": [], "edge_b": [], "odds_taken": []})
         with pytest.raises(ValueError):
             estimate_bet_profile(df)
+
+
+class TestSampleBet:
+    def test_deterministic_when_std_is_zero(self):
+        profile = {"mean_edge": 0.05, "std_edge": 0.0, "mean_odds": 2.0, "std_odds": 0.0, "n": 5}
+        rng = np.random.default_rng(0)
+        p_win, odds = sample_bet(rng, profile)
+        # odds collapses to mean_odds exactly (sigma=0 lognormal)
+        assert odds == pytest.approx(2.0)
+        # edge collapses to mean_edge exactly (sigma=0 normal); implied=1/2.0=0.5
+        assert p_win == pytest.approx(0.55)
+
+    def test_edge_floor_prevents_nonpositive_edge(self):
+        profile = {"mean_edge": -0.02, "std_edge": 0.0, "mean_odds": 2.0, "std_odds": 0.0, "n": 5}
+        rng = np.random.default_rng(0)
+        p_win, odds = sample_bet(rng, profile)
+        # edge floored to 0.001; implied=0.5 -> p_win=0.501
+        assert p_win == pytest.approx(0.501)
+
+    def test_seed_reproducibility_with_dispersion(self):
+        profile = {"mean_edge": 0.05, "std_edge": 0.02, "mean_odds": 2.0, "std_odds": 0.3, "n": 10}
+        r1 = sample_bet(np.random.default_rng(42), profile)
+        r2 = sample_bet(np.random.default_rng(42), profile)
+        assert r1 == r2
