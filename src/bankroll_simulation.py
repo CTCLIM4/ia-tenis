@@ -240,6 +240,8 @@ def run_simulation(
         raise ValueError(f"ruin_threshold debe estar en (0, 1), recibido {ruin_threshold}")
     if any(km <= 0 for km in kelly_multipliers):
         raise ValueError(f"kelly_multipliers deben ser > 0, recibido {kelly_multipliers}")
+    if bankroll <= 0:
+        raise ValueError(f"bankroll debe ser > 0, recibido {bankroll}")
 
     overrides = [mean_edge, std_edge, mean_odds, std_odds]
     n_overrides = sum(o is not None for o in overrides)
@@ -249,6 +251,12 @@ def run_simulation(
         return
 
     if n_overrides == 4:
+        if mean_odds <= 1:
+            raise ValueError(f"mean_odds debe ser > 1, recibido {mean_odds}")
+        if std_edge < 0:
+            raise ValueError(f"std_edge debe ser >= 0, recibido {std_edge}")
+        if std_odds < 0:
+            raise ValueError(f"std_odds debe ser >= 0, recibido {std_odds}")
         profile = {
             "mean_edge": mean_edge, "std_edge": std_edge,
             "mean_odds": mean_odds, "std_odds": std_odds, "n": "manual",
@@ -292,7 +300,13 @@ def main() -> None:
     args = parser.parse_args()
 
     tour = None if args.tour == "both" else args.tour
-    kelly_multipliers = [float(x) for x in args.kelly_fractions.split(",")]
+    try:
+        kelly_multipliers = [float(x) for x in args.kelly_fractions.split(",")]
+    except ValueError:
+        parser.error(
+            f"--kelly-fractions invalido: '{args.kelly_fractions}' "
+            "(debe ser una lista de numeros separados por comas, ej. '1.0,0.5,0.25')"
+        )
 
     run_simulation(
         bets_path=args.bets_file,

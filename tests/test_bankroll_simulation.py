@@ -330,3 +330,50 @@ class TestMain:
         main()
         out = capsys.readouterr().out
         assert "SIMULACION MONTE CARLO" in out
+
+
+class TestRunSimulationValidatesMoreInputs:
+    def test_rejects_non_positive_bankroll(self, tmp_path):
+        bets_path = _write_resolved_bets_csv(tmp_path)
+        with pytest.raises(ValueError):
+            run_simulation(bets_path=bets_path, n_simulations=20, n_bets=5, bankroll=0.0)
+        with pytest.raises(ValueError):
+            run_simulation(bets_path=bets_path, n_simulations=20, n_bets=5, bankroll=-50.0)
+
+    def test_rejects_manual_mean_odds_not_greater_than_one(self, tmp_path):
+        with pytest.raises(ValueError):
+            run_simulation(
+                bets_path=str(tmp_path / "nope.csv"), n_simulations=20, n_bets=5,
+                mean_edge=0.05, std_edge=0.01, mean_odds=0.8, std_odds=0.2,
+            )
+
+    def test_rejects_negative_manual_std_edge(self, tmp_path):
+        with pytest.raises(ValueError):
+            run_simulation(
+                bets_path=str(tmp_path / "nope.csv"), n_simulations=20, n_bets=5,
+                mean_edge=0.05, std_edge=-0.01, mean_odds=2.0, std_odds=0.2,
+            )
+
+    def test_rejects_negative_manual_std_odds(self, tmp_path):
+        with pytest.raises(ValueError):
+            run_simulation(
+                bets_path=str(tmp_path / "nope.csv"), n_simulations=20, n_bets=5,
+                mean_edge=0.05, std_edge=0.01, mean_odds=2.0, std_odds=-0.2,
+            )
+
+
+class TestMainRejectsMalformedKellyFractions:
+    def test_cli_exits_cleanly_on_malformed_kelly_fractions(self, tmp_path, capsys, monkeypatch):
+        bets_path = _write_resolved_bets_csv(tmp_path)
+        argv = [
+            "bankroll_simulation",
+            "--bets-file", bets_path,
+            "--kelly-fractions", "1.0,abc",
+        ]
+        monkeypatch.setattr(sys, "argv", argv)
+
+        with pytest.raises(SystemExit):
+            main()
+        err = capsys.readouterr().err
+        assert "Traceback" not in err
+        assert "kelly-fractions" in err
