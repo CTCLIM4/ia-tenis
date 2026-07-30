@@ -988,3 +988,149 @@ git commit -m "fix: address issue found in bankroll_simulation real-data smoke t
 ```
 
 If nothing needed fixing, no commit is required for this task.
+
+---
+
+## Task 10: Validate manual overrides / bankroll, and harden `--kelly-fractions` parsing
+
+**Added after the final whole-module review** (Tasks 1-9 were already complete,
+tested, and committed): `run_simulation` validates `n_bets`/`n_simulations`/
+`ruin_threshold`/`kelly_multipliers` but not the four manual override values
+or `bankroll`, so bad CLI input crashes with a raw Python traceback instead
+of a clean error — e.g. `--std-edge -0.02` raises `ValueError: scale < 0`
+from deep inside `sample_bet`, and `--bankroll -50` silently produces a
+nonsensical negative-bankroll report plus a `RuntimeWarning`. Separately,
+`--kelly-fractions` is parsed by hand (`[float(x) for x in ...split(",")]`)
+with no error handling, so malformed input (`"1.0,abc"`) also raises a raw
+traceback instead of argparse's usual clean "invalid value" message.
+
+**Files:**
+- Modify: `src/bankroll_simulation.py`
+- Modify: `tests/test_bankroll_simulation.py`
+
+- [ ] **Step 1: Write the failing tests**
+
+Append to `tests/test_bankroll_simulation.py`:
+
+```python
+class TestRunSimulationValidatesMoreInputs:
+    def test_rejects_non_positive_bankroll(self, tmp_path):
+        bets_path = _write_resolved_bets_csv(tmp_path)
+        with pytest.raises(ValueError):
+            run_simulation(bets_path=bets_path, n_simulations=20, n_bets=5, bankroll=0.0)
+        with pytest.raises(ValueError):
+            run_simulation(bets_path=bets_path, n_simulations=20, n_bets=5, bankroll=-50.0)
+
+    def test_rejects_manual_mean_odds_not_greater_than_one(self, tmp_path):
+        with pytest.raises(ValueError):
+            run_simulation(
+                bets_path=str(tmp_path / "nope.csv"), n_simulations=20, n_bets=5,
+                mean_edge=0.05, std_edge=0.01, mean_odds=0.8, std_odds=0.2,
+            )
+
+    def test_rejects_negative_manual_std_edge(self, tmp_path):
+        with pytest.raises(ValueError):
+            run_simulation(
+                bets_path=str(tmp_path / "nope.csv"), n_simulations=20, n_bets=5,
+                mean_edge=0.05, std_edge=-0.01, mean_odds=2.0, std_odds=0.2,
+            )
+
+    def test_rejects_negative_manual_std_odds(self, tmp_path):
+        with pytest.raises(ValueError):
+            run_simulation(
+                bets_path=str(tmp_path / "nope.csv"), n_simulations=20, n_bets=5,
+                mean_edge=0.05, std_edge=0.01, mean_odds=2.0, std_odds=-0.2,
+            )
+
+
+class TestMainRejectsMalformedKellyFractions:
+    def test_cli_exits_cleanly_on_malformed_kelly_fractions(self, tmp_path, capsys, monkeypatch):
+        bets_path = _write_resolved_bets_csv(tmp_path)
+        argv = [
+            "bankroll_simulation",
+            "--bets-file", bets_path,
+            "--kelly-fractions", "1.0,abc",
+        ]
+        monkeypatch.setattr(sys, "argv", argv)
+
+        with pytest.raises(SystemExit):
+            main()
+        err = capsys.readouterr().err
+        assert "Traceback" not in err
+        assert "kelly-fractions" in err
+```
+
+- [ ] **Step 2: Run tests to verify they fail**
+
+Run: `./tenis-env/Scripts/python.exe -m pytest tests/test_bankroll_simulation.py::TestRunSimulationValidatesMoreInputs tests/test_bankroll_simulation.py::TestMainRejectsMalformedKellyFractions -v`
+Expected: FAIL — the 4 `run_simulation` tests fail because no `ValueError` is
+raised for `bankroll`/`mean_odds`/`std_edge`/`std_odds` yet (either no
+exception, or an unrelated exception raised from deep inside `sample_bet`
+instead of a clean validation `ValueError` in `run_simulation` itself); the
+CLI test fails because `main()` raises an unhandled `ValueError` (not
+`SystemExit`) on malformed `--kelly-fractions`.
+
+- [ ] **Step 3: Write minimal implementation**
+
+In `src/bankroll_simulation.py`, extend the existing validation block near
+the top of `run_simulation` (right after the `n_bets`/`n_simulations`/
+`ruin_threshold`/`kelly_multipliers` checks added in Task 7) to also
+validate `bankroll`:
+
+```python
+    if bankroll <= 0:
+        raise ValueError(f"bankroll debe ser > 0, recibido {bankroll}")
+```
+
+Then, inside the `if n_overrides == 4:` branch (where the manual profile
+dict is built), validate the three override fields that have a meaningful
+valid range before building the profile:
+
+```python
+    if n_overrides == 4:
+        if mean_odds <= 1:
+            raise ValueError(f"mean_odds debe ser > 1, recibido {mean_odds}")
+        if std_edge < 0:
+            raise ValueError(f"std_edge debe ser >= 0, recibido {std_edge}")
+        if std_odds < 0:
+            raise ValueError(f"std_odds debe ser >= 0, recibido {std_odds}")
+        profile = {
+            "mean_edge": mean_edge, "std_edge": std_edge,
+            "mean_odds": mean_odds, "std_odds": std_odds, "n": "manual",
+        }
+```
+
+(`mean_edge` is intentionally left unvalidated — `sample_bet`'s existing
+0.001 floor already handles any value, including negative ones, safely.)
+
+In `main()`, wrap the `--kelly-fractions` parsing in a try/except that
+calls `parser.error(...)` (argparse's standard way to print a clean usage
+message and exit with status 2, instead of letting a raw `ValueError`
+propagate):
+
+```python
+    try:
+        kelly_multipliers = [float(x) for x in args.kelly_fractions.split(",")]
+    except ValueError:
+        parser.error(
+            f"--kelly-fractions invalido: '{args.kelly_fractions}' "
+            "(debe ser una lista de numeros separados por comas, ej. '1.0,0.5,0.25')"
+        )
+```
+
+- [ ] **Step 4: Run tests to verify they pass**
+
+Run: `./tenis-env/Scripts/python.exe -m pytest tests/test_bankroll_simulation.py::TestRunSimulationValidatesMoreInputs tests/test_bankroll_simulation.py::TestMainRejectsMalformedKellyFractions -v`
+Expected: PASS (5 tests)
+
+Then run the full file to confirm no regressions:
+
+Run: `./tenis-env/Scripts/python.exe -m pytest tests/test_bankroll_simulation.py -v`
+Expected: PASS (32 tests: 27 pre-existing + 5 new)
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add src/bankroll_simulation.py tests/test_bankroll_simulation.py
+git commit -m "fix: validate manual overrides/bankroll and harden --kelly-fractions parsing"
+```
