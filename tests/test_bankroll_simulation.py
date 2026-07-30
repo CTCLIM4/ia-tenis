@@ -8,6 +8,7 @@ import pandas as pd
 import pytest
 
 from src.bankroll_simulation import estimate_bet_profile, kelly_stake, sample_bet
+from src.bankroll_simulation import simulate_path  # add to existing import block
 
 
 def _resolved_df_for_profile():
@@ -90,3 +91,56 @@ class TestKellyStake:
         assert kelly_stake(0.9, 1.5, kelly_multiplier=0.25) == pytest.approx(0.05)
         # 1/10 Kelly finally drops below the cap: 0.1 * 0.4667 = 0.04667
         assert kelly_stake(0.9, 1.5, kelly_multiplier=0.1) == pytest.approx(0.046667, rel=1e-3)
+
+
+class _FixedRNG:
+    """Deterministic stand-in for np.random.Generator. normal()/lognormal()
+    collapse to their location parameter (only used with std=0 profiles in
+    these tests), and random() replays a fixed win/loss sequence — lets us
+    hand-verify the bankroll arithmetic exactly instead of trusting opaque
+    Generator internals."""
+
+    def __init__(self, wins):
+        self._wins = list(wins)
+        self._i = 0
+
+    def normal(self, loc, scale):
+        return loc
+
+    def lognormal(self, mean, sigma):
+        return math.exp(mean)
+
+    def random(self):
+        win = self._wins[self._i]
+        self._i += 1
+        return 0.0 if win else 0.999
+
+
+class TestSimulatePath:
+    def test_hand_verified_bankroll_sequence(self):
+        # profile is deterministic (std=0 both): every sampled bet is
+        # p_win=0.55, odds=2.0 -> kelly_stake(1.0) = 0.05 (at the cap)
+        profile = {"mean_edge": 0.05, "std_edge": 0.0, "mean_odds": 2.0, "std_odds": 0.0, "n": 5}
+        rng = _FixedRNG(wins=[True, False, True])
+        path = simulate_path(rng, profile, kelly_multiplier=1.0, n_bets=3, initial_bankroll=1000.0)
+
+        # bet1: stake=50,  win  -> 1000 + 50*(2.0-1)   = 1050.0
+        # bet2: stake=52.5,lose -> 1050 - 52.5         = 997.5
+        # bet3: stake=49.875,win-> 997.5 + 49.875*1.0  = 1047.375
+        expected = np.array([1000.0, 1050.0, 997.5, 1047.375])
+        np.testing.assert_allclose(path, expected)
+
+    def test_bankroll_never_negative(self):
+        # extreme profile: huge edge relative to odds still caps at 5%/bet,
+        # so bankroll shrinks but must never cross zero even on an
+        # all-losses run.
+        profile = {"mean_edge": 0.05, "std_edge": 0.0, "mean_odds": 2.0, "std_odds": 0.0, "n": 5}
+        rng = _FixedRNG(wins=[False] * 50)
+        path = simulate_path(rng, profile, kelly_multiplier=1.0, n_bets=50, initial_bankroll=1000.0)
+        assert (path >= 0.0).all()
+
+    def test_same_seed_reproducible(self):
+        profile = {"mean_edge": 0.05, "std_edge": 0.02, "mean_odds": 2.0, "std_odds": 0.3, "n": 10}
+        p1 = simulate_path(np.random.default_rng(7), profile, 1.0, n_bets=20, initial_bankroll=1000.0)
+        p2 = simulate_path(np.random.default_rng(7), profile, 1.0, n_bets=20, initial_bankroll=1000.0)
+        np.testing.assert_array_equal(p1, p2)

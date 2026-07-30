@@ -83,3 +83,34 @@ def kelly_stake(p_win: float, odds: float, kelly_multiplier: float) -> float:
     edge = p_win - implied_prob
     raw_kelly = edge / (odds - 1) if edge > 0 else 0.0
     return min(kelly_multiplier * raw_kelly, KELLY_CAP)
+
+
+def simulate_path(
+    rng: np.random.Generator,
+    profile: dict,
+    kelly_multiplier: float,
+    n_bets: int,
+    initial_bankroll: float,
+) -> np.ndarray:
+    """Simulate one bankroll trajectory of n_bets synthetic bets.
+
+    Stakes a fraction of the CURRENT bankroll each bet (compounding), not
+    a fraction of the fixed initial bankroll — this is the whole point of
+    the Kelly criterion (geometric growth) and is why half-Kelly reduces
+    ruin risk so much in practice. This differs deliberately from Módulo
+    2's linear equity curve, which is correct for reporting a fixed
+    historical sequence but not for a forward-looking Kelly simulation.
+    """
+    bankroll = initial_bankroll
+    path = [bankroll]
+    for _ in range(n_bets):
+        p_win, odds = sample_bet(rng, profile)
+        stake_frac = kelly_stake(p_win, odds, kelly_multiplier)
+        stake_usd = stake_frac * bankroll
+        if rng.random() < p_win:
+            bankroll += stake_usd * (odds - 1)
+        else:
+            bankroll -= stake_usd
+        bankroll = max(bankroll, 0.0)
+        path.append(bankroll)
+    return np.array(path)
