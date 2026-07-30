@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.bankroll_simulation import estimate_bet_profile, sample_bet
+from src.bankroll_simulation import estimate_bet_profile, kelly_stake, sample_bet
 
 
 def _resolved_df_for_profile():
@@ -71,3 +71,22 @@ class TestSampleBet:
         r1 = sample_bet(np.random.default_rng(42), profile)
         r2 = sample_bet(np.random.default_rng(42), profile)
         assert r1 == r2
+
+
+class TestKellyStake:
+    def test_positive_edge_scales_with_multiplier(self):
+        # p_win=0.55, odds=2.0 -> implied=0.5, edge=0.05, raw=0.05/(1.0)=0.05
+        assert kelly_stake(0.55, 2.0, kelly_multiplier=1.0) == pytest.approx(0.05)
+        assert kelly_stake(0.55, 2.0, kelly_multiplier=0.5) == pytest.approx(0.025)
+
+    def test_negative_edge_returns_zero(self):
+        # p_win=0.3, odds=2.0 -> implied=0.5, edge=-0.2 -> no bet
+        assert kelly_stake(0.3, 2.0, kelly_multiplier=1.0) == 0.0
+
+    def test_cap_dominates_at_high_edge(self):
+        # p_win=0.9, odds=1.5 -> implied=0.6667, edge=0.2333, raw=0.4667
+        # full Kelly and 1/4 Kelly both still hit the 5% cap
+        assert kelly_stake(0.9, 1.5, kelly_multiplier=1.0) == pytest.approx(0.05)
+        assert kelly_stake(0.9, 1.5, kelly_multiplier=0.25) == pytest.approx(0.05)
+        # 1/10 Kelly finally drops below the cap: 0.1 * 0.4667 = 0.04667
+        assert kelly_stake(0.9, 1.5, kelly_multiplier=0.1) == pytest.approx(0.046667, rel=1e-3)

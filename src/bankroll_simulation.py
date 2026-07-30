@@ -21,6 +21,8 @@ import math
 import numpy as np
 import pandas as pd
 
+from src.value_analysis import KELLY_CAP
+
 
 def estimate_bet_profile(df: pd.DataFrame) -> dict:
     """Derive an edge/odds sampling profile from resolved bets.
@@ -71,3 +73,13 @@ def sample_bet(rng: np.random.Generator, profile: dict) -> tuple[float, float]:
     implied_prob = 1 / odds
     p_win = min(max(implied_prob + edge, 0.01), 0.99)
     return p_win, odds
+
+
+def kelly_stake(p_win: float, odds: float, kelly_multiplier: float) -> float:
+    """Same convention as value_analysis.calculate_value's Kelly formula,
+    with an extra multiplier applied before the cap (so half/quarter Kelly
+    only differ from full Kelly when the cap isn't already binding)."""
+    implied_prob = 1 / odds
+    edge = p_win - implied_prob
+    raw_kelly = edge / (odds - 1) if edge > 0 else 0.0
+    return min(kelly_multiplier * raw_kelly, KELLY_CAP)
