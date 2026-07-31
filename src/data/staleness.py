@@ -16,6 +16,8 @@ from typing import Optional
 
 import pandas as pd
 
+from src.data.timezone_utils import lima_today
+
 LIVE_WARNING_DAYS = 1
 LIVE_CRITICAL_DAYS = 2
 REGULAR_WARNING_DAYS = 3
@@ -148,7 +150,7 @@ def check_dataset_staleness(
     used regardless of row order. reference_date defaults to today.
     """
     if reference_date is None:
-        reference_date = date.today()
+        reference_date = lima_today()
 
     last_match = df["match_date"].max()
     if pd.isna(last_match):

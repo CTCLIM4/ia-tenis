@@ -172,9 +172,10 @@ class TestCheckDatasetStalenessDataFrameHandling:
         report = check_dataset_staleness(df, reference_date=ref)
         assert report.days_stale == 2  # from 2026-07-18, not the other rows
 
-    def test_defaults_reference_date_to_today(self):
-        today = date.today()
-        df = _df(today)
+    def test_defaults_reference_date_to_lima_today(self, monkeypatch):
+        fixed_today = date(2026, 7, 30)
+        monkeypatch.setattr("src.data.staleness.lima_today", lambda: fixed_today)
+        df = _df(fixed_today)
         report = check_dataset_staleness(df)
         assert report.days_stale == 0
 
