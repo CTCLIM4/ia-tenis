@@ -101,6 +101,32 @@ class TestDiscoverMatches:
         assert m.odds_a == 1.5 and m.odds_b == 2.6
         assert m.match_date == date(2026, 7, 27)
 
+    def test_match_date_uses_lima_calendar_day_not_utc(self, monkeypatch):
+        import src.daily_scanner as scanner
+
+        monkeypatch.setattr(scanner, "fetch_sports_index", lambda api_key: [
+            {"key": "tennis_atp_wimbledon", "title": "ATP Wimbledon"},
+        ])
+        monkeypatch.setattr(
+            scanner, "fetch_odds_events_by_key",
+            lambda sport_key, api_key: [
+                _event("Novak Djokovic", "Jannik Sinner", bookmaker_key=DEFAULT_BOOKMAKER,
+                       commence_time="2026-07-27T02:00:00Z")
+            ],
+        )
+        now = datetime(2026, 7, 26, 12, 0, tzinfo=timezone.utc)
+        monkeypatch.setattr(scanner, "_now", lambda: now)
+
+        matches = discover_matches(
+            api_key="fake",
+            canonical_names_by_tour={"atp": ["Novak Djokovic", "Jannik Sinner"], "wta": []},
+            days_ahead=1,
+        )
+        assert len(matches) == 1
+        # 2026-07-27T02:00Z is 2026-07-26 21:00 in America/Lima (UTC-5) —
+        # match_date must reflect the Lima calendar day, not the UTC one.
+        assert matches[0].match_date == date(2026, 7, 26)
+
     def test_skips_event_outside_time_window(self, monkeypatch):
         import src.daily_scanner as scanner
 

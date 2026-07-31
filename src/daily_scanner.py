@@ -51,6 +51,7 @@ from typing import Optional
 
 import src.config  # noqa: F401  (side effect: carga .env antes de leer ODDS_API_KEY)
 from src.calibration_audit import classify_audit_decision, log_prediction_audit
+from src.data.timezone_utils import to_lima
 from src.odds_api import (
     DEFAULT_BOOKMAKER,
     fetch_odds_events_by_key,
@@ -109,6 +110,10 @@ def _now() -> datetime:
     return datetime.now(timezone.utc)
 
 
+# _now()/_is_within_window compare timezone-aware instants, not calendar
+# dates — that comparison is correct regardless of which tz the operands
+# are expressed in (Python normalizes internally), so no Lima conversion
+# is needed here. Only the calendar-date extraction below needs it.
 def _is_within_window(commence_time: str, days_ahead: int, now: Optional[datetime] = None) -> bool:
     """True when commence_time (ISO8601, e.g. '2026-07-27T18:00:00Z') falls
     between now and now + days_ahead days — the "today/next matchday" window."""
@@ -179,7 +184,7 @@ def discover_matches(
                       f"({sport['title']}). Partido excluido.")
                 continue
 
-            match_date = datetime.fromisoformat(commence_time.replace("Z", "+00:00")).date()
+            match_date = to_lima(datetime.fromisoformat(commence_time.replace("Z", "+00:00"))).date()
             matches.append(DiscoveredMatch(
                 tour=sport["tour"], tournament=sport["title"], surface=surface,
                 match_date=match_date, player_a=player_a, player_b=player_b,
