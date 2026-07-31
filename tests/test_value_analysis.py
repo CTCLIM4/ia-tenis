@@ -192,6 +192,12 @@ class TestCheckStaleness:
         out = capsys.readouterr().out
         assert "ADVERTENCIA" in out
 
+    def test_defaults_reference_date_to_lima_today(self, monkeypatch, capsys):
+        fixed_today = date(2026, 7, 30)
+        monkeypatch.setattr("src.value_analysis.lima_today", lambda: fixed_today)
+        _check_staleness("atp", fixed_today, reference_date=None)
+        assert capsys.readouterr().out == ""
+
 
 # ── 3. _resolve_player_name / disambiguation ───────────────────────────────────
 

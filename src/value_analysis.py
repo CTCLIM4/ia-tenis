@@ -41,6 +41,7 @@ from src.backtest.walkforward import _MIRROR_FLIP_COLS, load_features_with_mirro
 from src.calibration_audit import classify_audit_decision, log_prediction_audit
 from src.data.snapshots import load_snapshot_metadata, resolve_snapshot_path
 from src.data.staleness import StalenessLevel, evaluate_staleness
+from src.data.timezone_utils import lima_today
 from src.features import FEATURE_COLS
 from src.features.decay import EloHistoryTracker, calculate_decay_features
 from src.odds_api import DEFAULT_BOOKMAKER, DEFAULT_CACHE_MINUTES, MatchOdds, get_match_odds
@@ -338,7 +339,7 @@ def _check_staleness(
     """
     report = evaluate_staleness(
         last_match_date,
-        reference_date or date.today(),
+        reference_date or lima_today(),
         live_tournament_mode,
     )
     if report.level == StalenessLevel.OK:
