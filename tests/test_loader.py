@@ -1,6 +1,9 @@
+from datetime import date
+
 import pandas as pd
 import pytest
 from io import StringIO
+from src.data import loader
 from src.data.loader import _clean, _clean_wta, _count_sets_played, load_atp_matches, load_wta_matches
 
 SAMPLE_CSV = (
@@ -52,6 +55,25 @@ def test_clean_adds_tour_column_when_provided():
     raw["tour"] = "atp"
     df = _clean(raw)
     assert "tour" in df.columns
+
+
+def test_clean_drops_rows_dated_more_than_one_day_past_reference():
+    raw = pd.read_csv(StringIO(SAMPLE_CSV))  # tourney_date rows: 20230117, 20230116
+    df = _clean(raw, reference_date=date(2023, 1, 14))
+    assert len(df) == 0
+
+
+def test_clean_keeps_rows_within_one_day_of_reference():
+    raw = pd.read_csv(StringIO(SAMPLE_CSV))
+    df = _clean(raw, reference_date=date(2023, 1, 20))
+    assert len(df) == 2
+
+
+def test_clean_defaults_reference_date_to_lima_today(monkeypatch):
+    monkeypatch.setattr(loader, "lima_today", lambda: date(2023, 1, 1))
+    raw = pd.read_csv(StringIO(SAMPLE_CSV))
+    df = _clean(raw)
+    assert len(df) == 0
 
 
 # ── tennis-data.co.uk WTA loader ─────────────────────────────────────────────
@@ -118,6 +140,40 @@ def test_clean_wta_indoor_hard_maps_to_hard():
     raw.loc[0, "Surface"] = "Hard (I)"
     df = _clean_wta(raw, 2023)
     assert df.iloc[df["match_date"].argmin()]["surface"] == "hard"
+
+
+def test_clean_wta_drops_rows_dated_more_than_one_day_past_reference():
+    df = _clean_wta(_wta_raw(), 2023, reference_date=date(2023, 1, 13))
+    assert len(df) == 0
+
+
+def test_clean_wta_keeps_rows_within_one_day_of_reference():
+    df = _clean_wta(_wta_raw(), 2023, reference_date=date(2023, 1, 20))
+    assert len(df) == 3
+
+
+def test_clean_wta_defaults_reference_date_to_lima_today(monkeypatch):
+    monkeypatch.setattr(loader, "lima_today", lambda: date(2023, 1, 13))
+    df = _clean_wta(_wta_raw(), 2023)
+    assert len(df) == 0
+
+
+# Regression test for the 2026-08-12 Iasi Open incident: a single-digit
+# year typo in the source spreadsheet (2029-07-20 instead of 2026-07-20)
+# propagated into last_match_date and tripped the invalid_future_date
+# staleness guard. The filter must drop only the corrupted row.
+WTA_CSV_WITH_FUTURE_TYPO = (
+    "Date,Surface,Winner,Loser,WRank,LRank,Wsets,Lsets,B365W,B365L\n"
+    "18/07/2026,Clay,Badosa P.,Zidansek T.,10,20,2,0,1.50,2.50\n"
+    "20/07/2029,Clay,Sherif M.,Badosa P.,97,115,1,0,2.75,1.44\n"
+)
+
+
+def test_clean_wta_drops_future_typo_row_but_keeps_valid_row():
+    raw = pd.read_csv(StringIO(WTA_CSV_WITH_FUTURE_TYPO))
+    df = _clean_wta(raw, 2026, reference_date=date(2026, 8, 12))
+    assert len(df) == 1
+    assert df.iloc[0]["match_date"] == pd.Timestamp(2026, 7, 18)
 
 
 # ── raw_dir_override (snapshot-pinned loading) ──────────────────────────────

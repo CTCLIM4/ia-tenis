@@ -1,8 +1,11 @@
 import re
+from datetime import date, timedelta
 from pathlib import Path
 from typing import Optional
 
 import pandas as pd
+
+from src.data.timezone_utils import lima_today
 
 RAW_DATA_DIR = Path("data/raw")
 
@@ -31,13 +34,15 @@ def _count_sets_played(score) -> int:
     return len(_SET_SCORE_PATTERN.findall(_BRACKETED_PATTERN.sub("", score)))
 
 
-def _clean(df: pd.DataFrame) -> pd.DataFrame:
+def _clean(df: pd.DataFrame, reference_date: Optional[date] = None) -> pd.DataFrame:
     df = df.copy()
     df["match_date"] = pd.to_datetime(
         df["tourney_date"].astype(str), format="%Y%m%d", errors="coerce"
     )
     df["surface"] = df["surface"].map(_SURFACE_MAP).fillna("unknown")
     df = df.dropna(subset=["winner_name", "loser_name", "match_date"])
+    cutoff = pd.Timestamp((reference_date or lima_today()) + timedelta(days=1))
+    df = df[df["match_date"] <= cutoff]
     for col in ("winner_rank", "loser_rank"):
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce")
@@ -99,7 +104,7 @@ _TDUK_COL_ALIASES = {
 }
 
 
-def _clean_wta(df: pd.DataFrame, year: int) -> pd.DataFrame:
+def _clean_wta(df: pd.DataFrame, year: int, reference_date: Optional[date] = None) -> pd.DataFrame:
     """Normalize tennis-data.co.uk WTA columns to the internal schema."""
     df = df.copy()
     df.columns = [c.strip() for c in df.columns]
@@ -125,6 +130,8 @@ def _clean_wta(df: pd.DataFrame, year: int) -> pd.DataFrame:
     df = df.dropna(subset=["winner_name", "loser_name", "match_date"])
     df = df[df["winner_name"].str.strip() != ""]
     df = df[df["loser_name"].str.strip() != ""]
+    cutoff = pd.Timestamp((reference_date or lima_today()) + timedelta(days=1))
+    df = df[df["match_date"] <= cutoff]
     return df.sort_values("match_date").reset_index(drop=True)
 
 
