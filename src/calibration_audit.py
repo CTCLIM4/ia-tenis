@@ -32,24 +32,37 @@ _AUDIT_LOG_FIELDS = [
 
 
 def classify_audit_decision(
-    suspicious: bool, elo_ok: bool, logged: bool, has_value_a: bool, has_value_b: bool,
+    low_sample: bool, suspicious_edge: bool, elo_ok: bool, logged: bool,
+    has_value_a: bool, has_value_b: bool,
 ) -> str:
     """Classify what happened to one evaluated prediction, for the audit
     log's `decision` column.
 
     Priority order matters and is deliberately defensive (checked in this
     order even though some combinations shouldn't occur together in
-    practice): a suspicious edge always wins — the prediction was never
-    trustworthy enough to act on regardless of anything else. Then missing
-    Elo — the same data-quality concern log_query() itself encodes via
-    status='invalid_missing_elo'. Then whether the user actually logged it
-    to value_bets_log.csv. Then whether it even had positive edge on either
-    side to log in the first place.
+    practice):
+
+    1. Missing Elo (elo_ok=False, i.e. a player with 0 recorded matches)
+       always wins — it's the most specific diagnosis available and is
+       itself a special case of low_sample, so it must be checked first or
+       it would never be reachable.
+    2. low_sample — at least one player has fewer than
+       src.config.MIN_MATCHES_THRESHOLD matches. A thin sample is often the
+       root cause of an inflated edge, so it's reported ahead of the
+       edge-magnitude check below even when both are true for the same
+       prediction.
+    3. suspicious_edge — edge exceeds src.config.MAX_SUSPICIOUS_EDGE despite
+       an adequate sample; still not trustworthy enough to act on.
+    4. Then whether the user actually logged it to value_bets_log.csv.
+    5. Then whether it even had positive edge on either side to log in the
+       first place.
     """
-    if suspicious:
-        return "blocked_suspicious"
     if not elo_ok:
         return "invalid_missing_elo"
+    if low_sample:
+        return "blocked_low_sample"
+    if suspicious_edge:
+        return "blocked_suspicious_edge"
     if logged:
         return "logged"
     if not has_value_a and not has_value_b:

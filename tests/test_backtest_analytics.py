@@ -226,7 +226,7 @@ _AUDIT_HEADER = "tour,decision"
 _AUDIT_ROWS = [
     "atp,logged", "wta,logged",
     "atp,passed_low_edge",
-    "wta,blocked_suspicious", "atp,blocked_suspicious", "atp,blocked_suspicious",
+    "wta,blocked_low_sample", "atp,blocked_low_sample", "atp,blocked_suspicious_edge",
 ]
 
 
@@ -251,7 +251,8 @@ class TestComputeAuditCoverage:
             "logged": 2,
             "passed_low_edge": 1,
             "passed_user_declined": 0,
-            "blocked_suspicious": 3,
+            "blocked_low_sample": 2,
+            "blocked_suspicious_edge": 1,
             "invalid_missing_elo": 0,
         }
         assert cov["logged"] == 2
@@ -268,7 +269,7 @@ class TestPrintReport:
             "total": 6,
             "by_decision": {
                 "logged": 2, "passed_low_edge": 1, "passed_user_declined": 0,
-                "blocked_suspicious": 3, "invalid_missing_elo": 0,
+                "blocked_low_sample": 2, "blocked_suspicious_edge": 1, "invalid_missing_elo": 0,
             },
             "logged": 2, "passed": 4,
         }

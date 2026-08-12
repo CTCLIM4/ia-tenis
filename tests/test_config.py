@@ -17,6 +17,14 @@ class TestDotenvPath:
         assert (config._ROOT / "requirements.txt").exists()
 
 
+class TestThresholdConstants:
+    def test_min_matches_threshold_is_25(self):
+        assert config.MIN_MATCHES_THRESHOLD == 25
+
+    def test_max_suspicious_edge_is_0_10(self):
+        assert config.MAX_SUSPICIOUS_EDGE == 0.10
+
+
 class TestDotenvLoading:
     def test_env_example_is_parseable_and_has_odds_api_key(self):
         example_path = config._ROOT / ".env.example"

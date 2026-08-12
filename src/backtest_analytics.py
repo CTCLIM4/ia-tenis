@@ -155,7 +155,7 @@ def compute_calibration_metrics(df: pd.DataFrame) -> dict:
 
 _DECISION_CATEGORIES = [
     "logged", "passed_low_edge", "passed_user_declined",
-    "blocked_suspicious", "invalid_missing_elo",
+    "blocked_low_sample", "blocked_suspicious_edge", "invalid_missing_elo",
 ]
 
 

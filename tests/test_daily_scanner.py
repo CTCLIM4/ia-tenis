@@ -13,8 +13,8 @@ from src.daily_scanner import (
     evaluate_matches,
     print_value_bets_table,
 )
+from src.config import MAX_SUSPICIOUS_EDGE
 from src.odds_api import DEFAULT_BOOKMAKER
-from src.value_analysis import SUSPICIOUS_EDGE_THRESHOLD
 
 
 # ── _is_within_window ─────────────────────────────────────────────────────────
@@ -194,13 +194,14 @@ def _val(edge=0.1, ev=0.15, kelly=0.05, has_value=True):
     return {"implied_prob": 0.5, "edge": edge, "ev": ev, "kelly_fraction": kelly, "has_value": has_value}
 
 
-def _pred(elo_found_a=True, elo_found_b=True):
+def _pred(elo_found_a=True, elo_found_b=True, matches_a=100, matches_b=100):
     return {
         "player_a": "Novak Djokovic", "player_b": "Jannik Sinner",
         "p_a_raw": 0.6, "p_a_cal": 0.6, "p_b_raw": 0.4, "p_b_cal": 0.4,
         "rank_a": 1, "rank_b": 2, "rank_a_source": "auto", "rank_b_source": "auto",
         "features": {}, "elo_a": 2000, "elo_b": 1900,
         "elo_found_a": elo_found_a, "elo_found_b": elo_found_b,
+        "matches_a": matches_a, "matches_b": matches_b,
     }
 
 
@@ -243,7 +244,7 @@ class TestEvaluateMatches:
         monkeypatch.setattr(scanner, "predict_match", lambda *a, **k: _pred())
         monkeypatch.setattr(
             scanner, "calculate_value",
-            lambda p, o: _val(edge=SUSPICIOUS_EDGE_THRESHOLD + 0.05),
+            lambda p, o: _val(edge=MAX_SUSPICIOUS_EDGE + 0.05),
         )
 
         m = scanner.DiscoveredMatch(
@@ -255,6 +256,48 @@ class TestEvaluateMatches:
             [m], models={"atp": (None, None, None, None, None, None)}, halt_on_suspicious=True,
         )
         assert results[0].suspicious is True
+
+    def test_flags_low_sample_when_either_player_below_threshold(self, monkeypatch):
+        import src.daily_scanner as scanner
+
+        monkeypatch.setattr(scanner, "predict_match", lambda *a, **k: _pred(matches_a=14, matches_b=302))
+        monkeypatch.setattr(scanner, "calculate_value", lambda p, o: _val())
+
+        m = scanner.DiscoveredMatch(
+            tour="atp", tournament="ATP Cincinnati Open", surface="hard",
+            match_date=date(2026, 8, 11), player_a="Henrique Rocha", player_b="Marcos Giron",
+            odds_a=2.81, odds_b=1.46, raw_home="Henrique Rocha", raw_away="Marcos Giron",
+        )
+        results = evaluate_matches([m], models={"atp": (None, None, None, None, None, None)})
+        assert results[0].low_sample is True
+
+    def test_not_low_sample_when_both_players_meet_threshold(self, monkeypatch):
+        import src.daily_scanner as scanner
+
+        monkeypatch.setattr(scanner, "predict_match", lambda *a, **k: _pred(matches_a=30, matches_b=40))
+        monkeypatch.setattr(scanner, "calculate_value", lambda p, o: _val())
+
+        m = scanner.DiscoveredMatch(
+            tour="atp", tournament="ATP Wimbledon", surface="grass",
+            match_date=date(2026, 7, 27), player_a="Novak Djokovic", player_b="Jannik Sinner",
+            odds_a=1.5, odds_b=2.6, raw_home="Novak Djokovic", raw_away="Jannik Sinner",
+        )
+        results = evaluate_matches([m], models={"atp": (None, None, None, None, None, None)})
+        assert results[0].low_sample is False
+
+    def test_is_value_bet_false_when_low_sample_even_with_value(self, monkeypatch):
+        import src.daily_scanner as scanner
+
+        monkeypatch.setattr(scanner, "predict_match", lambda *a, **k: _pred(matches_a=14, matches_b=302))
+        monkeypatch.setattr(scanner, "calculate_value", lambda p, o: _val(edge=0.05, has_value=True))
+
+        m = scanner.DiscoveredMatch(
+            tour="atp", tournament="ATP Cincinnati Open", surface="hard",
+            match_date=date(2026, 8, 11), player_a="Henrique Rocha", player_b="Marcos Giron",
+            odds_a=2.81, odds_b=1.46, raw_home="Henrique Rocha", raw_away="Marcos Giron",
+        )
+        results = evaluate_matches([m], models={"atp": (None, None, None, None, None, None)})
+        assert results[0].is_value_bet is False
 
     def test_no_value_when_edge_not_positive(self, monkeypatch):
         import src.daily_scanner as scanner

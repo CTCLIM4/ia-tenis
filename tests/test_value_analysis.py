@@ -15,10 +15,10 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
 from src.features.decay import EloHistoryTracker
+from src.config import MAX_SUSPICIOUS_EDGE
 from src.value_analysis import (
     FEATURE_COLS,
     KELLY_CAP,
-    SUSPICIOUS_EDGE_THRESHOLD,
     _LOG_FIELDS,
     _build_age_lookup,
     _check_staleness,
@@ -630,6 +630,55 @@ class TestPredictMatchH2hWiring:
         assert pred["p_a_raw"] == pytest.approx(0.9)
 
 
+class TestPredictMatchMatchCounts:
+    """predict_match must expose each player's elo.match_counts so callers
+    can flag low-sample predictions (see src/config.MIN_MATCHES_THRESHOLD)
+    without re-resolving player names themselves."""
+
+    def _stub_fb(self):
+        return SimpleNamespace(
+            get_features=lambda p, o, s, d: {
+                "recent_win_rate": 0.5, "recent_win_rate_surface": 0.5,
+                "h2h_win_rate": 0.5, "h2h_matches": 0, "rest_days": 14.0,
+            },
+            match_dates=lambda p: [],
+            workload_history=lambda p: [],
+            last_surface_and_date=lambda p: None,
+        )
+
+    def _neutral_clf(self):
+        class _StubClf:
+            def predict_proba(self, X):
+                return np.array([[0.5, 0.5]])
+        return _StubClf()
+
+    def test_returns_match_counts_for_both_players(self):
+        elo = _fake_elo({"A": 1500.0, "B": 1500.0}, counts={"A": 302, "B": 14})
+        elo.get_effective_rating = lambda p, s: 1500.0
+        elo.expected_score = lambda a, b: 0.5
+
+        pred = predict_match(
+            elo, self._stub_fb(), self._neutral_clf(),
+            "A", "B", "hard", date(2026, 8, 11),
+            rank_lookup=None, age_lookup=None,
+        )
+        assert pred["matches_a"] == 302
+        assert pred["matches_b"] == 14
+
+    def test_unknown_player_reports_zero_matches(self):
+        elo = _fake_elo({"A": 1500.0}, counts={"A": 5})
+        elo.get_effective_rating = lambda p, s: 1500.0
+        elo.expected_score = lambda a, b: 0.5
+
+        pred = predict_match(
+            elo, self._stub_fb(), self._neutral_clf(),
+            "A", "Ghost Player", "hard", date(2026, 8, 11),
+            rank_lookup=None, age_lookup=None,
+        )
+        assert pred["matches_a"] == 5
+        assert pred["matches_b"] == 0
+
+
 class TestPredictMatchFatigueWiring:
     def test_fatigue_multiplier_diff_reaches_lr_input_vector(self):
         elo = _fake_elo({"A": 1500.0, "B": 1500.0})
@@ -785,7 +834,7 @@ class TestShouldHaltOnSuspiciousEdge:
         assert _should_halt_on_suspicious_edge(val_a, val_b, halt_on_suspicious=True) is False
 
     def test_false_exactly_at_threshold(self):
-        val_a = {"edge": SUSPICIOUS_EDGE_THRESHOLD}
+        val_a = {"edge": MAX_SUSPICIOUS_EDGE}
         val_b = {"edge": 0.0}
         assert _should_halt_on_suspicious_edge(val_a, val_b, halt_on_suspicious=True) is False
 

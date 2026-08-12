@@ -14,46 +14,73 @@ from src.value_analysis import calculate_value
 
 
 class TestClassifyAuditDecision:
-    def test_suspicious_wins_over_everything(self):
-        # Even if elo_ok is False and logged is True (contradictory in
-        # practice, but the priority order must still hold defensively).
+    def test_missing_elo_wins_over_low_sample_and_suspicious_edge(self):
+        # A player never seen at all (0 matches) always also satisfies
+        # low_sample, but invalid_missing_elo is the more specific, more
+        # useful diagnosis and must win — checked in this order deliberately
+        # (even the contradictory-in-practice combo of elo_ok=False with
+        # logged=True must still resolve this way, defensively).
         result = calibration_audit.classify_audit_decision(
-            suspicious=True, elo_ok=False, logged=True,
-            has_value_a=True, has_value_b=False,
-        )
-        assert result == "blocked_suspicious"
-
-    def test_missing_elo_wins_over_logged_and_value(self):
-        result = calibration_audit.classify_audit_decision(
-            suspicious=False, elo_ok=False, logged=True,
+            low_sample=True, suspicious_edge=True, elo_ok=False, logged=True,
             has_value_a=True, has_value_b=False,
         )
         assert result == "invalid_missing_elo"
 
+    def test_missing_elo_wins_over_logged_and_value(self):
+        result = calibration_audit.classify_audit_decision(
+            low_sample=False, suspicious_edge=False, elo_ok=False, logged=True,
+            has_value_a=True, has_value_b=False,
+        )
+        assert result == "invalid_missing_elo"
+
+    def test_low_sample_wins_over_suspicious_edge_when_elo_ok(self):
+        # A thin-but-nonzero sample is the root cause a huge edge is not
+        # trustworthy — reported as blocked_low_sample rather than the less
+        # specific blocked_suspicious_edge.
+        result = calibration_audit.classify_audit_decision(
+            low_sample=True, suspicious_edge=True, elo_ok=True, logged=True,
+            has_value_a=True, has_value_b=False,
+        )
+        assert result == "blocked_low_sample"
+
+    def test_low_sample_wins_over_logged_and_value(self):
+        result = calibration_audit.classify_audit_decision(
+            low_sample=True, suspicious_edge=False, elo_ok=True, logged=True,
+            has_value_a=True, has_value_b=False,
+        )
+        assert result == "blocked_low_sample"
+
+    def test_suspicious_edge_when_sample_is_sufficient(self):
+        result = calibration_audit.classify_audit_decision(
+            low_sample=False, suspicious_edge=True, elo_ok=True, logged=True,
+            has_value_a=True, has_value_b=False,
+        )
+        assert result == "blocked_suspicious_edge"
+
     def test_logged_when_user_confirmed_save(self):
         result = calibration_audit.classify_audit_decision(
-            suspicious=False, elo_ok=True, logged=True,
+            low_sample=False, suspicious_edge=False, elo_ok=True, logged=True,
             has_value_a=True, has_value_b=False,
         )
         assert result == "logged"
 
     def test_passed_low_edge_when_neither_side_has_value_and_not_logged(self):
         result = calibration_audit.classify_audit_decision(
-            suspicious=False, elo_ok=True, logged=False,
+            low_sample=False, suspicious_edge=False, elo_ok=True, logged=False,
             has_value_a=False, has_value_b=False,
         )
         assert result == "passed_low_edge"
 
     def test_passed_user_declined_when_value_existed_but_not_logged(self):
         result = calibration_audit.classify_audit_decision(
-            suspicious=False, elo_ok=True, logged=False,
+            low_sample=False, suspicious_edge=False, elo_ok=True, logged=False,
             has_value_a=True, has_value_b=False,
         )
         assert result == "passed_user_declined"
 
     def test_passed_user_declined_when_only_side_b_has_value(self):
         result = calibration_audit.classify_audit_decision(
-            suspicious=False, elo_ok=True, logged=False,
+            low_sample=False, suspicious_edge=False, elo_ok=True, logged=False,
             has_value_a=False, has_value_b=True,
         )
         assert result == "passed_user_declined"
@@ -138,7 +165,7 @@ class TestLogPredictionAudit:
     def test_appends_multiple_rows(self, audit_log_path):
         pred = _make_pred()
         v = calculate_value(0.58, 1.90)
-        for decision in ("logged", "passed_low_edge", "blocked_suspicious"):
+        for decision in ("logged", "passed_low_edge", "blocked_suspicious_edge"):
             calibration_audit.log_prediction_audit(
                 "atp", "Test", "hard", date(2026, 7, 25),
                 "Player A", "Player B",
@@ -149,7 +176,7 @@ class TestLogPredictionAudit:
                 shrink_hi=0.90, shrink_lo=0.10, shrink_rate=0.60,
             )
         rows = _read_audit_log(audit_log_path)
-        assert [r["decision"] for r in rows] == ["logged", "passed_low_edge", "blocked_suspicious"]
+        assert [r["decision"] for r in rows] == ["logged", "passed_low_edge", "blocked_suspicious_edge"]
 
     def test_records_elo_found_flags(self, audit_log_path):
         pred = _make_pred(elo_found_a=True, elo_found_b=False)

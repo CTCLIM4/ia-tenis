@@ -49,8 +49,8 @@ from dataclasses import dataclass
 from datetime import date, datetime, timedelta, timezone
 from typing import Optional
 
-import src.config  # noqa: F401  (side effect: carga .env antes de leer ODDS_API_KEY)
 from src.calibration_audit import classify_audit_decision, log_prediction_audit
+from src.config import MAX_SUSPICIOUS_EDGE, MIN_MATCHES_THRESHOLD  # also loads .env (side effect) before ODDS_API_KEY is read below
 from src.data.timezone_utils import to_lima
 from src.odds_api import (
     DEFAULT_BOOKMAKER,
@@ -61,7 +61,6 @@ from src.odds_api import (
 from src.player_matcher import match_player_name
 from src.surface_resolver import resolve_surface
 from src.value_analysis import (
-    SUSPICIOUS_EDGE_THRESHOLD,
     _SHRINK_HI,
     _SHRINK_LO,
     _SHRINK_RATE,
@@ -96,6 +95,7 @@ class EvaluatedMatch:
     val_b: dict
     elo_ok: bool
     suspicious: bool
+    low_sample: bool = False
 
     @property
     def has_value(self) -> bool:
@@ -103,7 +103,7 @@ class EvaluatedMatch:
 
     @property
     def is_value_bet(self) -> bool:
-        return self.elo_ok and not self.suspicious and self.has_value
+        return self.elo_ok and not self.low_sample and not self.suspicious and self.has_value
 
 
 def _now() -> datetime:
@@ -218,8 +218,12 @@ def evaluate_matches(
         val_a = calculate_value(pred["p_a_cal"], m.odds_a)
         val_b = calculate_value(pred["p_b_cal"], m.odds_b)
         elo_ok = pred.get("elo_found_a", True) and pred.get("elo_found_b", True)
-        suspicious = halt_on_suspicious and max(val_a["edge"], val_b["edge"]) > SUSPICIOUS_EDGE_THRESHOLD
-        results.append(EvaluatedMatch(m, pred, val_a, val_b, elo_ok, suspicious))
+        suspicious = halt_on_suspicious and max(val_a["edge"], val_b["edge"]) > MAX_SUSPICIOUS_EDGE
+        low_sample = (
+            pred.get("matches_a", MIN_MATCHES_THRESHOLD) < MIN_MATCHES_THRESHOLD
+            or pred.get("matches_b", MIN_MATCHES_THRESHOLD) < MIN_MATCHES_THRESHOLD
+        )
+        results.append(EvaluatedMatch(m, pred, val_a, val_b, elo_ok, suspicious, low_sample))
     return results
 
 
@@ -301,7 +305,8 @@ def run_scan(
             )
         try:
             decision = classify_audit_decision(
-                r.suspicious, r.elo_ok, logged, r.val_a["has_value"], r.val_b["has_value"],
+                r.low_sample, r.suspicious, r.elo_ok, logged,
+                r.val_a["has_value"], r.val_b["has_value"],
             )
             log_prediction_audit(
                 r.match.tour, r.match.tournament, r.match.surface, r.match.match_date,
@@ -329,7 +334,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--no-halt-on-suspicious", dest="halt_on_suspicious", action="store_false",
-        help=f"No excluir edges sospechosos (>{SUSPICIOUS_EDGE_THRESHOLD*100:.0f}%%) — "
+        help=f"No excluir edges sospechosos (>{MAX_SUSPICIOUS_EDGE*100:.0f}%%) — "
              "por defecto SI se excluyen, a diferencia de la CLI interactiva.",
     )
     parser.add_argument("--retrain", action="store_true")

@@ -36,7 +36,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline, make_pipeline
 from sklearn.preprocessing import StandardScaler
 
-import src.config  # noqa: F401  (side effect: carga .env antes de leer ODDS_API_KEY)
+from src.config import MAX_SUSPICIOUS_EDGE, MIN_MATCHES_THRESHOLD  # also loads .env (side effect) before ODDS_API_KEY is read below
 from src.backtest.walkforward import _MIRROR_FLIP_COLS, load_features_with_mirror
 from src.calibration_audit import classify_audit_decision, log_prediction_audit
 from src.data.snapshots import load_snapshot_metadata, resolve_snapshot_path
@@ -55,7 +55,6 @@ LOG_PATH   = _DATA_DIR / "value_bets_log.csv"
 # ── model constants ──────────────────────────────────────────────────────────
 KELLY_CAP         = 0.05   # max 5% of bankroll (conservative)
 CACHE_MAX_AGE_DAYS = 7     # rebuild if cache older than this
-SUSPICIOUS_EDGE_THRESHOLD = 0.10  # hard-block logging above this when --halt-on-suspicious
 
 _odds_warned = False       # print the auto-fetch failure warning once per session
 
@@ -119,9 +118,9 @@ def calculate_value(model_prob: float, odds_decimal: float) -> dict:
 
 def _should_halt_on_suspicious_edge(val_a: dict, val_b: dict, halt_on_suspicious: bool) -> bool:
     """True when --halt-on-suspicious is active and either side's edge exceeds
-    SUSPICIOUS_EDGE_THRESHOLD — a signal the prediction may be based on stale
+    MAX_SUSPICIOUS_EDGE — a signal the prediction may be based on stale
     data or a name-matching error rather than genuine market inefficiency."""
-    return halt_on_suspicious and max(val_a["edge"], val_b["edge"]) > SUSPICIOUS_EDGE_THRESHOLD
+    return halt_on_suspicious and max(val_a["edge"], val_b["edge"]) > MAX_SUSPICIOUS_EDGE
 
 
 def _should_log_prediction(suspicious: bool, save_response: str) -> bool:
@@ -676,6 +675,8 @@ def predict_match(
         "elo_b":         elo.get_effective_rating(pb_key, surface),
         "elo_found_a":   _is_elo_known(player_a, elo),
         "elo_found_b":   _is_elo_known(player_b, elo),
+        "matches_a":     elo.match_counts.get(pa_key, 0),
+        "matches_b":     elo.match_counts.get(pb_key, 0),
     }
 
 
@@ -1105,13 +1106,22 @@ def interactive_cli(
 
         elo_ok = pred.get("elo_found_a", True) and pred.get("elo_found_b", True)
         suspicious = _should_halt_on_suspicious_edge(val_a, val_b, halt_on_suspicious)
+        low_sample = (
+            pred.get("matches_a", MIN_MATCHES_THRESHOLD) < MIN_MATCHES_THRESHOLD
+            or pred.get("matches_b", MIN_MATCHES_THRESHOLD) < MIN_MATCHES_THRESHOLD
+        )
 
         if suspicious:
             best_edge = max(val_a["edge"], val_b["edge"])
             print(f"\n  *** BLOQUEADO: edge sospechoso ({best_edge*100:.1f}% > "
-                  f"{SUSPICIOUS_EDGE_THRESHOLD*100:.0f}%) ***")
+                  f"{MAX_SUSPICIOUS_EDGE*100:.0f}%) ***")
             print("  *** Posible dato stale o error de matching. Revisa manualmente.")
             print("  *** No se guarda en esta sesion. Corre sin --halt-on-suspicious para loguear igual.")
+            save = ""
+        elif low_sample:
+            print(f"\n  *** BLOQUEADO: muestra insuficiente (matches_a={pred.get('matches_a', 0)}, "
+                  f"matches_b={pred.get('matches_b', 0)}, minimo {MIN_MATCHES_THRESHOLD}) ***")
+            print("  *** El Elo de al menos un jugador aun no es confiable — revisa manualmente.")
             save = ""
         elif not elo_ok:
             print("\n  *** Elo faltante para uno o ambos jugadores — la prediccion no es confiable.")
@@ -1119,7 +1129,7 @@ def interactive_cli(
         else:
             save = _ask("\n  Guardar en log? (s/n)", "s").lower()
 
-        logged = _should_log_prediction(suspicious, save)
+        logged = _should_log_prediction(suspicious or low_sample, save)
         if logged:
             log_query(
                 tour, tournament, surface, match_date,
@@ -1138,7 +1148,8 @@ def interactive_cli(
         # or lose the value_bets_log.csv save that just happened above.
         try:
             decision = classify_audit_decision(
-                suspicious, elo_ok, logged, val_a["has_value"], val_b["has_value"],
+                low_sample, suspicious, elo_ok, logged,
+                val_a["has_value"], val_b["has_value"],
             )
             log_prediction_audit(
                 tour, tournament, surface, match_date,
@@ -1172,7 +1183,7 @@ def main() -> None:
     parser.add_argument("--halt-on-suspicious", action="store_true",
                         dest="halt_on_suspicious",
                         help="Bloquea el guardado en log si el edge supera "
-                             f"{SUSPICIOUS_EDGE_THRESHOLD*100:.0f}%% (posible dato stale)")
+                             f"{MAX_SUSPICIOUS_EDGE*100:.0f}%% (posible dato stale)")
     parser.add_argument("--snapshot", type=str, default=None,
                         help="Usar un snapshot pinned (data/snapshots/{id}/) en vez de datos en vivo")
     args = parser.parse_args()
