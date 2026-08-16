@@ -19,3 +19,4 @@ __pycache__/
 .idea/
 .vscode/
 .worktrees/
+!data/value_bets_log.csv
