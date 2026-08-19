@@ -349,6 +349,19 @@ def _check_staleness(
     print("  *** Las predicciones no incorporan resultados posteriores a esa fecha.")
 
 
+def get_last_match_date(tour: str) -> Optional[date]:
+    """Last match date backing the currently cached model for `tour`, or None
+    if no cache exists yet — call load_model(tour) at least once first.
+
+    Lets callers (e.g. scripts/daily_workflow.py, deciding whether to skip a
+    stale WTA scan) check dataset staleness themselves via
+    src.data.staleness.evaluate_staleness without duplicating _check_staleness's
+    print-only logic here.
+    """
+    cached = _load_cache(tour)
+    return cached[4] if cached is not None else None
+
+
 def _save_cache(
     tour: str, elo, fb, clf, rank_lookup: dict, last_match_date: date,
     elo_tracker: EloHistoryTracker, age_lookup: dict, snapshot: Optional[str] = None,

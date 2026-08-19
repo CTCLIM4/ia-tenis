@@ -27,3 +27,41 @@ def current_git_commit() -> str | None:
         return result.stdout.strip()
     except Exception:
         return None
+
+
+def commit_and_push(
+    paths: list[str], message: str, remote: str = "origin", branch: str = "master",
+) -> bool:
+    """Stage the given paths, commit, and push to remote/branch.
+
+    Returns True on success, False if there was nothing to commit or any
+    step failed (printed, never raised) — used by scripts/daily_workflow.py
+    and scripts/settle_workflow.py, where a failed push must not crash an
+    otherwise-successful run; the caller re-runs it manually if needed.
+    """
+    import subprocess
+    try:
+        subprocess.run(
+            ["git", "add", *paths], cwd=_ROOT, check=True, capture_output=True, text=True,
+        )
+        status = subprocess.run(
+            ["git", "status", "--porcelain", *paths],
+            cwd=_ROOT, check=True, capture_output=True, text=True,
+        )
+        if not status.stdout.strip():
+            print("  git: nada que commitear (sin cambios).")
+            return False
+        subprocess.run(
+            ["git", "commit", "-m", message], cwd=_ROOT, check=True, capture_output=True, text=True,
+        )
+        subprocess.run(
+            ["git", "push", remote, branch], cwd=_ROOT, check=True, capture_output=True, text=True,
+        )
+        return True
+    except subprocess.CalledProcessError as e:
+        stderr = (e.stderr or "").strip()
+        print(f"  Aviso: fallo el comando git {e.cmd}: {stderr}")
+        return False
+    except Exception as e:
+        print(f"  Aviso: fallo git ({e}).")
+        return False

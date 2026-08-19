@@ -523,6 +523,25 @@ class TestCacheRoundTripsLastMatchDate:
         assert va._load_cache("atp") is None
 
 
+class TestGetLastMatchDate:
+    def test_returns_last_match_date_from_cache(self, tmp_path, monkeypatch):
+        import src.value_analysis as va
+        monkeypatch.setattr(va, "_CACHE_DIR", tmp_path)
+
+        last_match_date = date(2025, 12, 22)
+        va._save_cache(
+            "atp", _fake_elo({"A": 1500.0}), SimpleNamespace(), SimpleNamespace(),
+            {"A": 10}, last_match_date, EloHistoryTracker(), {},
+        )
+
+        assert va.get_last_match_date("atp") == last_match_date
+
+    def test_returns_none_when_no_cache_exists(self, tmp_path, monkeypatch):
+        import src.value_analysis as va
+        monkeypatch.setattr(va, "_CACHE_DIR", tmp_path)
+        assert va.get_last_match_date("wta") is None
+
+
 class TestBuildAgeLookup:
     def test_returns_most_recent_age_and_date_per_player(self):
         df = pd.DataFrame([
