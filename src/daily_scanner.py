@@ -307,6 +307,7 @@ def run_scan(
                 r.match.player_a, r.match.player_b,
                 r.pred, r.val_a, r.val_b, r.match.odds_a, r.match.odds_b,
                 odds_a_source="auto", odds_b_source="auto",
+                bookmaker_a=r.match.bookmaker_a, bookmaker_b=r.match.bookmaker_b,
             )
         try:
             decision = classify_audit_decision(
@@ -320,6 +321,7 @@ def run_scan(
                 odds_a_source="auto", odds_b_source="auto",
                 decision=decision, model_snapshot_id=None,
                 shrink_hi=_SHRINK_HI, shrink_lo=_SHRINK_LO, shrink_rate=_SHRINK_RATE,
+                bookmaker_a=r.match.bookmaker_a, bookmaker_b=r.match.bookmaker_b,
             )
         except Exception as e:
             print(f"  Aviso: no se pudo escribir en el audit log ({e}). Continuando.")
