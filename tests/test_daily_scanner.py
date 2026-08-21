@@ -60,13 +60,17 @@ def _event(home="Novak Djokovic", away="Jannik Sinner", bookmaker_key="bet365",
 
 
 class TestExtractH2hOdds:
-    def test_extracts_prices_for_configured_bookmaker(self):
-        event = _event(prices={"Novak Djokovic": 1.5, "Jannik Sinner": 2.6})
-        assert _extract_h2h_odds(event, "bet365") == (1.5, 2.6)
+    def test_extracts_prices_for_allowed_bookmaker(self):
+        event = _event(prices={"Novak Djokovic": 1.5, "Jannik Sinner": 2.6}, bookmaker_key="bet365")
+        assert _extract_h2h_odds(event, {"bet365"}) == (1.5, 2.6, "bet365", "bet365")
 
-    def test_returns_none_when_bookmaker_absent(self):
+    def test_returns_none_when_no_allowed_bookmaker_quotes_it(self):
         event = _event(bookmaker_key="pinnacle")
-        assert _extract_h2h_odds(event, "bet365") is None
+        assert _extract_h2h_odds(event, {"bet365"}) is None
+
+    def test_none_allowed_bookmakers_means_all_allowed(self):
+        event = _event(prices={"Novak Djokovic": 1.5, "Jannik Sinner": 2.6}, bookmaker_key="pinnacle")
+        assert _extract_h2h_odds(event, None) == (1.5, 2.6, "pinnacle", "pinnacle")
 
 
 # ── discover_matches ──────────────────────────────────────────────────────────
@@ -99,6 +103,7 @@ class TestDiscoverMatches:
         assert m.player_a == "Novak Djokovic"
         assert m.player_b == "Jannik Sinner"
         assert m.odds_a == 1.5 and m.odds_b == 2.6
+        assert m.bookmaker_a == DEFAULT_BOOKMAKER and m.bookmaker_b == DEFAULT_BOOKMAKER
         assert m.match_date == date(2026, 7, 27)
 
     def test_match_date_uses_lima_calendar_day_not_utc(self, monkeypatch):
@@ -318,6 +323,47 @@ class TestEvaluateMatches:
 
 
 # ── print_value_bets_table ────────────────────────────────────────────────────
+
+class TestRunScanBookmakerLogging:
+    def test_logs_bookmaker_a_and_b_from_match(self, monkeypatch):
+        import src.daily_scanner as scanner
+
+        m = scanner.DiscoveredMatch(
+            tour="atp", tournament="ATP Wimbledon", surface="grass",
+            match_date=date(2026, 7, 27), player_a="Novak Djokovic", player_b="Jannik Sinner",
+            odds_a=1.5, odds_b=2.6, raw_home="Novak Djokovic", raw_away="Jannik Sinner",
+            bookmaker_a="bet365", bookmaker_b="pinnacle",
+        )
+        r = EvaluatedMatch(
+            match=m, pred=_pred(), val_a=_val(has_value=True), val_b=_val(has_value=False),
+            elo_ok=True, suspicious=False,
+        )
+        monkeypatch.setattr(scanner, "_load_models", lambda tours, retrain: {"atp": (None,)*6})
+        monkeypatch.setattr(scanner, "_canonical_names", lambda models: {"atp": [], "wta": []})
+        monkeypatch.setattr(scanner, "discover_matches", lambda *a, **kw: [m])
+        monkeypatch.setattr(scanner, "evaluate_matches", lambda matches, models, halt_on_suspicious=True: [r])
+        monkeypatch.setattr("builtins.input", lambda *a: "s")
+        monkeypatch.setenv("ODDS_API_KEY", "fake-key")
+
+        logged = []
+        monkeypatch.setattr(scanner, "log_query", lambda *a, **kw: logged.append(kw))
+        monkeypatch.setattr(scanner, "log_prediction_audit", lambda *a, **kw: None)
+
+        scanner.run_scan(tours=("atp",))
+
+        assert logged[0]["bookmaker_a"] == "bet365"
+        assert logged[0]["bookmaker_b"] == "pinnacle"
+
+
+class TestRunScanDefaultBookmaker:
+    def test_default_bookmaker_arg_is_none_not_pinnacle(self):
+        import argparse
+        import src.daily_scanner as scanner
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--bookmaker", default=None)
+        args = parser.parse_args([])
+        assert args.bookmaker is None
+
 
 class TestPrintValueBetsTable:
     def test_empty_list_prints_no_value_bets_message(self, capsys):

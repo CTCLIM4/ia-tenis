@@ -90,8 +90,8 @@ def _ask_winner(row: dict) -> str | None:
 def _build_report(target: str, settled: list[dict], log_path: str, bankroll: float = DEFAULT_BANKROLL) -> str:
     lines = [f"# Jornada {target} — liquidacion\n"]
     lines.append(f"{len(settled)} apuesta(s) liquidada(s) en `data/value_bets_log.csv`.\n")
-    lines.append("| Partido | Pick | Odds | Kelly | Resultado | Profit |")
-    lines.append("|---|---|---|---|---|---|")
+    lines.append("| Partido | Pick | Bookmaker | Odds | Kelly | Resultado | Profit |")
+    lines.append("|---|---|---|---|---|---|---|")
 
     stake_total = profit_total = 0.0
     wins = 0
@@ -101,12 +101,13 @@ def _build_report(target: str, settled: list[dict], log_path: str, bankroll: flo
         kelly = float(row[f"kelly_{side}"])
         pick = row["player_a"] if side == "a" else row["player_b"]
         opponent = row["player_b"] if side == "a" else row["player_a"]
+        bookmaker = row.get(f"bookmaker_{side}", "")
         profit = float(row["profit"])
         stake_total += kelly
         profit_total += profit
         wins += 1 if profit > 0 else 0
         lines.append(
-            f"| {pick} vs {opponent} | {pick} | {odds:.2f} | {kelly * 100:.2f}% | "
+            f"| {pick} vs {opponent} | {pick} | {bookmaker} | {odds:.2f} | {kelly * 100:.2f}% | "
             f"{row['result']} | {profit:+.4f} |"
         )
 

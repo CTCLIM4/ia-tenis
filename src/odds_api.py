@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 import urllib.request
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
@@ -17,6 +18,7 @@ CACHE_DIR = _ROOT / "data" / "odds_cache"
 
 ODDS_API_BASE = "https://api.the-odds-api.com/v4/sports"
 DEFAULT_BOOKMAKER = "pinnacle"
+DEFAULT_REGIONS = "eu,uk,us"
 DEFAULT_CACHE_MINUTES = 15
 
 
@@ -26,20 +28,61 @@ class MatchOdds:
     odds_b: float
     matched_home: str
     matched_away: str
+    bookmaker_a: str
+    bookmaker_b: str
+
+
+def _best_price(
+    event: dict, allowed_bookmakers: Optional[set[str]]
+) -> tuple[Optional[float], Optional[float], Optional[str], Optional[str]]:
+    """Scan event["bookmakers"] for the h2h market and return the best
+    (highest) price for each side independently, along with which
+    bookmaker offered it.
+
+    allowed_bookmakers=None means "allow every bookmaker in the response".
+    An empty set means "allow none" (nothing qualifies). The winning
+    bookmaker for the home side and the away side may differ — this is
+    deliberate, since the best price for one player is not necessarily
+    offered by the same book as the best price for their opponent.
+
+    Returns (None, None, None, None) for a side with no allowed bookmaker
+    quoting it (mirrors the old "bookmaker didn't quote it" None case).
+    """
+    home = event.get("home_team", "")
+    away = event.get("away_team", "")
+    best_home: Optional[float] = None
+    best_away: Optional[float] = None
+    bk_home: Optional[str] = None
+    bk_away: Optional[str] = None
+
+    for bk in event.get("bookmakers", []):
+        key = bk.get("key")
+        if allowed_bookmakers is not None and key not in allowed_bookmakers:
+            continue
+        for market in bk.get("markets", []):
+            if market.get("key") != "h2h":
+                continue
+            prices = {o["name"]: o["price"] for o in market.get("outcomes", [])}
+            if home in prices and (best_home is None or prices[home] > best_home):
+                best_home, bk_home = prices[home], key
+            if away in prices and (best_away is None or prices[away] > best_away):
+                best_away, bk_away = prices[away], key
+
+    return best_home, best_away, bk_home, bk_away
 
 
 def find_match_odds(
     events: list[dict],
     player_a: str,
     player_b: str,
-    bookmaker: str = DEFAULT_BOOKMAKER,
+    allowed_bookmakers: Optional[set[str]] = None,
 ) -> Optional[MatchOdds]:
     """Find the event matching player_a/player_b (either order) and extract
-    that bookmaker's h2h prices.
+    the best available h2h price for each side, independently, across
+    allowed_bookmakers (None = every bookmaker in the response).
 
-    Returns None when no event's participants match, or when a matching
-    event exists but the configured bookmaker didn't quote it — callers
-    must not substitute a different bookmaker.
+    Returns None when no event's participants match, or when either side
+    has no price from any allowed bookmaker.
     """
     surname_a = _surname(player_a)
     surname_b = _surname(player_b)
@@ -74,23 +117,40 @@ def find_match_odds(
         else:
             continue
 
-        for bk in event.get("bookmakers", []):
-            if bk.get("key") != bookmaker:
-                continue
-            for market in bk.get("markets", []):
-                if market.get("key") != "h2h":
-                    continue
-                prices = {o["name"]: o["price"] for o in market.get("outcomes", [])}
-                if order[0] in prices and order[1] in prices:
-                    return MatchOdds(
-                        odds_a=prices[order[0]],
-                        odds_b=prices[order[1]],
-                        matched_home=home,
-                        matched_away=away,
-                    )
-        return None  # event matched but this bookmaker didn't quote it
+        odds_home, odds_away, bk_home, bk_away = _best_price(event, allowed_bookmakers)
+        if odds_home is None or odds_away is None:
+            return None  # no allowed bookmaker quoted this side
+
+        if order == (home, away):
+            final_a, final_b, bk_a, bk_b = odds_home, odds_away, bk_home, bk_away
+        else:
+            final_a, final_b, bk_a, bk_b = odds_away, odds_home, bk_away, bk_home
+        return MatchOdds(
+            odds_a=final_a, odds_b=final_b,
+            matched_home=home, matched_away=away,
+            bookmaker_a=bk_a, bookmaker_b=bk_b,
+        )
 
     return None
+
+
+def resolve_allowed_bookmakers(explicit_bookmaker: Optional[str] = None) -> Optional[set[str]]:
+    """Build the allow-list of bookmaker keys eligible for best-price
+    selection.
+
+    explicit_bookmaker (the ODDS_API_BOOKMAKER env var or --bookmaker CLI
+    flag, when set) is a backward-compatible override: it collapses the
+    allow-list to that single bookmaker, reproducing the old fixed-book
+    behavior exactly, regardless of ALLOWED_BOOKMAKERS.
+
+    Otherwise, ALLOWED_BOOKMAKERS (comma-separated env var) is parsed into
+    a set. Empty or unset means "allow every bookmaker" (None).
+    """
+    if explicit_bookmaker:
+        return {explicit_bookmaker}
+    raw = os.environ.get("ALLOWED_BOOKMAKERS", "")
+    allowed = {b.strip() for b in raw.split(",") if b.strip()}
+    return allowed or None
 
 
 def fetch_sports_index(api_key: str) -> list[dict]:
@@ -127,9 +187,10 @@ def list_tennis_sport_keys(sports_index: list[dict]) -> list[dict]:
 
 def fetch_odds_events_by_key(sport_key: str, api_key: str) -> list[dict]:
     """Fetch raw upcoming h2h odds events for an explicit sport_key."""
+    regions = os.environ.get("ODDS_API_REGIONS", DEFAULT_REGIONS)
     url = (
         f"{ODDS_API_BASE}/{sport_key}/odds/"
-        f"?apiKey={api_key}&regions=eu&markets=h2h&oddsFormat=decimal"
+        f"?apiKey={api_key}&regions={regions}&markets=h2h&oddsFormat=decimal"
     )
     with urllib.request.urlopen(url, timeout=20) as resp:
         return json.loads(resp.read())
@@ -184,9 +245,9 @@ def get_match_odds(
     player_a: str,
     player_b: str,
     api_key: str,
-    bookmaker: str = DEFAULT_BOOKMAKER,
+    allowed_bookmakers: Optional[set[str]] = None,
     cache_minutes: int = DEFAULT_CACHE_MINUTES,
 ) -> Optional[MatchOdds]:
     """Top-level lookup: cached/fetched events -> matched odds for this pairing."""
     events = get_events(tour, api_key, cache_minutes)
-    return find_match_odds(events, player_a, player_b, bookmaker)
+    return find_match_odds(events, player_a, player_b, allowed_bookmakers)

@@ -381,6 +381,23 @@ class TestLogQueryStatus:
         assert len(rows) == 3
         assert all("status" in r for r in rows)
 
+    def test_bookmaker_a_and_b_recorded_when_provided(self, log_path):
+        pred = _make_pred()
+        log_query("atp", "Test", "hard", date(2026, 7, 1),
+                  "Player A", "Player B", pred, _val(), _val(), 1.90, 2.10,
+                  bookmaker_a="bet365", bookmaker_b="pinnacle")
+        row = _read_log(log_path)[0]
+        assert row["bookmaker_a"] == "bet365"
+        assert row["bookmaker_b"] == "pinnacle"
+
+    def test_bookmaker_defaults_to_empty_string(self, log_path):
+        pred = _make_pred()
+        log_query("atp", "Test", "hard", date(2026, 7, 1),
+                  "Player A", "Player B", pred, _val(), _val(), 1.90, 2.10)
+        row = _read_log(log_path)[0]
+        assert row["bookmaker_a"] == ""
+        assert row["bookmaker_b"] == ""
+
 
 class TestLogQueryOddsSource:
     def test_odds_source_defaults_to_manual(self, log_path):
@@ -404,7 +421,9 @@ class TestLogQueryOddsSource:
         """Regression: a pre-existing log written under the old header (no
         odds_a_source/odds_b_source) must be migrated in place, not silently
         misaligned, the next time log_query() appends a row."""
-        old_fields = [f for f in _LOG_FIELDS if f not in ("odds_a_source", "odds_b_source")]
+        old_fields = [f for f in _LOG_FIELDS
+                      if f not in ("odds_a_source", "odds_b_source",
+                                   "bookmaker_a", "bookmaker_b")]
         old_row = {
             "timestamp": "2026-07-01T16:27:16",
             "tour": "wta",
@@ -462,12 +481,51 @@ class TestLogQueryOddsSource:
         assert migrated["odds_b"] == "1.8"
         assert migrated["odds_a_source"] == "manual"
         assert migrated["odds_b_source"] == "manual"
+        assert migrated["bookmaker_a"] == "pinnacle"
+        assert migrated["bookmaker_b"] == "pinnacle"
 
         new_row = rows[1]
         assert new_row["odds_a"] == "1.5"
         assert new_row["odds_b"] == "2.5"
         assert new_row["odds_a_source"] == "auto"
         assert new_row["odds_b_source"] == "auto"
+
+
+class TestTryAutoOdds:
+    """Regression: try_auto_odds must pass allowed_bookmakers (Optional[set[str]])
+    to get_match_odds, not a bare string — see Task 14 fix."""
+
+    def test_passes_set_or_none_not_a_bare_string(self, monkeypatch):
+        import src.value_analysis as va
+        captured = {}
+
+        def fake_get_match_odds(tour, player_a, player_b, api_key, allowed_bookmakers, cache_minutes):
+            captured["allowed_bookmakers"] = allowed_bookmakers
+            return None
+
+        monkeypatch.setattr(va, "get_match_odds", fake_get_match_odds)
+        monkeypatch.setenv("ODDS_API_KEY", "fake-key")
+        monkeypatch.delenv("ODDS_API_BOOKMAKER", raising=False)
+
+        va.try_auto_odds("atp", "Player A", "Player B")
+
+        assert captured["allowed_bookmakers"] is None or isinstance(captured["allowed_bookmakers"], set)
+
+    def test_explicit_bookmaker_env_collapses_to_single_item_set(self, monkeypatch):
+        import src.value_analysis as va
+        captured = {}
+
+        def fake_get_match_odds(tour, player_a, player_b, api_key, allowed_bookmakers, cache_minutes):
+            captured["allowed_bookmakers"] = allowed_bookmakers
+            return None
+
+        monkeypatch.setattr(va, "get_match_odds", fake_get_match_odds)
+        monkeypatch.setenv("ODDS_API_KEY", "fake-key")
+        monkeypatch.setenv("ODDS_API_BOOKMAKER", "pinnacle")
+
+        va.try_auto_odds("atp", "Player A", "Player B")
+
+        assert captured["allowed_bookmakers"] == {"pinnacle"}
 
 
 class TestCacheRoundTripsLastMatchDate:

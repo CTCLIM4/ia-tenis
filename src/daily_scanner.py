@@ -54,9 +54,11 @@ from src.config import MAX_SUSPICIOUS_EDGE, MIN_MATCHES_THRESHOLD  # also loads 
 from src.data.timezone_utils import to_lima
 from src.odds_api import (
     DEFAULT_BOOKMAKER,
+    _best_price,
     fetch_odds_events_by_key,
     fetch_sports_index,
     list_tennis_sport_keys,
+    resolve_allowed_bookmakers,
 )
 from src.player_matcher import match_player_name
 from src.surface_resolver import resolve_surface
@@ -85,6 +87,8 @@ class DiscoveredMatch:
     odds_b: float
     raw_home: str   # name as reported by The Odds API, for display/debugging
     raw_away: str
+    bookmaker_a: str = ""
+    bookmaker_b: str = ""
 
 
 @dataclass
@@ -122,38 +126,38 @@ def _is_within_window(commence_time: str, days_ahead: int, now: Optional[datetim
     return now <= ts <= now + timedelta(days=days_ahead)
 
 
-def _extract_h2h_odds(event: dict, bookmaker: str) -> Optional[tuple[float, float]]:
-    """Return (odds_home, odds_away) from the configured bookmaker's h2h
-    market, or None if that bookmaker didn't quote this event."""
-    home = event.get("home_team", "")
-    away = event.get("away_team", "")
-    for bk in event.get("bookmakers", []):
-        if bk.get("key") != bookmaker:
-            continue
-        for market in bk.get("markets", []):
-            if market.get("key") != "h2h":
-                continue
-            prices = {o["name"]: o["price"] for o in market.get("outcomes", [])}
-            if home in prices and away in prices:
-                return prices[home], prices[away]
-    return None
+def _extract_h2h_odds(
+    event: dict, allowed_bookmakers: Optional[set[str]]
+) -> Optional[tuple[float, float, str, str]]:
+    """Return (odds_home, odds_away, bookmaker_home, bookmaker_away) from the
+    best-priced allowed bookmaker's h2h market, or None if no allowed
+    bookmaker quoted both sides of this event."""
+    odds_home, odds_away, bk_home, bk_away = _best_price(event, allowed_bookmakers)
+    if odds_home is None or odds_away is None:
+        return None
+    return odds_home, odds_away, bk_home, bk_away
 
 
 def discover_matches(
     api_key: str,
     canonical_names_by_tour: dict[str, list[str]],
-    bookmaker: str = DEFAULT_BOOKMAKER,
+    bookmaker: Optional[str] = None,
     days_ahead: int = DEFAULT_DAYS_AHEAD,
     tours: tuple[str, ...] = ("atp", "wta"),
 ) -> list[DiscoveredMatch]:
     """Discover today's/next-matchday's matches with bettable odds, matched
     to canonical dataset player names.
 
+    `bookmaker` is a backward-compatible override (ODDS_API_BOOKMAKER env
+    var or --bookmaker CLI flag) that collapses best-price selection to a
+    single fixed bookmaker — see resolve_allowed_bookmakers.
+
     Skips (with a printed reason) any event where the tournament's surface
-    can't be resolved, either player can't be matched to the dataset, or the
-    configured bookmaker didn't quote h2h odds — never raises on a
+    can't be resolved, either player can't be matched to the dataset, or no
+    allowed bookmaker quoted h2h odds for both sides — never raises on a
     per-event problem, since one bad event must not abort the whole scan.
     """
+    allowed_bookmakers = resolve_allowed_bookmakers(bookmaker)
     sports_index = fetch_sports_index(api_key)
     tennis_sports = [s for s in list_tennis_sport_keys(sports_index) if s["tour"] in tours]
 
@@ -169,10 +173,10 @@ def discover_matches(
             if not commence_time or not _is_within_window(commence_time, days_ahead):
                 continue
 
-            odds = _extract_h2h_odds(event, bookmaker)
+            odds = _extract_h2h_odds(event, allowed_bookmakers)
             if odds is None:
                 continue
-            odds_home, odds_away = odds
+            odds_home, odds_away, bookmaker_home, bookmaker_away = odds
 
             home, away = event.get("home_team", ""), event.get("away_team", "")
             canonical = canonical_names_by_tour.get(sport["tour"], [])
@@ -190,6 +194,7 @@ def discover_matches(
                 match_date=match_date, player_a=player_a, player_b=player_b,
                 odds_a=odds_home, odds_b=odds_away,
                 raw_home=home, raw_away=away,
+                bookmaker_a=bookmaker_home, bookmaker_b=bookmaker_away,
             ))
 
     return matches
@@ -259,7 +264,7 @@ def _canonical_names(models: dict[str, tuple]) -> dict[str, list[str]]:
 
 def run_scan(
     tours: tuple[str, ...] = ("atp", "wta"),
-    bookmaker: str = DEFAULT_BOOKMAKER,
+    bookmaker: Optional[str] = None,
     days_ahead: int = DEFAULT_DAYS_AHEAD,
     halt_on_suspicious: bool = True,
     retrain: bool = False,
@@ -302,6 +307,7 @@ def run_scan(
                 r.match.player_a, r.match.player_b,
                 r.pred, r.val_a, r.val_b, r.match.odds_a, r.match.odds_b,
                 odds_a_source="auto", odds_b_source="auto",
+                bookmaker_a=r.match.bookmaker_a, bookmaker_b=r.match.bookmaker_b,
             )
         try:
             decision = classify_audit_decision(
@@ -315,6 +321,7 @@ def run_scan(
                 odds_a_source="auto", odds_b_source="auto",
                 decision=decision, model_snapshot_id=None,
                 shrink_hi=_SHRINK_HI, shrink_lo=_SHRINK_LO, shrink_rate=_SHRINK_RATE,
+                bookmaker_a=r.match.bookmaker_a, bookmaker_b=r.match.bookmaker_b,
             )
         except Exception as e:
             print(f"  Aviso: no se pudo escribir en el audit log ({e}). Continuando.")
@@ -327,7 +334,11 @@ def main() -> None:
         description="Escaneo automatico de partidos del dia con value bets (+EV, Kelly>0)"
     )
     parser.add_argument("--tour", choices=["atp", "wta", "both"], default="both")
-    parser.add_argument("--bookmaker", default=DEFAULT_BOOKMAKER)
+    parser.add_argument(
+        "--bookmaker", default=None,
+        help="Restringe la seleccion a un unico bookmaker (por defecto: mejor precio "
+             "entre todos los permitidos por ALLOWED_BOOKMAKERS).",
+    )
     parser.add_argument(
         "--days-ahead", type=int, default=DEFAULT_DAYS_AHEAD,
         help="Ventana de partidos a incluir, en dias desde ahora (default: 1)",

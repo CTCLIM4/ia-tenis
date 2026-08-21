@@ -10,18 +10,21 @@ import scripts.settle_workflow as settle
 HEADER = [
     "timestamp", "tour", "tournament", "surface", "match_date", "player_a", "player_b",
     "odds_a", "odds_b", "ev_a", "ev_b", "kelly_a", "kelly_b", "status", "result", "profit",
+    "bookmaker_a", "bookmaker_b",
 ]
 
 
 def _row(match_date="2026-08-19", player_a="A Player", player_b="B Player",
          odds_a="2.0", odds_b="1.8", kelly_a="0.02", kelly_b="0.0",
-         status="ok", result="pending", profit=""):
+         status="ok", result="pending", profit="",
+         bookmaker_a="", bookmaker_b=""):
     return {
         "timestamp": "2026-08-19T10:00:00", "tour": "atp", "tournament": "ATP Test Open",
         "surface": "hard", "match_date": match_date, "player_a": player_a, "player_b": player_b,
         "odds_a": odds_a, "odds_b": odds_b, "ev_a": "0.1", "ev_b": "0.1",
         "kelly_a": kelly_a, "kelly_b": kelly_b,
         "status": status, "result": result, "profit": profit,
+        "bookmaker_a": bookmaker_a, "bookmaker_b": bookmaker_b,
     }
 
 
@@ -160,3 +163,40 @@ class TestRun:
 
         assert settled == []
         assert not (tmp_path / "2026-08-19-jornada-cincinnati.md").exists()
+
+
+class TestBuildReportBookmakerColumn:
+    def test_shows_bookmaker_for_settled_side(self, tmp_path, monkeypatch):
+        path = tmp_path / "value_bets_log.csv"
+        _write_csv(path, [
+            _row(match_date="2026-08-19", odds_a="2.0", kelly_a="0.05", bookmaker_a="bet365"),
+        ])
+        monkeypatch.setattr(settle, "_ask_winner", lambda row: "a")
+        monkeypatch.setattr(settle, "commit_and_push", lambda *a, **kw: True)
+
+        settle.run(date(2026, 8, 19), log_path=str(path), report_dir=str(tmp_path))
+
+        report_path = tmp_path / "2026-08-19-jornada-cincinnati.md"
+        content = report_path.read_text(encoding="utf-8")
+        assert "bet365" in content
+
+    def test_blank_when_bookmaker_field_absent(self, tmp_path, monkeypatch):
+        # Simulates a pre-migration CSV on disk (written before this task
+        # added bookmaker_a/bookmaker_b to HEADER) — the row dicts read back
+        # via csv.DictReader genuinely have no bookmaker_a/bookmaker_b keys
+        # at all, so _build_report's row.get(...) fallback must not raise.
+        OLD_HEADER = [h for h in HEADER if h not in ("bookmaker_a", "bookmaker_b")]
+        path = tmp_path / "value_bets_log.csv"
+        old_row = {k: v for k, v in _row(match_date="2026-08-19", odds_a="2.0", kelly_a="0.05").items()
+                   if k in OLD_HEADER}
+        with open(path, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=OLD_HEADER)
+            writer.writeheader()
+            writer.writerow(old_row)
+        monkeypatch.setattr(settle, "_ask_winner", lambda row: "a")
+        monkeypatch.setattr(settle, "commit_and_push", lambda *a, **kw: True)
+
+        settle.run(date(2026, 8, 19), log_path=str(path), report_dir=str(tmp_path))
+
+        report_path = tmp_path / "2026-08-19-jornada-cincinnati.md"
+        assert report_path.exists()

@@ -13,11 +13,12 @@ El modelo se reconstruye desde cero la primera vez (~30-60 s ATP),
 y luego queda cacheado 7 días en data/model_cache/{tour}.pkl.
 
 Cuotas: si ODDS_API_KEY esta configurada en el entorno, se intenta
-autocompletar la cuota de cada jugador via The Odds API (bookmaker fijo,
-default "pinnacle" — configurable con ODDS_API_BOOKMAKER, cache de eventos
-configurable con ODDS_API_CACHE_MINUTES). Si no hay key, no hay match, o
-falla la llamada, se pide la cuota a mano igual que antes — el auto-fetch
-nunca bloquea el flujo.
+autocompletar la cuota de cada jugador via The Odds API — mejor precio
+disponible entre los bookmakers permitidos (ALLOWED_BOOKMAKERS, o todos
+si no esta configurada; ODDS_API_BOOKMAKER sigue forzando uno solo si se
+define), cache de eventos configurable con ODDS_API_CACHE_MINUTES. Si no
+hay key, no hay match, o falla la llamada, se pide la cuota a mano igual
+que antes — el auto-fetch nunca bloquea el flujo.
 """
 from __future__ import annotations
 
@@ -44,7 +45,7 @@ from src.data.staleness import StalenessLevel, evaluate_staleness
 from src.data.timezone_utils import lima_today
 from src.features import FEATURE_COLS
 from src.features.decay import EloHistoryTracker, calculate_decay_features
-from src.odds_api import DEFAULT_BOOKMAKER, DEFAULT_CACHE_MINUTES, MatchOdds, get_match_odds
+from src.odds_api import DEFAULT_CACHE_MINUTES, MatchOdds, get_match_odds, resolve_allowed_bookmakers
 
 # ── paths ────────────────────────────────────────────────────────────────────
 _ROOT      = Path(__file__).resolve().parent.parent
@@ -701,6 +702,7 @@ _LOG_FIELDS = [
     "rank_a", "rank_a_source", "rank_b", "rank_b_source",
     "p_a_raw", "p_a_cal", "p_b_raw", "p_b_cal",
     "odds_a", "odds_a_source", "odds_b", "odds_b_source",
+    "bookmaker_a", "bookmaker_b",
     "implied_a", "implied_b",
     "edge_a", "ev_a", "kelly_a",
     "edge_b", "ev_b", "kelly_b",
@@ -717,8 +719,9 @@ _LOG_FIELDS = [
 
 def _migrate_log_header_if_needed() -> None:
     """If LOG_PATH exists with an older header than _LOG_FIELDS (e.g. missing
-    odds_a_source/odds_b_source), rewrite it with the current header so old
-    rows stay readable instead of silently misaligning on the next append."""
+    odds_a_source/odds_b_source or bookmaker_a/bookmaker_b), rewrite it with the
+    current header so old rows stay readable instead of silently misaligning on
+    the next append."""
     if not LOG_PATH.exists():
         return
     with open(LOG_PATH, newline="", encoding="utf-8") as f:
@@ -729,6 +732,8 @@ def _migrate_log_header_if_needed() -> None:
     for row in rows:
         row.setdefault("odds_a_source", "manual")
         row.setdefault("odds_b_source", "manual")
+        row.setdefault("bookmaker_a", "pinnacle")
+        row.setdefault("bookmaker_b", "pinnacle")
     with open(LOG_PATH, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=_LOG_FIELDS)
         writer.writeheader()
@@ -739,7 +744,8 @@ def _migrate_log_header_if_needed() -> None:
 def log_query(tour, tournament, surface, match_date,
               player_a, player_b,
               pred, val_a, val_b, odds_a, odds_b,
-              odds_a_source: str = "manual", odds_b_source: str = "manual") -> None:
+              odds_a_source: str = "manual", odds_b_source: str = "manual",
+              bookmaker_a: str = "", bookmaker_b: str = "") -> None:
     """Append one match prediction + odds to the CSV log.
 
     Rows where either player's Elo was not found (default 1500) are saved
@@ -774,6 +780,8 @@ def log_query(tour, tournament, surface, match_date,
         "odds_a_source":   odds_a_source,
         "odds_b":          odds_b,
         "odds_b_source":   odds_b_source,
+        "bookmaker_a":     bookmaker_a,
+        "bookmaker_b":     bookmaker_b,
         "implied_a":       round(val_a["implied_prob"], 4),
         "implied_b":       round(val_b["implied_prob"], 4),
         "edge_a":          round(val_a["edge"], 4),
@@ -919,9 +927,9 @@ def try_auto_odds(tour: str, player_a: str, player_b: str) -> Optional[MatchOdds
     if not api_key:
         return None
     try:
-        bookmaker = os.environ.get("ODDS_API_BOOKMAKER", DEFAULT_BOOKMAKER)
+        allowed_bookmakers = resolve_allowed_bookmakers(os.environ.get("ODDS_API_BOOKMAKER"))
         cache_minutes = int(os.environ.get("ODDS_API_CACHE_MINUTES", DEFAULT_CACHE_MINUTES))
-        return get_match_odds(tour, player_a, player_b, api_key, bookmaker, cache_minutes)
+        return get_match_odds(tour, player_a, player_b, api_key, allowed_bookmakers, cache_minutes)
     except Exception as e:
         if not _odds_warned:
             print(f"\n  Aviso: no se pudieron obtener cuotas automaticas ({e}). "
@@ -1052,8 +1060,8 @@ def interactive_cli(
             # Cuotas automaticas (best-effort, nunca bloquea el flujo)
             auto_odds = try_auto_odds(tour, player_a, player_b)
             if auto_odds is not None:
-                bookmaker_label = os.environ.get("ODDS_API_BOOKMAKER", DEFAULT_BOOKMAKER)
-                print(f"\n  Cuotas encontradas ({bookmaker_label}): "
+                print(f"\n  Cuotas encontradas (A: {auto_odds.bookmaker_a}, "
+                      f"B: {auto_odds.bookmaker_b}): "
                       f"{auto_odds.matched_home} vs {auto_odds.matched_away}")
 
             # Rankings — show auto-found values as defaults
@@ -1114,6 +1122,8 @@ def interactive_cli(
 
         val_a = calculate_value(pred["p_a_cal"], odds_a)
         val_b = calculate_value(pred["p_b_cal"], odds_b)
+        bookmaker_a = auto_odds.bookmaker_a if (auto_odds and odds_a_source == "auto") else ""
+        bookmaker_b = auto_odds.bookmaker_b if (auto_odds and odds_b_source == "auto") else ""
 
         _print_prediction(pred, val_a, val_b, odds_a, odds_b)
 
@@ -1149,6 +1159,7 @@ def interactive_cli(
                 player_a, player_b,
                 pred, val_a, val_b, odds_a, odds_b,
                 odds_a_source, odds_b_source,
+                bookmaker_a=bookmaker_a, bookmaker_b=bookmaker_b,
             )
 
         # Audit log: every evaluated prediction, unconditionally — not just
@@ -1172,6 +1183,7 @@ def interactive_cli(
                 decision=decision,
                 model_snapshot_id=snapshot,
                 shrink_hi=_SHRINK_HI, shrink_lo=_SHRINK_LO, shrink_rate=_SHRINK_RATE,
+                bookmaker_a=bookmaker_a, bookmaker_b=bookmaker_b,
             )
         except Exception as e:
             print(f"\n  Aviso: no se pudo escribir en el audit log ({e}). Continuando sesion.")
