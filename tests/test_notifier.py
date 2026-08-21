@@ -16,6 +16,11 @@ SAMPLE_VPN_OK = {
 SAMPLE_VPN_UNAVAILABLE = {"available": False, "session_mb": 0.0, "monthly_cumulative_mb": 0.0,
                           "remaining_mb": 2000.0, "percent_used": 0.0}
 
+SAMPLE_PICKS_WITH_BOOKMAKER = [
+    {"match": "Tirante vs Mensik", "pick": "Tirante", "odds": 2.75, "edge": 0.0322,
+     "kelly": 0.0092, "bookmaker": "bet365"},
+]
+
 ALL_ENV_VARS = {
     "SMTP_SERVER": "smtp.example.com", "SMTP_PORT": "587",
     "EMAIL_SENDER": "bot@example.com", "EMAIL_PASSWORD": "secret",
@@ -111,3 +116,14 @@ class TestSendPicksEmail:
 
         monkeypatch.setattr(notifier.smtplib, "SMTP", _boom)
         assert notifier.send_picks_email(SAMPLE_PICKS, SAMPLE_VPN_OK) is False
+
+
+class TestPicksTableBookmakerColumn:
+    def test_shows_bookmaker_when_present(self):
+        html = notifier.build_email_html(SAMPLE_PICKS_WITH_BOOKMAKER, SAMPLE_VPN_OK)
+        assert "bet365" in html
+
+    def test_blank_when_bookmaker_absent(self):
+        # SAMPLE_PICKS (module-level) has no "bookmaker" key — must not raise.
+        html = notifier.build_email_html(SAMPLE_PICKS, SAMPLE_VPN_OK)
+        assert "Tirante vs Mensik" in html

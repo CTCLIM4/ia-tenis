@@ -25,6 +25,7 @@ def _picks_table_html(selected_picks: list[dict]) -> str:
     rows = "\n".join(
         f'<tr><td style="padding:6px;border-bottom:1px solid #e0e0e0;">{p["match"]}</td>'
         f'<td style="padding:6px;border-bottom:1px solid #e0e0e0;">{p["pick"]}</td>'
+        f'<td style="padding:6px;border-bottom:1px solid #e0e0e0;">{p.get("bookmaker", "")}</td>'
         f'<td style="padding:6px;border-bottom:1px solid #e0e0e0;text-align:right;">{p["odds"]:.2f}</td>'
         f'<td style="padding:6px;border-bottom:1px solid #e0e0e0;text-align:right;">{p["edge"] * 100:+.1f}%</td>'
         f'<td style="padding:6px;border-bottom:1px solid #e0e0e0;text-align:right;">{p["kelly"] * 100:.2f}%</td></tr>'
@@ -36,6 +37,7 @@ def _picks_table_html(selected_picks: list[dict]) -> str:
         <tr style="background:#1f3a5f;color:#fff;">
           <th style="padding:8px;text-align:left;">Partido</th>
           <th style="padding:8px;text-align:left;">Pick</th>
+          <th style="padding:8px;text-align:left;">Bookmaker</th>
           <th style="padding:8px;text-align:right;">Cuota</th>
           <th style="padding:8px;text-align:right;">Edge</th>
           <th style="padding:8px;text-align:right;">Stake (1/2 Kelly)</th>
