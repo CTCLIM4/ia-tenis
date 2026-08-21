@@ -355,6 +355,16 @@ class TestRunScanBookmakerLogging:
         assert logged[0]["bookmaker_b"] == "pinnacle"
 
 
+class TestRunScanDefaultBookmaker:
+    def test_default_bookmaker_arg_is_none_not_pinnacle(self):
+        import argparse
+        import src.daily_scanner as scanner
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--bookmaker", default=None)
+        args = parser.parse_args([])
+        assert args.bookmaker is None
+
+
 class TestPrintValueBetsTable:
     def test_empty_list_prints_no_value_bets_message(self, capsys):
         print_value_bets_table([])

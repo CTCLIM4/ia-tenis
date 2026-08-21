@@ -264,7 +264,7 @@ def _canonical_names(models: dict[str, tuple]) -> dict[str, list[str]]:
 
 def run_scan(
     tours: tuple[str, ...] = ("atp", "wta"),
-    bookmaker: str = DEFAULT_BOOKMAKER,
+    bookmaker: Optional[str] = None,
     days_ahead: int = DEFAULT_DAYS_AHEAD,
     halt_on_suspicious: bool = True,
     retrain: bool = False,
@@ -334,7 +334,11 @@ def main() -> None:
         description="Escaneo automatico de partidos del dia con value bets (+EV, Kelly>0)"
     )
     parser.add_argument("--tour", choices=["atp", "wta", "both"], default="both")
-    parser.add_argument("--bookmaker", default=DEFAULT_BOOKMAKER)
+    parser.add_argument(
+        "--bookmaker", default=None,
+        help="Restringe la seleccion a un unico bookmaker (por defecto: mejor precio "
+             "entre todos los permitidos por ALLOWED_BOOKMAKERS).",
+    )
     parser.add_argument(
         "--days-ahead", type=int, default=DEFAULT_DAYS_AHEAD,
         help="Ventana de partidos a incluir, en dias desde ahora (default: 1)",
