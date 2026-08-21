@@ -22,6 +22,7 @@ _AUDIT_LOG_FIELDS = [
     "p_a_raw", "p_a_cal", "p_b_raw", "p_b_cal",
     "shrink_hi", "shrink_lo", "shrink_rate", "shrinkage_applied",
     "odds_a", "odds_a_source", "odds_b", "odds_b_source",
+    "bookmaker_a", "bookmaker_b",
     "implied_a", "implied_b",
     "edge_a", "ev_a", "kelly_a",
     "edge_b", "ev_b", "kelly_b",
@@ -78,6 +79,7 @@ def log_prediction_audit(
     decision: str,
     model_snapshot_id: str | None,
     shrink_hi: float, shrink_lo: float, shrink_rate: float,
+    bookmaker_a: str = "", bookmaker_b: str = "",
 ) -> None:
     """Append one evaluated prediction to the audit log — unconditionally,
     regardless of whether it was also saved to value_bets_log.csv. This is
@@ -118,6 +120,8 @@ def log_prediction_audit(
         "odds_a_source":   odds_a_source,
         "odds_b":          odds_b,
         "odds_b_source":   odds_b_source,
+        "bookmaker_a":     bookmaker_a,
+        "bookmaker_b":     bookmaker_b,
         "implied_a":       round(val_a["implied_prob"], 4),
         "implied_b":       round(val_b["implied_prob"], 4),
         "edge_a":          round(val_a["edge"], 4),

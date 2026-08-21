@@ -208,3 +208,36 @@ class TestLogPredictionAudit:
         )
         row = _read_audit_log(audit_log_path)[0]
         assert row["shrinkage_applied"] == "True"
+
+    def test_bookmaker_a_and_b_recorded(self, audit_log_path):
+        pred = _make_pred()
+        v = calculate_value(0.58, 1.90)
+        calibration_audit.log_prediction_audit(
+            "atp", "Test", "hard", date(2026, 7, 25),
+            "Player A", "Player B",
+            pred, v, v, 1.90, 1.90,
+            "manual", "manual",
+            decision="logged",
+            model_snapshot_id=None,
+            shrink_hi=0.90, shrink_lo=0.10, shrink_rate=0.60,
+            bookmaker_a="bet365", bookmaker_b="pinnacle",
+        )
+        row = _read_audit_log(audit_log_path)[0]
+        assert row["bookmaker_a"] == "bet365"
+        assert row["bookmaker_b"] == "pinnacle"
+
+    def test_bookmaker_defaults_to_empty_string(self, audit_log_path):
+        pred = _make_pred()
+        v = calculate_value(0.58, 1.90)
+        calibration_audit.log_prediction_audit(
+            "atp", "Test", "hard", date(2026, 7, 25),
+            "Player A", "Player B",
+            pred, v, v, 1.90, 1.90,
+            "manual", "manual",
+            decision="logged",
+            model_snapshot_id=None,
+            shrink_hi=0.90, shrink_lo=0.10, shrink_rate=0.60,
+        )
+        row = _read_audit_log(audit_log_path)[0]
+        assert row["bookmaker_a"] == ""
+        assert row["bookmaker_b"] == ""
