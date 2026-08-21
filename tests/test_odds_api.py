@@ -288,3 +288,37 @@ class TestListTennisSportKeys:
 
     def test_empty_index_returns_empty_list(self):
         assert list_tennis_sport_keys([]) == []
+
+
+# ── resolve_allowed_bookmakers ───────────────────────────────────────────────
+
+class TestResolveAllowedBookmakers:
+    def test_explicit_bookmaker_collapses_to_single_item_set(self, monkeypatch):
+        from src.odds_api import resolve_allowed_bookmakers
+        monkeypatch.delenv("ALLOWED_BOOKMAKERS", raising=False)
+        assert resolve_allowed_bookmakers("pinnacle") == {"pinnacle"}
+
+    def test_explicit_bookmaker_overrides_env_var(self, monkeypatch):
+        from src.odds_api import resolve_allowed_bookmakers
+        monkeypatch.setenv("ALLOWED_BOOKMAKERS", "bet365,williamhill")
+        assert resolve_allowed_bookmakers("pinnacle") == {"pinnacle"}
+
+    def test_no_explicit_bookmaker_parses_env_var(self, monkeypatch):
+        from src.odds_api import resolve_allowed_bookmakers
+        monkeypatch.setenv("ALLOWED_BOOKMAKERS", "bet365, williamhill ,pinnacle")
+        assert resolve_allowed_bookmakers(None) == {"bet365", "williamhill", "pinnacle"}
+
+    def test_unset_env_var_and_no_explicit_means_allow_all(self, monkeypatch):
+        from src.odds_api import resolve_allowed_bookmakers
+        monkeypatch.delenv("ALLOWED_BOOKMAKERS", raising=False)
+        assert resolve_allowed_bookmakers(None) is None
+
+    def test_empty_env_var_means_allow_all(self, monkeypatch):
+        from src.odds_api import resolve_allowed_bookmakers
+        monkeypatch.setenv("ALLOWED_BOOKMAKERS", "")
+        assert resolve_allowed_bookmakers(None) is None
+
+    def test_empty_explicit_string_falls_back_to_env(self, monkeypatch):
+        from src.odds_api import resolve_allowed_bookmakers
+        monkeypatch.setenv("ALLOWED_BOOKMAKERS", "bet365")
+        assert resolve_allowed_bookmakers("") == {"bet365"}

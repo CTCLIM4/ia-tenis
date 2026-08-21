@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 import urllib.request
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
@@ -130,6 +131,25 @@ def find_match_odds(
         return None  # event matched but this bookmaker didn't quote it
 
     return None
+
+
+def resolve_allowed_bookmakers(explicit_bookmaker: Optional[str] = None) -> Optional[set[str]]:
+    """Build the allow-list of bookmaker keys eligible for best-price
+    selection.
+
+    explicit_bookmaker (the ODDS_API_BOOKMAKER env var or --bookmaker CLI
+    flag, when set) is a backward-compatible override: it collapses the
+    allow-list to that single bookmaker, reproducing the old fixed-book
+    behavior exactly, regardless of ALLOWED_BOOKMAKERS.
+
+    Otherwise, ALLOWED_BOOKMAKERS (comma-separated env var) is parsed into
+    a set. Empty or unset means "allow every bookmaker" (None).
+    """
+    if explicit_bookmaker:
+        return {explicit_bookmaker}
+    raw = os.environ.get("ALLOWED_BOOKMAKERS", "")
+    allowed = {b.strip() for b in raw.split(",") if b.strip()}
+    return allowed or None
 
 
 def fetch_sports_index(api_key: str) -> list[dict]:
