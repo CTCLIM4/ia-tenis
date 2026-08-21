@@ -81,8 +81,8 @@ def find_match_odds(
     the best available h2h price for each side, independently, across
     allowed_bookmakers (None = every bookmaker in the response).
 
-    Returns None when no event's participants match, or when no allowed
-    bookmaker quoted both sides of the matched event.
+    Returns None when no event's participants match, or when either side
+    has no price from any allowed bookmaker.
     """
     surname_a = _surname(player_a)
     surname_b = _surname(player_b)
@@ -119,18 +119,16 @@ def find_match_odds(
 
         odds_home, odds_away, bk_home, bk_away = _best_price(event, allowed_bookmakers)
         if odds_home is None or odds_away is None:
-            return None  # event matched but no allowed bookmaker quoted both sides
+            return None  # no allowed bookmaker quoted this side
 
         if order == (home, away):
-            return MatchOdds(
-                odds_a=odds_home, odds_b=odds_away,
-                matched_home=home, matched_away=away,
-                bookmaker_a=bk_home, bookmaker_b=bk_away,
-            )
+            final_a, final_b, bk_a, bk_b = odds_home, odds_away, bk_home, bk_away
+        else:
+            final_a, final_b, bk_a, bk_b = odds_away, odds_home, bk_away, bk_home
         return MatchOdds(
-            odds_a=odds_away, odds_b=odds_home,
+            odds_a=final_a, odds_b=final_b,
             matched_home=home, matched_away=away,
-            bookmaker_a=bk_away, bookmaker_b=bk_home,
+            bookmaker_a=bk_a, bookmaker_b=bk_b,
         )
 
     return None

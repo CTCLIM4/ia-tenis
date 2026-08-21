@@ -185,6 +185,23 @@ class TestFindMatchOdds:
         )
         assert result is None
 
+    def test_returns_none_when_only_one_side_has_an_allowed_quote(self):
+        # pinnacle only quotes the home side (e.g. away outcome missing from
+        # its response) -- odds_home resolves but odds_away stays None, so
+        # the `or` in `if odds_home is None or odds_away is None` must fire.
+        event = {
+            "home_team": "Novak Djokovic", "away_team": "Jannik Sinner",
+            "bookmakers": [{
+                "key": "pinnacle",
+                "markets": [{
+                    "key": "h2h",
+                    "outcomes": [{"name": "Novak Djokovic", "price": 1.50}],
+                }],
+            }],
+        }
+        result = find_match_odds([event], "Novak Djokovic", "Jannik Sinner")
+        assert result is None
+
     def test_independent_bookmaker_per_side(self):
         events = [_multi_bk_event("Novak Djokovic", "Jannik Sinner", {
             "pinnacle": {"Novak Djokovic": 1.50, "Jannik Sinner": 2.60},
