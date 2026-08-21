@@ -161,6 +161,7 @@ class TestFindMatchOdds:
         assert result == MatchOdds(
             odds_a=1.50, odds_b=2.60,
             matched_home="Novak Djokovic", matched_away="Jannik Sinner",
+            bookmaker_a="pinnacle", bookmaker_b="pinnacle",
         )
 
     def test_reversed_order_match(self):
@@ -169,6 +170,7 @@ class TestFindMatchOdds:
         assert result == MatchOdds(
             odds_a=2.60, odds_b=1.50,
             matched_home="Novak Djokovic", matched_away="Jannik Sinner",
+            bookmaker_a="pinnacle", bookmaker_b="pinnacle",
         )
 
     def test_no_match_returns_none(self):
@@ -178,8 +180,19 @@ class TestFindMatchOdds:
 
     def test_bookmaker_absent_returns_none(self):
         events = [_event("Novak Djokovic", "Jannik Sinner", bookmaker_key="pinnacle")]
-        result = find_match_odds(events, "Novak Djokovic", "Jannik Sinner", bookmaker="bet365")
+        result = find_match_odds(
+            events, "Novak Djokovic", "Jannik Sinner", allowed_bookmakers={"bet365"},
+        )
         assert result is None
+
+    def test_independent_bookmaker_per_side(self):
+        events = [_multi_bk_event("Novak Djokovic", "Jannik Sinner", {
+            "pinnacle": {"Novak Djokovic": 1.50, "Jannik Sinner": 2.60},
+            "bet365":   {"Novak Djokovic": 1.55, "Jannik Sinner": 2.55},
+        })]
+        result = find_match_odds(events, "Novak Djokovic", "Jannik Sinner")
+        assert result.odds_a == 1.55 and result.bookmaker_a == "bet365"
+        assert result.odds_b == 2.60 and result.bookmaker_b == "pinnacle"
 
     def test_matches_regardless_of_periods_and_accents(self):
         events = [_event("Sabalenka A.", "Swiatek I.")]

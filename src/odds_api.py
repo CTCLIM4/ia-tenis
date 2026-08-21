@@ -28,6 +28,8 @@ class MatchOdds:
     odds_b: float
     matched_home: str
     matched_away: str
+    bookmaker_a: str
+    bookmaker_b: str
 
 
 def _best_price(
@@ -73,14 +75,14 @@ def find_match_odds(
     events: list[dict],
     player_a: str,
     player_b: str,
-    bookmaker: str = DEFAULT_BOOKMAKER,
+    allowed_bookmakers: Optional[set[str]] = None,
 ) -> Optional[MatchOdds]:
     """Find the event matching player_a/player_b (either order) and extract
-    that bookmaker's h2h prices.
+    the best available h2h price for each side, independently, across
+    allowed_bookmakers (None = every bookmaker in the response).
 
-    Returns None when no event's participants match, or when a matching
-    event exists but the configured bookmaker didn't quote it — callers
-    must not substitute a different bookmaker.
+    Returns None when no event's participants match, or when no allowed
+    bookmaker quoted both sides of the matched event.
     """
     surname_a = _surname(player_a)
     surname_b = _surname(player_b)
@@ -115,21 +117,21 @@ def find_match_odds(
         else:
             continue
 
-        for bk in event.get("bookmakers", []):
-            if bk.get("key") != bookmaker:
-                continue
-            for market in bk.get("markets", []):
-                if market.get("key") != "h2h":
-                    continue
-                prices = {o["name"]: o["price"] for o in market.get("outcomes", [])}
-                if order[0] in prices and order[1] in prices:
-                    return MatchOdds(
-                        odds_a=prices[order[0]],
-                        odds_b=prices[order[1]],
-                        matched_home=home,
-                        matched_away=away,
-                    )
-        return None  # event matched but this bookmaker didn't quote it
+        odds_home, odds_away, bk_home, bk_away = _best_price(event, allowed_bookmakers)
+        if odds_home is None or odds_away is None:
+            return None  # event matched but no allowed bookmaker quoted both sides
+
+        if order == (home, away):
+            return MatchOdds(
+                odds_a=odds_home, odds_b=odds_away,
+                matched_home=home, matched_away=away,
+                bookmaker_a=bk_home, bookmaker_b=bk_away,
+            )
+        return MatchOdds(
+            odds_a=odds_away, odds_b=odds_home,
+            matched_home=home, matched_away=away,
+            bookmaker_a=bk_away, bookmaker_b=bk_home,
+        )
 
     return None
 
@@ -245,9 +247,9 @@ def get_match_odds(
     player_a: str,
     player_b: str,
     api_key: str,
-    bookmaker: str = DEFAULT_BOOKMAKER,
+    allowed_bookmakers: Optional[set[str]] = None,
     cache_minutes: int = DEFAULT_CACHE_MINUTES,
 ) -> Optional[MatchOdds]:
     """Top-level lookup: cached/fetched events -> matched odds for this pairing."""
     events = get_events(tour, api_key, cache_minutes)
-    return find_match_odds(events, player_a, player_b, bookmaker)
+    return find_match_odds(events, player_a, player_b, allowed_bookmakers)
