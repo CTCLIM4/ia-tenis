@@ -194,6 +194,16 @@ class TestFindMatchOdds:
         assert result.odds_a == 1.55 and result.bookmaker_a == "bet365"
         assert result.odds_b == 2.60 and result.bookmaker_b == "pinnacle"
 
+    def test_independent_bookmaker_per_side_with_reversed_order(self):
+        events = [_multi_bk_event("Novak Djokovic", "Jannik Sinner", {
+            "pinnacle": {"Novak Djokovic": 1.50, "Jannik Sinner": 2.60},
+            "bet365":   {"Novak Djokovic": 1.55, "Jannik Sinner": 2.55},
+        })]
+        # player_a=Sinner (away team), player_b=Djokovic (home team) -> reversed order branch
+        result = find_match_odds(events, "Jannik Sinner", "Novak Djokovic")
+        assert result.odds_a == 2.60 and result.bookmaker_a == "pinnacle"
+        assert result.odds_b == 1.55 and result.bookmaker_b == "bet365"
+
     def test_matches_regardless_of_periods_and_accents(self):
         events = [_event("Sabalenka A.", "Swiatek I.")]
         result = find_match_odds(events, "Aryna Sabalenka", "Iga Swiatek")
