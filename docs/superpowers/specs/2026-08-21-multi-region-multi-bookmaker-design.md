@@ -141,19 +141,28 @@ Full suite (509 existing tests) must stay green; new tests added for the
 above, no real network calls (same mocking approach as the existing odds_api
 tests).
 
-## Open risk (not blocking, verify before merge)
+## Open risk (verified 2026-08-21 against real API, resolved as a known cost)
 
-The Odds API's quota cost scales with `regions × markets` requested per
-call. Moving from `eu` alone to `eu,uk,us` (3 regions × 1 market) could
-roughly triple per-scan quota consumption. With the free tier (500
-req/month) and daily automated runs across several active tournaments, this
-may exhaust the monthly quota well before month-end. Verify actual quota
-cost against a real `ODDS_API_KEY` response (the `x-requests-*` response
-headers The Odds API returns) before relying on this in the daily
-automation — same verify-against-real-API pattern used for the
-`sport_key`-per-tournament discovery assumption. If quota pressure is
-confirmed, a follow-up (narrower default region list, or caching more
-aggressively) may be needed — out of scope for this spec.
+Confirmed empirically with a real `ODDS_API_KEY` against `tennis_atp_cincinnati_open`:
+`regions=eu,uk,us` costs **3 credits per call** (`x-requests-last: 3`), i.e.
+exactly 1 credit per region — the `regions × markets` scaling was correct,
+not just a theoretical concern. The `/v4/sports` discovery call itself is
+free (`x-requests-last: 0`).
+
+Quota state at verification time: 396/500 monthly requests remaining
+(104 used before this check). A daily automated scan across N active
+tournaments now costs `3N` credits/day instead of the old `N` (single
+`eu` region), i.e. roughly a 3x increase in daily quota burn. With a
+2-tournament day (a common case — one ATP + one WTA event) that's 6
+credits/day (~180/month at that rate), leaving headroom under the 500/month
+free tier under normal single-tournament-per-day operation, but multi-
+tournament days (e.g. 3+ concurrent ATP/WTA events during overlapping
+tour weeks) could approach the ceiling faster than before. Not a blocker —
+no code change needed for this spec — but worth monitoring `x-requests-remaining`
+in `daily_workflow.py`'s output if scans start being skipped for API-key
+reasons, and worth revisiting (narrower default region list, e.g. dropping
+to `eu,uk` if `us` rarely surfaces better prices in practice) if quota
+pressure becomes real.
 
 ## Spec coverage check
 
