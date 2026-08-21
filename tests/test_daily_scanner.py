@@ -60,13 +60,17 @@ def _event(home="Novak Djokovic", away="Jannik Sinner", bookmaker_key="bet365",
 
 
 class TestExtractH2hOdds:
-    def test_extracts_prices_for_configured_bookmaker(self):
-        event = _event(prices={"Novak Djokovic": 1.5, "Jannik Sinner": 2.6})
-        assert _extract_h2h_odds(event, "bet365") == (1.5, 2.6)
+    def test_extracts_prices_for_allowed_bookmaker(self):
+        event = _event(prices={"Novak Djokovic": 1.5, "Jannik Sinner": 2.6}, bookmaker_key="bet365")
+        assert _extract_h2h_odds(event, {"bet365"}) == (1.5, 2.6, "bet365", "bet365")
 
-    def test_returns_none_when_bookmaker_absent(self):
+    def test_returns_none_when_no_allowed_bookmaker_quotes_it(self):
         event = _event(bookmaker_key="pinnacle")
-        assert _extract_h2h_odds(event, "bet365") is None
+        assert _extract_h2h_odds(event, {"bet365"}) is None
+
+    def test_none_allowed_bookmakers_means_all_allowed(self):
+        event = _event(prices={"Novak Djokovic": 1.5, "Jannik Sinner": 2.6}, bookmaker_key="pinnacle")
+        assert _extract_h2h_odds(event, None) == (1.5, 2.6, "pinnacle", "pinnacle")
 
 
 # ── discover_matches ──────────────────────────────────────────────────────────
@@ -99,6 +103,7 @@ class TestDiscoverMatches:
         assert m.player_a == "Novak Djokovic"
         assert m.player_b == "Jannik Sinner"
         assert m.odds_a == 1.5 and m.odds_b == 2.6
+        assert m.bookmaker_a == DEFAULT_BOOKMAKER and m.bookmaker_b == DEFAULT_BOOKMAKER
         assert m.match_date == date(2026, 7, 27)
 
     def test_match_date_uses_lima_calendar_day_not_utc(self, monkeypatch):
