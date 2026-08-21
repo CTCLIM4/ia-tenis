@@ -18,6 +18,7 @@ CACHE_DIR = _ROOT / "data" / "odds_cache"
 
 ODDS_API_BASE = "https://api.the-odds-api.com/v4/sports"
 DEFAULT_BOOKMAKER = "pinnacle"
+DEFAULT_REGIONS = "eu,uk,us"
 DEFAULT_CACHE_MINUTES = 15
 
 
@@ -186,9 +187,10 @@ def list_tennis_sport_keys(sports_index: list[dict]) -> list[dict]:
 
 def fetch_odds_events_by_key(sport_key: str, api_key: str) -> list[dict]:
     """Fetch raw upcoming h2h odds events for an explicit sport_key."""
+    regions = os.environ.get("ODDS_API_REGIONS", DEFAULT_REGIONS)
     url = (
         f"{ODDS_API_BASE}/{sport_key}/odds/"
-        f"?apiKey={api_key}&regions=eu&markets=h2h&oddsFormat=decimal"
+        f"?apiKey={api_key}&regions={regions}&markets=h2h&oddsFormat=decimal"
     )
     with urllib.request.urlopen(url, timeout=20) as resp:
         return json.loads(resp.read())

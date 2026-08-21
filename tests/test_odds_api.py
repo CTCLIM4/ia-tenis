@@ -322,3 +322,43 @@ class TestResolveAllowedBookmakers:
         from src.odds_api import resolve_allowed_bookmakers
         monkeypatch.setenv("ALLOWED_BOOKMAKERS", "bet365")
         assert resolve_allowed_bookmakers("") == {"bet365"}
+
+
+# ── regions configuration ────────────────────────────────────────────────────
+
+class TestRegionsParam:
+    def test_default_regions_when_env_unset(self, monkeypatch):
+        import src.odds_api as odds_api
+        monkeypatch.delenv("ODDS_API_REGIONS", raising=False)
+        captured = {}
+
+        class _FakeResp:
+            def __enter__(self): return self
+            def __exit__(self, *a): return False
+            def read(self): return b"[]"
+
+        def _fake_urlopen(url, timeout=None):
+            captured["url"] = url
+            return _FakeResp()
+
+        monkeypatch.setattr(odds_api.urllib.request, "urlopen", _fake_urlopen)
+        odds_api.fetch_odds_events_by_key("tennis_atp_wimbledon", "fake-key")
+        assert "regions=eu,uk,us" in captured["url"]
+
+    def test_custom_regions_from_env(self, monkeypatch):
+        import src.odds_api as odds_api
+        monkeypatch.setenv("ODDS_API_REGIONS", "au,us2")
+        captured = {}
+
+        class _FakeResp:
+            def __enter__(self): return self
+            def __exit__(self, *a): return False
+            def read(self): return b"[]"
+
+        def _fake_urlopen(url, timeout=None):
+            captured["url"] = url
+            return _FakeResp()
+
+        monkeypatch.setattr(odds_api.urllib.request, "urlopen", _fake_urlopen)
+        odds_api.fetch_odds_events_by_key("tennis_atp_wimbledon", "fake-key")
+        assert "regions=au,us2" in captured["url"]
