@@ -203,3 +203,33 @@ class TestRun:
 
         assert len(self.sent["picks"]) == 1
         assert self.sent["vpn"] == {"available": False}
+
+    def test_selected_picks_include_bookmaker(self, monkeypatch):
+        m = DiscoveredMatch(
+            tour="atp", tournament="ATP Test Open", surface="hard",
+            match_date=date(2026, 8, 19), player_a="A Player", player_b="B Player",
+            odds_a=2.0, odds_b=1.8, raw_home="A Player", raw_away="B Player",
+            bookmaker_a="bet365", bookmaker_b="pinnacle",
+        )
+        r = _result(match=m, val_a=_val(edge=0.05, kelly=0.04, has_value=True))
+        self._wire_common(monkeypatch, [r])
+
+        selected = workflow.run()
+
+        assert selected[0]["bookmaker"] == "bet365"
+
+    def test_logs_query_with_bookmaker_from_match(self, monkeypatch):
+        m = DiscoveredMatch(
+            tour="atp", tournament="ATP Test Open", surface="hard",
+            match_date=date(2026, 8, 19), player_a="A Player", player_b="B Player",
+            odds_a=2.0, odds_b=1.8, raw_home="A Player", raw_away="B Player",
+            bookmaker_a="bet365", bookmaker_b="pinnacle",
+        )
+        r = _result(match=m, val_a=_val(edge=0.05, kelly=0.04, has_value=True))
+        self._wire_common(monkeypatch, [r])
+
+        workflow.run()
+
+        _, kwargs = self.logged_queries[0]
+        assert kwargs["bookmaker_a"] == "bet365"
+        assert kwargs["bookmaker_b"] == "pinnacle"

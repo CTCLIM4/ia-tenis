@@ -108,14 +108,15 @@ def run(dry_run: bool = False) -> list[dict]:
         r.val_b["kelly_fraction"] = (r.val_b["kelly_fraction"] / KELLY_DIVISOR) if qualifies_b else 0.0
 
         match_label = f"{r.match.player_a} vs {r.match.player_b}"
-        for qualifies, val, odds, name in (
-            (qualifies_a, r.val_a, r.match.odds_a, r.match.player_a),
-            (qualifies_b, r.val_b, r.match.odds_b, r.match.player_b),
+        for qualifies, val, odds, name, bookmaker in (
+            (qualifies_a, r.val_a, r.match.odds_a, r.match.player_a, r.match.bookmaker_a),
+            (qualifies_b, r.val_b, r.match.odds_b, r.match.player_b, r.match.bookmaker_b),
         ):
             if qualifies:
                 selected.append({
                     "match": match_label, "pick": name, "odds": odds,
                     "edge": val["edge"], "kelly": val["kelly_fraction"],
+                    "bookmaker": bookmaker,
                 })
 
         if not dry_run:
@@ -123,6 +124,7 @@ def run(dry_run: bool = False) -> list[dict]:
                 r.match.tour, r.match.tournament, r.match.surface, r.match.match_date,
                 r.match.player_a, r.match.player_b, r.pred, r.val_a, r.val_b,
                 r.match.odds_a, r.match.odds_b, odds_a_source="auto", odds_b_source="auto",
+                bookmaker_a=r.match.bookmaker_a, bookmaker_b=r.match.bookmaker_b,
             )
 
     if not dry_run:
@@ -138,6 +140,7 @@ def run(dry_run: bool = False) -> list[dict]:
                     r.match.odds_a, r.match.odds_b, odds_a_source="auto", odds_b_source="auto",
                     decision=decision, model_snapshot_id=None,
                     shrink_hi=_SHRINK_HI, shrink_lo=_SHRINK_LO, shrink_rate=_SHRINK_RATE,
+                    bookmaker_a=r.match.bookmaker_a, bookmaker_b=r.match.bookmaker_b,
                 )
             except Exception as e:
                 print(f"  Aviso: no se pudo escribir en el audit log ({e}). Continuando.")
