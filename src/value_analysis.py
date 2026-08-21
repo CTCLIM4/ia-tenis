@@ -13,11 +13,12 @@ El modelo se reconstruye desde cero la primera vez (~30-60 s ATP),
 y luego queda cacheado 7 días en data/model_cache/{tour}.pkl.
 
 Cuotas: si ODDS_API_KEY esta configurada en el entorno, se intenta
-autocompletar la cuota de cada jugador via The Odds API (bookmaker fijo,
-default "pinnacle" — configurable con ODDS_API_BOOKMAKER, cache de eventos
-configurable con ODDS_API_CACHE_MINUTES). Si no hay key, no hay match, o
-falla la llamada, se pide la cuota a mano igual que antes — el auto-fetch
-nunca bloquea el flujo.
+autocompletar la cuota de cada jugador via The Odds API — mejor precio
+disponible entre los bookmakers permitidos (ALLOWED_BOOKMAKERS, o todos
+si no esta configurada; ODDS_API_BOOKMAKER sigue forzando uno solo si se
+define), cache de eventos configurable con ODDS_API_CACHE_MINUTES. Si no
+hay key, no hay match, o falla la llamada, se pide la cuota a mano igual
+que antes — el auto-fetch nunca bloquea el flujo.
 """
 from __future__ import annotations
 
@@ -44,7 +45,7 @@ from src.data.staleness import StalenessLevel, evaluate_staleness
 from src.data.timezone_utils import lima_today
 from src.features import FEATURE_COLS
 from src.features.decay import EloHistoryTracker, calculate_decay_features
-from src.odds_api import DEFAULT_BOOKMAKER, DEFAULT_CACHE_MINUTES, MatchOdds, get_match_odds
+from src.odds_api import DEFAULT_CACHE_MINUTES, MatchOdds, get_match_odds, resolve_allowed_bookmakers
 
 # ── paths ────────────────────────────────────────────────────────────────────
 _ROOT      = Path(__file__).resolve().parent.parent
@@ -926,9 +927,9 @@ def try_auto_odds(tour: str, player_a: str, player_b: str) -> Optional[MatchOdds
     if not api_key:
         return None
     try:
-        bookmaker = os.environ.get("ODDS_API_BOOKMAKER", DEFAULT_BOOKMAKER)
+        allowed_bookmakers = resolve_allowed_bookmakers(os.environ.get("ODDS_API_BOOKMAKER"))
         cache_minutes = int(os.environ.get("ODDS_API_CACHE_MINUTES", DEFAULT_CACHE_MINUTES))
-        return get_match_odds(tour, player_a, player_b, api_key, bookmaker, cache_minutes)
+        return get_match_odds(tour, player_a, player_b, api_key, allowed_bookmakers, cache_minutes)
     except Exception as e:
         if not _odds_warned:
             print(f"\n  Aviso: no se pudieron obtener cuotas automaticas ({e}). "
@@ -1059,8 +1060,8 @@ def interactive_cli(
             # Cuotas automaticas (best-effort, nunca bloquea el flujo)
             auto_odds = try_auto_odds(tour, player_a, player_b)
             if auto_odds is not None:
-                bookmaker_label = os.environ.get("ODDS_API_BOOKMAKER", DEFAULT_BOOKMAKER)
-                print(f"\n  Cuotas encontradas ({bookmaker_label}): "
+                print(f"\n  Cuotas encontradas (A: {auto_odds.bookmaker_a}, "
+                      f"B: {auto_odds.bookmaker_b}): "
                       f"{auto_odds.matched_home} vs {auto_odds.matched_away}")
 
             # Rankings — show auto-found values as defaults
@@ -1121,6 +1122,8 @@ def interactive_cli(
 
         val_a = calculate_value(pred["p_a_cal"], odds_a)
         val_b = calculate_value(pred["p_b_cal"], odds_b)
+        bookmaker_a = auto_odds.bookmaker_a if (auto_odds and odds_a_source == "auto") else ""
+        bookmaker_b = auto_odds.bookmaker_b if (auto_odds and odds_b_source == "auto") else ""
 
         _print_prediction(pred, val_a, val_b, odds_a, odds_b)
 
@@ -1156,6 +1159,7 @@ def interactive_cli(
                 player_a, player_b,
                 pred, val_a, val_b, odds_a, odds_b,
                 odds_a_source, odds_b_source,
+                bookmaker_a=bookmaker_a, bookmaker_b=bookmaker_b,
             )
 
         # Audit log: every evaluated prediction, unconditionally — not just
@@ -1179,6 +1183,7 @@ def interactive_cli(
                 decision=decision,
                 model_snapshot_id=snapshot,
                 shrink_hi=_SHRINK_HI, shrink_lo=_SHRINK_LO, shrink_rate=_SHRINK_RATE,
+                bookmaker_a=bookmaker_a, bookmaker_b=bookmaker_b,
             )
         except Exception as e:
             print(f"\n  Aviso: no se pudo escribir en el audit log ({e}). Continuando sesion.")
