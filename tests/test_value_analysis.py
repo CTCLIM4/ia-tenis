@@ -491,6 +491,43 @@ class TestLogQueryOddsSource:
         assert new_row["odds_b_source"] == "auto"
 
 
+class TestTryAutoOdds:
+    """Regression: try_auto_odds must pass allowed_bookmakers (Optional[set[str]])
+    to get_match_odds, not a bare string — see Task 14 fix."""
+
+    def test_passes_set_or_none_not_a_bare_string(self, monkeypatch):
+        import src.value_analysis as va
+        captured = {}
+
+        def fake_get_match_odds(tour, player_a, player_b, api_key, allowed_bookmakers, cache_minutes):
+            captured["allowed_bookmakers"] = allowed_bookmakers
+            return None
+
+        monkeypatch.setattr(va, "get_match_odds", fake_get_match_odds)
+        monkeypatch.setenv("ODDS_API_KEY", "fake-key")
+        monkeypatch.delenv("ODDS_API_BOOKMAKER", raising=False)
+
+        va.try_auto_odds("atp", "Player A", "Player B")
+
+        assert captured["allowed_bookmakers"] is None or isinstance(captured["allowed_bookmakers"], set)
+
+    def test_explicit_bookmaker_env_collapses_to_single_item_set(self, monkeypatch):
+        import src.value_analysis as va
+        captured = {}
+
+        def fake_get_match_odds(tour, player_a, player_b, api_key, allowed_bookmakers, cache_minutes):
+            captured["allowed_bookmakers"] = allowed_bookmakers
+            return None
+
+        monkeypatch.setattr(va, "get_match_odds", fake_get_match_odds)
+        monkeypatch.setenv("ODDS_API_KEY", "fake-key")
+        monkeypatch.setenv("ODDS_API_BOOKMAKER", "pinnacle")
+
+        va.try_auto_odds("atp", "Player A", "Player B")
+
+        assert captured["allowed_bookmakers"] == {"pinnacle"}
+
+
 class TestCacheRoundTripsLastMatchDate:
     def test_last_match_date_round_trips(self, tmp_path, monkeypatch):
         import src.value_analysis as va
