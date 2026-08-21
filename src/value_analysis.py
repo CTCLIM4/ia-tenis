@@ -701,6 +701,7 @@ _LOG_FIELDS = [
     "rank_a", "rank_a_source", "rank_b", "rank_b_source",
     "p_a_raw", "p_a_cal", "p_b_raw", "p_b_cal",
     "odds_a", "odds_a_source", "odds_b", "odds_b_source",
+    "bookmaker_a", "bookmaker_b",
     "implied_a", "implied_b",
     "edge_a", "ev_a", "kelly_a",
     "edge_b", "ev_b", "kelly_b",
@@ -717,8 +718,9 @@ _LOG_FIELDS = [
 
 def _migrate_log_header_if_needed() -> None:
     """If LOG_PATH exists with an older header than _LOG_FIELDS (e.g. missing
-    odds_a_source/odds_b_source), rewrite it with the current header so old
-    rows stay readable instead of silently misaligning on the next append."""
+    odds_a_source/odds_b_source or bookmaker_a/bookmaker_b), rewrite it with the
+    current header so old rows stay readable instead of silently misaligning on
+    the next append."""
     if not LOG_PATH.exists():
         return
     with open(LOG_PATH, newline="", encoding="utf-8") as f:
@@ -729,6 +731,8 @@ def _migrate_log_header_if_needed() -> None:
     for row in rows:
         row.setdefault("odds_a_source", "manual")
         row.setdefault("odds_b_source", "manual")
+        row.setdefault("bookmaker_a", "pinnacle")
+        row.setdefault("bookmaker_b", "pinnacle")
     with open(LOG_PATH, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=_LOG_FIELDS)
         writer.writeheader()
@@ -739,7 +743,8 @@ def _migrate_log_header_if_needed() -> None:
 def log_query(tour, tournament, surface, match_date,
               player_a, player_b,
               pred, val_a, val_b, odds_a, odds_b,
-              odds_a_source: str = "manual", odds_b_source: str = "manual") -> None:
+              odds_a_source: str = "manual", odds_b_source: str = "manual",
+              bookmaker_a: str = "", bookmaker_b: str = "") -> None:
     """Append one match prediction + odds to the CSV log.
 
     Rows where either player's Elo was not found (default 1500) are saved
@@ -774,6 +779,8 @@ def log_query(tour, tournament, surface, match_date,
         "odds_a_source":   odds_a_source,
         "odds_b":          odds_b,
         "odds_b_source":   odds_b_source,
+        "bookmaker_a":     bookmaker_a,
+        "bookmaker_b":     bookmaker_b,
         "implied_a":       round(val_a["implied_prob"], 4),
         "implied_b":       round(val_b["implied_prob"], 4),
         "edge_a":          round(val_a["edge"], 4),
