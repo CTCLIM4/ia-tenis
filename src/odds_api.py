@@ -28,6 +28,45 @@ class MatchOdds:
     matched_away: str
 
 
+def _best_price(
+    event: dict, allowed_bookmakers: Optional[set[str]]
+) -> tuple[Optional[float], Optional[float], Optional[str], Optional[str]]:
+    """Scan event["bookmakers"] for the h2h market and return the best
+    (highest) price for each side independently, along with which
+    bookmaker offered it.
+
+    allowed_bookmakers=None means "allow every bookmaker in the response".
+    An empty set means "allow none" (nothing qualifies). The winning
+    bookmaker for the home side and the away side may differ — this is
+    deliberate, since the best price for one player is not necessarily
+    offered by the same book as the best price for their opponent.
+
+    Returns (None, None, None, None) for a side with no allowed bookmaker
+    quoting it (mirrors the old "bookmaker didn't quote it" None case).
+    """
+    home = event.get("home_team", "")
+    away = event.get("away_team", "")
+    best_home: Optional[float] = None
+    best_away: Optional[float] = None
+    bk_home: Optional[str] = None
+    bk_away: Optional[str] = None
+
+    for bk in event.get("bookmakers", []):
+        key = bk.get("key")
+        if allowed_bookmakers is not None and key not in allowed_bookmakers:
+            continue
+        for market in bk.get("markets", []):
+            if market.get("key") != "h2h":
+                continue
+            prices = {o["name"]: o["price"] for o in market.get("outcomes", [])}
+            if home in prices and (best_home is None or prices[home] > best_home):
+                best_home, bk_home = prices[home], key
+            if away in prices and (best_away is None or prices[away] > best_away):
+                best_away, bk_away = prices[away], key
+
+    return best_home, best_away, bk_home, bk_away
+
+
 def find_match_odds(
     events: list[dict],
     player_a: str,

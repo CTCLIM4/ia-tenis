@@ -83,6 +83,77 @@ def _event(home, away, bookmaker_key=DEFAULT_BOOKMAKER, prices=None):
     }
 
 
+def _multi_bk_event(home, away, prices_by_bookmaker):
+    """prices_by_bookmaker: {bookmaker_key: {home: price, away: price}}"""
+    return {
+        "home_team": home,
+        "away_team": away,
+        "bookmakers": [
+            {
+                "key": bk,
+                "markets": [{
+                    "key": "h2h",
+                    "outcomes": [
+                        {"name": home, "price": prices[home]},
+                        {"name": away, "price": prices[away]},
+                    ],
+                }],
+            }
+            for bk, prices in prices_by_bookmaker.items()
+        ],
+    }
+
+
+class TestBestPrice:
+    def test_picks_max_price_per_side_independently(self):
+        from src.odds_api import _best_price
+        event = _multi_bk_event("Djokovic", "Sinner", {
+            "pinnacle": {"Djokovic": 1.50, "Sinner": 2.60},
+            "bet365":   {"Djokovic": 1.60, "Sinner": 2.50},
+        })
+        odds_home, odds_away, bk_home, bk_away = _best_price(event, allowed_bookmakers=None)
+        assert odds_home == 1.60 and bk_home == "bet365"
+        assert odds_away == 2.60 and bk_away == "pinnacle"
+
+    def test_allowed_bookmakers_filters_out_others(self):
+        from src.odds_api import _best_price
+        event = _multi_bk_event("Djokovic", "Sinner", {
+            "pinnacle": {"Djokovic": 1.50, "Sinner": 2.60},
+            "bet365":   {"Djokovic": 1.60, "Sinner": 2.50},
+        })
+        odds_home, odds_away, bk_home, bk_away = _best_price(event, allowed_bookmakers={"pinnacle"})
+        assert odds_home == 1.50 and bk_home == "pinnacle"
+        assert odds_away == 2.60 and bk_away == "pinnacle"
+
+    def test_empty_allowed_bookmakers_set_means_none_allowed(self):
+        from src.odds_api import _best_price
+        event = _multi_bk_event("Djokovic", "Sinner", {
+            "pinnacle": {"Djokovic": 1.50, "Sinner": 2.60},
+        })
+        result = _best_price(event, allowed_bookmakers=set())
+        assert result == (None, None, None, None)
+
+    def test_no_bookmakers_quote_event_returns_all_none(self):
+        from src.odds_api import _best_price
+        event = _multi_bk_event("Djokovic", "Sinner", {
+            "bet365": {"Djokovic": 1.60, "Sinner": 2.50},
+        })
+        result = _best_price(event, allowed_bookmakers={"pinnacle"})
+        assert result == (None, None, None, None)
+
+    def test_ignores_non_h2h_markets(self):
+        from src.odds_api import _best_price
+        event = {
+            "home_team": "Djokovic", "away_team": "Sinner",
+            "bookmakers": [{
+                "key": "pinnacle",
+                "markets": [{"key": "totals", "outcomes": []}],
+            }],
+        }
+        result = _best_price(event, allowed_bookmakers=None)
+        assert result == (None, None, None, None)
+
+
 class TestFindMatchOdds:
     def test_direct_order_match(self):
         events = [_event("Novak Djokovic", "Jannik Sinner")]
