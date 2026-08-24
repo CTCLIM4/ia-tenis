@@ -41,6 +41,7 @@ TOURNAMENT_SURFACES = {
     "hamburg": "clay",
     "prague": "hard",
     "washington": "hard",
+    "monterrey": "hard",
 }
 
 
