@@ -14,3 +14,5 @@
 - Drawdown maximo: -154.40$ (-11.8%) | Varianza (profit): 0.00118
 - Racha ganadora maxima: 6 | Racha perdedora maxima: 5
 - Calibracion: EV teorico +14.2% vs retorno real +1.1% (diff -13.1 pp)
+
+**Nota**: Kalinina A. vs Joint M. se marca como `void` (profit 0), no como ganada/perdida — Kalinina se retiro del torneo por lesion de columna antes de jugar el R1 y fue reemplazada por la lucky loser Panna Udvardy, que enfrento a Joint en su lugar. El partido sobre el que se apostó nunca se disputó, asi que se anula (stake devuelto) en vez de liquidarse contra un partido distinto.
