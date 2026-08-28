@@ -76,12 +76,29 @@ class TestWtaIsStale:
         assert workflow._wta_is_stale() is False
 
 
+class TestAtpIsStale:
+    def test_false_when_no_cache(self, monkeypatch):
+        monkeypatch.setattr(workflow, "get_last_match_date", lambda tour: None)
+        assert workflow._atp_is_stale() is False
+
+    def test_true_when_stale(self, monkeypatch):
+        monkeypatch.setattr(workflow, "get_last_match_date", lambda tour: date(2026, 1, 1))
+        assert workflow._atp_is_stale() is True
+
+    def test_false_when_fresh(self, monkeypatch):
+        import src.data.timezone_utils as tzu
+        today = tzu.lima_today()
+        monkeypatch.setattr(workflow, "get_last_match_date", lambda tour: today)
+        assert workflow._atp_is_stale() is False
+
+
 class TestRun:
-    def _wire_common(self, monkeypatch, results, stale_wta=False, api_key="key123"):
+    def _wire_common(self, monkeypatch, results, stale_wta=False, stale_atp=False, api_key="key123"):
         monkeypatch.setenv("ODDS_API_KEY", api_key)
         monkeypatch.setattr(workflow, "_load_models", lambda tours, retrain: {})
         monkeypatch.setattr(workflow, "_canonical_names", lambda models: {})
         monkeypatch.setattr(workflow, "_wta_is_stale", lambda: stale_wta)
+        monkeypatch.setattr(workflow, "_atp_is_stale", lambda: stale_atp)
         monkeypatch.setattr(workflow, "discover_matches", lambda *a, **kw: [r.match for r in results])
         monkeypatch.setattr(workflow, "evaluate_matches", lambda matches, models: results)
         monkeypatch.setattr(workflow, "track_vpn_usage", lambda: {"available": False})
@@ -147,6 +164,21 @@ class TestRun:
         workflow.run()
 
         assert called_tours["tours"] == ("atp",)
+
+    def test_skips_atp_matches_when_stale(self, monkeypatch):
+        wta_r = _result(match=_match(player_a="WTA Pick", tour="wta"),
+                         val_a=_val(edge=0.05, kelly=0.04, has_value=True))
+        self._wire_common(monkeypatch, [wta_r], stale_atp=True)
+
+        called_tours = {}
+        monkeypatch.setattr(
+            workflow, "discover_matches",
+            lambda api_key, canonical, tours=("atp", "wta"): called_tours.setdefault("tours", tours) or [wta_r.match],
+        )
+
+        workflow.run()
+
+        assert called_tours["tours"] == ("wta",)
 
     def test_logs_query_only_for_qualifying_matches(self, monkeypatch):
         strong = _result(val_a=_val(edge=0.05, kelly=0.04, has_value=True))

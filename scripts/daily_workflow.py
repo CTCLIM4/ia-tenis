@@ -10,9 +10,12 @@ revisar la tabla en consola, elegir un subconjunto de picks a mano, aplicar
 1/2 Kelly) por una corrida no interactiva con los mismos criterios que se
 venian aplicando a mano en las ultimas jornadas:
 
-  - WTA se ignora por completo si el dataset esta desactualizado (mismo
-    criterio de src.data.staleness que ya imprime la advertencia en
-    src.daily_scanner — aqui se usa para decidir, no solo para avisar).
+  - ATP y WTA se ignoran por completo, cada uno independientemente, si su
+    dataset esta desactualizado (mismo criterio de src.data.staleness que ya
+    imprime la advertencia en src.daily_scanner — aqui se usa para decidir,
+    no solo para avisar). Simetria ATP/WTA agregada el 2026-08-28: antes solo
+    WTA se auto-excluia; el aviso de staleness de ATP se imprimia pero no
+    bloqueaba nada.
   - Solo se registran picks con edge >= MIN_EDGE (3%) — descarta el "ruido"
     de edges marginales que se venian declinando a mano.
   - El Kelly registrado es un cuarto del calculado (1/4 Kelly). Bajado desde
@@ -71,6 +74,18 @@ def _wta_is_stale() -> bool:
     return report.level != StalenessLevel.OK
 
 
+def _atp_is_stale() -> bool:
+    """True when the cached ATP dataset is stale enough to skip ATP picks
+    entirely for this run. Symmetric to _wta_is_stale() — see its
+    docstring; same cache-population requirement and OK/WARNING/CRITICAL
+    semantics, just for the ATP circuit."""
+    last_match = get_last_match_date("atp")
+    if last_match is None:
+        return False
+    report = evaluate_staleness(last_match, lima_today())
+    return report.level != StalenessLevel.OK
+
+
 def _qualifying_sides(r) -> tuple[bool, bool]:
     """Which side(s) of an evaluated match pass the project's auto-logging
     gate: elo found, adequate sample, not a suspicious edge, and edge >= MIN_EDGE
@@ -94,9 +109,12 @@ def run(dry_run: bool = False) -> list[dict]:
     canonical_names = _canonical_names(models)
 
     tours = ("atp", "wta")
+    if _atp_is_stale():
+        print("  ATP desactualizado: se ignoran picks ATP de esta jornada.")
+        tours = tuple(t for t in tours if t != "atp")
     if _wta_is_stale():
         print("  WTA desactualizado: se ignoran picks WTA de esta jornada.")
-        tours = ("atp",)
+        tours = tuple(t for t in tours if t != "wta")
 
     print("Descubriendo partidos programados...")
     matches = discover_matches(api_key, canonical_names, tours=tours)
