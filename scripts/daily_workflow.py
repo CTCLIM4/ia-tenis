@@ -98,14 +98,14 @@ def _qualifying_sides(r) -> tuple[bool, bool]:
     return qualifies_a, qualifies_b
 
 
-def run(dry_run: bool = False) -> list[dict]:
+def run(dry_run: bool = False, retrain: bool = False) -> list[dict]:
     api_key = os.environ.get("ODDS_API_KEY")
     if not api_key:
         print("ODDS_API_KEY no configurada. Abortando.")
         return []
 
     print("Cargando modelos (ATP, WTA)...")
-    models = _load_models(("atp", "wta"), retrain=False)
+    models = _load_models(("atp", "wta"), retrain=retrain)
     canonical_names = _canonical_names(models)
 
     tours = ("atp", "wta")
@@ -197,8 +197,10 @@ def main() -> None:
     )
     parser.add_argument("--dry-run", action="store_true",
                          help="No escribe CSVs, no envia correo, no hace git push")
+    parser.add_argument("--retrain", action="store_true",
+                         help="Reconstruye el cache del modelo desde data/processed/ en vez de reusar el existente")
     args = parser.parse_args()
-    run(dry_run=args.dry_run)
+    run(dry_run=args.dry_run, retrain=args.retrain)
 
 
 if __name__ == "__main__":
