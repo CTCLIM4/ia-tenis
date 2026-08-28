@@ -154,7 +154,7 @@ def run(dry_run: bool = False) -> list[dict]:
             except Exception as e:
                 print(f"  Aviso: no se pudo escribir en el audit log ({e}). Continuando.")
 
-    print(f"\n{len(selected)} pick(s) seleccionados (edge >= {MIN_EDGE * 100:.0f}%, 1/2 Kelly):")
+    print(f"\n{len(selected)} pick(s) seleccionados (edge >= {MIN_EDGE * 100:.0f}%, 1/4 Kelly):")
     for p in selected:
         print(f"  {p['match']} -> {p['pick']} @ {p['odds']:.2f} "
               f"(edge {p['edge'] * 100:+.1f}%, kelly {p['kelly'] * 100:.2f}%)")
@@ -167,7 +167,7 @@ def run(dry_run: bool = False) -> list[dict]:
         if selected:
             commit_and_push(
                 [VALUE_BETS_LOG],
-                f"feat(bets): auto-log {len(selected)} value bet(s) for {lima_today().isoformat()} (1/2 Kelly)",
+                f"feat(bets): auto-log {len(selected)} value bet(s) for {lima_today().isoformat()} (1/4 Kelly)",
             )
 
     return selected
