@@ -124,13 +124,13 @@ class TestRun:
         assert len(selected) == 1
         assert selected[0]["pick"] == "Strong Pick"
 
-    def test_applies_half_kelly_to_qualifying_side(self, monkeypatch):
+    def test_applies_quarter_kelly_to_qualifying_side(self, monkeypatch):
         r = _result(val_a=_val(edge=0.05, kelly=0.04, has_value=True))
         self._wire_common(monkeypatch, [r])
 
         selected = workflow.run()
 
-        assert selected[0]["kelly"] == 0.02
+        assert selected[0]["kelly"] == 0.01
 
     def test_skips_wta_matches_when_stale(self, monkeypatch):
         atp_r = _result(match=_match(player_a="ATP Pick", tour="atp"),

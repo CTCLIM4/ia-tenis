@@ -15,8 +15,17 @@ venian aplicando a mano en las ultimas jornadas:
     src.daily_scanner — aqui se usa para decidir, no solo para avisar).
   - Solo se registran picks con edge >= MIN_EDGE (3%) — descarta el "ruido"
     de edges marginales que se venian declinando a mano.
-  - El Kelly registrado es la mitad del calculado (1/2 Kelly), igual que las
-    jornadas registradas manualmente hasta ahora.
+  - El Kelly registrado es un cuarto del calculado (1/4 Kelly). Bajado desde
+    1/2 Kelly el 2026-08-27 tras el diagnostico de calibracion de la gira de
+    pista dura (Cincinnati+Monterrey): la banca acumulaba drawdown de -11.8%
+    y el Monte Carlo de Modulo 4 mostro que 1/4 Kelly recorta el drawdown
+    mediano esperado de -18.9% a -7.5% sin aumentar el riesgo de ruina (ya
+    era ~0% gracias al KELLY_CAP). No se toco apply_shrinkage: el sesgo de
+    sobreconfianza detectado en la racha reciente (odds 1.5-2.0, N=28) no es
+    estadisticamente significativo (p=0.08) y cae justo en el rango 40-80%
+    que el estudio de calibracion de referencia (Section 13, ATP+WTA 2016-23,
+    muestra mucho mayor) encontro bien calibrado — ajustar el shrinkage con
+    N=28 arriesgaria sobreajustar ruido de muestra chica.
 
 No liquida apuestas ni decide resultados de partidos — eso es
 scripts/settle_workflow.py, y sigue pidiendo confirmacion humana porque este
@@ -45,7 +54,7 @@ from src.utils.vpn_tracker import track_vpn_usage
 from src.value_analysis import _SHRINK_HI, _SHRINK_LO, _SHRINK_RATE, get_last_match_date, log_query
 
 MIN_EDGE = 0.03
-KELLY_DIVISOR = 2
+KELLY_DIVISOR = 4
 VALUE_BETS_LOG = "data/value_bets_log.csv"
 
 
