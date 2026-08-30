@@ -71,6 +71,29 @@ def classify_audit_decision(
     return "passed_user_declined"
 
 
+def _migrate_log_header_if_needed() -> None:
+    """If AUDIT_LOG_PATH exists with an older header than _AUDIT_LOG_FIELDS
+    (e.g. missing bookmaker_a/bookmaker_b), rewrite it with the current
+    header so old rows stay readable instead of silently misaligning on the
+    next append. Mirrors src.value_analysis._migrate_log_header_if_needed
+    for the sibling value_bets_log.csv."""
+    if not AUDIT_LOG_PATH.exists():
+        return
+    with open(AUDIT_LOG_PATH, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        if reader.fieldnames == _AUDIT_LOG_FIELDS:
+            return
+        rows = list(reader)
+    for row in rows:
+        row.setdefault("bookmaker_a", "")
+        row.setdefault("bookmaker_b", "")
+    with open(AUDIT_LOG_PATH, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=_AUDIT_LOG_FIELDS)
+        writer.writeheader()
+        for row in rows:
+            writer.writerow({k: row.get(k, "") for k in _AUDIT_LOG_FIELDS})
+
+
 def log_prediction_audit(
     tour, tournament, surface, match_date,
     player_a, player_b,
@@ -97,6 +120,7 @@ def log_prediction_audit(
     its source (`src.git_utils.current_git_commit`) and have this function
     see the patched version.
     """
+    _migrate_log_header_if_needed()
     AUDIT_LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
     shrink = abs(pred["p_a_cal"] - pred["p_a_raw"]) > 0.001
 

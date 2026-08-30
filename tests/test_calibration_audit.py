@@ -241,3 +241,78 @@ class TestLogPredictionAudit:
         row = _read_audit_log(audit_log_path)[0]
         assert row["bookmaker_a"] == ""
         assert row["bookmaker_b"] == ""
+
+    def test_migrates_old_header_and_preserves_old_row(self, audit_log_path):
+        """Regression: a pre-existing audit log written under the older
+        32-column header (no bookmaker_a/bookmaker_b) must be migrated in
+        place the next time log_prediction_audit() appends a row, instead of
+        silently misaligning every row appended after it (the bug that broke
+        src.backtest_analytics' load_audit_log with a pandas ParserError)."""
+        old_fields = [f for f in calibration_audit._AUDIT_LOG_FIELDS
+                      if f not in ("bookmaker_a", "bookmaker_b")]
+        old_row = {
+            "timestamp": "2026-08-21T01:14:22",
+            "tour": "atp",
+            "tournament": "ATP Cincinnati Open TEST",
+            "surface": "hard",
+            "match_date": "2026-08-21",
+            "player_a": "Lorenzo Musetti",
+            "player_b": "Frances Tiafoe",
+            "p_a_raw": "0.5738",
+            "p_a_cal": "0.5738",
+            "p_b_raw": "0.4262",
+            "p_b_cal": "0.4262",
+            "shrink_hi": "0.9",
+            "shrink_lo": "0.1",
+            "shrink_rate": "0.6",
+            "shrinkage_applied": "False",
+            "odds_a": "1.89",
+            "odds_a_source": "auto",
+            "odds_b": "2.01",
+            "odds_b_source": "auto",
+            "implied_a": "0.5291",
+            "implied_b": "0.4975",
+            "edge_a": "0.0447",
+            "ev_a": "0.0845",
+            "kelly_a": "0.025",
+            "edge_b": "-0.0713",
+            "ev_b": "-0.1434",
+            "kelly_b": "0.0",
+            "model_commit": "b973c0f",
+            "model_snapshot_id": "",
+            "elo_found_a": "True",
+            "elo_found_b": "True",
+            "decision": "logged",
+        }
+        with open(audit_log_path, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=old_fields)
+            writer.writeheader()
+            writer.writerow(old_row)
+
+        pred = _make_pred()
+        v = calculate_value(0.58, 1.90)
+        calibration_audit.log_prediction_audit(
+            "atp", "Test", "hard", date(2026, 8, 22),
+            "Player C", "Player D",
+            pred, v, v, 1.90, 1.90,
+            "manual", "manual",
+            decision="logged",
+            model_snapshot_id=None,
+            shrink_hi=0.90, shrink_lo=0.10, shrink_rate=0.60,
+            bookmaker_a="betus", bookmaker_b="betfair_ex_uk",
+        )
+
+        rows = _read_audit_log(audit_log_path)
+        assert len(rows) == 2
+
+        migrated = rows[0]
+        assert migrated["player_a"] == "Lorenzo Musetti"
+        assert migrated["odds_a"] == "1.89"
+        assert migrated["odds_b"] == "2.01"
+        assert migrated["bookmaker_a"] == ""
+        assert migrated["bookmaker_b"] == ""
+
+        new_row = rows[1]
+        assert new_row["player_a"] == "Player C"
+        assert new_row["bookmaker_a"] == "betus"
+        assert new_row["bookmaker_b"] == "betfair_ex_uk"

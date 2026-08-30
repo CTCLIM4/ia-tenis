@@ -21,3 +21,4 @@ __pycache__/
 .vscode/
 .worktrees/
 !data/value_bets_log.csv
+*.zip
