@@ -154,6 +154,30 @@ class TestRun:
         assert str(path) in pushed["paths"]
         assert any("2026-08-19-jornada-cincinnati.md" in p for p in pushed["paths"])
 
+    def test_report_includes_bets_settled_in_an_earlier_run_same_date(self, tmp_path, monkeypatch):
+        """Regression: settling the same date in two batches (e.g. some
+        matches confirmed same-day, a rain-suspended one confirmed the next
+        day) must not make the second run's report silently overwrite the
+        first run's — the report should always reflect every bet resolved
+        for that match_date, not just the ones settled in this particular
+        run."""
+        path = tmp_path / "value_bets_log.csv"
+        _write_csv(path, [
+            _row(match_date="2026-08-30", player_a="Already Settled Earlier",
+                 result="A_win", profit="0.02"),
+            _row(match_date="2026-08-30", player_a="Settled This Run",
+                 odds_a="2.0", kelly_a="0.05"),
+        ])
+        monkeypatch.setattr(settle, "_ask_winner", lambda row: "a")
+        monkeypatch.setattr(settle, "commit_and_push", lambda *a, **kw: True)
+
+        settle.run(date(2026, 8, 30), log_path=str(path), report_dir=str(tmp_path))
+
+        report_path = tmp_path / "2026-08-30-jornada-cincinnati.md"
+        content = report_path.read_text(encoding="utf-8")
+        assert "Already Settled Earlier" in content
+        assert "Settled This Run" in content
+
     def test_no_pending_rows_returns_empty_without_writing(self, tmp_path, monkeypatch):
         path = tmp_path / "value_bets_log.csv"
         _write_csv(path, [_row(match_date="2026-08-18")])

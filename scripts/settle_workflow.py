@@ -185,7 +185,17 @@ def run(
 
     report_path = str(Path(report_dir) / f"{target}-jornada-cincinnati.md")
     if not dry_run:
-        report = _build_report(target, settled, log_path)
+        # The report reflects every bet resolved for this match_date, not
+        # just the ones settled in this particular run — otherwise settling
+        # the same date in two batches (e.g. a rain-suspended match
+        # confirmed a day later) would silently overwrite the earlier
+        # batch's report instead of extending it.
+        all_settled_for_date = [
+            row for row in rows
+            if row.get("match_date") == target and row.get("status") == "ok"
+            and row.get("result") not in ("", "pending")
+        ]
+        report = _build_report(target, all_settled_for_date, log_path)
         Path(report_path).parent.mkdir(parents=True, exist_ok=True)
         Path(report_path).write_text(report, encoding="utf-8")
         print(f"\nReporte escrito en {report_path}")
