@@ -1,5 +1,6 @@
 """End-to-end pipeline: load data -> features -> backtest."""
 import sys
+from datetime import date
 from pathlib import Path
 from typing import Optional
 
@@ -16,11 +17,14 @@ from src.models.elo import EloSystem
 def run_pipeline(
     tour: str = "atp",
     start_year: int = 1990,
-    end_year: int = 2023,
+    end_year: Optional[int] = None,
     warmup_years: int = 10,
     eval_start: int = None,
     snapshot: Optional[str] = None,
 ) -> None:
+    if end_year is None:
+        end_year = date.today().year
+
     if snapshot is not None:
         features_path = resolve_snapshot_path(snapshot, tour, "processed")
         print(f"Loading {tour.upper()} features from snapshot '{snapshot}' ({features_path})...")
@@ -85,7 +89,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="ia-tenis pipeline")
     parser.add_argument("tour",        nargs="?", default="atp")
     parser.add_argument("start_year",  nargs="?", type=int, default=1990)
-    parser.add_argument("end_year",    nargs="?", type=int, default=2023)
+    parser.add_argument("end_year",    nargs="?", type=int, default=None)
     parser.add_argument("--warmup",    type=int,  default=10,   dest="warmup_years")
     parser.add_argument("--eval-start", type=int, default=None, dest="eval_start")
     parser.add_argument("--snapshot",  type=str,  default=None,
