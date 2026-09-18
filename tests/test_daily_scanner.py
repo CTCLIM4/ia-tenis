@@ -322,6 +322,26 @@ class TestEvaluateMatches:
         assert results[0].has_value is False
 
 
+class TestRunScanDefaultToursIncludesDavis:
+    def test_default_tours_includes_davis(self, monkeypatch):
+        import src.daily_scanner as scanner
+
+        captured = {}
+
+        def _fake_load_models(tours, retrain):
+            captured["tours"] = tours
+            return {}
+
+        monkeypatch.setattr(scanner, "_load_models", _fake_load_models)
+        monkeypatch.setattr(scanner, "_canonical_names", lambda models: {})
+        monkeypatch.setattr(scanner, "discover_matches", lambda *a, **kw: [])
+        monkeypatch.setenv("ODDS_API_KEY", "fake-key")
+
+        scanner.run_scan()  # no tours kwarg -- exercises the default
+
+        assert captured["tours"] == ("atp", "wta", "davis")
+
+
 # ── print_value_bets_table ────────────────────────────────────────────────────
 
 class TestRunScanBookmakerLogging:

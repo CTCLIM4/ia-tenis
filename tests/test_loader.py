@@ -4,7 +4,10 @@ import pandas as pd
 import pytest
 from io import StringIO
 from src.data import loader
-from src.data.loader import _clean, _clean_wta, _count_sets_played, load_atp_matches, load_wta_matches
+from src.data.loader import (
+    _clean, _clean_wta, _count_sets_played,
+    load_atp_matches, load_davis_cup_matches, load_wta_matches,
+)
 
 SAMPLE_CSV = (
     "tourney_id,tourney_name,surface,draw_size,tourney_level,tourney_date,"
@@ -211,6 +214,108 @@ class TestLoadWtaMatchesRawDirOverride:
         override_dir.mkdir()
         with pytest.raises(FileNotFoundError):
             load_wta_matches(2023, 2023, raw_dir_override=override_dir)
+
+
+# ── Davis Cup (filtered from the same ATP source, tourney_level == "D") ────
+#
+# tennis-data.co.uk has no Davis Cup data (verified 2026-09-18: daviscup.php
+# and every guessed archive path 404 there — the only "Davis Cup" text on the
+# whole site is an <option> linking out to daviscup.org). Davis Cup ties are
+# already embedded in the same stats.tennismylife.org yearly ATP feed used by
+# load_atp_matches(), tagged tourney_level == "D", so load_davis_cup_matches()
+# filters that instead of hitting a separate source or raw directory.
+
+DAVIS_SAMPLE_CSV = (
+    "tourney_id,tourney_name,surface,draw_size,tourney_level,tourney_date,"
+    "match_num,winner_id,winner_seed,winner_entry,winner_name,winner_hand,"
+    "winner_ht,winner_ioc,winner_age,winner_rank,winner_rank_points,"
+    "loser_id,loser_seed,loser_entry,loser_name,loser_hand,loser_ht,"
+    "loser_ioc,loser_age,loser_rank,loser_rank_points,score,best_of,round,minutes\n"
+    "2023-D-ESP-USA,Davis Cup,Hard,4,D,20230119,2,103,,,Nadal,R,185,ESP,36.7,2,8000,"
+    "104,,,Isner,R,208,USA,42.5,50,600,7-5 6-3,3,RR,95\n"
+    "2023-D-ESP-USA,Davis Cup,Hard,4,D,20230118,1,101,,,Alcaraz,R,183,ESP,19.7,1,10000,"
+    "102,,,Fritz,R,196,USA,25.2,9,3000,6-3 6-4 6-2,3,RR,90\n"
+    "2023-1,AO,Hard,128,G,20230117,1,105,,,Djokovic,R,188,SRB,35.7,1,10000,"
+    "106,,,Murray,R,190,GBR,35.5,5,500,6-3 6-4,5,R32,85\n"
+)
+
+
+class TestLoadDavisCupMatches:
+    def test_filters_to_davis_cup_rows_only(self, tmp_path):
+        override_dir = tmp_path / "atp_source"
+        override_dir.mkdir()
+        (override_dir / "2023.csv").write_text(DAVIS_SAMPLE_CSV)
+
+        df = load_davis_cup_matches(2023, 2023, raw_dir_override=override_dir)
+
+        assert len(df) == 2
+        assert set(df["winner_name"]) == {"Alcaraz", "Nadal"}
+        assert "Djokovic" not in set(df["winner_name"])
+
+    def test_tour_column_is_davis(self, tmp_path):
+        override_dir = tmp_path / "atp_source"
+        override_dir.mkdir()
+        (override_dir / "2023.csv").write_text(DAVIS_SAMPLE_CSV)
+
+        df = load_davis_cup_matches(2023, 2023, raw_dir_override=override_dir)
+
+        assert (df["tour"] == "davis").all()
+
+    def test_davis_cup_surface_normalization(self, tmp_path):
+        override_dir = tmp_path / "atp_source"
+        override_dir.mkdir()
+        (override_dir / "2023.csv").write_text(DAVIS_SAMPLE_CSV)
+
+        df = load_davis_cup_matches(2023, 2023, raw_dir_override=override_dir)
+
+        assert set(df["surface"].unique()).issubset({"clay", "hard", "grass", "carpet", "unknown"})
+
+    def test_davis_cup_sorted_by_date(self, tmp_path):
+        override_dir = tmp_path / "atp_source"
+        override_dir.mkdir()
+        (override_dir / "2023.csv").write_text(DAVIS_SAMPLE_CSV)
+
+        df = load_davis_cup_matches(2023, 2023, raw_dir_override=override_dir)
+
+        dates = df["match_date"].tolist()
+        assert dates == sorted(dates)
+        assert df.iloc[0]["winner_name"] == "Alcaraz"  # 2023-01-18, earlier
+
+    def test_davis_cup_drops_missing_names(self, tmp_path):
+        raw = DAVIS_SAMPLE_CSV.replace("Nadal", "")
+        override_dir = tmp_path / "atp_source"
+        override_dir.mkdir()
+        (override_dir / "2023.csv").write_text(raw)
+
+        df = load_davis_cup_matches(2023, 2023, raw_dir_override=override_dir)
+
+        assert len(df) == 1
+        assert df.iloc[0]["winner_name"] == "Alcaraz"
+
+    def test_davis_cup_sets_played_count(self, tmp_path):
+        override_dir = tmp_path / "atp_source"
+        override_dir.mkdir()
+        (override_dir / "2023.csv").write_text(DAVIS_SAMPLE_CSV)
+
+        df = load_davis_cup_matches(2023, 2023, raw_dir_override=override_dir)
+
+        row = df[df["winner_name"] == "Alcaraz"].iloc[0]
+        assert row["sets_played"] == 3  # "6-3 6-4 6-2"
+
+    def test_davis_cup_missing_file_raises(self, tmp_path):
+        override_dir = tmp_path / "no_files"
+        override_dir.mkdir()
+        with pytest.raises(FileNotFoundError):
+            load_davis_cup_matches(2023, 2023, raw_dir_override=override_dir)
+
+    def test_davis_cup_no_matching_rows_raises(self, tmp_path):
+        # ATP files exist for the range but contain zero tourney_level == "D"
+        # rows -- distinct from the "no files at all" case above.
+        override_dir = tmp_path / "atp_source_no_davis"
+        override_dir.mkdir()
+        (override_dir / "2023.csv").write_text(SAMPLE_CSV)  # only "G" level rows
+        with pytest.raises(FileNotFoundError):
+            load_davis_cup_matches(2023, 2023, raw_dir_override=override_dir)
 
 
 # ── sets_played normalization ───────────────────────────────────────────────

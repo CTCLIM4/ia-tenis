@@ -21,6 +21,11 @@ _PROCESSED_DIR = _ROOT / "data" / "processed"
 _RAW_TOUR_DIRS = {
     "atp": "tennis_atp_tml",
     "wta": "tennis_wta_tduk",
+    # Davis Cup has no separate raw source -- tennis-data.co.uk has no Davis
+    # Cup data at all (verified 2026-09-18), and Davis Cup ties are already
+    # embedded in the same stats.tennismylife.org ATP feed (tourney_level ==
+    # "D"), so it shares ATP's raw directory rather than a new one.
+    "davis": "tennis_atp_tml",
 }
 
 # Only these extensions are ever read by src/data/loader.py's load_atp_matches/
@@ -123,7 +128,10 @@ def create_snapshot(snapshot_id: str | None = None, tours: tuple[str, ...] = ("a
 
             raw_tour_src = _RAW_DIR / _RAW_TOUR_DIRS[tour]
             raw_tour_dst = raw_dir / _RAW_TOUR_DIRS[tour]
-            raw_tour_dst.mkdir(parents=True)
+            # exist_ok=True: "davis" shares "atp"'s _RAW_TOUR_DIRS entry, so
+            # requesting both tours in one call reaches this path twice for
+            # the same destination directory.
+            raw_tour_dst.mkdir(parents=True, exist_ok=True)
             files_meta = {
                 f"processed/{features_dst.name}": _file_record(features_dst),
             }

@@ -167,6 +167,46 @@ class TestCreateSnapshot:
         assert "2026.csv" in raw_files  # the real fixture data file must still be copied
 
 
+class TestDavisCupRawTourDir:
+    """Davis Cup has no separate raw source -- tennis-data.co.uk doesn't
+    have Davis Cup data at all (verified 2026-09-18), and Davis Cup ties are
+    already embedded in the same stats.tennismylife.org ATP feed. So
+    "davis" maps to the *same* raw directory as "atp", not a new one."""
+
+    def test_davis_is_in_raw_tour_dirs(self):
+        assert "davis" in snapshots._RAW_TOUR_DIRS
+
+    def test_davis_maps_to_same_raw_dir_as_atp(self):
+        assert snapshots._RAW_TOUR_DIRS["davis"] == snapshots._RAW_TOUR_DIRS["atp"]
+
+    def test_can_snapshot_davis_alone(self, fake_data_dirs):
+        (fake_data_dirs["processed_dir"] / "davis_features.csv").write_text(
+            "match_date,winner,loser\n2026-07-10,A,B\n"
+        )
+
+        snapshot_dir = snapshots.create_snapshot(snapshot_id="2026-07-24", tours=("davis",))
+
+        assert (snapshot_dir / "processed" / "davis_features.csv").exists()
+        assert (snapshot_dir / "raw" / "tennis_atp_tml" / "2026.csv").exists()
+        meta = json.loads((snapshot_dir / "metadata.json").read_text())
+        assert meta["tours"]["davis"]["n_rows"] == 1
+
+    def test_can_snapshot_atp_and_davis_together_despite_shared_raw_dir(self, fake_data_dirs):
+        # Regression: both tours resolve to the same _RAW_TOUR_DIRS entry
+        # ("tennis_atp_tml"), so the raw destination directory gets created
+        # (and populated) twice in one create_snapshot() call -- the second
+        # mkdir must not raise FileExistsError.
+        (fake_data_dirs["processed_dir"] / "davis_features.csv").write_text(
+            "match_date,winner,loser\n2026-07-10,A,B\n"
+        )
+
+        snapshot_dir = snapshots.create_snapshot(snapshot_id="2026-07-24", tours=("atp", "davis"))
+
+        assert (snapshot_dir / "processed" / "atp_features.csv").exists()
+        assert (snapshot_dir / "processed" / "davis_features.csv").exists()
+        assert (snapshot_dir / "raw" / "tennis_atp_tml" / "2026.csv").exists()
+
+
 class TestListSnapshots:
     def test_empty_when_no_snapshots_dir(self, fake_data_dirs):
         assert snapshots.list_snapshots() == []

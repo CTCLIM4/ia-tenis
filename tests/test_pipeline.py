@@ -55,6 +55,29 @@ class TestRunPipelineDefaultEndYear:
         assert captured["end_year"] == 2020
 
 
+class TestRunPipelineDavisDispatch:
+    def test_davis_tour_calls_load_davis_cup_matches_not_atp_or_wta(self, monkeypatch):
+        def _boom(*a, **kw):
+            raise AssertionError("wrong loader called for tour='davis'")
+
+        monkeypatch.setattr("src.pipeline.load_atp_matches", _boom)
+        monkeypatch.setattr("src.pipeline.load_wta_matches", _boom)
+
+        captured = {}
+
+        def _fake_davis_loader(start_year, end_year, raw_dir_override=None):
+            captured["start_year"] = start_year
+            captured["end_year"] = end_year
+            raise _StopEarly
+
+        monkeypatch.setattr("src.pipeline.load_davis_cup_matches", _fake_davis_loader)
+
+        with pytest.raises(_StopEarly):
+            run_pipeline(tour="davis", warmup_years=1)
+
+        assert captured["end_year"] == date.today().year
+
+
 @pytest.fixture()
 def fake_snapshot(tmp_path, monkeypatch):
     """A minimal but structurally valid snapshot with a real, if tiny,

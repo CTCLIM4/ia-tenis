@@ -21,6 +21,7 @@ from src.value_analysis import (
     KELLY_CAP,
     _LOG_FIELDS,
     _build_age_lookup,
+    _build_elo_fb,
     _check_staleness,
     _current_age,
     _is_elo_known,
@@ -618,6 +619,34 @@ class TestBuildAgeLookup:
             {"winner_name": "A", "loser_name": "B", "match_date": pd.Timestamp("2023-01-01")},
         ])
         assert _build_age_lookup(df) == {}
+
+
+class _StopEarly(Exception):
+    """Raised by a fake loader right after capturing its call args, to skip
+    the rest of _build_elo_fb (Elo/FeatureBuilder replay) -- these tests
+    only care about which loader gets dispatched to for a given tour."""
+
+
+class TestBuildEloFbDavisDispatch:
+    def test_davis_tour_calls_load_davis_cup_matches_not_atp_or_wta(self, monkeypatch):
+        def _boom(*a, **kw):
+            raise AssertionError("wrong loader called for tour='davis'")
+
+        monkeypatch.setattr("src.data.loader.load_atp_matches", _boom)
+        monkeypatch.setattr("src.data.loader.load_wta_matches", _boom)
+
+        captured = {}
+
+        def _fake_davis_loader(start_year, end_year, raw_dir_override=None):
+            captured["start_year"] = start_year
+            raise _StopEarly
+
+        monkeypatch.setattr("src.data.loader.load_davis_cup_matches", _fake_davis_loader)
+
+        with pytest.raises(_StopEarly):
+            _build_elo_fb("davis")
+
+        assert captured["start_year"] == 1981
 
 
 class TestCurrentAge:

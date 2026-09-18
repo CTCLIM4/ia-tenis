@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 
 from src.backtest.walkforward import build_match_features, load_features_with_mirror, walk_forward_backtest
-from src.data.loader import load_atp_matches, load_wta_matches
+from src.data.loader import load_atp_matches, load_davis_cup_matches, load_wta_matches
 from src.data.snapshots import resolve_snapshot_path
 from src.features.engineering import FeatureBuilder
 from src.models.elo import EloSystem
@@ -33,7 +33,11 @@ def run_pipeline(
         print(f"  {len(original):,} feature rows ({len(match_df):,} with mirrors) — pinned, not regenerated.")
     else:
         print(f"Loading {tour.upper()} matches {start_year}-{end_year}...")
-        loader = load_atp_matches if tour == "atp" else load_wta_matches
+        loader = (
+            load_atp_matches if tour == "atp"
+            else load_wta_matches if tour == "wta"
+            else load_davis_cup_matches
+        )
         df = loader(start_year, end_year)
         print(f"  Loaded {len(df):,} matches across {df['year'].nunique()} seasons")
 

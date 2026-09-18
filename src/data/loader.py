@@ -135,6 +135,32 @@ def _clean_wta(df: pd.DataFrame, year: int, reference_date: Optional[date] = Non
     return df.sort_values("match_date").reset_index(drop=True)
 
 
+def load_davis_cup_matches(
+    start_year: int = 1981, end_year: int = 2026, raw_dir_override: Optional[Path] = None,
+) -> pd.DataFrame:
+    """Load Davis Cup matches.
+
+    tennis-data.co.uk has no Davis Cup data (verified 2026-09-18: daviscup.php
+    and every guessed archive path 404 there). Davis Cup ties are already
+    embedded in the same stats.tennismylife.org yearly ATP feed used by
+    load_atp_matches() -- tagged tourney_level == "D" -- so this filters that
+    instead of reading a separate raw directory. Competes individually
+    (players, not teams), so the schema is identical to a regular ATP match.
+
+    raw_dir_override: same as load_atp_matches's (data/raw/tennis_atp_tml by
+    default) -- there is no separate Davis Cup raw directory to override.
+    """
+    df = load_atp_matches(start_year, end_year, raw_dir_override=raw_dir_override)
+    davis = df[df["tourney_level"] == "D"].copy()
+    if davis.empty:
+        raise FileNotFoundError(
+            f"No Davis Cup rows (tourney_level == 'D') found in the ATP data for "
+            f"years {start_year}-{end_year}."
+        )
+    davis["tour"] = "davis"
+    return davis.reset_index(drop=True)
+
+
 def _read_tduk_file(path: Path) -> pd.DataFrame:
     suffix = path.suffix.lower()
     if suffix == ".csv":

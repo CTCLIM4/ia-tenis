@@ -273,7 +273,7 @@ def main() -> None:
         description="Dashboard de rendimiento y analisis de banca (Modulo 2)"
     )
     parser.add_argument("--bankroll", type=float, default=DEFAULT_BANKROLL)
-    parser.add_argument("--tour", choices=["atp", "wta", "both"], default="both")
+    parser.add_argument("--tour", choices=["atp", "wta", "davis", "both"], default="both")
     parser.add_argument("--bets-file", default=DEFAULT_BETS_PATH)
     parser.add_argument("--audit-file", default=DEFAULT_AUDIT_PATH)
     args = parser.parse_args()

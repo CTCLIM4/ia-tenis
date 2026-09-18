@@ -442,14 +442,18 @@ def _build_elo_fb(tour: str, raw_dir_override: Optional[Path] = None):
     data/raw/{tour dir} — used for snapshot-pinned loading
     (load_model(snapshot=...)).
     """
-    from src.data.loader import load_atp_matches, load_wta_matches
+    from src.data.loader import load_atp_matches, load_davis_cup_matches, load_wta_matches
     from src.features.engineering import FeatureBuilder
     from src.models.elo import EloSystem
     from src.backtest.walkforward import build_match_features
 
     print(f"  Reconstruyendo Elo + FeatureBuilder ({tour.upper()})...")
-    loader   = load_atp_matches if tour == "atp" else load_wta_matches
-    start    = 1990 if tour == "atp" else 2007
+    loader   = (
+        load_atp_matches if tour == "atp"
+        else load_wta_matches if tour == "wta"
+        else load_davis_cup_matches
+    )
+    start    = 1990 if tour == "atp" else 2007 if tour == "wta" else 1981
     end      = date.today().year
     df_raw   = loader(start, end, raw_dir_override=raw_dir_override)
     # Sort by date so rank lookup iteration is chronological
@@ -1203,6 +1207,8 @@ def main() -> None:
     )
     parser.add_argument("--wta", action="store_true",
                         help="Usar modelo WTA en lugar de ATP (default)")
+    parser.add_argument("--davis", action="store_true",
+                        help="Usar modelo Davis Cup en lugar de ATP (default)")
     parser.add_argument("--retrain", action="store_true",
                         help="Ignorar cache y reentrenar modelo desde cero")
     parser.add_argument("--halt-on-suspicious", action="store_true",
@@ -1212,7 +1218,7 @@ def main() -> None:
     parser.add_argument("--snapshot", type=str, default=None,
                         help="Usar un snapshot pinned (data/snapshots/{id}/) en vez de datos en vivo")
     args = parser.parse_args()
-    tour = "wta" if args.wta else "atp"
+    tour = "wta" if args.wta else "davis" if args.davis else "atp"
     interactive_cli(
         tour, retrain=args.retrain, halt_on_suspicious=args.halt_on_suspicious,
         snapshot=args.snapshot,

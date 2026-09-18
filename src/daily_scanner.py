@@ -143,7 +143,7 @@ def discover_matches(
     canonical_names_by_tour: dict[str, list[str]],
     bookmaker: Optional[str] = None,
     days_ahead: int = DEFAULT_DAYS_AHEAD,
-    tours: tuple[str, ...] = ("atp", "wta"),
+    tours: tuple[str, ...] = ("atp", "wta", "davis"),
 ) -> list[DiscoveredMatch]:
     """Discover today's/next-matchday's matches with bettable odds, matched
     to canonical dataset player names.
@@ -263,7 +263,7 @@ def _canonical_names(models: dict[str, tuple]) -> dict[str, list[str]]:
 
 
 def run_scan(
-    tours: tuple[str, ...] = ("atp", "wta"),
+    tours: tuple[str, ...] = ("atp", "wta", "davis"),
     bookmaker: Optional[str] = None,
     days_ahead: int = DEFAULT_DAYS_AHEAD,
     halt_on_suspicious: bool = True,
@@ -333,7 +333,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Escaneo automatico de partidos del dia con value bets (+EV, Kelly>0)"
     )
-    parser.add_argument("--tour", choices=["atp", "wta", "both"], default="both")
+    parser.add_argument("--tour", choices=["atp", "wta", "davis", "both"], default="both")
     parser.add_argument(
         "--bookmaker", default=None,
         help="Restringe la seleccion a un unico bookmaker (por defecto: mejor precio "

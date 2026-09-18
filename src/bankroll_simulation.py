@@ -286,7 +286,7 @@ def main() -> None:
         description="Simulacion Monte Carlo de banca bajo Kelly (Modulo 4)"
     )
     parser.add_argument("--bankroll", type=float, default=DEFAULT_BANKROLL)
-    parser.add_argument("--tour", choices=["atp", "wta", "both"], default="both")
+    parser.add_argument("--tour", choices=["atp", "wta", "davis", "both"], default="both")
     parser.add_argument("--bets-file", default=DEFAULT_BETS_PATH)
     parser.add_argument("--bets", type=int, default=DEFAULT_N_BETS)
     parser.add_argument("--simulations", type=int, default=DEFAULT_N_SIMULATIONS)
