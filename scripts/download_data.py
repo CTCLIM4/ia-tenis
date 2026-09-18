@@ -269,10 +269,43 @@ def _wta_remote_size(url: str) -> int | None:
         return None
 
 
-def _download_wta_year(year: int) -> bool:
+_WTA_DATA_PAGE_URL = "https://www.tennis-data.co.uk/data.php"
+_WTA_LINK_RE = re.compile(r'href="([^"]*/(\d{4})w/\d{4}\.(?:xlsx?|csv))"', re.IGNORECASE)
+
+
+def _fetch_wta_links() -> dict[int, str]:
+    """Scrape data.php for the WTA download URL of each year it currently lists.
+
+    tennis-data.co.uk periodically moves its files under a new opaque path
+    prefix (seen live 2026-09-18: the old {year}w/{year}w.xls-style guesses
+    became .../hrjk-85HytOjkhth76j_ygh4jf7/{year}w/{year}.xlsx). Scraping the
+    live page for the href it actually publishes survives that; guessing a
+    hardcoded pattern list doesn't. Returns {} on any network error --
+    callers must fall back to the guessed patterns in that case.
+    """
+    try:
+        req = urllib.request.Request(_WTA_DATA_PAGE_URL, headers=_WTA_HEADERS)
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            html = resp.read().decode("utf-8", errors="replace")
+    except Exception:
+        return {}
+
+    links: dict[int, str] = {}
+    base = "https://www.tennis-data.co.uk/"
+    for href, year_str in _WTA_LINK_RE.findall(html):
+        url = href if href.lower().startswith("http") else base + href.lstrip("/")
+        links[int(year_str)] = url
+    return links
+
+
+def _download_wta_year(year: int, discovered_url: str | None = None) -> bool:
     """Download one year of WTA data from tennis-data.co.uk. Returns True on success.
 
     tennis-data.co.uk uses inconsistent naming across years; try all known patterns.
+    discovered_url (from _fetch_wta_links, scraped off the live site) is tried
+    first when given, since it reflects the site's current path -- the
+    hardcoded guessed patterns below are only a fallback for when scraping
+    itself fails.
 
     Mirrors the ATP path's remote-size comparison (_should_download): an
     already-present local file is only skipped once its size is confirmed to
@@ -281,7 +314,7 @@ def _download_wta_year(year: int) -> bool:
     once it first exists locally.
     """
     base = "http://www.tennis-data.co.uk"
-    patterns = [
+    guessed_patterns = [
         f"{base}/{year}w/{year}w.xls",
         f"{base}/{year}w/{year}.xls",
         f"{base}/{year}w/{year}w.xlsx",
@@ -289,6 +322,7 @@ def _download_wta_year(year: int) -> bool:
         f"{base}/{year}w/{year}w.csv",
         f"{base}/{year}w/{year}.csv",
     ]
+    patterns = [discovered_url] + guessed_patterns if discovered_url else guessed_patterns
 
     for ext in (".xls", ".xlsx", ".csv"):
         local = WTA_DIR / f"{year}w{ext}"
@@ -331,7 +365,11 @@ def download():
     current_year = datetime.date.today().year
     WTA_DIR.mkdir(parents=True, exist_ok=True)
     print(f"\nDownloading WTA data ({WTA_START_YEAR}-{current_year}) from tennis-data.co.uk...")
-    ok = sum(_download_wta_year(y) for y in range(WTA_START_YEAR, current_year + 1))
+    wta_links = _fetch_wta_links()
+    ok = sum(
+        _download_wta_year(y, wta_links.get(y))
+        for y in range(WTA_START_YEAR, current_year + 1)
+    )
     print(f"  WTA: {ok} files ready in {WTA_DIR}")
 
     print("\nDownload step finished.")

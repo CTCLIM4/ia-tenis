@@ -358,10 +358,11 @@ class TestDownloadAtpFailureIsolation:
             raise ConnectionError("network down")
 
         monkeypatch.setattr(dd.requests, "get", boom)
+        monkeypatch.setattr(dd, "_fetch_wta_links", lambda: {})
 
         wta_years_called = []
 
-        def fake_wta_year(year):
+        def fake_wta_year(year, discovered_url=None):
             wta_years_called.append(year)
             return True
 
@@ -573,6 +574,49 @@ class TestWtaRemoteSize:
         assert dd._wta_remote_size("http://x/2026w.xlsx") is None
 
 
+class TestFetchWtaLinks:
+    """tennis-data.co.uk moved its WTA files under an opaque path prefix
+    (seen live 2026-09-18: /hrjk-85HytOjkhth76j_ygh4jf7/{year}w/{year}.xlsx)
+    that the old hardcoded {year}w/{year}w.xls-style patterns don't match.
+    _fetch_wta_links() scrapes the live data page instead of guessing, so a
+    future path change doesn't require another code fix.
+    """
+
+    _SAMPLE_HTML = """
+    <a HREF="hrjk-85HytOjkhth76j_ygh4jf7/2025/2025.xlsx">2025 men</a>
+    <a HREF="hrjk-85HytOjkhth76j_ygh4jf7/2025w/2025.xlsx">2025 women</a>
+    <a HREF="hrjk-85HytOjkhth76j_ygh4jf7/2026/2026.xlsx">2026 men</a>
+    <a HREF="hrjk-85HytOjkhth76j_ygh4jf7/2026w/2026.xlsx">2026 women</a>
+    """
+
+    def test_parses_women_links_and_ignores_men(self, monkeypatch):
+        monkeypatch.setattr(
+            dd.urllib.request, "urlopen",
+            lambda req, timeout=None: _FakeGetResponse(self._SAMPLE_HTML.encode("utf-8")),
+        )
+        links = dd._fetch_wta_links()
+        assert links == {
+            2025: "https://www.tennis-data.co.uk/hrjk-85HytOjkhth76j_ygh4jf7/2025w/2025.xlsx",
+            2026: "https://www.tennis-data.co.uk/hrjk-85HytOjkhth76j_ygh4jf7/2026w/2026.xlsx",
+        }
+
+    def test_returns_empty_dict_on_network_error(self, monkeypatch):
+        def boom(req, timeout=None):
+            raise ConnectionError("network down")
+
+        monkeypatch.setattr(dd.urllib.request, "urlopen", boom)
+        assert dd._fetch_wta_links() == {}
+
+    def test_absolute_href_passed_through_unchanged(self, monkeypatch):
+        html = '<a href="https://cdn.example.com/2026w/2026.xlsx">2026 women</a>'
+        monkeypatch.setattr(
+            dd.urllib.request, "urlopen",
+            lambda req, timeout=None: _FakeGetResponse(html.encode("utf-8")),
+        )
+        links = dd._fetch_wta_links()
+        assert links == {2026: "https://cdn.example.com/2026w/2026.xlsx"}
+
+
 class TestDownloadWtaYearSizeComparison:
     """The known bug (memory: project-wta-download-size-bug): _download_wta_year
     skipped any year whose local file already existed, with no comparison
@@ -638,3 +682,56 @@ class TestDownloadWtaYearSizeComparison:
         assert (tmp_path / "2026w.xlsx").read_bytes() == new_body
         # No pre-existing file, so there is nothing to size-compare against.
         assert head_calls == []
+
+
+class TestDownloadWtaYearDiscoveredUrl:
+    """A discovered_url (from _fetch_wta_links) is the real, current URL
+    scraped off the live site -- it must be tried before any of the
+    hardcoded guessed patterns, which go stale whenever the site
+    restructures its paths (as it did 2026-09-18)."""
+
+    def test_discovered_url_used_before_guessed_patterns(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(dd, "WTA_DIR", tmp_path)
+        new_body = _wta_xlsx_body()
+        discovered = "https://www.tennis-data.co.uk/hrjk-xyz/2026w/2026.xlsx"
+
+        def fake_urlopen(req, timeout=None):
+            if req.full_url != discovered:
+                raise AssertionError(f"should not hit guessed pattern: {req.full_url}")
+            return _FakeGetResponse(new_body)
+
+        monkeypatch.setattr(dd.urllib.request, "urlopen", fake_urlopen)
+
+        assert dd._download_wta_year(2026, discovered_url=discovered) is True
+        assert (tmp_path / "2026w.xlsx").read_bytes() == new_body
+
+    def test_falls_back_to_guessed_patterns_when_discovered_url_fails(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(dd, "WTA_DIR", tmp_path)
+        new_body = _wta_xlsx_body()
+        discovered = "https://www.tennis-data.co.uk/hrjk-xyz/2026w/2026.xlsx"
+        fallback = "http://www.tennis-data.co.uk/2026w/2026w.xls"
+
+        def fake_urlopen(req, timeout=None):
+            if req.full_url == discovered:
+                raise ConnectionError("stale discovered link, site moved again")
+            if req.full_url == fallback:
+                return _FakeGetResponse(new_body)
+            raise AssertionError(f"unexpected url: {req.full_url}")
+
+        monkeypatch.setattr(dd.urllib.request, "urlopen", fake_urlopen)
+
+        assert dd._download_wta_year(2026, discovered_url=discovered) is True
+        # Destination filename is derived from the downloaded content's
+        # detected format, not the guessed pattern's URL suffix.
+        assert (tmp_path / "2026w.xlsx").read_bytes() == new_body
+
+    def test_no_discovered_url_falls_back_to_guessed_patterns(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(dd, "WTA_DIR", tmp_path)
+        new_body = _wta_xlsx_body()
+
+        def fake_urlopen(req, timeout=None):
+            return _FakeGetResponse(new_body)
+
+        monkeypatch.setattr(dd.urllib.request, "urlopen", fake_urlopen)
+
+        assert dd._download_wta_year(2026, discovered_url=None) is True
