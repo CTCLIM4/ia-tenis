@@ -518,3 +518,78 @@ class TestPrintValueBetsTable:
         out = capsys.readouterr().out
         assert "Novak Djokovic" in out
         assert "Wimbledon" in out
+
+
+# ── auto-save ─────────────────────────────────────────────────────────
+
+class TestScannerAutoSave:
+    """Cuando auto_save=True, run_scan() guarda value bets sin invocar
+    input() — modo no-interactivo para produccion."""
+
+    def test_auto_save_skips_input_prompt(self, monkeypatch):
+        import src.daily_scanner as scanner
+
+        m = scanner.DiscoveredMatch(
+            tour="wta", tournament="WTA Test", surface="hard",
+            match_date=date(2026, 9, 19), player_a="Test Player A",
+            player_b="Test Player B", odds_a=1.8, odds_b=2.0,
+            raw_home="Test Player A", raw_away="Test Player B",
+        )
+        r = EvaluatedMatch(
+            match=m, pred=_pred(), val_a=_val(has_value=True), val_b=_val(has_value=False),
+            elo_ok=True, suspicious=False,
+        )
+        monkeypatch.setattr(scanner, "_load_models", lambda tours, retrain: {"wta": (None,) * 6})
+        monkeypatch.setattr(scanner, "_canonical_names", lambda models: {"wta": []})
+        monkeypatch.setattr(scanner, "discover_matches", lambda *a, **kw: [m])
+        monkeypatch.setattr(scanner, "evaluate_matches", lambda matches, models, halt_on_suspicious=True: [r])
+        monkeypatch.setenv("ODDS_API_KEY", "fake-key")
+
+        logged = []
+        monkeypatch.setattr(scanner, "log_query", lambda *a, **kw: logged.append(kw))
+        monkeypatch.setattr(scanner, "log_prediction_audit", lambda *a, **kw: None)
+
+        input_called = [False]
+        def fake_input(*a):
+            input_called[0] = True
+            return "s"
+        monkeypatch.setattr("builtins.input", fake_input)
+
+        scanner.run_scan(tours=("wta",), auto_save=True)
+
+        assert not input_called[0], "input() should never be called when auto_save=True"
+        assert len(logged) == 1, "value bet should be auto-logged"
+
+    def test_auto_save_false_calls_input(self, monkeypatch):
+        import src.daily_scanner as scanner
+
+        m = scanner.DiscoveredMatch(
+            tour="wta", tournament="WTA Test", surface="hard",
+            match_date=date(2026, 9, 19), player_a="Test Player A",
+            player_b="Test Player B", odds_a=1.8, odds_b=2.0,
+            raw_home="Test Player A", raw_away="Test Player B",
+        )
+        r = EvaluatedMatch(
+            match=m, pred=_pred(), val_a=_val(has_value=True), val_b=_val(has_value=False),
+            elo_ok=True, suspicious=False,
+        )
+        monkeypatch.setattr(scanner, "_load_models", lambda tours, retrain: {"wta": (None,) * 6})
+        monkeypatch.setattr(scanner, "_canonical_names", lambda models: {"wta": []})
+        monkeypatch.setattr(scanner, "discover_matches", lambda *a, **kw: [m])
+        monkeypatch.setattr(scanner, "evaluate_matches", lambda matches, models, halt_on_suspicious=True: [r])
+        monkeypatch.setenv("ODDS_API_KEY", "fake-key")
+
+        logged = []
+        monkeypatch.setattr(scanner, "log_query", lambda *a, **kw: logged.append(kw))
+        monkeypatch.setattr(scanner, "log_prediction_audit", lambda *a, **kw: None)
+
+        input_called = [False]
+        def fake_input(*a):
+            input_called[0] = True
+            return "s"
+        monkeypatch.setattr("builtins.input", fake_input)
+
+        scanner.run_scan(tours=("wta",), auto_save=False)
+
+        assert input_called[0], "input() should be called when auto_save=False"
+        assert len(logged) == 1

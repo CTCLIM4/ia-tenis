@@ -268,12 +268,13 @@ def run_scan(
     days_ahead: int = DEFAULT_DAYS_AHEAD,
     halt_on_suspicious: bool = True,
     retrain: bool = False,
+    auto_save: bool = False,
 ) -> None:
     api_key = os.environ.get("ODDS_API_KEY")
     if not api_key:
         print("ODDS_API_KEY no configurada. El escaneo automatico requiere una key de "
-              "The Odds API (no hay fallback manual en este modo). "
-              "Define la variable de entorno e intenta de nuevo.")
+               "The Odds API (no hay fallback manual en este modo). "
+               "Define la variable de entorno e intenta de nuevo.")
         return
 
     print(f"Cargando modelos ({', '.join(t.upper() for t in tours)})...")
@@ -292,8 +293,8 @@ def run_scan(
 
     print_value_bets_table(value_bets)
 
-    save_all = False
-    if value_bets:
+    save_all = auto_save
+    if value_bets and not auto_save:
         answer = input(
             f"\n  Guardar estas {len(value_bets)} value bet(s) en value_bets_log.csv? (s/n) [s]: "
         ).strip().lower()
@@ -349,6 +350,8 @@ def main() -> None:
              "por defecto SI se excluyen, a diferencia de la CLI interactiva.",
     )
     parser.add_argument("--retrain", action="store_true")
+    parser.add_argument("--auto-save", action="store_true",
+                        help="Guardar automaticamente value bets sin prompt interactivo")
     parser.set_defaults(halt_on_suspicious=True)
     args = parser.parse_args()
 
@@ -356,6 +359,7 @@ def main() -> None:
     run_scan(
         tours=tours, bookmaker=args.bookmaker, days_ahead=args.days_ahead,
         halt_on_suspicious=args.halt_on_suspicious, retrain=args.retrain,
+        auto_save=args.auto_save,
     )
 
 
