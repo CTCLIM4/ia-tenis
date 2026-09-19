@@ -62,6 +62,7 @@ from src.odds_api import (
     list_tennis_sport_keys,
     resolve_allowed_bookmakers,
 )
+from scripts.backup_logs import backup_logs
 from src.player_matcher import match_player_name
 from src.surface_resolver import resolve_surface
 from src.value_analysis import (
@@ -356,6 +357,9 @@ def run_scan(
             f"\n  Guardar estas {len(value_bets)} value bet(s) en value_bets_log.csv? (s/n) [s]: "
         ).strip().lower()
         save_all = answer in ("s", "si", "y", "yes", "")
+
+    if save_all and value_bets:
+        backup_logs()
 
     for r in results:
         logged = save_all and r.is_value_bet

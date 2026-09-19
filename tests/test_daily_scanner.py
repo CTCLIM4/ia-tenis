@@ -705,3 +705,53 @@ class TestScannerAutoSave:
 
         assert input_called[0], "input() should be called when auto_save=False"
         assert len(logged) == 1
+
+
+class TestScannerBacksUpBeforeLogging:
+    """Prompted by the 2026-09-19 incident (26 rows lost from an untracked
+    prediction_audit_log.csv, no way back) -- run_scan() must back up the
+    log files before writing to them, but only when it's actually about to
+    write (no value bets -> nothing to protect against, no backup noise)."""
+
+    def _wire(self, monkeypatch, has_value_bets: bool):
+        import src.daily_scanner as scanner
+
+        m = scanner.DiscoveredMatch(
+            tour="wta", tournament="WTA Test", surface="hard",
+            match_date=date(2026, 9, 19), player_a="Test Player A",
+            player_b="Test Player B", odds_a=1.8, odds_b=2.0,
+            raw_home="Test Player A", raw_away="Test Player B",
+        )
+        r = EvaluatedMatch(
+            match=m, pred=_pred(), val_a=_val(has_value=has_value_bets), val_b=_val(has_value=False),
+            elo_ok=True, suspicious=False,
+        )
+        monkeypatch.setattr(scanner, "_load_models", lambda tours, retrain: {"wta": (None,) * 6})
+        monkeypatch.setattr(scanner, "_canonical_names", lambda models: {"wta": []})
+        monkeypatch.setattr(scanner, "discover_matches", lambda *a, **kw: [m])
+        monkeypatch.setattr(scanner, "evaluate_matches", lambda matches, models, halt_on_suspicious=True: [r])
+        monkeypatch.setattr(scanner, "log_query", lambda *a, **kw: None)
+        monkeypatch.setattr(scanner, "log_prediction_audit", lambda *a, **kw: None)
+        monkeypatch.setenv("ODDS_API_KEY", "fake-key")
+
+    def test_scanner_backs_up_before_logging(self, monkeypatch):
+        import src.daily_scanner as scanner
+
+        self._wire(monkeypatch, has_value_bets=True)
+        backup_calls = []
+        monkeypatch.setattr(scanner, "backup_logs", lambda *a, **kw: backup_calls.append(1))
+
+        scanner.run_scan(tours=("wta",), auto_save=True)
+
+        assert len(backup_calls) == 1
+
+    def test_scanner_does_not_backup_if_no_value_bets(self, monkeypatch):
+        import src.daily_scanner as scanner
+
+        self._wire(monkeypatch, has_value_bets=False)
+        backup_calls = []
+        monkeypatch.setattr(scanner, "backup_logs", lambda *a, **kw: backup_calls.append(1))
+
+        scanner.run_scan(tours=("wta",), auto_save=True)
+
+        assert backup_calls == []
