@@ -3,8 +3,11 @@ scripts/run_prediction.py. Every test mocks subprocess.run; none of them
 touch the real schtasks database."""
 from __future__ import annotations
 
+import shlex
+
 import pytest
 
+import scripts.run_prediction as run_prediction
 import scripts.schedule_daily as schedule_daily
 
 
@@ -119,6 +122,34 @@ class TestCreateTask:
 
         with pytest.raises(ValueError):
             schedule_daily.create_task(hour=25, minute=0, task_name="test-task")
+
+    def test_generated_command_is_accepted_by_run_prediction_argparse(self, monkeypatch, tmp_path):
+        # Regression: the /tr command previously hardcoded "--auto-save",
+        # but run_prediction.py has no such CLI flag (auto-save is baked
+        # into step 4 internally) -- so schtasks ran a command that failed
+        # argparse with exit code 2, before any pipeline step ever ran.
+        calls = []
+
+        def fake_run(cmd, **kw):
+            calls.append(cmd)
+            return _FakeCompletedProcess(returncode=0)
+
+        monkeypatch.setattr(schedule_daily.subprocess, "run", fake_run)
+        monkeypatch.setattr(schedule_daily, "_ROOT", tmp_path)
+
+        schedule_daily.create_task(hour=8, minute=0, task_name="test-task")
+
+        create_cmd = next(c for c in calls if "/create" in c)
+        command_str = create_cmd[create_cmd.index("/tr") + 1]
+        parts = shlex.split(command_str, posix=False)
+        script_args = [p.strip('"') for p in parts[2:]]
+
+        try:
+            run_prediction.build_parser().parse_args(script_args)
+        except SystemExit:
+            pytest.fail(
+                f"run_prediction.py rejects the scheduled command's arguments: {script_args}"
+            )
 
     def test_creates_log_directory(self, monkeypatch, tmp_path):
         monkeypatch.setattr(

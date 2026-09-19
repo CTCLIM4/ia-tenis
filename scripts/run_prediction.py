@@ -58,7 +58,7 @@ def run(cmd: list[str], check: bool = True, stdin_input: str = "\n", log_file=No
         sys.exit(result.returncode)
     return result.returncode
 
-def main() -> None:
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Runner unico: descarga data -> pipeline -> retrain -> scanner"
     )
@@ -70,7 +70,11 @@ def main() -> None:
                         help="Saltar descarga de data (usar cache)")
     parser.add_argument("--log", action="store_true",
                         help="Tambien escribe la salida a data/logs/daily_{fecha}.log")
-    args = parser.parse_args()
+    return parser
+
+
+def main() -> None:
+    args = build_parser().parse_args()
 
     tours = ("atp", "wta", "davis") if args.tour == "both" else (args.tour,)
 
