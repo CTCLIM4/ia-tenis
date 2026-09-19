@@ -8,6 +8,7 @@ data/logs/
 data/vpn_usage.json
 data/value_bets_log.csv
 data/prediction_audit_log.csv
+!data/prediction_audit_log.csv
 data/snapshots/*/processed/
 data/snapshots/*/raw/
 __pycache__/
