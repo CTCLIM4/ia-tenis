@@ -36,6 +36,31 @@ class TestIsWithinWindow:
         now = datetime(2026, 7, 27, 12, 0, tzinfo=timezone.utc)
         assert not _is_within_window("2026-07-26T10:00:00Z", days_ahead=1, now=now)
 
+    def test_past_commence_time_excluded_even_with_in_play_when_default_flag_off(self):
+        # in_play defaults to False -- a past commence_time must stay
+        # excluded unless the caller explicitly opts in.
+        now = datetime(2026, 7, 27, 12, 0, tzinfo=timezone.utc)
+        assert not _is_within_window("2026-07-27T10:00:00Z", days_ahead=1, now=now)
+
+    def test_scanner_includes_in_play_matches(self):
+        # Started 30 minutes ago, well within a plausible match duration --
+        # in_play=True must include it.
+        now = datetime(2026, 7, 27, 12, 0, tzinfo=timezone.utc)
+        assert _is_within_window("2026-07-27T11:30:00Z", days_ahead=1, now=now, in_play=True)
+
+    def test_scanner_excludes_finished_matches(self):
+        # Commenced 8 hours ago -- no realistic tennis match is still live;
+        # in_play=True must not treat this as in-play.
+        now = datetime(2026, 7, 27, 12, 0, tzinfo=timezone.utc)
+        assert not _is_within_window("2026-07-27T04:00:00Z", days_ahead=1, now=now, in_play=True)
+
+    def test_in_play_still_respects_future_days_ahead_window(self):
+        # in_play only extends the window backward (already-started
+        # matches), never forward -- the days_ahead upper bound is
+        # unaffected.
+        now = datetime(2026, 7, 27, 12, 0, tzinfo=timezone.utc)
+        assert not _is_within_window("2026-07-30T10:00:00Z", days_ahead=1, now=now, in_play=True)
+
 
 # ── _extract_h2h_odds ─────────────────────────────────────────────────────────
 
@@ -170,6 +195,93 @@ class TestDiscoverMatches:
             canonical_names_by_tour={"atp": ["Novak Djokovic", "Jannik Sinner"], "wta": []},
             days_ahead=1,
         )
+        assert matches == []
+
+    def test_scanner_handles_odds_api_rate_limit(self, monkeypatch):
+        import urllib.error
+
+        import src.daily_scanner as scanner
+
+        monkeypatch.setattr(scanner, "fetch_sports_index", lambda api_key: [
+            {"key": "tennis_atp_wimbledon", "title": "ATP Wimbledon"},
+        ])
+
+        calls = {"n": 0}
+
+        def flaky_fetch(sport_key, api_key):
+            calls["n"] += 1
+            if calls["n"] == 1:
+                raise urllib.error.HTTPError(
+                    "http://x", 429, "Too Many Requests", {}, None,
+                )
+            return [_event("Novak Djokovic", "Jannik Sinner", bookmaker_key=DEFAULT_BOOKMAKER)]
+
+        monkeypatch.setattr(scanner, "fetch_odds_events_by_key", flaky_fetch)
+        monkeypatch.setattr(scanner.time, "sleep", lambda s: None)
+
+        now = datetime(2026, 7, 27, 0, 0, tzinfo=timezone.utc)
+        monkeypatch.setattr(scanner, "_now", lambda: now)
+
+        matches = discover_matches(
+            api_key="fake",
+            canonical_names_by_tour={"atp": ["Novak Djokovic", "Jannik Sinner"], "wta": []},
+            days_ahead=1,
+        )
+
+        assert calls["n"] == 2  # first call 429'd, retried once and succeeded
+        assert len(matches) == 1
+
+    def test_scanner_degrades_gracefully_when_rate_limit_persists(self, monkeypatch):
+        import urllib.error
+
+        import src.daily_scanner as scanner
+
+        monkeypatch.setattr(scanner, "fetch_sports_index", lambda api_key: [
+            {"key": "tennis_atp_wimbledon", "title": "ATP Wimbledon"},
+        ])
+
+        def always_429(sport_key, api_key):
+            raise urllib.error.HTTPError("http://x", 429, "Too Many Requests", {}, None)
+
+        monkeypatch.setattr(scanner, "fetch_odds_events_by_key", always_429)
+        monkeypatch.setattr(scanner.time, "sleep", lambda s: None)
+
+        now = datetime(2026, 7, 27, 0, 0, tzinfo=timezone.utc)
+        monkeypatch.setattr(scanner, "_now", lambda: now)
+
+        # Must not raise -- degrades to "no matches from this sport" instead
+        # of crashing the whole scan over one rate-limited tournament.
+        matches = discover_matches(
+            api_key="fake",
+            canonical_names_by_tour={"atp": ["Novak Djokovic", "Jannik Sinner"], "wta": []},
+            days_ahead=1,
+        )
+
+        assert matches == []
+
+    def test_scanner_handles_partial_player_match(self, monkeypatch):
+        # Already covered by test_skips_unmatched_player below -- pinned
+        # again with the exact name from the task brief for traceability:
+        # if only one of the two players resolves, the match is excluded
+        # entirely rather than guessing the other side.
+        import src.daily_scanner as scanner
+
+        monkeypatch.setattr(scanner, "fetch_sports_index", lambda api_key: [
+            {"key": "tennis_atp_wimbledon", "title": "ATP Wimbledon"},
+        ])
+        monkeypatch.setattr(
+            scanner, "fetch_odds_events_by_key",
+            lambda sport_key, api_key: [_event("Novak Djokovic", "Completely Unknown")],
+        )
+        now = datetime(2026, 7, 27, 0, 0, tzinfo=timezone.utc)
+        monkeypatch.setattr(scanner, "_now", lambda: now)
+
+        matches = discover_matches(
+            api_key="fake",
+            canonical_names_by_tour={"atp": ["Novak Djokovic", "Jannik Sinner"], "wta": []},
+            days_ahead=1,
+        )
+
         assert matches == []
 
     def test_skips_unmatched_player(self, monkeypatch):

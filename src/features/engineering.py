@@ -46,6 +46,18 @@ class FeatureBuilder:
             return 0.5
         return sum(results) / len(results)
 
+    def _trend(self, results: List[bool], min_n: int = 4) -> float:
+        """Recent-half win rate minus earlier-half win rate: positive means
+        improving, negative means declining. 0.0 (neutral) with fewer than
+        min_n results to split into two meaningfully-sized halves."""
+        n = len(results)
+        if n < min_n:
+            return 0.0
+        half = n // 2
+        recent_half = results[-half:]
+        earlier_half = results[:-half]
+        return self._win_rate(recent_half) - self._win_rate(earlier_half)
+
     def get_features(self, player: str, opponent: str, surface: str, match_date: date) -> dict:
         history = self._history[player]
 
@@ -54,16 +66,24 @@ class FeatureBuilder:
 
         h2h_matches = self._h2h_matches[(player, opponent)]
         h2h_rate = _weighted_h2h_rate(h2h_matches)
+        h2h_trend = self._trend([won for _, won in h2h_matches])
 
         last = self._last_match_date.get(player)
         rest_days = (match_date - last).days if last is not None else 14
+
+        all_results = [won for _, _, won in history]
+        surface_results = [won for _, s, won in history if s == surface]
 
         return {
             "recent_win_rate": self._win_rate(recent),
             "recent_win_rate_surface": self._win_rate(recent_surface) if recent_surface else 0.5,
             "h2h_win_rate": h2h_rate,
             "h2h_matches": len(h2h_matches),
+            "h2h_trend": h2h_trend,
             "rest_days": float(rest_days),
+            "momentum_3": self._win_rate(all_results[-3:]),
+            "momentum_5": self._win_rate(all_results[-5:]),
+            "surface_win_rate_trend": self._trend(surface_results),
         }
 
     def match_dates(self, player: str) -> List[date]:

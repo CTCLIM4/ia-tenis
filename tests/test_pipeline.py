@@ -106,6 +106,10 @@ def fake_snapshot(tmp_path, monkeypatch):
         "fatigue_multiplier_diff": rng.uniform(-0.15, 0.15, n),
         "surface_transition_multiplier_diff": rng.uniform(-0.10, 0.10, n),
         "adjusted_elo_diff": elo_diff * rng.uniform(0.6, 1.0, n),
+        "h2h_trend": rng.uniform(-0.3, 0.3, n),
+        "momentum_3_diff": rng.uniform(-0.5, 0.5, n),
+        "momentum_5_diff": rng.uniform(-0.5, 0.5, n),
+        "surface_win_rate_trend_diff": rng.uniform(-0.5, 0.5, n),
         "outcome": 1,
         "is_mirror": False,
     })

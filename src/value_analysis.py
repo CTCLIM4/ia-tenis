@@ -610,7 +610,11 @@ def build_prediction_features(
         "form_diff":         fa["recent_win_rate"]         - fb_["recent_win_rate"],
         "surface_form_diff": fa["recent_win_rate_surface"] - fb_["recent_win_rate_surface"],
         "h2h_rate":          fa["h2h_win_rate"],
+        "h2h_trend":         fa["h2h_trend"],
         "rest_diff":         fa["rest_days"]               - fb_["rest_days"],
+        "momentum_3_diff":   fa["momentum_3"]               - fb_["momentum_3"],
+        "momentum_5_diff":   fa["momentum_5"]               - fb_["momentum_5"],
+        "surface_win_rate_trend_diff": fa["surface_win_rate_trend"] - fb_["surface_win_rate_trend"],
         "rolling_elo_diff":    decay_a["rolling_elo_diff"]     - decay_b["rolling_elo_diff"],
         "age_multiplier_diff": decay_a["age_multiplier"]       - decay_b["age_multiplier"],
         "rust_factor_diff":    decay_a["rust_factor"]          - decay_b["rust_factor"],
@@ -718,6 +722,7 @@ _LOG_FIELDS = [
     "surface_form_diff", "h2h_rate", "rest_diff",
     "rolling_elo_diff", "age_multiplier_diff", "rust_factor_diff",
     "fatigue_multiplier_diff", "surface_transition_multiplier_diff", "adjusted_elo_diff",
+    "h2h_trend", "surface_win_rate_trend_diff",
 ]
 
 
@@ -738,6 +743,8 @@ def _migrate_log_header_if_needed() -> None:
         row.setdefault("odds_b_source", "manual")
         row.setdefault("bookmaker_a", "pinnacle")
         row.setdefault("bookmaker_b", "pinnacle")
+        row.setdefault("h2h_trend", "0.0")
+        row.setdefault("surface_win_rate_trend_diff", "0.0")
     with open(LOG_PATH, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=_LOG_FIELDS)
         writer.writeheader()

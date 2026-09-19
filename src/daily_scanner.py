@@ -45,6 +45,8 @@ from __future__ import annotations
 
 import argparse
 import os
+import time
+import urllib.error
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta, timezone
 from typing import Optional
@@ -118,11 +120,28 @@ def _now() -> datetime:
 # dates — that comparison is correct regardless of which tz the operands
 # are expressed in (Python normalizes internally), so no Lima conversion
 # is needed here. Only the calendar-date extraction below needs it.
-def _is_within_window(commence_time: str, days_ahead: int, now: Optional[datetime] = None) -> bool:
+IN_PLAY_MAX_AGE_HOURS = 4  # generous upper bound for a tennis match's real duration
+
+
+def _is_within_window(
+    commence_time: str, days_ahead: int, now: Optional[datetime] = None,
+    in_play: bool = False, in_play_max_age_hours: float = IN_PLAY_MAX_AGE_HOURS,
+) -> bool:
     """True when commence_time (ISO8601, e.g. '2026-07-27T18:00:00Z') falls
-    between now and now + days_ahead days — the "today/next matchday" window."""
+    between now and now + days_ahead days — the "today/next matchday" window.
+
+    in_play=True (opt-in, default False) additionally includes matches that
+    already started, as long as they commenced within
+    in_play_max_age_hours — CAUTION (see daily_scanner's --in-play help):
+    the model was trained and validated for pre-match prediction only, with
+    no signal about live match state (current score, momentum). Applying it
+    to a match already in progress can show "value" that's really just the
+    model being blind to something the in-play price already reflects.
+    """
     now = now or _now()
     ts = datetime.fromisoformat(commence_time.replace("Z", "+00:00"))
+    if in_play and ts < now:
+        return now - ts <= timedelta(hours=in_play_max_age_hours)
     return now <= ts <= now + timedelta(days=days_ahead)
 
 
@@ -138,12 +157,36 @@ def _extract_h2h_odds(
     return odds_home, odds_away, bk_home, bk_away
 
 
+def _fetch_events_with_retry(
+    sport_key: str, api_key: str, max_retries: int = 2, backoff_seconds: float = 1.0,
+) -> list[dict]:
+    """fetch_odds_events_by_key with bounded retry on 429 (rate limit).
+
+    Retries up to max_retries times with a fixed backoff, then degrades
+    gracefully (prints a warning, returns []) rather than raising -- one
+    rate-limited tournament must not abort the whole scan, same philosophy
+    as the per-event skip logic in discover_matches's main loop.
+    """
+    for attempt in range(max_retries + 1):
+        try:
+            return fetch_odds_events_by_key(sport_key, api_key)
+        except urllib.error.HTTPError as e:
+            if e.code == 429 and attempt < max_retries:
+                print(f"  Aviso: rate limit (429) en {sport_key}, reintentando en {backoff_seconds}s...")
+                time.sleep(backoff_seconds)
+                continue
+            print(f"  Aviso: no se pudieron obtener cuotas para {sport_key} ({e}). Saltando este torneo.")
+            return []
+    return []
+
+
 def discover_matches(
     api_key: str,
     canonical_names_by_tour: dict[str, list[str]],
     bookmaker: Optional[str] = None,
     days_ahead: int = DEFAULT_DAYS_AHEAD,
     tours: tuple[str, ...] = ("atp", "wta", "davis"),
+    in_play: bool = False,
 ) -> list[DiscoveredMatch]:
     """Discover today's/next-matchday's matches with bettable odds, matched
     to canonical dataset player names.
@@ -151,6 +194,10 @@ def discover_matches(
     `bookmaker` is a backward-compatible override (ODDS_API_BOOKMAKER env
     var or --bookmaker CLI flag) that collapses best-price selection to a
     single fixed bookmaker — see resolve_allowed_bookmakers.
+
+    in_play=True (opt-in, default False): also includes matches already in
+    progress (see _is_within_window's in_play docstring for the caution
+    about applying a pre-match-only model to an in-play price).
 
     Skips (with a printed reason) any event where the tournament's surface
     can't be resolved, either player can't be matched to the dataset, or no
@@ -167,10 +214,10 @@ def discover_matches(
         if surface is None:
             continue  # resolve_surface already printed the warning
 
-        events = fetch_odds_events_by_key(sport["key"], api_key)
+        events = _fetch_events_with_retry(sport["key"], api_key)
         for event in events:
             commence_time = event.get("commence_time")
-            if not commence_time or not _is_within_window(commence_time, days_ahead):
+            if not commence_time or not _is_within_window(commence_time, days_ahead, in_play=in_play):
                 continue
 
             odds = _extract_h2h_odds(event, allowed_bookmakers)
@@ -269,6 +316,7 @@ def run_scan(
     halt_on_suspicious: bool = True,
     retrain: bool = False,
     auto_save: bool = False,
+    in_play: bool = False,
 ) -> None:
     api_key = os.environ.get("ODDS_API_KEY")
     if not api_key:
@@ -277,12 +325,21 @@ def run_scan(
                "Define la variable de entorno e intenta de nuevo.")
         return
 
+    if in_play:
+        print(
+            "  *** ADVERTENCIA --in-play: el modelo fue entrenado y validado solo para "
+            "prediccion PRE-partido. No tiene ninguna senal del estado real del partido "
+            "en curso (marcador, quien esta sirviendo, etc.). Un 'value bet' detectado "
+            "aqui puede ser simplemente el modelo ciego a algo que la cuota in-play ya "
+            "refleja -- tratar estos picks con escepticismo extra. ***"
+        )
+
     print(f"Cargando modelos ({', '.join(t.upper() for t in tours)})...")
     models = _load_models(tours, retrain)
     canonical_names = _canonical_names(models)
 
     print("Descubriendo torneos activos y partidos programados...")
-    matches = discover_matches(api_key, canonical_names, bookmaker, days_ahead, tours)
+    matches = discover_matches(api_key, canonical_names, bookmaker, days_ahead, tours, in_play=in_play)
     if not matches:
         print("No se encontraron partidos programados en la ventana configurada.")
         return
@@ -352,6 +409,12 @@ def main() -> None:
     parser.add_argument("--retrain", action="store_true")
     parser.add_argument("--auto-save", action="store_true",
                         help="Guardar automaticamente value bets sin prompt interactivo")
+    parser.add_argument(
+        "--in-play", action="store_true",
+        help="Incluye partidos ya comenzados (hasta "
+             f"{IN_PLAY_MAX_AGE_HOURS}h desde el commence_time). CUIDADO: el modelo "
+             "no tiene ninguna senal del estado real del partido -- ver advertencia impresa al usar esta flag.",
+    )
     parser.set_defaults(halt_on_suspicious=True)
     args = parser.parse_args()
 
@@ -359,7 +422,7 @@ def main() -> None:
     run_scan(
         tours=tours, bookmaker=args.bookmaker, days_ahead=args.days_ahead,
         halt_on_suspicious=args.halt_on_suspicious, retrain=args.retrain,
-        auto_save=args.auto_save,
+        auto_save=args.auto_save, in_play=args.in_play,
     )
 
 

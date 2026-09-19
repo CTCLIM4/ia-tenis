@@ -99,6 +99,21 @@ class TestKnownAtpTournamentCoverage:
             )
 
 
+class TestAllCurrentLiveTournaments:
+    def test_surface_resolver_all_current_tournaments(self):
+        # Re-checked live against The Odds API 2026-09-18 (Fase 3 of the
+        # scanner-improvements session): only "WTA Guadalajara Open" was
+        # active, and it already resolves. This is a portable, deterministic
+        # regression pin of that live check (not a network call itself) --
+        # re-run the live check in TestFallSwingCoverage's docstring
+        # scenario whenever new tournaments start showing up unresolved.
+        live_sports = [
+            {"key": "tennis_wta_guadalajara_open", "title": "WTA Guadalajara Open"},
+        ]
+        unresolved = [s for s in live_sports if resolve_surface(s["title"], s["key"]) is None]
+        assert unresolved == []
+
+
 class TestUnknownSurface:
     def test_unknown_tournament_returns_none(self):
         assert resolve_surface("ATP Fictional Open 3000", "tennis_atp_fictional") is None

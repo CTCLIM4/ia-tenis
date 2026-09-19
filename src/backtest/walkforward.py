@@ -15,7 +15,12 @@ _MIRROR_FLIP_COLS = (
     "elo_diff", "rank_diff", "form_diff", "surface_form_diff", "rest_diff",
     "rolling_elo_diff", "age_multiplier_diff", "rust_factor_diff",
     "fatigue_multiplier_diff", "surface_transition_multiplier_diff",
-    "adjusted_elo_diff",
+    "adjusted_elo_diff", "momentum_3_diff", "momentum_5_diff",
+    "surface_win_rate_trend_diff",
+    # h2h_trend (unlike h2h_rate) is already antisymmetric by construction
+    # (fa["h2h_trend"] == -fb["h2h_trend"], see FeatureBuilder._trend) --
+    # simple negation is its correct mirror transform, same as a true diff.
+    "h2h_trend",
 )
 
 
@@ -125,7 +130,11 @@ def build_match_features(
                 "form_diff": wf["recent_win_rate"] - lf["recent_win_rate"],
                 "surface_form_diff": wf["recent_win_rate_surface"] - lf["recent_win_rate_surface"],
                 "h2h_rate": wf["h2h_win_rate"],
+                "h2h_trend": wf["h2h_trend"],
                 "rest_diff": wf["rest_days"] - lf["rest_days"],
+                "momentum_3_diff": wf["momentum_3"] - lf["momentum_3"],
+                "momentum_5_diff": wf["momentum_5"] - lf["momentum_5"],
+                "surface_win_rate_trend_diff": wf["surface_win_rate_trend"] - lf["surface_win_rate_trend"],
                 "rolling_elo_diff": w_decay["rolling_elo_diff"] - l_decay["rolling_elo_diff"],
                 "age_multiplier_diff": w_decay["age_multiplier"] - l_decay["age_multiplier"],
                 "rust_factor_diff": w_decay["rust_factor"] - l_decay["rust_factor"],
@@ -160,8 +169,17 @@ def build_match_features(
 def walk_forward_backtest(
     df: pd.DataFrame,
     warmup_years: int = 10,
+    return_predictions: bool = False,
 ) -> Dict[int, dict]:
-    """Walk-forward backtest. Train on all years before test_year; evaluate on test_year."""
+    """Walk-forward backtest. Train on all years before test_year; evaluate on test_year.
+
+    return_predictions=True additionally includes each year's raw "probs"
+    (predicted P(win)) and "y_true" (actual outcome) arrays in its result
+    dict -- needed for calibration analysis (binned calibration curves,
+    per-shrinkage-rate comparison) that the aggregated brier_score/log_loss
+    alone can't support. Default (False) leaves the existing result shape
+    unchanged.
+    """
     all_years = sorted(df[~df["is_mirror"]]["year"].unique())
     test_years = all_years[warmup_years:]
 
@@ -200,5 +218,18 @@ def walk_forward_backtest(
             "elo_only_accuracy": float(accuracy_score(y_test, (elo_probs >= 0.5).astype(int))),
             "elo_only_log_loss": float(log_loss(y_test, elo_probs, labels=[0, 1])),
         }
+        if return_predictions:
+            results[test_year]["probs"] = probs
+            results[test_year]["y_true"] = y_test
+
+            # Winner-perspective-only y_test above is always 1 (mirror-row
+            # convention), so it carries no calibration signal on its own.
+            # Score the full test set (mirrors included) with the same
+            # fitted clf/scaler -- no retrain -- for genuine 0/1 variation.
+            full_test_df = df[df["year"] == test_year]
+            X_full = full_test_df[_FEATURE_COLS].fillna(0.0).values
+            X_full_scaled = scaler.transform(X_full)
+            results[test_year]["probs_calibration"] = clf.predict_proba(X_full_scaled)[:, 1]
+            results[test_year]["y_true_calibration"] = full_test_df["outcome"].values
 
     return results

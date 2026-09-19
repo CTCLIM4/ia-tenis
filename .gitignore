@@ -3,6 +3,8 @@ data/raw/
 data/processed/
 data/model_cache/
 data/odds_cache/
+data/dashboard/
+data/logs/
 data/vpn_usage.json
 data/value_bets_log.csv
 data/prediction_audit_log.csv

@@ -666,7 +666,8 @@ class TestBuildPredictionFeaturesDecay:
         fb = SimpleNamespace(
             get_features=lambda p, o, s, d: {
                 "recent_win_rate": 0.5, "recent_win_rate_surface": 0.5,
-                "h2h_win_rate": 0.5, "h2h_matches": 0, "rest_days": 14.0,
+                "h2h_win_rate": 0.5, "h2h_matches": 0, "h2h_trend": 0.0, "rest_days": 14.0,
+                "momentum_3": 0.5, "momentum_5": 0.5, "surface_win_rate_trend": 0.0,
             },
             match_dates=lambda p: [],
             workload_history=lambda p: [],
@@ -688,7 +689,8 @@ class TestBuildPredictionFeaturesDecay:
         fb = SimpleNamespace(
             get_features=lambda p, o, s, d: {
                 "recent_win_rate": 0.5, "recent_win_rate_surface": 0.5,
-                "h2h_win_rate": 0.5, "h2h_matches": 0, "rest_days": 14.0,
+                "h2h_win_rate": 0.5, "h2h_matches": 0, "h2h_trend": 0.0, "rest_days": 14.0,
+                "momentum_3": 0.5, "momentum_5": 0.5, "surface_win_rate_trend": 0.0,
             },
             match_dates=lambda p: [] if p == "Young" else [date(2018, 1, 1)],
             workload_history=lambda p: [],
@@ -714,7 +716,8 @@ class TestPredictMatchH2hWiring:
         fb = SimpleNamespace(
             get_features=lambda p, o, s, d: {
                 "recent_win_rate": 0.5, "recent_win_rate_surface": 0.5,
-                "h2h_win_rate": 0.9, "h2h_matches": 5, "rest_days": 14.0,
+                "h2h_win_rate": 0.9, "h2h_matches": 5, "h2h_trend": 0.0, "rest_days": 14.0,
+                "momentum_3": 0.5, "momentum_5": 0.5, "surface_win_rate_trend": 0.0,
             },
             match_dates=lambda p: [],
             workload_history=lambda p: [],
@@ -745,7 +748,8 @@ class TestPredictMatchMatchCounts:
         return SimpleNamespace(
             get_features=lambda p, o, s, d: {
                 "recent_win_rate": 0.5, "recent_win_rate_surface": 0.5,
-                "h2h_win_rate": 0.5, "h2h_matches": 0, "rest_days": 14.0,
+                "h2h_win_rate": 0.5, "h2h_matches": 0, "h2h_trend": 0.0, "rest_days": 14.0,
+                "momentum_3": 0.5, "momentum_5": 0.5, "surface_win_rate_trend": 0.0,
             },
             match_dates=lambda p: [],
             workload_history=lambda p: [],
@@ -793,7 +797,8 @@ class TestPredictMatchFatigueWiring:
         fb = SimpleNamespace(
             get_features=lambda p, o, s, d: {
                 "recent_win_rate": 0.5, "recent_win_rate_surface": 0.5,
-                "h2h_win_rate": 0.5, "h2h_matches": 0, "rest_days": 14.0,
+                "h2h_win_rate": 0.5, "h2h_matches": 0, "h2h_trend": 0.0, "rest_days": 14.0,
+                "momentum_3": 0.5, "momentum_5": 0.5, "surface_win_rate_trend": 0.0,
             },
             match_dates=lambda p: [],
             workload_history=lambda p: (
@@ -829,7 +834,8 @@ class TestPredictMatchSurfaceTransitionWiring:
         fb = SimpleNamespace(
             get_features=lambda p, o, s, d: {
                 "recent_win_rate": 0.5, "recent_win_rate_surface": 0.5,
-                "h2h_win_rate": 0.5, "h2h_matches": 0, "rest_days": 14.0,
+                "h2h_win_rate": 0.5, "h2h_matches": 0, "h2h_trend": 0.0, "rest_days": 14.0,
+                "momentum_3": 0.5, "momentum_5": 0.5, "surface_win_rate_trend": 0.0,
             },
             match_dates=lambda p: [],
             workload_history=lambda p: [],
@@ -867,7 +873,8 @@ class TestPredictMatchAgeLookup:
         fb = SimpleNamespace(
             get_features=lambda p, o, s, d: {
                 "recent_win_rate": 0.5, "recent_win_rate_surface": 0.5,
-                "h2h_win_rate": 0.5, "h2h_matches": 0, "rest_days": 14.0,
+                "h2h_win_rate": 0.5, "h2h_matches": 0, "h2h_trend": 0.0, "rest_days": 14.0,
+                "momentum_3": 0.5, "momentum_5": 0.5, "surface_win_rate_trend": 0.0,
             },
             match_dates=lambda p: [] if p == "Young" else [date(2018, 1, 1)],
             workload_history=lambda p: [],
@@ -975,6 +982,10 @@ class TestTrainLRPipeline:
             "fatigue_multiplier_diff": rng.uniform(-0.15, 0.15, n),
             "surface_transition_multiplier_diff": rng.uniform(-0.10, 0.10, n),
             "adjusted_elo_diff":   elo_diff * rng.uniform(0.6, 1.0, n),
+            "h2h_trend":           rng.uniform(-0.3, 0.3, n),
+            "momentum_3_diff":     rng.uniform(-0.5, 0.5, n),
+            "momentum_5_diff":     rng.uniform(-0.5, 0.5, n),
+            "surface_win_rate_trend_diff": rng.uniform(-0.5, 0.5, n),
             "outcome":             1,
         })
         processed_dir = tmp_path / "processed"
@@ -1001,7 +1012,7 @@ class TestTrainLRPipeline:
         self._write_synthetic_features_csv(tmp_path)
 
         clf = va._train_lr("atp")
-        X = np.array([[100.0, 0.7, 20.0, 0.1, 0.05, 0.6, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 80.0]])
+        X = np.array([[100.0, 0.7, 20.0, 0.1, 0.05, 0.6, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 80.0, 0.0, 0.0]])
         probs = clf.predict_proba(X)
 
         assert probs.shape == (1, 2)
@@ -1014,7 +1025,7 @@ class TestTrainLRPipeline:
         self._write_synthetic_features_csv(tmp_path)
 
         clf = va._train_lr("atp")
-        X = np.array([[50.0, 0.6, 10.0, 0.2, 0.1, 0.55, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 40.0]])
+        X = np.array([[50.0, 0.6, 10.0, 0.2, 0.1, 0.55, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 40.0, 0.0, 0.0]])
         p1 = clf.predict_proba(X)
         p2 = clf.predict_proba(X)
         np.testing.assert_array_equal(p1, p2)
@@ -1046,7 +1057,7 @@ class TestTrainLRPipeline:
         manual_lr = LogisticRegression(C=1.0, max_iter=1000, random_state=42)
         manual_lr.fit(X_scaled, full["outcome"].values)
 
-        X_query = np.array([[30.0, 0.55, 5.0, 0.05, 0.02, 0.5, 2.0, 3.0, 0.0, 0.0, 0.0, 0.0, 20.0]])
+        X_query = np.array([[30.0, 0.55, 5.0, 0.05, 0.02, 0.5, 2.0, 3.0, 0.0, 0.0, 0.0, 0.0, 20.0, 0.0, 0.0]])
         pipeline_probs = clf.predict_proba(X_query)
         manual_probs = manual_lr.predict_proba(manual_scaler.transform(X_query))
 
@@ -1100,6 +1111,10 @@ class TestLoadModelSnapshot:
             "fatigue_multiplier_diff": rng.uniform(-0.15, 0.15, n),
             "surface_transition_multiplier_diff": rng.uniform(-0.10, 0.10, n),
             "adjusted_elo_diff": elo_diff * rng.uniform(0.6, 1.0, n),
+            "h2h_trend": rng.uniform(-0.3, 0.3, n),
+            "momentum_3_diff": rng.uniform(-0.5, 0.5, n),
+            "momentum_5_diff": rng.uniform(-0.5, 0.5, n),
+            "surface_win_rate_trend_diff": rng.uniform(-0.5, 0.5, n),
             "outcome": 1,
             "is_mirror": False,
         }).to_csv(path, index=False)

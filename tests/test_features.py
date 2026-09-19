@@ -61,6 +61,100 @@ def test_rest_days_calculated_correctly():
     assert f["rest_days"] == 7
 
 
+def test_rest_days_neutral_for_first_match():
+    # Pinned again with the exact name from the Fase 5 brief -- already
+    # covered in spirit by test_new_player_returns_defaults.
+    fb = FeatureBuilder()
+    f = fb.get_features("A", "B", "hard", date(2023, 1, 1))
+    assert f["rest_days"] == 14
+
+
+class TestMomentum:
+    def test_momentum_feature_calculated_correctly(self):
+        fb = FeatureBuilder()
+        # 2 losses then 3 wins (most recent) -- momentum_3 should be 1.0
+        # (all 3 most recent matches won), momentum_5 should be 0.6 (3/5).
+        for _ in range(2):
+            fb.update("B", "A", "hard", date(2023, 1, 1))
+        for _ in range(3):
+            fb.update("A", "B", "hard", date(2023, 2, 1))
+        f = fb.get_features("A", "B", "hard", date(2023, 6, 1))
+        assert f["momentum_3"] == 1.0
+        assert f["momentum_5"] == pytest.approx(0.6)
+
+    def test_momentum_defaults_to_neutral_for_new_player(self):
+        fb = FeatureBuilder()
+        f = fb.get_features("A", "B", "hard", date(2023, 1, 1))
+        assert f["momentum_3"] == 0.5
+        assert f["momentum_5"] == 0.5
+
+    def test_momentum_uses_most_recent_matches_only(self):
+        fb = FeatureBuilder()
+        for _ in range(5):
+            fb.update("A", "B", "hard", date(2023, 1, 1))  # 5 wins, old
+        for _ in range(3):
+            fb.update("B", "A", "hard", date(2023, 2, 1))  # 3 losses, recent
+        f = fb.get_features("A", "B", "hard", date(2023, 6, 1))
+        assert f["momentum_3"] == 0.0  # last 3 are all losses
+
+
+class TestSurfaceWinRateTrend:
+    def test_surface_win_rate_trend_direction(self):
+        fb = FeatureBuilder()
+        # Earlier hard-court results: 2 losses. Recent hard-court: 2 wins.
+        # Trend must be positive (improving on this surface).
+        fb.update("B", "A", "hard", date(2023, 1, 1))
+        fb.update("B", "A", "hard", date(2023, 1, 5))
+        fb.update("A", "B", "hard", date(2023, 2, 1))
+        fb.update("A", "B", "hard", date(2023, 2, 5))
+        f = fb.get_features("A", "B", "hard", date(2023, 6, 1))
+        assert f["surface_win_rate_trend"] > 0
+
+    def test_declining_surface_form_gives_negative_trend(self):
+        fb = FeatureBuilder()
+        fb.update("A", "B", "hard", date(2023, 1, 1))
+        fb.update("A", "B", "hard", date(2023, 1, 5))
+        fb.update("B", "A", "hard", date(2023, 2, 1))
+        fb.update("B", "A", "hard", date(2023, 2, 5))
+        f = fb.get_features("A", "B", "hard", date(2023, 6, 1))
+        assert f["surface_win_rate_trend"] < 0
+
+    def test_neutral_when_not_enough_surface_history(self):
+        fb = FeatureBuilder()
+        fb.update("A", "B", "hard", date(2023, 1, 1))
+        f = fb.get_features("A", "B", "hard", date(2023, 6, 1))
+        assert f["surface_win_rate_trend"] == 0.0
+
+
+class TestH2hTrend:
+    def test_h2h_trend_uses_recent_encounters(self):
+        fb = FeatureBuilder()
+        # First 2 meetings: A lost both. Last 2 meetings: A won both.
+        # Trend (recent - earlier win rate) must be positive.
+        fb.update("B", "A", "hard", date(2023, 1, 1))
+        fb.update("B", "A", "hard", date(2023, 1, 5))
+        fb.update("A", "B", "hard", date(2023, 2, 1))
+        fb.update("A", "B", "hard", date(2023, 2, 5))
+        f = fb.get_features("A", "B", "hard", date(2023, 6, 1))
+        assert f["h2h_trend"] > 0
+
+    def test_h2h_trend_is_antisymmetric(self):
+        fb = FeatureBuilder()
+        fb.update("B", "A", "hard", date(2023, 1, 1))
+        fb.update("B", "A", "hard", date(2023, 1, 5))
+        fb.update("A", "B", "hard", date(2023, 2, 1))
+        fb.update("A", "B", "hard", date(2023, 2, 5))
+        fa = fb.get_features("A", "B", "hard", date(2023, 6, 1))
+        fb_ = fb.get_features("B", "A", "hard", date(2023, 6, 1))
+        assert fa["h2h_trend"] == pytest.approx(-fb_["h2h_trend"])
+
+    def test_h2h_trend_neutral_with_too_few_meetings(self):
+        fb = FeatureBuilder()
+        fb.update("A", "B", "hard", date(2023, 1, 1))
+        f = fb.get_features("A", "B", "hard", date(2023, 6, 1))
+        assert f["h2h_trend"] == 0.0
+
+
 def test_surface_form_is_surface_specific():
     fb = FeatureBuilder(surface_n=5)
     fb.update("A", "B", "clay", date(2023, 1, 1))

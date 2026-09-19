@@ -28,16 +28,16 @@ def _synthetic_features(n: int = 2000, n_years: int = 12, start_year: int = 2010
             "fatigue_multiplier_diff": rng.uniform(-0.15, 0.15, n),
             "surface_transition_multiplier_diff": rng.uniform(-0.10, 0.10, n),
             "adjusted_elo_diff": elo_diff * rng.uniform(0.6, 1.0, n),
+            "h2h_trend": rng.uniform(-0.3, 0.3, n),
+            "momentum_3_diff": rng.uniform(-0.5, 0.5, n),
+            "momentum_5_diff": rng.uniform(-0.5, 0.5, n),
+            "surface_win_rate_trend_diff": rng.uniform(-0.5, 0.5, n),
             "outcome": 1,
             "is_mirror": False,
         }
     )
     mirror = original.copy()
-    for col in (
-        "elo_diff", "rank_diff", "form_diff", "surface_form_diff", "rest_diff",
-        "rolling_elo_diff", "age_multiplier_diff", "rust_factor_diff",
-        "fatigue_multiplier_diff", "surface_transition_multiplier_diff", "adjusted_elo_diff",
-    ):
+    for col in _MIRROR_FLIP_COLS:
         mirror[col] = -mirror[col]
     mirror["elo_prob"] = 1.0 - mirror["elo_prob"]
     mirror["h2h_rate"] = 1.0 - mirror["h2h_rate"]
@@ -122,6 +122,63 @@ def test_n_matches_correct_per_year():
     for year, m in results.items():
         expected = int(((df["year"] == year) & (~df["is_mirror"])).sum())
         assert m["n_matches"] == expected
+
+
+class TestReturnPredictions:
+    """return_predictions=True exposes the raw per-match (prob, outcome)
+    pairs used to compute each year's aggregate metrics -- needed for
+    calibration analysis (binned calibration curves, Brier decomposition)
+    that can't be done from the aggregated brier_score/log_loss alone.
+    Default (False) leaves the existing result shape untouched."""
+
+    def test_default_does_not_include_predictions(self):
+        df = _synthetic_features()
+        results = walk_forward_backtest(df, warmup_years=5)
+        for m in results.values():
+            assert "probs" not in m
+            assert "y_true" not in m
+
+    def test_return_predictions_includes_probs_and_y_true(self):
+        df = _synthetic_features()
+        results = walk_forward_backtest(df, warmup_years=5, return_predictions=True)
+        for year, m in results.items():
+            assert "probs" in m and "y_true" in m
+            assert len(m["probs"]) == m["n_matches"]
+            assert len(m["y_true"]) == m["n_matches"]
+
+    def test_probs_are_valid_probabilities(self):
+        df = _synthetic_features()
+        results = walk_forward_backtest(df, warmup_years=5, return_predictions=True)
+        for m in results.values():
+            assert ((m["probs"] >= 0.0) & (m["probs"] <= 1.0)).all()
+
+    def test_brier_score_matches_manual_computation_from_predictions(self):
+        # The aggregate brier_score must be exactly reproducible from the
+        # raw probs/y_true this option exposes -- proves they're the same
+        # values the aggregate metric was computed from, not a separate
+        # (potentially drifted) recomputation.
+        from sklearn.metrics import brier_score_loss
+
+        df = _synthetic_features()
+        results = walk_forward_backtest(df, warmup_years=5, return_predictions=True)
+        for year, m in results.items():
+            recomputed = brier_score_loss(m["y_true"], m["probs"])
+            assert recomputed == pytest.approx(m["brier_score"])
+
+    def test_calibration_predictions_include_mirror_rows_with_both_outcomes(self):
+        # "y_true" (winner-perspective only, per mirror-row convention) is
+        # always 1 -- a calibration curve needs genuine 0/1 variation, which
+        # only the full test set (mirrors included) provides. Scored with
+        # the same fitted clf/scaler as the aggregate metrics, no retrain.
+        df = _synthetic_features()
+        results = walk_forward_backtest(df, warmup_years=5, return_predictions=True)
+        for year, m in results.items():
+            assert "probs_calibration" in m and "y_true_calibration" in m
+            assert len(m["probs_calibration"]) == len(m["y_true_calibration"])
+            # Exactly double the winner-perspective-only count (each real
+            # match contributes one original + one mirror row).
+            assert len(m["probs_calibration"]) == 2 * m["n_matches"]
+            assert set(np.unique(m["y_true_calibration"])) == {0, 1}
 
 
 class _SpyScaler:

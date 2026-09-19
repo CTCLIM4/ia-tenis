@@ -72,6 +72,49 @@ def test_mirror_row_negates_h2h_rate_as_one_minus_rate():
         assert mirror_rate == pytest.approx(1 - orig_rate)
 
 
+def test_output_includes_new_fase5_columns():
+    df = pd.DataFrame([_row("A", "B", "clay", date(2023, 1, 1))])
+    match_df = build_match_features(df, EloSystem(), FeatureBuilder())
+    for col in ("momentum_3_diff", "momentum_5_diff", "surface_win_rate_trend_diff", "h2h_trend"):
+        assert col in match_df.columns
+
+
+def test_mirror_rows_negate_momentum_and_surface_trend_diffs():
+    df = pd.DataFrame(
+        [
+            _row("A", "B", "clay", date(2023, 1, 1)),
+            _row("A", "B", "clay", date(2023, 1, 5)),
+            _row("B", "A", "clay", date(2023, 1, 10)),
+            _row("A", "B", "clay", date(2023, 1, 15)),
+        ]
+    )
+    match_df = build_match_features(df, EloSystem(), FeatureBuilder())
+    original = match_df[~match_df["is_mirror"]]
+    mirror = match_df[match_df["is_mirror"]]
+
+    for col in ("momentum_3_diff", "momentum_5_diff", "surface_win_rate_trend_diff", "h2h_trend"):
+        assert list(mirror[col]) == pytest.approx([-v for v in original[col]])
+
+
+def test_momentum_diff_reflects_recent_form():
+    # A won its last 3, B lost its last 3 -- momentum_3_diff for the next
+    # A-vs-B match must be strongly positive in A's favor.
+    df = pd.DataFrame(
+        [
+            _row("A", "C", "clay", date(2023, 1, 1)),
+            _row("A", "C", "clay", date(2023, 1, 5)),
+            _row("A", "C", "clay", date(2023, 1, 10)),
+            _row("C", "B", "clay", date(2023, 1, 12)),
+            _row("C", "B", "clay", date(2023, 1, 14)),
+            _row("C", "B", "clay", date(2023, 1, 16)),
+            _row("A", "B", "clay", date(2023, 2, 1)),
+        ]
+    )
+    match_df = build_match_features(df, EloSystem(), FeatureBuilder())
+    last_row = match_df[~match_df["is_mirror"]].iloc[-1]
+    assert last_row["momentum_3_diff"] == pytest.approx(1.0)  # A: 3/3, B: 0/3
+
+
 def test_adjusted_elo_diff_penalizes_inactive_aging_veteran():
     """A veteran with a strong clay Elo but no recent matches and an
     advanced age should show a much smaller (or negative) adjusted_elo_diff
