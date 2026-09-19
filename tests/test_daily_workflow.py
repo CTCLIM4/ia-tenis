@@ -92,13 +92,67 @@ class TestAtpIsStale:
         assert workflow._atp_is_stale() is False
 
 
+class TestStalenessLiveTournamentMode:
+    """live_tournament_mode=True matches src/daily_scanner.py's behavior for
+    a confirmed-live tournament: staleness is still computed and printed as
+    a warning, but never excludes the tour. Default (live_tournament_mode
+    omitted/False) preserves the original hard-exclude-on-any-non-OK gate,
+    which exists specifically to stop auto-pushed, auto-emailed picks from
+    being generated off data that could be weeks out of date with nobody
+    reviewing it (see docs/superpowers/specs/2026-07-13-staleness-context-aware-design.md)."""
+
+    def test_daily_workflow_allows_current_day_match_in_live_mode(self, monkeypatch):
+        import src.data.timezone_utils as tzu
+        today = tzu.lima_today()
+        monkeypatch.setattr(workflow, "get_last_match_date", lambda tour: today)
+
+        assert workflow._atp_is_stale(live_tournament_mode=True) is False
+        assert workflow._wta_is_stale(live_tournament_mode=True) is False
+
+    def test_daily_workflow_still_warns_on_stale_data(self, monkeypatch, capsys):
+        monkeypatch.setattr(workflow, "get_last_match_date", lambda tour: date(2026, 1, 1))
+
+        result = workflow._wta_is_stale(live_tournament_mode=True)
+
+        assert result is False  # warns, does not block
+        out = capsys.readouterr().out
+        assert "dias atras" in out or "días atrás" in out
+
+    def test_default_mode_still_blocks_stale_data(self, monkeypatch):
+        # Regression guard: the live_tournament_mode=True relaxation must
+        # not leak into the default (opt-out) case.
+        monkeypatch.setattr(workflow, "get_last_match_date", lambda tour: date(2026, 1, 1))
+        assert workflow._wta_is_stale() is True
+        assert workflow._wta_is_stale(live_tournament_mode=False) is True
+
+    def test_daily_workflow_davis_cup_staleness_ok(self, monkeypatch):
+        # Davis Cup's own cached last_match_date can be genuinely old
+        # (occasional fixture windows, not a weekly tour like ATP/WTA) --
+        # _davis_is_stale must work off the same generic mechanism (it reads
+        # data/model_cache/davis.pkl via get_last_match_date, no separate
+        # data source) and must not block under live_tournament_mode either.
+        monkeypatch.setattr(
+            workflow, "get_last_match_date",
+            lambda tour: date(2026, 2, 6) if tour == "davis" else None,
+        )
+        assert workflow._davis_is_stale(live_tournament_mode=True) is False
+
+
 class TestRun:
     def _wire_common(self, monkeypatch, results, stale_wta=False, stale_atp=False, api_key="key123"):
         monkeypatch.setenv("ODDS_API_KEY", api_key)
         monkeypatch.setattr(workflow, "_load_models", lambda tours, retrain: {})
         monkeypatch.setattr(workflow, "_canonical_names", lambda models: {})
-        monkeypatch.setattr(workflow, "_wta_is_stale", lambda: stale_wta)
-        monkeypatch.setattr(workflow, "_atp_is_stale", lambda: stale_atp)
+        # Mirrors the real _wta_is_stale/_atp_is_stale contract: stale only
+        # excludes when live_tournament_mode is not set.
+        monkeypatch.setattr(
+            workflow, "_wta_is_stale",
+            lambda live_tournament_mode=False: stale_wta and not live_tournament_mode,
+        )
+        monkeypatch.setattr(
+            workflow, "_atp_is_stale",
+            lambda live_tournament_mode=False: stale_atp and not live_tournament_mode,
+        )
         monkeypatch.setattr(workflow, "discover_matches", lambda *a, **kw: [r.match for r in results])
         monkeypatch.setattr(workflow, "evaluate_matches", lambda matches, models: results)
         monkeypatch.setattr(workflow, "track_vpn_usage", lambda: {"available": False})
@@ -249,6 +303,43 @@ class TestRun:
         selected = workflow.run()
 
         assert selected[0]["bookmaker"] == "bet365"
+
+    def test_live_tournament_mode_does_not_exclude_stale_tours(self, monkeypatch):
+        atp_r = _result(match=_match(player_a="ATP Pick", tour="atp"),
+                         val_a=_val(edge=0.05, kelly=0.04, has_value=True))
+        wta_r = _result(match=_match(player_a="WTA Pick", tour="wta"),
+                         val_a=_val(edge=0.05, kelly=0.04, has_value=True))
+        self._wire_common(monkeypatch, [atp_r, wta_r], stale_wta=True, stale_atp=True)
+
+        called_tours = {}
+        monkeypatch.setattr(
+            workflow, "discover_matches",
+            lambda api_key, canonical, tours=("atp", "wta"):
+                called_tours.setdefault("tours", tours) or [atp_r.match, wta_r.match],
+        )
+
+        workflow.run(live_tournament_mode=True)
+
+        assert called_tours["tours"] == ("atp", "wta")
+
+    def test_default_mode_still_excludes_stale_tours(self, monkeypatch):
+        # Regression guard: live_tournament_mode's relaxation must be
+        # strictly opt-in, matching the original hard-gate behavior when
+        # the caller doesn't ask for it.
+        atp_r = _result(match=_match(player_a="ATP Pick", tour="atp"),
+                         val_a=_val(edge=0.05, kelly=0.04, has_value=True))
+        self._wire_common(monkeypatch, [atp_r], stale_wta=True, stale_atp=False)
+
+        called_tours = {}
+        monkeypatch.setattr(
+            workflow, "discover_matches",
+            lambda api_key, canonical, tours=("atp", "wta"):
+                called_tours.setdefault("tours", tours) or [atp_r.match],
+        )
+
+        workflow.run()
+
+        assert called_tours["tours"] == ("atp",)
 
     def test_logs_query_with_bookmaker_from_match(self, monkeypatch):
         m = DiscoveredMatch(

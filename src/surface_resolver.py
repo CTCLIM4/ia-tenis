@@ -43,6 +43,13 @@ TOURNAMENT_SURFACES = {
     "washington": "hard",
     "monterrey": "hard",
     "guadalajara": "hard",
+    "chengdu": "hard",
+    "hangzhou": "hard",
+    "tokyo": "hard",
+    "japan open": "hard",
+    "beijing": "hard",
+    "china open": "hard",
+    "wuhan": "hard",
 }
 
 

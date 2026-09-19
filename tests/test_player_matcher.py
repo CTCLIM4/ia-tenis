@@ -47,3 +47,44 @@ class TestNoMatch:
 
     def test_empty_canonical_list_returns_none(self):
         assert match_player_name("Novak Djokovic", []) is None
+
+
+class TestKnownProblematicCases:
+    """Verified against real behavior before writing these (see
+    project_scanner_gaps_2026-09-18 memory) -- two of the four originally
+    proposed cases already worked with zero changes needed."""
+
+    def test_surname_initial_variants(self):
+        # Already covered in spirit by TestAbbreviatedFormats -- pinned
+        # again with the exact name from the task brief for traceability.
+        canonical = ["Novak Djokovic", "Jannik Sinner"]
+        assert match_player_name("N. Djokovic", canonical) == "Novak Djokovic"
+
+    def test_accented_names(self):
+        # normalize_name() (src/name_matching.py) already NFKD-strips
+        # accents for both surname() and first_initial() -- already covered
+        # in spirit by TestAbbreviatedFormats.test_accented_name_variant,
+        # pinned again with the exact name from the task brief.
+        canonical = ["Cristian Garin", "Novak Djokovic"]
+        assert match_player_name("Cristian Garín", canonical) == "Cristian Garin"
+
+    def test_davis_cup_names_use_the_same_matcher_no_special_case_needed(self):
+        # Davis Cup ties are embedded in the same stats.tennismylife.org ATP
+        # feed (tourney_level == "D") as regular tour matches -- same
+        # winner_name/loser_name schema, same "First Last" format, verified
+        # directly against real loaded data 2026-09-18 (e.g. "Holger Rune").
+        # There is no separate Davis Cup naming convention to handle.
+        canonical = ["Holger Rune", "Alexandar Lazarov", "Dimitar Kuzmanov"]
+        assert match_player_name("H. Rune", canonical) == "Holger Rune"
+        assert match_player_name("Kuzmanov D.", canonical) == "Dimitar Kuzmanov"
+
+    def test_bare_nickname_does_not_match_by_design(self):
+        # "Iga" -> "Iga Swiatek": deliberately NOT implemented. The Odds API
+        # never actually sends bare first-name nicknames (verified: it uses
+        # structured "First Last" / "Last F." formats, same as every other
+        # case in this file) -- and matching on a first-name-only token
+        # would mean guessing among every player who happens to share it,
+        # which is exactly the class of wrong-guess risk
+        # match_player_name's docstring says is worse than not matching.
+        canonical = ["Iga Swiatek", "Novak Djokovic"]
+        assert match_player_name("Iga", canonical) is None

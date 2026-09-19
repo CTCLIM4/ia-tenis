@@ -52,6 +52,53 @@ class TestTournamentDictionaryFallback:
         assert resolve_surface("WTA Guadalajara Open", "tennis_wta_guadalajara_open") == "hard"
 
 
+class TestFallSwingCoverage:
+    """Proactive coverage for the Sept-Oct 2026 Asian hard-court swing --
+    none of these were live in the Odds API feed yet as of 2026-09-18 (only
+    Guadalajara was), but they start the following week (Sept 22-29) and
+    would hit the exact same silent-exclusion gap Guadalajara did. Surfaces
+    confirmed via atptour.com's official 2026 calendar PDF + Wikipedia
+    (2026-09-18): Chengdu and Hangzhou (ATP 250, outdoor hard, Sept 23-29),
+    Tokyo/Japan Open (ATP 500, outdoor hard, Sept 29-Oct 6), Beijing/China
+    Open (ATP 500 + WTA 1000, outdoor hard, Sept 29-Oct 12), Wuhan (WTA
+    1000, outdoor hard, Oct 12-18)."""
+
+    def test_surface_resolver_covers_guadalajara(self):
+        assert resolve_surface("WTA Guadalajara Open", "tennis_wta_guadalajara_open") == "hard"
+
+    def test_chengdu(self):
+        assert resolve_surface("ATP Chengdu", "tennis_atp_chengdu") == "hard"
+
+    def test_hangzhou(self):
+        assert resolve_surface("ATP Hangzhou", "tennis_atp_hangzhou") == "hard"
+
+    def test_tokyo_japan_open(self):
+        assert resolve_surface("ATP Tokyo", "tennis_atp_tokyo") == "hard"
+        assert resolve_surface("ATP Japan Open", "tennis_atp_japan_open") == "hard"
+
+    def test_beijing_china_open(self):
+        assert resolve_surface("ATP Beijing", "tennis_atp_beijing") == "hard"
+        assert resolve_surface("WTA China Open", "tennis_wta_china_open") == "hard"
+
+    def test_wuhan(self):
+        assert resolve_surface("WTA Wuhan Open", "tennis_wta_wuhan_open") == "hard"
+
+
+class TestKnownAtpTournamentCoverage:
+    def test_surface_resolver_covers_known_atp_tournaments(self):
+        # Every entry currently in TOURNAMENT_SURFACES must actually resolve
+        # via its own name -- a regression guard against a future edit that
+        # adds a key but typos the lookup, or renames resolve_surface's
+        # matching logic without re-checking the whole table.
+        import src.surface_resolver as sr
+
+        for tournament, expected_surface in sr.TOURNAMENT_SURFACES.items():
+            title = f"ATP {tournament.title()}"
+            assert resolve_surface(title, "tennis_atp_generic") == expected_surface, (
+                f"{tournament!r} did not resolve to {expected_surface!r} via title {title!r}"
+            )
+
+
 class TestUnknownSurface:
     def test_unknown_tournament_returns_none(self):
         assert resolve_surface("ATP Fictional Open 3000", "tennis_atp_fictional") is None

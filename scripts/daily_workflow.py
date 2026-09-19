@@ -61,29 +61,55 @@ KELLY_DIVISOR = 4
 VALUE_BETS_LOG = "data/value_bets_log.csv"
 
 
-def _wta_is_stale() -> bool:
+def _is_stale(tour: str, live_tournament_mode: bool = False) -> bool:
+    """True when `tour`'s cached dataset is stale enough that its picks
+    should be excluded from this run. Requires _load_models(...) to have
+    already populated the cache for `tour` — returns False (don't skip) if
+    there's no cache to check yet, letting the normal load_model()
+    staleness print speak for itself instead of silently excluding it.
+
+    live_tournament_mode=True matches src/daily_scanner.py's behavior for a
+    confirmed-live tournament: the staleness level is still computed and
+    printed as a warning, but never excludes the tour — a few days of
+    archive publication lag during an actually-live tournament week is a
+    known, accepted limitation of the data source, not a sign the whole
+    dataset is stale/abandoned. Default (False) preserves the original
+    hard-exclude-on-any-non-OK gate, which exists specifically to stop
+    auto-pushed, auto-emailed picks from being generated off data that
+    could be weeks out of date with nobody reviewing it (see
+    docs/superpowers/specs/2026-07-13-staleness-context-aware-design.md).
+    """
+    last_match = get_last_match_date(tour)
+    if last_match is None:
+        return False
+    report = evaluate_staleness(last_match, lima_today(), live_tournament_mode)
+    if report.level == StalenessLevel.OK:
+        return False
+    print(f"  {tour.upper()}: {report.message}")
+    return not live_tournament_mode
+
+
+def _wta_is_stale(live_tournament_mode: bool = False) -> bool:
     """True when the cached WTA dataset is stale enough to skip WTA picks
-    entirely for this run. Requires _load_models(("atp","wta"), ...) to have
-    already populated the WTA cache — returns False (don't skip) if there's
-    no cache to check yet, letting the normal load_model() staleness print
-    speak for itself instead of silently excluding WTA."""
-    last_match = get_last_match_date("wta")
-    if last_match is None:
-        return False
-    report = evaluate_staleness(last_match, lima_today())
-    return report.level != StalenessLevel.OK
+    entirely for this run — see _is_stale()'s docstring for the
+    live_tournament_mode semantics."""
+    return _is_stale("wta", live_tournament_mode)
 
 
-def _atp_is_stale() -> bool:
+def _atp_is_stale(live_tournament_mode: bool = False) -> bool:
     """True when the cached ATP dataset is stale enough to skip ATP picks
-    entirely for this run. Symmetric to _wta_is_stale() — see its
-    docstring; same cache-population requirement and OK/WARNING/CRITICAL
-    semantics, just for the ATP circuit."""
-    last_match = get_last_match_date("atp")
-    if last_match is None:
-        return False
-    report = evaluate_staleness(last_match, lima_today())
-    return report.level != StalenessLevel.OK
+    entirely for this run. Symmetric to _wta_is_stale() — see
+    _is_stale()'s docstring."""
+    return _is_stale("atp", live_tournament_mode)
+
+
+def _davis_is_stale(live_tournament_mode: bool = False) -> bool:
+    """True when the cached Davis Cup dataset is stale enough to skip Davis
+    Cup picks for this run. Symmetric to _wta_is_stale()/_atp_is_stale() —
+    Davis Cup has no separate raw source (see src/data/loader.py's
+    load_davis_cup_matches), so this reads the same
+    data/model_cache/davis.pkl via get_last_match_date("davis")."""
+    return _is_stale("davis", live_tournament_mode)
 
 
 def _qualifying_sides(r) -> tuple[bool, bool]:
@@ -98,7 +124,7 @@ def _qualifying_sides(r) -> tuple[bool, bool]:
     return qualifies_a, qualifies_b
 
 
-def run(dry_run: bool = False, retrain: bool = False) -> list[dict]:
+def run(dry_run: bool = False, retrain: bool = False, live_tournament_mode: bool = False) -> list[dict]:
     api_key = os.environ.get("ODDS_API_KEY")
     if not api_key:
         print("ODDS_API_KEY no configurada. Abortando.")
@@ -109,10 +135,10 @@ def run(dry_run: bool = False, retrain: bool = False) -> list[dict]:
     canonical_names = _canonical_names(models)
 
     tours = ("atp", "wta")
-    if _atp_is_stale():
+    if _atp_is_stale(live_tournament_mode):
         print("  ATP desactualizado: se ignoran picks ATP de esta jornada.")
         tours = tuple(t for t in tours if t != "atp")
-    if _wta_is_stale():
+    if _wta_is_stale(live_tournament_mode):
         print("  WTA desactualizado: se ignoran picks WTA de esta jornada.")
         tours = tuple(t for t in tours if t != "wta")
 
@@ -199,8 +225,11 @@ def main() -> None:
                          help="No escribe CSVs, no envia correo, no hace git push")
     parser.add_argument("--retrain", action="store_true",
                          help="Reconstruye el cache del modelo desde data/processed/ en vez de reusar el existente")
+    parser.add_argument("--live-tournament", action="store_true", dest="live_tournament_mode",
+                         help="Torneo activo confirmado: no excluir un tour por staleness, solo advertir "
+                              "(igual que src/daily_scanner.py) -- el gate estricto por defecto sigue activo sin esta flag")
     args = parser.parse_args()
-    run(dry_run=args.dry_run, retrain=args.retrain)
+    run(dry_run=args.dry_run, retrain=args.retrain, live_tournament_mode=args.live_tournament_mode)
 
 
 if __name__ == "__main__":
