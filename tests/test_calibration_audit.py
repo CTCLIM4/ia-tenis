@@ -5,6 +5,7 @@ full, unbiased population of predictions."""
 from __future__ import annotations
 
 import csv
+import itertools
 from datetime import date
 
 import pytest
@@ -84,6 +85,40 @@ class TestClassifyAuditDecision:
             has_value_a=False, has_value_b=True,
         )
         assert result == "passed_user_declined"
+
+    def test_audit_log_no_unknown_recovery_in_code(self):
+        """Regression guard: 7 rows in the real prediction_audit_log.csv
+        (timestamps 2026-08-21 through 2026-08-27) carry
+        decision == "UNKNOWN_RECOVERY" -- a string that appears nowhere in
+        this function, nowhere else in src/, and nowhere in git history as
+        code (only ever as data, in the commit that first tracked the CSV).
+        It was written by some uncommitted, ad-hoc script that called
+        log_prediction_audit() directly with a literal decision string,
+        bypassing this classifier -- not by a bug in classify_audit_decision
+        itself. Exhaustively trying every boolean combination this function
+        accepts proves it can never itself produce that value (or anything
+        outside its known vocabulary); the real fix against recurrence is
+        that no current code path calls log_prediction_audit() with a
+        hardcoded decision -- both call sites (src/daily_scanner.py,
+        src/value_analysis.py) always classify via this function first."""
+        known_decisions = {
+            "invalid_missing_elo", "blocked_low_sample", "blocked_suspicious_edge",
+            "logged", "passed_low_edge", "passed_user_declined",
+        }
+        for low_sample, suspicious_edge, elo_ok, logged, has_value_a, has_value_b in (
+            itertools.product((True, False), repeat=6)
+        ):
+            result = calibration_audit.classify_audit_decision(
+                low_sample=low_sample, suspicious_edge=suspicious_edge, elo_ok=elo_ok,
+                logged=logged, has_value_a=has_value_a, has_value_b=has_value_b,
+            )
+            assert result != "UNKNOWN_RECOVERY"
+            assert result in known_decisions, (
+                f"unexpected decision {result!r} for inputs "
+                f"low_sample={low_sample}, suspicious_edge={suspicious_edge}, "
+                f"elo_ok={elo_ok}, logged={logged}, "
+                f"has_value_a={has_value_a}, has_value_b={has_value_b}"
+            )
 
 
 def _make_pred(p_a_raw=0.60, p_a_cal=0.58, elo_found_a=True, elo_found_b=True):
