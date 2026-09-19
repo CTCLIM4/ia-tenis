@@ -322,6 +322,118 @@ class TestEvaluateMatches:
         assert results[0].has_value is False
 
 
+class TestScannerGracefulFailures:
+    """Rule: if The Odds API has no key, or finds nothing, run_scan() must
+    fail gracefully with a clear message -- never crash."""
+
+    def test_missing_api_key_fails_gracefully_no_crash(self, monkeypatch, capsys):
+        import src.daily_scanner as scanner
+
+        monkeypatch.delenv("ODDS_API_KEY", raising=False)
+
+        scanner.run_scan()  # must not raise
+
+        assert "ODDS_API_KEY" in capsys.readouterr().out
+
+    def test_scanner_handles_no_matches_found(self, monkeypatch, capsys):
+        import src.daily_scanner as scanner
+
+        monkeypatch.setattr(scanner, "_load_models", lambda tours, retrain: {})
+        monkeypatch.setattr(scanner, "_canonical_names", lambda models: {})
+        monkeypatch.setattr(scanner, "discover_matches", lambda *a, **kw: [])
+        monkeypatch.setenv("ODDS_API_KEY", "fake-key")
+
+        scanner.run_scan()  # must not raise
+
+        assert "No se encontraron" in capsys.readouterr().out
+
+
+class TestScannerProducesPicksRegardlessOfDataAge:
+    def test_scanner_produces_picks_with_stale_data(self, monkeypatch):
+        """daily_scanner.py (unlike scripts/daily_workflow.py) has no
+        staleness gate at all -- it logs a value bet using whatever model
+        _load_models hands it, regardless of how old that model's
+        underlying match data is. Pins this down explicitly since it's easy
+        to wrongly assume some staleness check happens somewhere in this
+        path (it doesn't -- that's scripts/daily_workflow.py's job)."""
+        import src.daily_scanner as scanner
+
+        m = scanner.DiscoveredMatch(
+            tour="wta", tournament="WTA Guadalajara Open", surface="hard",
+            match_date=date(2026, 9, 18), player_a="Iga Swiatek", player_b="Coco Gauff",
+            odds_a=1.8, odds_b=2.0, raw_home="Iga Swiatek", raw_away="Coco Gauff",
+        )
+        r = EvaluatedMatch(
+            match=m, pred=_pred(), val_a=_val(has_value=True), val_b=_val(has_value=False),
+            elo_ok=True, suspicious=False,
+        )
+        monkeypatch.setattr(scanner, "_load_models", lambda tours, retrain: {"wta": (None,) * 6})
+        monkeypatch.setattr(scanner, "_canonical_names", lambda models: {"wta": []})
+        monkeypatch.setattr(scanner, "discover_matches", lambda *a, **kw: [m])
+        monkeypatch.setattr(scanner, "evaluate_matches", lambda matches, models, halt_on_suspicious=True: [r])
+        monkeypatch.setattr("builtins.input", lambda *a: "s")
+        monkeypatch.setenv("ODDS_API_KEY", "fake-key")
+
+        logged = []
+        monkeypatch.setattr(scanner, "log_query", lambda *a, **kw: logged.append(kw))
+        monkeypatch.setattr(scanner, "log_prediction_audit", lambda *a, **kw: None)
+
+        scanner.run_scan(tours=("wta",))
+
+        assert len(logged) == 1  # nothing blocked the pick from being logged
+
+
+class TestScannerPlayerNameResolution:
+    def test_resolves_surname_and_initial_variant_to_canonical_name(self, monkeypatch):
+        # discover_matches uses src.player_matcher.match_player_name (surname
+        # + first-initial heuristic), not exact string equality -- a
+        # bookmaker-style "N. Djokovic" must still resolve to the dataset's
+        # canonical "Novak Djokovic".
+        import src.daily_scanner as scanner
+
+        monkeypatch.setattr(scanner, "fetch_sports_index", lambda api_key: [
+            {"key": "tennis_atp_wimbledon", "title": "ATP Wimbledon"},
+        ])
+        monkeypatch.setattr(
+            scanner, "fetch_odds_events_by_key",
+            lambda sport_key, api_key: [
+                _event("N. Djokovic", "J. Sinner", bookmaker_key=DEFAULT_BOOKMAKER)
+            ],
+        )
+        now = datetime(2026, 7, 27, 0, 0, tzinfo=timezone.utc)
+        monkeypatch.setattr(scanner, "_now", lambda: now)
+
+        matches = discover_matches(
+            api_key="fake",
+            canonical_names_by_tour={"atp": ["Novak Djokovic", "Jannik Sinner"], "wta": []},
+            days_ahead=1,
+        )
+
+        assert len(matches) == 1
+        assert matches[0].player_a == "Novak Djokovic"
+        assert matches[0].player_b == "Jannik Sinner"
+
+
+class TestScannerDavisTourDispatch:
+    def test_davis_tour_runs_without_crashing(self, monkeypatch):
+        import src.daily_scanner as scanner
+
+        captured = {}
+
+        def _fake_load_models(tours, retrain):
+            captured["tours"] = tours
+            return {"davis": (None,) * 6}
+
+        monkeypatch.setattr(scanner, "_load_models", _fake_load_models)
+        monkeypatch.setattr(scanner, "_canonical_names", lambda models: {"davis": []})
+        monkeypatch.setattr(scanner, "discover_matches", lambda *a, **kw: [])
+        monkeypatch.setenv("ODDS_API_KEY", "fake-key")
+
+        scanner.run_scan(tours=("davis",))  # must not raise
+
+        assert captured["tours"] == ("davis",)
+
+
 class TestRunScanDefaultToursIncludesDavis:
     def test_default_tours_includes_davis(self, monkeypatch):
         import src.daily_scanner as scanner

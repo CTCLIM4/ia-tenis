@@ -33,6 +33,48 @@ class TestQueryAdapterBytes:
         monkeypatch.setattr(vpn_tracker.subprocess, "run", lambda *a, **kw: _Proc())
         assert vpn_tracker._query_adapter_bytes() is None
 
+    def test_vpn_tracker_detects_tunnelbear_by_process(self, monkeypatch):
+        # Regression: TunnelBear v4+ can tunnel over WireGuard, which shows
+        # up as a generic "Wintun"/"WireGuard Tunnel" adapter -- the plain
+        # "TunnelBear" name-pattern match finds nothing in that case, even
+        # though TunnelBear is actually connected and passing traffic.
+        # Falling back to a broader adapter-name match is only safe once the
+        # actual TunnelBear.exe process is confirmed running (otherwise it'd
+        # misattribute an unrelated WireGuard VPN's traffic).
+        class _Proc:
+            def __init__(self, stdout):
+                self.stdout = stdout
+
+        def fake_run(cmd, **kwargs):
+            script = cmd[-1]
+            if "Get-Process" in script:
+                return _Proc("1")  # TunnelBear.exe is running
+            if "Wintun" in script:
+                return _Proc('{"ReceivedBytes":2000,"SentBytes":1000}')
+            return _Proc("")  # primary "TunnelBear"-named adapter: not found
+
+        monkeypatch.setattr(vpn_tracker.subprocess, "run", fake_run)
+        assert vpn_tracker._query_adapter_bytes() == (2000, 1000)
+
+    def test_does_not_fall_back_to_generic_adapter_when_process_not_running(self, monkeypatch):
+        # Without a confirmed TunnelBear process, a generic "Wintun" adapter
+        # could belong to any other WireGuard VPN -- must not attribute its
+        # traffic to TunnelBear's usage tracking.
+        class _Proc:
+            def __init__(self, stdout):
+                self.stdout = stdout
+
+        def fake_run(cmd, **kwargs):
+            script = cmd[-1]
+            if "Get-Process" in script:
+                return _Proc("0")  # TunnelBear.exe is NOT running
+            if "Wintun" in script:
+                return _Proc('{"ReceivedBytes":2000,"SentBytes":1000}')
+            return _Proc("")
+
+        monkeypatch.setattr(vpn_tracker.subprocess, "run", fake_run)
+        assert vpn_tracker._query_adapter_bytes() is None
+
 
 class TestTrackVpnUsage:
     def _mock_stats(self, monkeypatch, rx, tx):

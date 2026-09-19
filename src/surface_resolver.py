@@ -42,6 +42,7 @@ TOURNAMENT_SURFACES = {
     "prague": "hard",
     "washington": "hard",
     "monterrey": "hard",
+    "guadalajara": "hard",
 }
 
 

@@ -43,6 +43,14 @@ class TestTournamentDictionaryFallback:
         assert resolve_surface("ATP Washington Open", "tennis_atp_washington_open") == "hard"
         assert resolve_surface("WTA Washington Open", "tennis_wta_washington_open") == "hard"
 
+    def test_guadalajara_open(self):
+        # WTA 500, outdoor hard courts, Panamerican Tennis Center, Zapopan --
+        # confirmed via wtatennis.com and Wikipedia 2026-09-18. Showed up
+        # unresolved in the live Odds API feed (sport_key
+        # "tennis_wta_guadalajara_open") during the 2026-09-18 WTA Guadalajara
+        # Open, excluding it from the automated scan entirely.
+        assert resolve_surface("WTA Guadalajara Open", "tennis_wta_guadalajara_open") == "hard"
+
 
 class TestUnknownSurface:
     def test_unknown_tournament_returns_none(self):

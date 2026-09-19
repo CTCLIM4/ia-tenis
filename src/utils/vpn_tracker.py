@@ -27,10 +27,17 @@ MB = 1024 * 1024
 DEFAULT_USAGE_PATH = _ROOT / "data" / "vpn_usage.json"
 DEFAULT_MONTHLY_LIMIT_MB = 2000
 DEFAULT_ADAPTER_NAME_PATTERN = "TunnelBear"
+DEFAULT_PROCESS_NAME_PATTERN = "TunnelBear"
+# TunnelBear v4+ can tunnel over WireGuard, which shows up as a generic
+# adapter name instead of anything containing "TunnelBear" -- tried in order
+# only once _is_process_running confirms TunnelBear.exe is actually running
+# (see _query_adapter_bytes), so an unrelated WireGuard VPN's traffic is
+# never misattributed to TunnelBear's usage tracking.
+_FALLBACK_ADAPTER_NAME_PATTERNS = ("Wintun", "WireGuard")
 
 
-def _query_adapter_bytes(
-    name_pattern: str = DEFAULT_ADAPTER_NAME_PATTERN, timeout: int = 10,
+def _query_adapter_bytes_by_name(
+    name_pattern: str, timeout: int = 10,
 ) -> Optional[tuple[int, int]]:
     """Return (received_bytes, sent_bytes) for the first network adapter whose
     Name or InterfaceDescription contains name_pattern.
@@ -61,6 +68,53 @@ def _query_adapter_bytes(
         return int(data["ReceivedBytes"]), int(data["SentBytes"])
     except (json.JSONDecodeError, KeyError, TypeError, ValueError):
         return None
+
+
+def _is_process_running(name_pattern: str = DEFAULT_PROCESS_NAME_PATTERN, timeout: int = 10) -> bool:
+    """True if a running process's name contains name_pattern.
+
+    Returns False (not an error) on any PowerShell failure — same
+    "status unknown, don't crash" contract as _query_adapter_bytes_by_name.
+    """
+    script = (
+        f"if (Get-Process -Name '*{name_pattern}*' -ErrorAction SilentlyContinue) "
+        '{ Write-Output "1" } else { Write-Output "0" }'
+    )
+    try:
+        result = subprocess.run(
+            ["powershell", "-NoProfile", "-NonInteractive", "-Command", script],
+            capture_output=True, text=True, timeout=timeout,
+        )
+    except Exception:
+        return False
+    return (result.stdout or "").strip() == "1"
+
+
+def _query_adapter_bytes(
+    name_pattern: str = DEFAULT_ADAPTER_NAME_PATTERN,
+    process_name_pattern: str = DEFAULT_PROCESS_NAME_PATTERN,
+    timeout: int = 10,
+) -> Optional[tuple[int, int]]:
+    """Return (received_bytes, sent_bytes) for TunnelBear's adapter.
+
+    Tries the named adapter first; if that finds nothing and the TunnelBear
+    process is confirmed running (WireGuard mode uses a generic adapter name
+    the first lookup won't match), retries against known generic WireGuard
+    adapter names. The process check gates the fallback so an unrelated
+    WireGuard VPN's adapter is never mistaken for TunnelBear's.
+    """
+    stats = _query_adapter_bytes_by_name(name_pattern, timeout)
+    if stats is not None:
+        return stats
+
+    if not _is_process_running(process_name_pattern, timeout):
+        return None
+
+    for fallback_pattern in _FALLBACK_ADAPTER_NAME_PATTERNS:
+        stats = _query_adapter_bytes_by_name(fallback_pattern, timeout)
+        if stats is not None:
+            return stats
+    return None
 
 
 def _load_state(path: Path) -> dict:

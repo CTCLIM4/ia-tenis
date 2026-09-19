@@ -53,15 +53,20 @@ def _clean(df: pd.DataFrame, reference_date: Optional[date] = None) -> pd.DataFr
 
 
 def load_atp_matches(
-    start_year: int = 1990, end_year: int = 2024, raw_dir_override: Optional[Path] = None,
+    start_year: int = 1990, end_year: Optional[int] = None, raw_dir_override: Optional[Path] = None,
 ) -> pd.DataFrame:
     """Load ATP matches from Tennismylife/TML-Database (data/raw/tennis_atp_tml/{year}.csv).
+
+    end_year=None (default) resolves to the current year -- a caller that
+    omits it must see this year's data, not silently stop short of it.
 
     raw_dir_override: read from this directory instead of the default
     data/raw/tennis_atp_tml — used for snapshot-pinned loading
     (src/data/snapshots.py's resolve_snapshot_path), where the directory is
     a frozen copy under data/snapshots/{id}/raw/tennis_atp_tml.
     """
+    if end_year is None:
+        end_year = date.today().year
     tour_dir = raw_dir_override if raw_dir_override is not None else (RAW_DATA_DIR / "tennis_atp_tml")
     frames = []
     for year in range(start_year, end_year + 1):
@@ -136,7 +141,7 @@ def _clean_wta(df: pd.DataFrame, year: int, reference_date: Optional[date] = Non
 
 
 def load_davis_cup_matches(
-    start_year: int = 1981, end_year: int = 2026, raw_dir_override: Optional[Path] = None,
+    start_year: int = 1981, end_year: Optional[int] = None, raw_dir_override: Optional[Path] = None,
 ) -> pd.DataFrame:
     """Load Davis Cup matches.
 
@@ -146,6 +151,10 @@ def load_davis_cup_matches(
     load_atp_matches() -- tagged tourney_level == "D" -- so this filters that
     instead of reading a separate raw directory. Competes individually
     (players, not teams), so the schema is identical to a regular ATP match.
+
+    end_year=None (default) resolves to the current year, same as
+    load_atp_matches (this delegates straight to it, so the resolution
+    happens there).
 
     raw_dir_override: same as load_atp_matches's (data/raw/tennis_atp_tml by
     default) -- there is no separate Davis Cup raw directory to override.
@@ -173,9 +182,12 @@ def _read_tduk_file(path: Path) -> pd.DataFrame:
 
 
 def load_wta_matches(
-    start_year: int = 2007, end_year: int = 2024, raw_dir_override: Optional[Path] = None,
+    start_year: int = 2007, end_year: Optional[int] = None, raw_dir_override: Optional[Path] = None,
 ) -> pd.DataFrame:
     """Load WTA matches from tennis-data.co.uk (data/raw/tennis_wta_tduk/{year}w.[xls|xlsx|csv]).
+
+    end_year=None (default) resolves to the current year -- a caller that
+    omits it must see this year's data, not silently stop short of it.
 
     Download files from tennis-data.co.uk/wta.php and place them in
     data/raw/tennis_wta_tduk/.  Run scripts/download_data.py to automate.
@@ -183,6 +195,8 @@ def load_wta_matches(
     raw_dir_override: same as load_atp_matches's, for
     data/raw/tennis_wta_tduk — used for snapshot-pinned loading.
     """
+    if end_year is None:
+        end_year = date.today().year
     tour_dir = raw_dir_override if raw_dir_override is not None else (RAW_DATA_DIR / "tennis_wta_tduk")
     frames = []
     for year in range(start_year, end_year + 1):

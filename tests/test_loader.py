@@ -199,6 +199,44 @@ class TestLoadAtpMatchesRawDirOverride:
             load_atp_matches(2023, 2023, raw_dir_override=override_dir)
 
 
+class TestLoaderEndYearDefaultsToCurrentYear:
+    """Regression: load_atp_matches/load_wta_matches/load_davis_cup_matches
+    all had a stale hardcoded end_year default (2024/2026) -- a caller that
+    omits end_year (or passes None) must see the current year's file, not
+    silently stop short of it."""
+
+    def test_atp_loader_uses_current_year_default(self, tmp_path):
+        override_dir = tmp_path / "atp_source"
+        override_dir.mkdir()
+        current_year = date.today().year
+        (override_dir / f"{current_year}.csv").write_text(SAMPLE_CSV)
+
+        df = load_atp_matches(current_year, None, raw_dir_override=override_dir)
+
+        assert len(df) == 2
+
+    def test_wta_loader_uses_current_year_default(self, tmp_path):
+        override_dir = tmp_path / "wta_source"
+        override_dir.mkdir()
+        current_year = date.today().year
+        (override_dir / f"{current_year}w.csv").write_text(WTA_CSV)
+
+        df = load_wta_matches(current_year, None, raw_dir_override=override_dir)
+
+        assert len(df) == 3
+
+    def test_davis_loader_uses_current_year_default(self, tmp_path):
+        override_dir = tmp_path / "atp_source"
+        override_dir.mkdir()
+        current_year = date.today().year
+        raw = DAVIS_SAMPLE_CSV.replace("2023", str(current_year))
+        (override_dir / f"{current_year}.csv").write_text(raw)
+
+        df = load_davis_cup_matches(current_year, None, raw_dir_override=override_dir)
+
+        assert len(df) == 2
+
+
 class TestLoadWtaMatchesRawDirOverride:
     def test_reads_from_override_directory_instead_of_default(self, tmp_path):
         override_dir = tmp_path / "custom_wta"
