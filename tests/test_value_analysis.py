@@ -31,8 +31,11 @@ from src.value_analysis import (
     apply_shrinkage,
     build_prediction_features,
     calculate_value,
+    check_existing_log_entry,
     log_query,
     predict_match,
+    update_log_entry,
+    LogMatchStatus,
 )
 
 
@@ -398,6 +401,160 @@ class TestLogQueryStatus:
         row = _read_log(log_path)[0]
         assert row["bookmaker_a"] == ""
         assert row["bookmaker_b"] == ""
+
+
+class TestCheckExistingLogEntry:
+    """Prompted by 2026-09-19: daily_scanner.py had no protection against
+    re-logging the same still-pending match across separate scan runs --
+    each re-log would double-count that position's stake/P&L once the
+    match settles. check_existing_log_entry lets a caller distinguish a
+    genuinely new match from a re-scan of one already logged."""
+
+    def test_value_bets_log_allows_new_match(self, log_path):
+        status, existing = check_existing_log_entry(
+            "atp", "Test", "Player A", "Player B", date(2026, 7, 1), 1.90,
+        )
+        assert status == LogMatchStatus.NEW
+        assert existing is None
+
+    def test_value_bets_log_duplicate_detection(self, log_path):
+        pred = _make_pred()
+        log_query("atp", "Test", "hard", date(2026, 7, 1),
+                  "Player A", "Player B", pred, _val(), _val(), 1.90, 2.10)
+
+        status, existing = check_existing_log_entry(
+            "atp", "Test", "Player A", "Player B", date(2026, 7, 1), 1.90,
+        )
+        assert status == LogMatchStatus.DUPLICATE
+        assert existing is not None
+
+    def test_duplicate_detection_within_2pct_tolerance(self, log_path):
+        pred = _make_pred()
+        log_query("atp", "Test", "hard", date(2026, 7, 1),
+                  "Player A", "Player B", pred, _val(), _val(), 3.80, 2.10)
+
+        # 3.87 is a 1.8% move from 3.80 -- inside tolerance, still a dup.
+        status, _ = check_existing_log_entry(
+            "atp", "Test", "Player A", "Player B", date(2026, 7, 1), 3.87,
+        )
+        assert status == LogMatchStatus.DUPLICATE
+
+    def test_value_bets_log_allows_different_odds(self, log_path):
+        """Real regression case: Stearns vs Jovic odds moved 3.80 -> 3.90
+        (2.6%) between two separate scans -- a legitimate update, not a
+        duplicate to silently skip."""
+        pred = _make_pred()
+        log_query("atp", "Test", "hard", date(2026, 7, 1),
+                  "Player A", "Player B", pred, _val(), _val(), 3.80, 2.10)
+
+        status, existing = check_existing_log_entry(
+            "atp", "Test", "Player A", "Player B", date(2026, 7, 1), 3.90,
+        )
+        assert status == LogMatchStatus.UPDATE
+        assert existing is not None
+
+    def test_odds_b_move_also_triggers_update(self, log_path):
+        pred = _make_pred()
+        log_query("atp", "Test", "hard", date(2026, 7, 1),
+                  "Player A", "Player B", pred, _val(), _val(), 1.90, 2.10)
+
+        # odds_a unchanged, but odds_b moved > 2% -- still a real update.
+        status, _ = check_existing_log_entry(
+            "atp", "Test", "Player A", "Player B", date(2026, 7, 1), 1.90,
+            odds_b=2.30,
+        )
+        assert status == LogMatchStatus.UPDATE
+
+    def test_value_bets_log_ignores_resolved_match(self, log_path):
+        pred = _make_pred()
+        log_query("atp", "Test", "hard", date(2026, 7, 1),
+                  "Player A", "Player B", pred, _val(), _val(), 1.90, 2.10)
+        rows = _read_log(log_path)
+        rows[0]["result"] = "A_win"
+        with open(log_path, "w", newline="", encoding="utf-8") as f:
+            w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
+            w.writeheader()
+            w.writerows(rows)
+
+        status, existing = check_existing_log_entry(
+            "atp", "Test", "Player A", "Player B", date(2026, 7, 1), 1.90,
+        )
+        assert status == LogMatchStatus.RESOLVED
+        assert existing is not None
+
+    def test_different_match_date_is_a_new_match(self, log_path):
+        pred = _make_pred()
+        log_query("atp", "Test", "hard", date(2026, 7, 1),
+                  "Player A", "Player B", pred, _val(), _val(), 1.90, 2.10)
+
+        status, _ = check_existing_log_entry(
+            "atp", "Test", "Player A", "Player B", date(2026, 7, 2), 1.90,
+        )
+        assert status == LogMatchStatus.NEW
+
+    def test_different_tournament_is_a_new_match(self, log_path):
+        pred = _make_pred()
+        log_query("atp", "Test Open", "hard", date(2026, 7, 1),
+                  "Player A", "Player B", pred, _val(), _val(), 1.90, 2.10)
+
+        status, _ = check_existing_log_entry(
+            "atp", "Other Open", "Player A", "Player B", date(2026, 7, 1), 1.90,
+        )
+        assert status == LogMatchStatus.NEW
+
+
+class TestUpdateLogEntry:
+    def test_updates_existing_row_odds_in_place(self, log_path):
+        pred = _make_pred()
+        log_query("atp", "Test", "hard", date(2026, 7, 1),
+                  "Player A", "Player B", pred, _val(), _val(), 3.80, 2.10)
+
+        updated = update_log_entry(
+            "atp", "Test", "hard", date(2026, 7, 1),
+            "Player A", "Player B", pred, _val(), _val(), 3.90, 2.10,
+        )
+
+        assert updated is True
+        rows = _read_log(log_path)
+        assert len(rows) == 1
+        assert rows[0]["odds_a"] == "3.9"
+
+    def test_does_not_duplicate_the_row(self, log_path):
+        pred = _make_pred()
+        log_query("atp", "Test", "hard", date(2026, 7, 1),
+                  "Player A", "Player B", pred, _val(), _val(), 3.80, 2.10)
+
+        update_log_entry(
+            "atp", "Test", "hard", date(2026, 7, 1),
+            "Player A", "Player B", pred, _val(), _val(), 3.90, 2.10,
+        )
+
+        assert len(_read_log(log_path)) == 1
+
+    def test_returns_false_when_no_matching_row(self, log_path):
+        pred = _make_pred()
+        updated = update_log_entry(
+            "atp", "Test", "hard", date(2026, 7, 1),
+            "Player A", "Player B", pred, _val(), _val(), 3.90, 2.10,
+        )
+        assert updated is False
+
+    def test_leaves_other_rows_untouched(self, log_path):
+        pred = _make_pred()
+        log_query("atp", "Test", "hard", date(2026, 7, 1),
+                  "Player A", "Player B", pred, _val(), _val(), 1.90, 2.10)
+        log_query("wta", "Other", "hard", date(2026, 7, 2),
+                  "Player C", "Player D", pred, _val(), _val(), 2.50, 1.60)
+
+        update_log_entry(
+            "atp", "Test", "hard", date(2026, 7, 1),
+            "Player A", "Player B", pred, _val(), _val(), 2.10, 1.80,
+        )
+
+        rows = _read_log(log_path)
+        assert len(rows) == 2
+        other = next(r for r in rows if r["player_a"] == "Player C")
+        assert other["odds_a"] == "2.5"
 
 
 class TestLogQueryOddsSource:

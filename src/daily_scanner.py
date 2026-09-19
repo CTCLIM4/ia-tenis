@@ -69,10 +69,14 @@ from src.value_analysis import (
     _SHRINK_HI,
     _SHRINK_LO,
     _SHRINK_RATE,
+    ODDS_UPDATE_TOLERANCE,
+    LogMatchStatus,
     calculate_value,
+    check_existing_log_entry,
     load_model,
     log_query,
     predict_match,
+    update_log_entry,
 )
 
 DEFAULT_DAYS_AHEAD = 1
@@ -364,13 +368,34 @@ def run_scan(
     for r in results:
         logged = save_all and r.is_value_bet
         if logged:
-            log_query(
-                r.match.tour, r.match.tournament, r.match.surface, r.match.match_date,
-                r.match.player_a, r.match.player_b,
-                r.pred, r.val_a, r.val_b, r.match.odds_a, r.match.odds_b,
-                odds_a_source="auto", odds_b_source="auto",
-                bookmaker_a=r.match.bookmaker_a, bookmaker_b=r.match.bookmaker_b,
+            status, _existing = check_existing_log_entry(
+                r.match.tour, r.match.tournament, r.match.player_a, r.match.player_b,
+                r.match.match_date, r.match.odds_a, r.match.odds_b,
             )
+            if status == LogMatchStatus.DUPLICATE:
+                print(f"  Aviso: {r.match.player_a} vs {r.match.player_b} ya estaba "
+                      f"logueado con odds similares (dentro de {ODDS_UPDATE_TOLERANCE*100:.0f}%), no se duplica.")
+                logged = False
+            elif status == LogMatchStatus.RESOLVED:
+                print(f"  Aviso: {r.match.player_a} vs {r.match.player_b} ya tiene "
+                      f"un resultado registrado, no se re-loguea.")
+                logged = False
+            elif status == LogMatchStatus.UPDATE:
+                update_log_entry(
+                    r.match.tour, r.match.tournament, r.match.surface, r.match.match_date,
+                    r.match.player_a, r.match.player_b,
+                    r.pred, r.val_a, r.val_b, r.match.odds_a, r.match.odds_b,
+                    odds_a_source="auto", odds_b_source="auto",
+                    bookmaker_a=r.match.bookmaker_a, bookmaker_b=r.match.bookmaker_b,
+                )
+            else:  # NEW
+                log_query(
+                    r.match.tour, r.match.tournament, r.match.surface, r.match.match_date,
+                    r.match.player_a, r.match.player_b,
+                    r.pred, r.val_a, r.val_b, r.match.odds_a, r.match.odds_b,
+                    odds_a_source="auto", odds_b_source="auto",
+                    bookmaker_a=r.match.bookmaker_a, bookmaker_b=r.match.bookmaker_b,
+                )
         try:
             decision = classify_audit_decision(
                 r.low_sample, r.suspicious, r.elo_ok, logged,

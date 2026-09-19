@@ -28,6 +28,7 @@ import os
 import pickle
 import sys
 from datetime import date, datetime, timedelta
+from enum import Enum
 from pathlib import Path
 from typing import Dict, Optional, Tuple
 
@@ -752,19 +753,13 @@ def _migrate_log_header_if_needed() -> None:
             writer.writerow({k: row.get(k, "") for k in _LOG_FIELDS})
 
 
-def log_query(tour, tournament, surface, match_date,
-              player_a, player_b,
-              pred, val_a, val_b, odds_a, odds_b,
-              odds_a_source: str = "manual", odds_b_source: str = "manual",
-              bookmaker_a: str = "", bookmaker_b: str = "") -> None:
-    """Append one match prediction + odds to the CSV log.
-
-    Rows where either player's Elo was not found (default 1500) are saved
-    with status='invalid_missing_elo' instead of 'ok', so they can be
-    filtered out during analysis without contaminating the pick history.
-    """
-    _migrate_log_header_if_needed()
-    LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+def _build_log_row(tour, tournament, surface, match_date,
+                    player_a, player_b,
+                    pred, val_a, val_b, odds_a, odds_b,
+                    odds_a_source: str = "manual", odds_b_source: str = "manual",
+                    bookmaker_a: str = "", bookmaker_b: str = "") -> tuple[dict, bool]:
+    """Build one log row dict (shared by log_query's append and
+    update_log_entry's in-place rewrite). Returns (row, elo_ok)."""
     feats  = pred["features"]
     shrink = abs(pred["p_a_cal"] - pred["p_a_raw"]) > 0.001
 
@@ -807,6 +802,33 @@ def log_query(tour, tournament, surface, match_date,
         "profit":          "",
         **{k: round(feats[k], 4) for k in FEATURE_COLS},
     }
+    return row, elo_ok
+
+
+def log_query(tour, tournament, surface, match_date,
+              player_a, player_b,
+              pred, val_a, val_b, odds_a, odds_b,
+              odds_a_source: str = "manual", odds_b_source: str = "manual",
+              bookmaker_a: str = "", bookmaker_b: str = "") -> None:
+    """Append one match prediction + odds to the CSV log.
+
+    Rows where either player's Elo was not found (default 1500) are saved
+    with status='invalid_missing_elo' instead of 'ok', so they can be
+    filtered out during analysis without contaminating the pick history.
+
+    Does not check for an existing row covering the same match -- callers
+    that might re-scan an already-logged, still-pending match (e.g.
+    src.daily_scanner.run_scan) must call check_existing_log_entry() first
+    and use update_log_entry() instead when appropriate, or every re-scan
+    would duplicate the position in value_bets_log.csv.
+    """
+    _migrate_log_header_if_needed()
+    LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+    row, elo_ok = _build_log_row(
+        tour, tournament, surface, match_date, player_a, player_b,
+        pred, val_a, val_b, odds_a, odds_b,
+        odds_a_source, odds_b_source, bookmaker_a, bookmaker_b,
+    )
 
     write_header = not LOG_PATH.exists()
     with open(LOG_PATH, "a", newline="", encoding="utf-8") as f:
@@ -821,6 +843,120 @@ def log_query(tour, tournament, surface, match_date,
         missing = [player_a] * (not pred.get("elo_found_a", True)) \
                 + [player_b] * (not pred.get("elo_found_b", True))
         print(f"  Guardado como INVALIDO (Elo faltante: {', '.join(missing)}) en {LOG_PATH}")
+
+
+# ── duplicate detection ─────────────────────────────────────────────────────
+
+ODDS_UPDATE_TOLERANCE = 0.02  # 2% -- beyond this, treat as a real odds move
+
+
+class LogMatchStatus(str, Enum):
+    NEW = "new"              # no existing row for this match -> log_query()
+    DUPLICATE = "duplicate"  # existing pending row, odds within tolerance -> skip
+    UPDATE = "update"        # existing pending row, odds moved -> update_log_entry()
+    RESOLVED = "resolved"    # existing row already has a real result -> never touch
+
+
+def _odds_moved(old: float, new: float, tolerance: float) -> bool:
+    old, new = float(old), float(new)
+    if old == 0:
+        return new != 0
+    return abs(new - old) / abs(old) > tolerance
+
+
+def check_existing_log_entry(
+    tour: str, tournament: str, player_a: str, player_b: str, match_date: date,
+    odds_a: float, odds_b: Optional[float] = None,
+    log_path: Optional[Path] = None, tolerance: float = ODDS_UPDATE_TOLERANCE,
+) -> Tuple["LogMatchStatus", Optional[dict]]:
+    """Check value_bets_log.csv for a row already covering this exact match
+    (same tour + tournament + player_a + player_b + match_date).
+
+    Returns (status, existing_row_or_None) -- see LogMatchStatus for what
+    each status means. A match is identified by identity fields only;
+    odds_a/odds_b (and `tolerance`) decide DUPLICATE vs UPDATE for a
+    pending match, never whether it's the same match.
+    """
+    log_path = Path(log_path) if log_path is not None else LOG_PATH
+    if not log_path.exists():
+        return LogMatchStatus.NEW, None
+
+    with open(log_path, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            if not (
+                row.get("tour") == tour
+                and row.get("tournament") == tournament
+                and row.get("player_a") == player_a
+                and row.get("player_b") == player_b
+                and row.get("match_date") == match_date.isoformat()
+            ):
+                continue
+
+            if row.get("result") not in (None, "", "pending"):
+                return LogMatchStatus.RESOLVED, row
+
+            moved = _odds_moved(row["odds_a"], odds_a, tolerance)
+            if odds_b is not None and "odds_b" in row:
+                moved = moved or _odds_moved(row["odds_b"], odds_b, tolerance)
+            return (LogMatchStatus.UPDATE if moved else LogMatchStatus.DUPLICATE), row
+
+    return LogMatchStatus.NEW, None
+
+
+def update_log_entry(tour, tournament, surface, match_date,
+                      player_a, player_b,
+                      pred, val_a, val_b, odds_a, odds_b,
+                      odds_a_source: str = "auto", odds_b_source: str = "auto",
+                      bookmaker_a: str = "", bookmaker_b: str = "") -> bool:
+    """Replace the existing row for this match in place (odds moved since
+    it was first logged) instead of appending a duplicate.
+
+    Returns True if a matching row was found and updated, False if there
+    was nothing to update (caller should log_query() instead in that
+    case). Rewrites the whole file -- value_bets_log.csv is small enough
+    (real-money picks only, not every evaluated prediction) that this is
+    fine, same tradeoff _migrate_log_header_if_needed() already makes.
+    """
+    _migrate_log_header_if_needed()
+    if not LOG_PATH.exists():
+        return False
+
+    with open(LOG_PATH, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        rows = list(reader)
+
+    match_date_str = match_date.isoformat()
+    idx = next(
+        (i for i, row in enumerate(rows) if (
+            row.get("tour") == tour and row.get("tournament") == tournament
+            and row.get("player_a") == player_a and row.get("player_b") == player_b
+            and row.get("match_date") == match_date_str
+        )),
+        None,
+    )
+    if idx is None:
+        return False
+
+    new_row, elo_ok = _build_log_row(
+        tour, tournament, surface, match_date, player_a, player_b,
+        pred, val_a, val_b, odds_a, odds_b,
+        odds_a_source, odds_b_source, bookmaker_a, bookmaker_b,
+    )
+    rows[idx] = new_row
+
+    with open(LOG_PATH, "w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=_LOG_FIELDS)
+        w.writeheader()
+        w.writerows(rows)
+
+    if elo_ok:
+        print(f"  Actualizado en {LOG_PATH} (odds cambiaron)")
+    else:
+        missing = [player_a] * (not pred.get("elo_found_a", True)) \
+                + [player_b] * (not pred.get("elo_found_b", True))
+        print(f"  Actualizado como INVALIDO (Elo faltante: {', '.join(missing)}) en {LOG_PATH}")
+    return True
 
 
 # ── display helpers ───────────────────────────────────────────────────────────

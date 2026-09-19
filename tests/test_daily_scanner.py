@@ -461,7 +461,7 @@ class TestScannerGracefulFailures:
 
 
 class TestScannerProducesPicksRegardlessOfDataAge:
-    def test_scanner_produces_picks_with_stale_data(self, monkeypatch):
+    def test_scanner_produces_picks_with_stale_data(self, monkeypatch, tmp_path):
         """daily_scanner.py (unlike scripts/daily_workflow.py) has no
         staleness gate at all -- it logs a value bet using whatever model
         _load_models hands it, regardless of how old that model's
@@ -485,6 +485,7 @@ class TestScannerProducesPicksRegardlessOfDataAge:
         monkeypatch.setattr(scanner, "evaluate_matches", lambda matches, models, halt_on_suspicious=True: [r])
         monkeypatch.setattr("builtins.input", lambda *a: "s")
         monkeypatch.setenv("ODDS_API_KEY", "fake-key")
+        monkeypatch.setattr("src.value_analysis.LOG_PATH", tmp_path / "value_bets_log.csv")
 
         logged = []
         monkeypatch.setattr(scanner, "log_query", lambda *a, **kw: logged.append(kw))
@@ -569,7 +570,7 @@ class TestRunScanDefaultToursIncludesDavis:
 # ── print_value_bets_table ────────────────────────────────────────────────────
 
 class TestRunScanBookmakerLogging:
-    def test_logs_bookmaker_a_and_b_from_match(self, monkeypatch):
+    def test_logs_bookmaker_a_and_b_from_match(self, monkeypatch, tmp_path):
         import src.daily_scanner as scanner
 
         m = scanner.DiscoveredMatch(
@@ -588,6 +589,7 @@ class TestRunScanBookmakerLogging:
         monkeypatch.setattr(scanner, "evaluate_matches", lambda matches, models, halt_on_suspicious=True: [r])
         monkeypatch.setattr("builtins.input", lambda *a: "s")
         monkeypatch.setenv("ODDS_API_KEY", "fake-key")
+        monkeypatch.setattr("src.value_analysis.LOG_PATH", tmp_path / "value_bets_log.csv")
 
         logged = []
         monkeypatch.setattr(scanner, "log_query", lambda *a, **kw: logged.append(kw))
@@ -638,7 +640,7 @@ class TestScannerAutoSave:
     """Cuando auto_save=True, run_scan() guarda value bets sin invocar
     input() — modo no-interactivo para produccion."""
 
-    def test_auto_save_skips_input_prompt(self, monkeypatch):
+    def test_auto_save_skips_input_prompt(self, monkeypatch, tmp_path):
         import src.daily_scanner as scanner
 
         m = scanner.DiscoveredMatch(
@@ -656,6 +658,7 @@ class TestScannerAutoSave:
         monkeypatch.setattr(scanner, "discover_matches", lambda *a, **kw: [m])
         monkeypatch.setattr(scanner, "evaluate_matches", lambda matches, models, halt_on_suspicious=True: [r])
         monkeypatch.setenv("ODDS_API_KEY", "fake-key")
+        monkeypatch.setattr("src.value_analysis.LOG_PATH", tmp_path / "value_bets_log.csv")
 
         logged = []
         monkeypatch.setattr(scanner, "log_query", lambda *a, **kw: logged.append(kw))
@@ -672,7 +675,7 @@ class TestScannerAutoSave:
         assert not input_called[0], "input() should never be called when auto_save=True"
         assert len(logged) == 1, "value bet should be auto-logged"
 
-    def test_auto_save_false_calls_input(self, monkeypatch):
+    def test_auto_save_false_calls_input(self, monkeypatch, tmp_path):
         import src.daily_scanner as scanner
 
         m = scanner.DiscoveredMatch(
@@ -690,6 +693,7 @@ class TestScannerAutoSave:
         monkeypatch.setattr(scanner, "discover_matches", lambda *a, **kw: [m])
         monkeypatch.setattr(scanner, "evaluate_matches", lambda matches, models, halt_on_suspicious=True: [r])
         monkeypatch.setenv("ODDS_API_KEY", "fake-key")
+        monkeypatch.setattr("src.value_analysis.LOG_PATH", tmp_path / "value_bets_log.csv")
 
         logged = []
         monkeypatch.setattr(scanner, "log_query", lambda *a, **kw: logged.append(kw))
@@ -713,7 +717,7 @@ class TestScannerBacksUpBeforeLogging:
     log files before writing to them, but only when it's actually about to
     write (no value bets -> nothing to protect against, no backup noise)."""
 
-    def _wire(self, monkeypatch, has_value_bets: bool):
+    def _wire(self, monkeypatch, has_value_bets: bool, tmp_path):
         import src.daily_scanner as scanner
 
         m = scanner.DiscoveredMatch(
@@ -733,11 +737,12 @@ class TestScannerBacksUpBeforeLogging:
         monkeypatch.setattr(scanner, "log_query", lambda *a, **kw: None)
         monkeypatch.setattr(scanner, "log_prediction_audit", lambda *a, **kw: None)
         monkeypatch.setenv("ODDS_API_KEY", "fake-key")
+        monkeypatch.setattr("src.value_analysis.LOG_PATH", tmp_path / "value_bets_log.csv")
 
-    def test_scanner_backs_up_before_logging(self, monkeypatch):
+    def test_scanner_backs_up_before_logging(self, monkeypatch, tmp_path):
         import src.daily_scanner as scanner
 
-        self._wire(monkeypatch, has_value_bets=True)
+        self._wire(monkeypatch, True, tmp_path)
         backup_calls = []
         monkeypatch.setattr(scanner, "backup_logs", lambda *a, **kw: backup_calls.append(1))
 
@@ -745,13 +750,131 @@ class TestScannerBacksUpBeforeLogging:
 
         assert len(backup_calls) == 1
 
-    def test_scanner_does_not_backup_if_no_value_bets(self, monkeypatch):
+    def test_scanner_does_not_backup_if_no_value_bets(self, monkeypatch, tmp_path):
         import src.daily_scanner as scanner
 
-        self._wire(monkeypatch, has_value_bets=False)
+        self._wire(monkeypatch, False, tmp_path)
         backup_calls = []
         monkeypatch.setattr(scanner, "backup_logs", lambda *a, **kw: backup_calls.append(1))
 
         scanner.run_scan(tours=("wta",), auto_save=True)
 
         assert backup_calls == []
+
+
+def _read_scanner_log_rows(path):
+    import csv as _csv
+    with open(path, newline="", encoding="utf-8") as f:
+        return list(_csv.DictReader(f))
+
+
+class TestScannerDedupBeforeLogging:
+    """Prompted by the 2026-09-19 duplicate-logging finding: a re-scan of
+    an already-logged, still-pending match must not append a second row
+    (which would double-count the position in P&L once the match
+    settles). Uses the real check_existing_log_entry/log_query/
+    update_log_entry against a tmp LOG_PATH -- not mocked, since the
+    point is proving the real dedup decision, not a scanner-level stub."""
+
+    def _match_and_result(self, odds_a=3.80, odds_b=1.37):
+        import src.daily_scanner as scanner
+        from src.features import FEATURE_COLS
+
+        m = scanner.DiscoveredMatch(
+            tour="wta", tournament="WTA Guadalajara Open", surface="hard",
+            match_date=date(2026, 9, 19), player_a="Stearns P.", player_b="Jovic I.",
+            odds_a=odds_a, odds_b=odds_b, raw_home="Peyton Stearns", raw_away="Iva Jovic",
+        )
+        pred = _pred()
+        pred["features"] = {c: 0.0 for c in FEATURE_COLS}
+        r = EvaluatedMatch(
+            match=m, pred=pred, val_a=_val(has_value=True), val_b=_val(has_value=False),
+            elo_ok=True, suspicious=False,
+        )
+        return m, r
+
+    def _wire(self, monkeypatch, r, log_path):
+        import src.daily_scanner as scanner
+
+        monkeypatch.setattr(scanner, "_load_models", lambda tours, retrain: {"wta": (None,) * 6})
+        monkeypatch.setattr(scanner, "_canonical_names", lambda models: {"wta": []})
+        monkeypatch.setattr(scanner, "discover_matches", lambda *a, **kw: [r.match])
+        monkeypatch.setattr(scanner, "evaluate_matches", lambda matches, models, halt_on_suspicious=True: [r])
+        monkeypatch.setattr(scanner, "log_prediction_audit", lambda *a, **kw: None)
+        monkeypatch.setattr(scanner, "backup_logs", lambda *a, **kw: None)
+        monkeypatch.setenv("ODDS_API_KEY", "fake-key")
+        monkeypatch.setattr("src.value_analysis.LOG_PATH", log_path)
+
+    def test_scanner_logs_new_match(self, monkeypatch, tmp_path):
+        import src.daily_scanner as scanner
+
+        log_path = tmp_path / "value_bets_log.csv"
+        _, r = self._match_and_result()
+        self._wire(monkeypatch, r, log_path)
+
+        scanner.run_scan(tours=("wta",), auto_save=True)
+
+        rows = _read_scanner_log_rows(log_path)
+        assert len(rows) == 1
+        assert rows[0]["player_a"] == "Stearns P."
+
+    def test_scanner_skips_duplicate_match(self, monkeypatch, tmp_path):
+        import src.daily_scanner as scanner
+
+        log_path = tmp_path / "value_bets_log.csv"
+        _, r = self._match_and_result(odds_a=3.80)
+        self._wire(monkeypatch, r, log_path)
+
+        scanner.run_scan(tours=("wta",), auto_save=True)  # first run: logs it
+        scanner.run_scan(tours=("wta",), auto_save=True)  # second run: same odds
+
+        rows = _read_scanner_log_rows(log_path)
+        assert len(rows) == 1  # not duplicated
+
+    def test_scanner_updates_changed_odds(self, monkeypatch, tmp_path):
+        import src.daily_scanner as scanner
+
+        log_path = tmp_path / "value_bets_log.csv"
+        _, r_first = self._match_and_result(odds_a=3.80)
+        self._wire(monkeypatch, r_first, log_path)
+        scanner.run_scan(tours=("wta",), auto_save=True)
+
+        # Real regression scenario: odds moved 3.80 -> 3.90 on a re-scan.
+        _, r_second = self._match_and_result(odds_a=3.90)
+        monkeypatch.setattr(scanner, "discover_matches", lambda *a, **kw: [r_second.match])
+        monkeypatch.setattr(scanner, "evaluate_matches", lambda matches, models, halt_on_suspicious=True: [r_second])
+        scanner.run_scan(tours=("wta",), auto_save=True)
+
+        rows = _read_scanner_log_rows(log_path)
+        assert len(rows) == 1  # updated in place, not duplicated
+        assert rows[0]["odds_a"] == "3.9"
+
+    def test_scanner_with_real_value_bets_log(self, monkeypatch, tmp_path):
+        """End-to-end against a realistic seeded row matching the real
+        Stearns/Jovic entry's shape -- proves the whole chain (scan -> dedup
+        check -> update) works against actual value_bets_log.csv content,
+        not just synthetic fixtures."""
+        import src.daily_scanner as scanner
+        from src.value_analysis import log_query
+
+        log_path = tmp_path / "value_bets_log.csv"
+        monkeypatch.setattr("src.value_analysis.LOG_PATH", log_path)
+
+        # Seed with a realistic first entry, mirroring the real incident.
+        _, seed_r = self._match_and_result(odds_a=3.80)
+        log_query(
+            seed_r.match.tour, seed_r.match.tournament, seed_r.match.surface,
+            seed_r.match.match_date, seed_r.match.player_a, seed_r.match.player_b,
+            seed_r.pred, seed_r.val_a, seed_r.val_b, seed_r.match.odds_a, seed_r.match.odds_b,
+            odds_a_source="auto", odds_b_source="auto",
+        )
+        assert len(_read_scanner_log_rows(log_path)) == 1
+
+        _, r = self._match_and_result(odds_a=3.90)
+        self._wire(monkeypatch, r, log_path)
+
+        scanner.run_scan(tours=("wta",), auto_save=True)
+
+        rows = _read_scanner_log_rows(log_path)
+        assert len(rows) == 1
+        assert rows[0]["odds_a"] == "3.9"

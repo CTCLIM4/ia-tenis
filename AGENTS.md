@@ -5,7 +5,7 @@ Tennis match prediction model (ATP/WTA/Davis Cup) with Elo + features + logistic
 
 ## Stack
 - Python 3.14.5, pandas 3.0.3, numpy 2.5.0, sklearn 1.9.0, scipy 1.18.0, matplotlib 3.10
-- pytest 9.1.1, 676 tests all passing
+- pytest 9.1.1, 692 tests all passing
 - Key modules: `src/models/elo.py`, `src/features/engineering.py`, `src/features/decay.py`, `src/backtest/walkforward.py`, `src/data/loader.py`, `src/value_analysis.py`, `src/calibration_audit.py`, `src/calibration_metrics.py`, `src/dashboard.py`, `src/daily_scanner.py`, `src/surface_resolver.py`, `src/player_matcher.py`, `scripts/backup_logs.py`
 
 ## Architecture
@@ -17,7 +17,7 @@ Tennis match prediction model (ATP/WTA/Davis Cup) with Elo + features + logistic
 - **Backtest** (`src/backtest/walkforward.py`): Walk-forward LR evaluation with mirror rows; `return_predictions=True` exposes raw (prob, outcome) pairs (including a mirror-balanced `probs_calibration`/`y_true_calibration` pair) for calibration analysis
 - **Calibration metrics** (`src/calibration_metrics.py`): Reliability/calibration-curve analysis against the large backtest sample (never the small real-bet log — see `docs/metrics/2026-09-18-calibration-investigation.md`)
 - **Dashboard** (`src/dashboard.py`): Backtest accuracy by year, calibration curves, LR feature importance, value-bet history — PNGs to `data/dashboard/` (gitignored, regenerate with `python -m src.dashboard`)
-- **Daily scanner** (`src/daily_scanner.py`): Discovers live matches via The Odds API, no staleness gate (prints warnings only), `--auto-save`, `--in-play` (opt-in, loud warning — model has no live-match-state signal), rate-limit retry with backoff
+- **Daily scanner** (`src/daily_scanner.py`): Discovers live matches via The Odds API, no staleness gate (prints warnings only), `--auto-save`, `--in-play` (opt-in, loud warning — model has no live-match-state signal), rate-limit retry with backoff. Before logging a value bet, calls `check_existing_log_entry()` (`src/value_analysis.py`): a genuinely new match logs normally, odds within 2% of an already-logged pending match is skipped as a duplicate, odds moved >2% updates that row in place (`update_log_entry()`) instead of appending a second one, and a match whose row already has a real result is never touched. Added 2026-09-19 after a re-scan of the same still-pending match logged it twice, which would have double-counted the position once it settled.
 - **Daily workflow** (`scripts/daily_workflow.py`): Stricter automation wrapper — DOES hard-exclude a tour on any staleness (unless `--live-tournament` opts out of that), auto-logs + emails + git-pushes
 - **Runner** (`scripts/run_prediction.py`): download → pipeline → retrain (non-interactive `load_model(tour, retrain=True)`, never the interactive CLI) → scanner --auto-save, `--log` writes `data/logs/daily_{date}.log`
 - **Scheduler** (`scripts/schedule_daily.py`): Builds/removes a Windows Scheduled Task for `run_prediction.py` — not registered by default, run manually to activate
@@ -38,5 +38,5 @@ Tennis match prediction model (ATP/WTA/Davis Cup) with Elo + features + logistic
 `momentum_3_diff`/`momentum_5_diff` are computed by `FeatureBuilder` but deliberately **not** in `FEATURE_COLS` — A/B backtest showed no clear benefit and a small net negative when bundled with the other two additions.
 
 ## Test Coverage
-- 676 tests, all passing
-- Key test areas: backtest (incl. calibration-prediction instrumentation), bankroll simulation, calibration audit, calibration metrics, dashboard, features, Elo, pipeline, value analysis, daily scanner, daily workflow, surface resolver, player matcher, schedule_daily, run_prediction, backup_logs, gitignore protection (real `git ls-files` checks)
+- 692 tests, all passing
+- Key test areas: backtest (incl. calibration-prediction instrumentation), bankroll simulation, calibration audit, calibration metrics, dashboard, features, Elo, pipeline, value analysis (incl. log dedup: `check_existing_log_entry`/`update_log_entry`), daily scanner, daily workflow, surface resolver, player matcher, schedule_daily, run_prediction, backup_logs, gitignore protection (real `git ls-files` checks)
