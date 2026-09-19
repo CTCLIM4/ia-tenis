@@ -5,8 +5,8 @@ Tennis match prediction model (ATP/WTA/Davis Cup) with Elo + features + logistic
 
 ## Stack
 - Python 3.14.5, pandas 3.0.3, numpy 2.5.0, sklearn 1.9.0, scipy 1.18.0, matplotlib 3.10
-- pytest 9.1.1, 663 tests all passing
-- Key modules: `src/models/elo.py`, `src/features/engineering.py`, `src/features/decay.py`, `src/backtest/walkforward.py`, `src/data/loader.py`, `src/value_analysis.py`, `src/calibration_audit.py`, `src/calibration_metrics.py`, `src/dashboard.py`, `src/daily_scanner.py`, `src/surface_resolver.py`, `src/player_matcher.py`
+- pytest 9.1.1, 676 tests all passing
+- Key modules: `src/models/elo.py`, `src/features/engineering.py`, `src/features/decay.py`, `src/backtest/walkforward.py`, `src/data/loader.py`, `src/value_analysis.py`, `src/calibration_audit.py`, `src/calibration_metrics.py`, `src/dashboard.py`, `src/daily_scanner.py`, `src/surface_resolver.py`, `src/player_matcher.py`, `scripts/backup_logs.py`
 
 ## Architecture
 - **EloSystem** (`src/models/elo.py`): General + surface Elo ratings with yearly decay, K-factor based on match count
@@ -21,6 +21,7 @@ Tennis match prediction model (ATP/WTA/Davis Cup) with Elo + features + logistic
 - **Daily workflow** (`scripts/daily_workflow.py`): Stricter automation wrapper — DOES hard-exclude a tour on any staleness (unless `--live-tournament` opts out of that), auto-logs + emails + git-pushes
 - **Runner** (`scripts/run_prediction.py`): download → pipeline → retrain (non-interactive `load_model(tour, retrain=True)`, never the interactive CLI) → scanner --auto-save, `--log` writes `data/logs/daily_{date}.log`
 - **Scheduler** (`scripts/schedule_daily.py`): Builds/removes a Windows Scheduled Task for `run_prediction.py` — not registered by default, run manually to activate
+- **Log backups** (`scripts/backup_logs.py`): timestamped `shutil.copy2` backups of `data/prediction_audit_log.csv`/`data/value_bets_log.csv` to `data/logs/backup_{timestamp}_{filename}.csv` (gitignored, rotated to the last 7 per file), called by `daily_scanner.py` right before it writes any value bets. Second line of defense alongside both log files being git-tracked (`!`-negated in `.gitignore`) — added after a 2026-09-19 incident where an ad-hoc dedup script deleted 26 rows from the then-untracked audit log (no unique data was actually lost — see `docs/metrics/2026-09-19-audit-log-protection.md` — but the file had no recovery path at the time)
 - **Data Loading** (`src/data/loader.py`): ATP (Tennismylife API) and WTA (tennis-data.co.uk, scraped live for current URLs) loaders; `load_davis_cup_matches` filters the ATP feed by `tourney_level == "D"` — tennis-data.co.uk has no separate Davis Cup source
 - **Config** (`src/config.py`): Environment variables, MIN_MATCHES_THRESHOLD=25, MAX_SUSPICIOUS_EDGE=0.10
 
@@ -37,5 +38,5 @@ Tennis match prediction model (ATP/WTA/Davis Cup) with Elo + features + logistic
 `momentum_3_diff`/`momentum_5_diff` are computed by `FeatureBuilder` but deliberately **not** in `FEATURE_COLS` — A/B backtest showed no clear benefit and a small net negative when bundled with the other two additions.
 
 ## Test Coverage
-- 663 tests, all passing
-- Key test areas: backtest (incl. calibration-prediction instrumentation), bankroll simulation, calibration audit, calibration metrics, dashboard, features, Elo, pipeline, value analysis, daily scanner, daily workflow, surface resolver, player matcher, schedule_daily, run_prediction
+- 676 tests, all passing
+- Key test areas: backtest (incl. calibration-prediction instrumentation), bankroll simulation, calibration audit, calibration metrics, dashboard, features, Elo, pipeline, value analysis, daily scanner, daily workflow, surface resolver, player matcher, schedule_daily, run_prediction, backup_logs, gitignore protection (real `git ls-files` checks)
