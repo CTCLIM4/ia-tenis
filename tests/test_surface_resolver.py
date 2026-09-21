@@ -51,6 +51,13 @@ class TestTournamentDictionaryFallback:
         # Open, excluding it from the automated scan entirely.
         assert resolve_surface("WTA Guadalajara Open", "tennis_wta_guadalajara_open") == "hard"
 
+    def test_singapore_open(self):
+        # WTA 250, indoor hard courts, OCBC Arena -- confirmed via
+        # wtatennis.com and Wikipedia 2026-09-21. Showed up unresolved in
+        # the live Odds API feed ("WTA Singapore Open") during the
+        # 2026-09-21 scan, excluding it from the automated scan entirely.
+        assert resolve_surface("WTA Singapore Open", "tennis_wta_singapore_open") == "hard"
+
 
 class TestFallSwingCoverage:
     """Proactive coverage for the Sept-Oct 2026 Asian hard-court swing --
@@ -109,6 +116,7 @@ class TestAllCurrentLiveTournaments:
         # scenario whenever new tournaments start showing up unresolved.
         live_sports = [
             {"key": "tennis_wta_guadalajara_open", "title": "WTA Guadalajara Open"},
+            {"key": "tennis_wta_singapore_open", "title": "WTA Singapore Open"},
         ]
         unresolved = [s for s in live_sports if resolve_surface(s["title"], s["key"]) is None]
         assert unresolved == []
