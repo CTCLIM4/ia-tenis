@@ -40,6 +40,33 @@ class TestDisambiguation:
         assert match_player_name("K. Pliskova", canonical) is None
 
 
+class TestTruncatedFirstNameCollisions:
+    """Real bug found 2026-09-21 scanning WTA Singapore Open: the dataset
+    disambiguates same-initial collisions with a longer truncated first
+    name ("Wang Xin.", "Wang Xiy.") instead of a bare single letter.
+    normalize_name() strips the period before surname()/first_initial()
+    ever see it, so a >1-char truncated token was indistinguishable from a
+    real "Firstname Surname" full name -- "Wang Xin." parsed as
+    surname="xin", initial="w", so "Xinyu Wang" (surname=wang, initial=x)
+    matched NEITHER "Wang Xin." nor "Wang Xiy." on surname, and instead
+    silently matched the unrelated, near-empty-sample "Wang X." (7
+    matches) through the single-candidate path -- feeding the model a
+    near-fresh player's Elo for a 233-match veteran and producing a
+    bogus 27% edge that only got caught by the suspicious-edge halt."""
+
+    def test_truncated_first_name_no_longer_misparsed_as_surname(self):
+        canonical = ["Wang X.", "Wang Xin.", "Wang Xiy."]
+        # Ambiguous by design once surname is parsed correctly (three
+        # same-surname, same-initial candidates) -- refusing to guess is
+        # correct here, matching the Pliskova-sisters precedent, and far
+        # safer than the old silent wrong-match.
+        assert match_player_name("Xinyu Wang", canonical) is None
+
+    def test_truncated_first_name_still_matches_when_unambiguous(self):
+        canonical = ["Wang Xin.", "Alcaraz Garfia"]
+        assert match_player_name("Xinyu Wang", canonical) == "Wang Xin."
+
+
 class TestNoMatch:
     def test_unknown_player_returns_none(self):
         canonical = ["Novak Djokovic", "Jannik Sinner"]

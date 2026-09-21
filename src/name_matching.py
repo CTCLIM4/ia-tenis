@@ -22,13 +22,34 @@ def normalize_name(name: str) -> str:
     return re.sub(r"\s+", " ", ascii_name).strip().lower()
 
 
+def _tagged_tokens(name: str) -> list[tuple[str, bool]]:
+    """Split into normalized tokens, each paired with whether the ORIGINAL
+    (pre-normalize) token ended with a period. normalize_name() strips
+    periods, so this has to run on the raw string first -- a trailing
+    period is the only reliable signal that a token is a truncated first
+    name (e.g. "Xin." disambiguating "Wang Xin." from another "Wang X."),
+    which can be more than one letter and would otherwise be
+    indistinguishable from a real surname."""
+    tagged = []
+    for raw in name.split():
+        had_period = raw.endswith(".")
+        norm = normalize_name(raw)
+        if norm:
+            tagged.append((norm, had_period))
+    return tagged
+
+
 def surname(name: str) -> str:
-    parts = normalize_name(name).split(" ")
-    # Drop single-character tokens (initials like "a" in "Sabalenka A.")
-    # so the surname is identified consistently regardless of whether the
-    # source lists it first ("Sabalenka A.") or last ("Aryna Sabalenka").
-    surname_parts = [p for p in parts if len(p) > 1]
-    return surname_parts[-1] if surname_parts else (parts[-1] if parts else "")
+    tokens = _tagged_tokens(name)
+    if not tokens:
+        return ""
+    # A token is an abbreviated first-name fragment -- never the surname --
+    # if the original ended with a period ("A." or the longer "Xin.") or
+    # it's a bare single letter even without one. Whatever's left is the
+    # surname; when the source lists it first ("Sabalenka A.") that's the
+    # sole remaining token, when last ("Aryna Sabalenka") it's the last one.
+    non_abbrev = [tok for tok, had_period in tokens if not (had_period or len(tok) <= 1)]
+    return non_abbrev[-1] if non_abbrev else tokens[-1][0]
 
 
 def first_initial(name: str) -> str:
