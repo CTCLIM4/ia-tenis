@@ -58,6 +58,15 @@ class TestTournamentDictionaryFallback:
         # 2026-09-21 scan, excluding it from the automated scan entirely.
         assert resolve_surface("WTA Singapore Open", "tennis_wta_singapore_open") == "hard"
 
+    def test_seoul_korea_open(self):
+        # WTA 250, outdoor hard courts, Olympic Park Tennis Center --
+        # confirmed via wtatennis.com and Wikipedia 2026-09-21 (Sept 21-27
+        # 2026). Officially "Korea Open" but commonly referred to as
+        # "Seoul" -- mapped under both names since it's unknown which one
+        # a given Odds API feed uses for sport_title.
+        assert resolve_surface("WTA Seoul", "tennis_wta_seoul") == "hard"
+        assert resolve_surface("WTA Korea Open", "tennis_wta_korea_open") == "hard"
+
 
 class TestFallSwingCoverage:
     """Proactive coverage for the Sept-Oct 2026 Asian hard-court swing --
@@ -117,6 +126,7 @@ class TestAllCurrentLiveTournaments:
         live_sports = [
             {"key": "tennis_wta_guadalajara_open", "title": "WTA Guadalajara Open"},
             {"key": "tennis_wta_singapore_open", "title": "WTA Singapore Open"},
+            {"key": "tennis_wta_seoul", "title": "WTA Seoul"},
         ]
         unresolved = [s for s in live_sports if resolve_surface(s["title"], s["key"]) is None]
         assert unresolved == []

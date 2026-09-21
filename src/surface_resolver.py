@@ -51,6 +51,8 @@ TOURNAMENT_SURFACES = {
     "china open": "hard",
     "wuhan": "hard",
     "singapore": "hard",
+    "seoul": "hard",
+    "korea open": "hard",
 }
 
 
