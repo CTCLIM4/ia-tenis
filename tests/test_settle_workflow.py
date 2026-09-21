@@ -42,6 +42,16 @@ class TestBetSide:
     def test_side_b_when_kelly_b_positive(self):
         assert settle._bet_side(_row(kelly_a="0.0", kelly_b="0.014")) == "b"
 
+    def test_side_b_when_both_positive_but_b_is_larger(self):
+        # Real case: 2026-09-19 Stearns/Jovic row had both sides showing
+        # edge (different bookmakers, betfair vs onexbet) — kelly_a=0.0025,
+        # kelly_b=0.0171. The dominant recommended position (6.8x bigger)
+        # was on B, not the "a wins if kelly_a>0" default.
+        assert settle._bet_side(_row(kelly_a="0.0025", kelly_b="0.0171")) == "b"
+
+    def test_side_a_when_both_positive_but_a_is_larger(self):
+        assert settle._bet_side(_row(kelly_a="0.03", kelly_b="0.01")) == "a"
+
 
 class TestComputeProfit:
     def test_win_on_bet_side_a(self):

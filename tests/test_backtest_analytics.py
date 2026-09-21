@@ -39,6 +39,12 @@ _BETS_ROWS = [
 # no has_value gate (see src/value_analysis.py around line 1114).
 _ZERO_STAKE_ROW = "atp,2026-01-07,ok,A_win,0.0,0.0,2.0,1.9,0.0,0.0,0.0"
 
+# Row G: both sides positive Kelly — odds_a/odds_b came from two different
+# bookmakers (no shared vig constraint), so edge_a + edge_b <= 0 does not
+# hold across books. Real case: 2026-09-19 Stearns/Jovic (kelly_a=0.0025,
+# kelly_b=0.0171) — the dominant position (6.8x bigger) was on B.
+_DUAL_KELLY_ROW = "wta,2026-01-08,ok,B_win,0.0025,0.0171,3.9,1.37,0.0287,0.0086,0.006327"
+
 
 def _write_bets_csv(tmp_path, rows=_BETS_ROWS):
     path = tmp_path / "value_bets_log.csv"
@@ -85,6 +91,15 @@ class TestLoadResolvedBets:
         df = load_resolved_bets(_write_bets_csv(tmp_path, rows))
         assert len(df) == 2
         assert set(df["match_date"].dt.strftime("%Y-%m-%d")) == {"2026-01-01", "2026-01-02"}
+
+    def test_bet_side_picks_larger_kelly_when_both_positive(self, tmp_path):
+        rows = _BETS_ROWS + [_DUAL_KELLY_ROW]
+        df = load_resolved_bets(_write_bets_csv(tmp_path, rows))
+        row = df[df["match_date"] == "2026-01-08"].iloc[0]
+        assert row["bet_side"] == "b"
+        assert row["stake"] == pytest.approx(0.0171)
+        assert row["odds_taken"] == pytest.approx(1.37)
+        assert row["ev_theoretical"] == pytest.approx(0.0086)
 
 
 def _synthetic_resolved_df():

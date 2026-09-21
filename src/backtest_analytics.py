@@ -39,9 +39,12 @@ def load_resolved_bets(path: str, tour: Optional[str] = None) -> pd.DataFrame:
     without a real bet — reachable via the interactive CLI's save prompt.
 
     Derives per-row bet_side/stake/odds_taken/ev_theoretical/win from
-    whichever side (a/b) actually has kelly_<side> > 0 — deterministic since
-    edge_a + edge_b <= 0 always (bookmaker vig), so at most one side can have
-    positive Kelly for a given row.
+    whichever side (a/b) has the larger Kelly fraction. Usually only one
+    side is positive at all (edge_a + edge_b <= 0 within a single
+    bookmaker's vig), but odds_a/odds_b can come from two different
+    bookmakers with no shared vig constraint, so both sides can show a
+    positive edge on the same row — the dominant position is whichever
+    side actually got the bigger stake.
     """
     df = pd.read_csv(path)
     df = df[(df["status"] == "ok") & (df["result"].isin(["A_win", "B_win"]))].copy()
@@ -53,7 +56,7 @@ def load_resolved_bets(path: str, tour: Optional[str] = None) -> pd.DataFrame:
     # a no-edge match), so there's nothing to attribute a bet_side/stake to.
     df = df[(df["kelly_a"] > 0) | (df["kelly_b"] > 0)].copy()
 
-    bet_side = df["kelly_a"].gt(0).map({True: "a", False: "b"})
+    bet_side = df["kelly_a"].ge(df["kelly_b"]).map({True: "a", False: "b"})
     df["bet_side"] = bet_side
     df["stake"] = df["kelly_a"].where(bet_side == "a", df["kelly_b"])
     df["odds_taken"] = df["odds_a"].where(bet_side == "a", df["odds_b"])

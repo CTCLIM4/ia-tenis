@@ -59,8 +59,15 @@ def _write_rows(path: str, rows: list[dict], fieldnames: list[str]) -> None:
 
 def _bet_side(row: dict) -> str:
     """Which side ('a' or 'b') actually carries the Kelly stake on this row —
-    see src.backtest_analytics.load_resolved_bets, same convention."""
-    return "a" if float(row.get("kelly_a") or 0) > 0 else "b"
+    see src.backtest_analytics.load_resolved_bets, same convention.
+
+    Picks the larger of the two: normally only one side has a positive
+    Kelly fraction, but different bookmaker sources for odds_a/odds_b can
+    each show their own (small) edge on the same match — the dominant
+    position is whichever side actually got the bigger stake."""
+    kelly_a = float(row.get("kelly_a") or 0)
+    kelly_b = float(row.get("kelly_b") or 0)
+    return "a" if kelly_a >= kelly_b else "b"
 
 
 def _compute_profit(row: dict, winner_side: str) -> tuple[str, float]:
