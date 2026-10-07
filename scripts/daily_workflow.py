@@ -64,6 +64,13 @@ from src.value_analysis import (
 
 MIN_EDGE = 0.03
 KELLY_DIVISOR = 4
+# Tours still scanned and written to the prediction audit log, but never
+# auto-logged as bets or emailed. WTA excluded since 2026-10-07: replaying
+# this exact rule on out-of-sample WTA predictions against historical market
+# odds lost -12.3% flat over 9,038 bets, worse than betting every side
+# (docs/metrics/2026-10-07-model-vs-market-edge.md). Remove a tour only with
+# new evidence of edge from scripts/market_edge_backtest.py.
+AUTO_LOG_EXCLUDED_TOURS = frozenset({"wta"})
 VALUE_BETS_LOG = "data/value_bets_log.csv"
 
 
@@ -172,6 +179,10 @@ def run(
         backup_logs(files=(AUDIT_LOG_PATH, value_analysis.LOG_PATH), backup_dir=_ROOT / "data" / "logs")
     for r, qualifies_a, qualifies_b in graded:
         if not (qualifies_a or qualifies_b):
+            continue
+        if r.match.tour in AUTO_LOG_EXCLUDED_TOURS:
+            print(f"  {r.match.player_a} vs {r.match.player_b}: pick {r.match.tour.upper()} no registrado "
+                  f"(tour excluido del auto-registro: sin edge demostrado frente al mercado).")
             continue
 
         status = LogMatchStatus.NEW

@@ -201,6 +201,27 @@ class TestRun:
         assert len(selected) == 1
         assert selected[0]["pick"] == "Strong Pick"
 
+    def test_wta_pick_is_audited_but_never_logged_or_emailed(self, monkeypatch):
+        # WTA excluded from auto-logging (docs/metrics/2026-10-07-model-vs-market-edge.md):
+        # still scanned and audited for calibration, but no bet row, no email pick.
+        wta_r = _result(match=_match(player_a="WTA Pick", tour="wta"),
+                        val_a=_val(edge=0.05, kelly=0.04, has_value=True))
+        atp_r = _result(match=_match(player_a="ATP Pick", tour="atp"),
+                        val_a=_val(edge=0.05, kelly=0.04, has_value=True))
+        self._wire_common(monkeypatch, [wta_r, atp_r])
+
+        selected = workflow.run()
+
+        assert [s["pick"] for s in selected] == ["ATP Pick"]
+        assert [a[4] for a, _kw in self.logged_queries] == ["ATP Pick"]  # player_a
+        assert [p["pick"] for p in self.sent["picks"]] == ["ATP Pick"]
+        assert len(self.audit_decisions) == 2
+        assert wta_r.val_a["kelly_fraction"] == 0.04  # untouched: never staked
+
+    def test_wta_is_in_excluded_tours(self):
+        assert "wta" in workflow.AUTO_LOG_EXCLUDED_TOURS
+        assert "atp" not in workflow.AUTO_LOG_EXCLUDED_TOURS
+
     def test_applies_quarter_kelly_to_qualifying_side(self, monkeypatch):
         r = _result(val_a=_val(edge=0.05, kelly=0.04, has_value=True))
         self._wire_common(monkeypatch, [r])
