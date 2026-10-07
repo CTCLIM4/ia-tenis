@@ -1,0 +1,161 @@
+"""Backtest the model's betting edge against historical WTA market odds.
+
+Uso:
+  python -m scripts.market_edge_backtest
+
+Global calibration (src/calibration_metrics.py) asks "is P(win) right on
+average?". This asks the betting question: on the matches where the model
+disagrees with the market by enough to bet, who is right? Out-of-sample WTA
+predictions (same walk-forward as src.backtest.walkforward, warmup 10 years,
+production shrinkage) are joined to Tennis-Data's historical odds (average,
+Bet365, max; Pinnacle until 2025) and the production selection rule is
+replayed: MIN_EDGE <= p - 1/odds <= MAX_SUSPICIOUS_EDGE, Kelly/4 capped at
+KELLY_CAP. WTA only: the ATP source (Tennismylife) carries no odds.
+
+See docs/metrics/2026-10-07-model-vs-market-edge.md.
+"""
+from __future__ import annotations
+
+import sys
+import warnings
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import brier_score_loss, log_loss
+from sklearn.preprocessing import StandardScaler
+
+_ROOT = Path(__file__).resolve().parent.parent
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+
+from scripts.daily_workflow import KELLY_DIVISOR, MIN_EDGE
+from src.backtest.walkforward import _FEATURE_COLS, load_features_with_mirror
+from src.config import MAX_SUSPICIOUS_EDGE
+from src.value_analysis import KELLY_CAP, apply_shrinkage
+
+WARMUP_YEARS = 10
+ODDS_COLS = ["PSW", "PSL", "B365W", "B365L", "MaxW", "MaxL", "AvgW", "AvgL"]
+
+
+def out_of_sample_predictions(features_path: Path) -> pd.DataFrame:
+    df = load_features_with_mirror(features_path)
+    years = sorted(df[~df["is_mirror"]]["year"].unique())
+    frames = []
+    for test_year in years[WARMUP_YEARS:]:
+        train = df[df["year"] < test_year]
+        test = df[(df["year"] == test_year) & ~df["is_mirror"]]
+        scaler = StandardScaler()
+        X_train = scaler.fit_transform(train[_FEATURE_COLS].fillna(0.0).values)
+        clf = LogisticRegression(C=1.0, max_iter=1000, random_state=42).fit(X_train, train["outcome"].values)
+        probs = clf.predict_proba(scaler.transform(test[_FEATURE_COLS].fillna(0.0).values))[:, 1]
+        out = test[["match_date", "year", "winner", "loser"]].copy()
+        out["p"] = [apply_shrinkage(p) for p in probs]
+        frames.append(out)
+    pred = pd.concat(frames, ignore_index=True)
+    pred["match_date"] = pd.to_datetime(pred["match_date"]).dt.normalize()
+    return pred
+
+
+def historical_odds(raw_dir: Path) -> pd.DataFrame:
+    frames = []
+    for path in sorted(raw_dir.glob("20*w.xls*")):
+        x = pd.read_excel(path)
+        frames.append(x[["Date", "Winner", "Loser"] + [c for c in ODDS_COLS if c in x]])
+    odds = pd.concat(frames, ignore_index=True)
+    odds["match_date"] = pd.to_datetime(odds["Date"], errors="coerce").dt.normalize()
+    odds = odds.rename(columns={"Winner": "winner", "Loser": "loser"}).drop(columns="Date")
+    for col in ODDS_COLS:
+        odds[col] = pd.to_numeric(odds.get(col), errors="coerce")
+    # A (date, winner, loser) key seen twice can't be attributed safely.
+    return odds.drop_duplicates(["match_date", "winner", "loser"], keep=False)
+
+
+def _devig(own: pd.Series, other: pd.Series) -> pd.Series:
+    return (1 / own) / (1 / own + 1 / other)
+
+
+def bet_sides(matches: pd.DataFrame) -> pd.DataFrame:
+    """One row per side of each match: winner side (y=1) and loser side (y=0)."""
+    sides = []
+    for own, other, p, y in (("W", "L", matches["p"], 1), ("L", "W", 1 - matches["p"], 0)):
+        sides.append(pd.DataFrame({
+            "year": matches["year"], "p": p, "y": y,
+            "q": _devig(matches[f"Avg{own}"], matches[f"Avg{other}"]),
+            "q_ps": _devig(matches[f"PS{own}"], matches[f"PS{other}"]),
+            "avg": matches[f"Avg{own}"], "b365": matches[f"B365{own}"], "max": matches[f"Max{own}"],
+        }))
+    return pd.concat(sides, ignore_index=True)
+
+
+def select_bets(sides: pd.DataFrame, price: str) -> pd.DataFrame:
+    odds = sides[price]
+    edge = sides["p"] - 1 / odds
+    bets = sides[(odds > 1) & (edge >= MIN_EDGE) & (edge <= MAX_SUSPICIOUS_EDGE)].copy()
+    bets["odds"] = bets[price]
+    bets["edge"] = edge[bets.index]
+    bets["ev"] = bets["p"] * (bets["odds"] - 1) - (1 - bets["p"])
+    bets["stake"] = np.minimum(bets["edge"] / (bets["odds"] - 1), KELLY_CAP) / KELLY_DIVISOR
+    bets["ret"] = np.where(bets["y"] == 1, bets["odds"] - 1, -1.0)
+    return bets
+
+
+def _bootstrap_ci(x: np.ndarray, n: int = 2000, seed: int = 0) -> tuple[float, float]:
+    rng = np.random.default_rng(seed)
+    means = [rng.choice(x, len(x)).mean() for _ in range(n)]
+    lo, hi = np.percentile(means, [2.5, 97.5])
+    return float(lo), float(hi)
+
+
+def _summary(bets: pd.DataFrame, by: str) -> pd.DataFrame:
+    return bets.groupby(by, observed=True).agg(
+        N=("y", "size"), model_p=("p", "mean"), market_q=("q", "mean"),
+        actual=("y", "mean"), EV=("ev", "mean"), ROI=("ret", "mean"),
+    ).round(3)
+
+
+def main() -> None:
+    warnings.filterwarnings("ignore")  # openpyxl "unknown extension" noise
+    pred = out_of_sample_predictions(_ROOT / "data/processed/wta_features.csv")
+    matches = pred.merge(historical_odds(_ROOT / "data/raw/tennis_wta_tduk"),
+                         on=["match_date", "winner", "loser"], how="left")
+    matches = matches[matches["AvgW"].gt(1) & matches["AvgL"].gt(1)]
+    sides = bet_sides(matches)
+    print(f"Out-of-sample WTA {int(matches['year'].min())}-{int(matches['year'].max())}: "
+          f"{len(pred)} predictions, {len(matches)} with market odds\n")
+
+    print("A. Accuracy over every side of every match")
+    print(f"  model                  log-loss {log_loss(sides['y'], sides['p']):.4f}  "
+          f"brier {brier_score_loss(sides['y'], sides['p']):.4f}")
+    print(f"  market avg (de-vigged) log-loss {log_loss(sides['y'], sides['q']):.4f}  "
+          f"brier {brier_score_loss(sides['y'], sides['q']):.4f}")
+    ps = sides.dropna(subset=["q_ps"])
+    print(f"  Pinnacle subset: model {log_loss(ps['y'], ps['p']):.4f} vs Pinnacle {log_loss(ps['y'], ps['q_ps']):.4f}")
+    blends = {a: log_loss(sides["y"], a * sides["p"] + (1 - a) * sides["q"]) for a in np.linspace(0, 1, 21)}
+    best = min(blends, key=blends.get)
+    print(f"  best blend a*model + (1-a)*market: a={best:.2f} (log-loss {blends[best]:.4f})\n")
+
+    print(f"B. Production rule ({MIN_EDGE:.0%} <= edge <= {MAX_SUSPICIOUS_EDGE:.0%}, "
+          f"Kelly/{KELLY_DIVISOR} cap {KELLY_CAP:.0%})")
+    for price, label in (("avg", "market average odds"), ("b365", "Bet365"), ("max", "best odds (optimistic)")):
+        bets = select_bets(sides, price)
+        lo, hi = _bootstrap_ci(bets["ret"].to_numpy())
+        kelly_roi = (bets["stake"] * bets["ret"]).sum() / bets["stake"].sum()
+        print(f"  [{label}] N={len(bets)}  model p {bets['p'].mean():.3f} | market q {bets['q'].mean():.3f} | "
+              f"actual {bets['y'].mean():.3f}\n"
+              f"    EV theoretical {bets['ev'].mean():+.1%} | ROI flat {bets['ret'].mean():+.1%} "
+              f"(95% CI {lo:+.1%}..{hi:+.1%}) | ROI Kelly-weighted {kelly_roi:+.1%}")
+    base = sides.assign(ret=np.where(sides["y"] == 1, sides["avg"] - 1, -1.0))
+    print(f"  baseline, bet every side at avg odds: ROI {base['ret'].mean():+.1%}\n")
+
+    bets = select_bets(sides, "avg")
+    bets["odds_band"] = pd.cut(bets["odds"], [1, 1.5, 2, 3, 5, 100])
+    bets["edge_band"] = pd.cut(bets["edge"], [MIN_EDGE, 0.05, 0.07, MAX_SUSPICIOUS_EDGE])
+    print("C. Selected bets (avg odds) by odds band\n" + _summary(bets, "odds_band").to_string() + "\n")
+    print("D. By edge band\n" + _summary(bets, "edge_band").to_string() + "\n")
+    print("E. By year\n" + _summary(bets, "year")[["N", "EV", "ROI"]].T.to_string())
+
+
+if __name__ == "__main__":
+    main()
