@@ -188,3 +188,49 @@ class TestCreateTask:
         schedule_daily.create_task(hour=8, minute=0, task_name="test-task")
 
         assert (tmp_path / "data" / "logs").is_dir()
+
+
+class TestCreateOddsSnapshotTask:
+    def _create(self, monkeypatch, root, **kw):
+        calls = []
+
+        def fake_run(cmd, **kwargs):
+            calls.append(cmd)
+            return _FakeCompletedProcess(returncode=0)
+
+        monkeypatch.setattr(schedule_daily.subprocess, "run", fake_run)
+        monkeypatch.setattr(schedule_daily, "_ROOT", root)
+        schedule_daily.create_odds_snapshot_task(task_name="test-snap", **kw)
+        return next(c for c in calls if "/create" in c)
+
+    def test_runs_hourly_every_n_hours(self, monkeypatch, tmp_path):
+        cmd = self._create(monkeypatch, tmp_path, hour=1, minute=0, every_hours=6)
+        assert cmd[cmd.index("/sc") + 1] == "hourly"
+        assert cmd[cmd.index("/mo") + 1] == "6"
+        assert cmd[cmd.index("/st") + 1] == "01:00"
+
+    def test_rejects_invalid_interval_before_touching_schtasks(self, monkeypatch, tmp_path):
+        monkeypatch.setattr(schedule_daily.subprocess, "run",
+                            lambda *a, **kw: (_ for _ in ()).throw(AssertionError("schtasks called")))
+        with pytest.raises(ValueError):
+            schedule_daily.create_odds_snapshot_task(every_hours=0, task_name="test-snap")
+
+    def test_generated_command_is_accepted_by_snapshot_odds_argparse(self, monkeypatch, tmp_path):
+        # Same lesson as the daily task: the launcher's real command must
+        # parse against the target script's real argparse.
+        import scripts.snapshot_odds as snapshot_odds
+
+        deep_root = tmp_path / ("x" * 60) / ("y" * 60)
+        monkeypatch.setattr(schedule_daily.sys, "executable", str(deep_root / ("venv" * 20) / "python.exe"))
+        cmd = self._create(monkeypatch, deep_root)
+        task_command = cmd[cmd.index("/tr") + 1]
+        assert len(task_command) <= schedule_daily.MAX_TR_LENGTH
+        lines = Path(task_command.strip('"')).read_text(encoding="utf-8").splitlines()
+        assert lines[1] == f'cd /d "{deep_root}"'
+        parts = shlex.split(lines[-1], posix=False)
+        assert parts[1].strip('"').endswith("snapshot_odds.py")
+        script_args = [p.strip('"') for p in parts[2:parts.index(">>")]]
+        try:
+            snapshot_odds.build_parser().parse_args(script_args)
+        except SystemExit:
+            pytest.fail(f"snapshot_odds.py rejects the scheduled command's arguments: {script_args}")
