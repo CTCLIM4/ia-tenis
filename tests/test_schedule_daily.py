@@ -4,6 +4,7 @@ touch the real schtasks database."""
 from __future__ import annotations
 
 import shlex
+from pathlib import Path
 
 import pytest
 
@@ -140,7 +141,8 @@ class TestCreateTask:
         schedule_daily.create_task(hour=8, minute=0, task_name="test-task")
 
         create_cmd = next(c for c in calls if "/create" in c)
-        command_str = create_cmd[create_cmd.index("/tr") + 1]
+        launcher = create_cmd[create_cmd.index("/tr") + 1].strip('"')
+        command_str = Path(launcher).read_text(encoding="utf-8").splitlines()[-1]
         parts = shlex.split(command_str, posix=False)
         script_args = [p.strip('"') for p in parts[2:]]
 
@@ -150,6 +152,31 @@ class TestCreateTask:
             pytest.fail(
                 f"run_prediction.py rejects the scheduled command's arguments: {script_args}"
             )
+
+    def test_task_command_fits_schtasks_limit_in_deep_checkout(self, monkeypatch, tmp_path):
+        # Regression (2026-10-07): with the full venv + script paths of the
+        # production checkout, the /tr value exceeded schtasks' 261-char
+        # limit and registration failed. The task must point at a short
+        # launcher whose content is the real command, run from the repo root.
+        calls = []
+
+        def fake_run(cmd, **kw):
+            calls.append(cmd)
+            return _FakeCompletedProcess(returncode=0)
+
+        deep_root = tmp_path / ("x" * 60) / ("y" * 60)
+        monkeypatch.setattr(schedule_daily.subprocess, "run", fake_run)
+        monkeypatch.setattr(schedule_daily, "_ROOT", deep_root)
+        monkeypatch.setattr(schedule_daily.sys, "executable", str(deep_root / ("venv" * 20) / "python.exe"))
+
+        schedule_daily.create_task(hour=8, minute=0, task_name="test-task")
+
+        create_cmd = next(c for c in calls if "/create" in c)
+        task_command = create_cmd[create_cmd.index("/tr") + 1]
+        assert len(task_command) <= schedule_daily.MAX_TR_LENGTH
+        content = Path(task_command.strip('"')).read_text(encoding="utf-8")
+        assert f'cd /d "{deep_root}"' in content
+        assert "run_prediction.py" in content.splitlines()[-1]
 
     def test_creates_log_directory(self, monkeypatch, tmp_path):
         monkeypatch.setattr(
