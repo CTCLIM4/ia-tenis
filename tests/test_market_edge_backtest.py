@@ -78,3 +78,24 @@ def test_atp_join_uses_tournament_window_and_drops_ambiguous_pairs():
     assert joined["AvgW"].tolist()[0] == 1.02
     assert pd.isna(joined["AvgW"].tolist()[1])
     assert joined["AvgW"].tolist()[2] == 1.10
+
+
+def test_anchored_predictions_are_symmetric_and_walk_forward():
+    import numpy as np
+    rng = np.random.default_rng(0)
+    rows = []
+    for year in range(2010, 2015):
+        for _ in range(60):
+            w, l = rng.uniform(1.2, 3.5, 2)
+            row = {c: rng.normal() for c in meb._FEATURE_COLS}
+            row.update(elo_prob=rng.uniform(0.2, 0.8), h2h_rate=rng.uniform(0, 1))
+            row.update(year=year, p=rng.uniform(0.2, 0.8), AvgW=w, AvgL=l, PSW=w, PSL=l,
+                       B365W=w, B365L=l, MaxW=w, MaxL=l)
+            rows.append(row)
+    out = meb.anchored_predictions(pd.DataFrame(rows))
+    assert sorted(out["year"].unique()) == [2013, 2014]  # first 3 odds years only train
+    n = len(out) // 2
+    for col in ("M1", "M2", "M3"):
+        winner_side = out[out["y"] == 1][col].to_numpy()
+        loser_side = out[out["y"] == 0][col].to_numpy()
+        assert winner_side + loser_side == pytest.approx(np.ones(n))

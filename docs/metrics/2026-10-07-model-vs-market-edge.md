@@ -1,6 +1,6 @@
 # Modelo vs mercado: el edge no se sostiene — 2026-10-07
 
-Reproducir: `python -m scripts.market_edge_backtest [--tour wta|atp]`.
+Reproducir: `python -m scripts.market_edge_backtest [--tour wta|atp] [--anchored]`.
 
 ## Pregunta
 
@@ -17,46 +17,83 @@ donde discrepa, si el mercado es más informativo (selección adversa).
 
 ## Método
 
-- Predicciones fuera de muestra del walk-forward WTA (mismo esquema que
+- Predicciones fuera de muestra del walk-forward (mismo esquema que
   `src/backtest/walkforward.py`: entrenar con años anteriores, warmup de
-  10 años, shrinkage de producción), 2016–2026.
-- Unidas por (fecha, ganadora, perdedora) a las cuotas históricas de
-  Tennis-Data: media del mercado, Bet365, máxima, y Pinnacle hasta 2025.
-  25.479 de 25.589 partidos tienen cuotas.
+  10 años, shrinkage de producción).
+- Unidas a las cuotas históricas de Tennis-Data: media del mercado, Bet365,
+  máxima, y Pinnacle hasta 2025.
 - Se reproduce la regla de producción: 3% ≤ p − 1/cuota ≤ 10%, stake
   Kelly/4 con tope 5%. Ambos lados de cada partido son candidatos.
-- ATP: la fuente del modelo (Tennismylife) no trae cuotas, así que se
+- **WTA**: 25.479 de 25.589 partidos 2016–2026 con cuotas, cruzados por
+  (fecha, ganadora, perdedora).
+- **ATP**: la fuente del modelo (Tennismylife) no trae cuotas; se
   descargaron los ficheros ATP de Tennis-Data (2000–2026) en
-  `data/raw/tennis_atp_tduk_odds/`. Ver sección ATP.
+  `data/raw/tennis_atp_tduk_odds/` (ignorado por git). Tennismylife usa
+  nombres completos ("Carlos Alcaraz") y fecha cada partido con el inicio
+  del torneo; Tennis-Data usa "Alcaraz C." y la fecha real. Se cruza por
+  (último token del apellido, inicial) de ambos jugadores, con la fecha de
+  Tennis-Data entre 3 días antes y 20 después, solo pares 1:1: el 95% de
+  las filas de Tennis-Data 2016+ cruzan (lo que no cruza del lado
+  Tennismylife es sobre todo Copa Davis y niveles que Tennis-Data no
+  cubre). 39.442 partidos con cuota media, 2010–2026.
 
-## WTA
+## Fuga de información en los datos ATP (encontrada y corregida)
+
+Al analizar ATP apareció una fuga: Tennismylife fecha todos los partidos
+de un torneo con el mismo día, y `_clean()` en `src/data/loader.py`
+ordenaba solo por fecha con un sort inestable, lo que listaba rondas
+posteriores antes que las anteriores en el **99,1%** de los torneos ATP
+2016–2024. Las features de un partido de primera ronda se calculaban
+después de los partidos siguientes de ese jugador en el mismo torneo:
+`rest_diff` era negativo para el 50,4% de los ganadores frente a un 11,3%
+positivo, y por sí solo "batía" al mercado de cierre en 14,5 milésimas de
+log-loss. Copa Davis comparte la misma fuente.
+
+Corregido en el commit `4c0e919` (orden por fecha, torneo, ronda y
+`match_num`); las inversiones bajan al 0,5%. Tras reconstruir:
+
+| | Antes (con fuga) | Después |
+|---|---|---|
+| ATP walk-forward, accuracy | 68,49% | 66,73% |
+| ATP walk-forward, log-loss | 0,5953 | 0,6037 |
+| Davis, accuracy / log-loss | 68,89% / 0,5959 | 68,84% / 0,5946 |
+| Ganancia de `rest_diff` sobre el mercado | 14,5 mll | 0,0 mll |
+
+Todas las cifras ATP de este informe son **posteriores** a la corrección.
+Una primera versión del análisis ATP, con la fuga, sugería que el modelo
+aportaba algo al mercado y que los favoritos estaban en equilibrio; ambas
+cosas eran artefactos de la fuga.
 
 ## Resultados
 
 **1. El mercado es más preciso que el modelo, y el modelo no le añade nada.**
 
-| | Log-loss | Brier |
+| | WTA log-loss | ATP log-loss |
 |---|---|---|
-| Modelo | 0,6221 | 0,2167 |
-| Mercado (media, sin margen) | **0,5951** | **0,2051** |
-| Pinnacle (subconjunto) | 0,5971 vs modelo 0,6240 | |
-
-La mejor mezcla `a·modelo + (1−a)·mercado` da **a = 0**: añadir el modelo a
-la probabilidad del mercado empeora la predicción.
+| Modelo | 0,6221 | 0,6085 |
+| Mercado (media, sin margen) | **0,5951** | **0,5789** |
+| Pinnacle vs modelo (subconjunto) | 0,5971 vs 0,6240 | 0,5770 vs 0,6082 |
+| Peso óptimo del modelo en `a·modelo + (1−a)·mercado` | **0** | **0** |
 
 **2. La regla de producción pierde dinero, y pierde más que apostar al azar.**
 
-| Precio | N | p modelo | q mercado | Victorias reales | EV teórico | ROI plano (IC 95%) | ROI Kelly |
+| Tour, precio | N | p modelo | q mercado | Victorias reales | EV teórico | ROI plano (IC 95%) | ROI Kelly |
 |---|---|---|---|---|---|---|---|
-| Media del mercado | 9.038 | 0,474 | 0,392 | **0,376** | +19,2% | **−12,3%** (−15,0..−9,5) | −9,2% |
-| Bet365 | 8.848 | 0,467 | 0,386 | 0,371 | +20,2% | −11,4% (−14,3..−8,6) | −8,7% |
-| Mejor cuota (optimista) | 11.440 | 0,470 | 0,412 | 0,403 | +21,6% | −3,9% (−6,5..−1,2) | −1,2% |
+| WTA, media | 9.038 | 0,474 | 0,392 | **0,376** | +19,2% | **−12,3%** (−15,0..−9,5) | −9,2% |
+| WTA, Bet365 | 8.848 | 0,467 | 0,386 | 0,371 | +20,2% | −11,4% (−14,3..−8,6) | −8,7% |
+| WTA, mejor cuota | 11.440 | 0,470 | 0,412 | 0,403 | +21,6% | −3,9% (−6,5..−1,2) | −1,2% |
+| ATP, media | 13.902 | 0,445 | 0,363 | **0,354** | +23,6% | **−10,6%** (−13,1..−8,0) | −7,8% |
+| ATP, Bet365 | 13.763 | 0,433 | 0,355 | 0,346 | +26,3% | −9,1% (−11,9..−6,3) | −6,8% |
+| ATP, mejor cuota | 17.517 | 0,446 | 0,390 | 0,382 | +30,6% | +1,1% (−2,0..+4,1) | +0,4% |
 
-Apostar a **todos** los lados a cuota media da −7,2%, que es simplemente el
-margen de la casa. La selección del modelo (−12,3%) es **peor que no
-seleccionar**: sus "edges" señalan justo los partidos donde se equivoca.
+Apostar a **todos** los lados a cuota media da −7,2% (WTA) y −7,1% (ATP),
+que es simplemente el margen de la casa. La selección del modelo es **peor
+que no seleccionar** en ambos circuitos: sus "edges" señalan justo los
+partidos donde se equivoca. Ni siquiera a la mejor cuota del mercado (el
+máximo entre todas las casas, un techo que producción no siempre alcanza)
+hay un resultado positivo distinguible de cero.
 
-El EV teórico del backtest (+19,2%) coincide casi exactamente con el del log
+El EV teórico del backtest (+19–24% a cuota media) coincide con el del log
 real (+19,3%). No es mala suerte de la muestra real: es lo que el modelo
 produce de forma estructural.
 
@@ -64,14 +101,44 @@ produce de forma estructural.
 
 - Por cuota: en todas las bandas, las victorias reales quedan en o por
   debajo de la q del mercado, nunca cerca de la p del modelo. Con cuotas
-  > 5 el modelo dice 20,6%, el mercado 13,7% y la realidad 9,7%
-  (ROI −36%).
-- Por edge: **cuanto más edge declara el modelo, peor el ROI** (3–5%:
-  −10,2%; 5–7%: −13,1%; 7–10%: −14,0%). Un edge real se comportaría al revés.
-- Por año: ROI negativo en los 11 años (de −1,5% a −21,4%), EV teórico
-  siempre en torno a +17–22%.
-- Ningún filtro probado rescata un ROI positivo (cuotas < 2: −6,3%;
-  p ≥ 0,6: −5,8%; edges 1–3%: −10,1%).
+  > 5: WTA modelo 20,6% / mercado 13,7% / real 9,7% (ROI −36%); ATP
+  18,5% / 11,8% / 9,3% (ROI −28%).
+- Por edge: **cuanto más edge declara el modelo, peor el ROI** (WTA:
+  −10,2% → −13,1% → −14,0%; ATP: −9,0% → −9,9% → −12,7% para 3–5%, 5–7%,
+  7–10%). Un edge real se comportaría al revés.
+- Por año: WTA negativo en los 11 años; ATP negativo en 16 de 17 (2021:
+  +1,3%).
+- Ningún filtro probado rescata un ROI positivo a cuota media (WTA cuotas
+  < 2: −6,3%; p ≥ 0,6: −5,8%; ATP cuotas ≤ 3: −6,1%, > 3: −17,0%).
+
+## Modelo anclado al mercado (`--anchored`)
+
+En lugar de predecir desde cero, se parte de la probabilidad del mercado
+q y se aprende solo la desviación. Walk-forward sobre los años con cuotas
+(mínimo 3 de entrenamiento), sin intercepto y simétrico entre jugadores:
+
+- **M1**: logit(q). El mercado solo, recalibrado.
+- **M2**: logit(q) + logit(p del modelo actual, fuera de muestra).
+- **M3**: logit(q) + las 15 features (L2, C=0,1).
+
+| | WTA 2019–2026 | ATP 2013–2026 |
+|---|---|---|
+| Log-loss mercado | 0,5907 | 0,5833 |
+| Log-loss M1 / M2 / M3 | 0,5901 / 0,5902 / 0,5903 | 0,5831 / 0,5829 / 0,5830 |
+| Apuestas con la regla a cuota media, M1 / M2 / M3 | 2 / 6 / 190 | 5 / 6 / 387 |
+| ROI M3 a cuota media | −17,0% (−30,6..−2,5) | −4,6% (−13,8..+4,7) |
+
+Ninguna feature, sola, mejora al mercado en más de 0,3 milésimas de
+log-loss (ATP, tras la corrección). Los modelos anclados son prácticamente
+el mercado: a cuota media casi nunca ven un 3% de edge, que es lo que
+haría un modelo honesto sin información adicional.
+
+A la mejor cuota, ATP M1 da +8,2% (N=1.054, IC +2,1..+14,7) y M2/M3 no lo
+mejoran (+8,0%, +5,6%). M1 no usa ninguna feature: esa ganancia sale de
+comparar el precio máximo del mercado con su probabilidad media (buscar la
+mejor cuota), no del modelo, y la cuota máxima histórica incluye casas y
+precios a los que producción no tiene acceso. En WTA ni eso es
+distinguible de cero.
 
 ## El log real
 
@@ -80,62 +147,8 @@ produce de forma estructural.
 | ATP | 83 | 0,505 | 0,435 | 0,482 | +1,6% |
 | WTA | 33 | 0,542 | 0,473 | 0,485 | −25,7% |
 
-La WTA real cuadra con el backtest. La ATP real queda entre modelo y
-mercado con un ROI ligeramente positivo (N=83, no concluyente por sí solo);
-ver la sección ATP.
-
-## ATP
-
-**Cruce de datos.** Tennismylife usa nombres completos ("Carlos Alcaraz") y
-fecha el partido con el inicio del torneo; Tennis-Data usa "Alcaraz C." y
-la fecha real. Se cruza por (último token del apellido, inicial) de ambos
-jugadores, con la fecha de Tennis-Data entre 3 días antes y 20 después, y
-solo pares 1:1. Se cruzan 25.877 de 27.210 filas de Tennis-Data 2016+ (95%);
-lo que no cruza del lado Tennismylife es sobre todo Copa Davis y niveles
-que Tennis-Data no cubre. Con cuota media disponible: 39.442 partidos,
-2010–2026.
-
-**1. El mercado también es más preciso, pero aquí el modelo sí aporta algo.**
-
-| | Log-loss | Brier |
-|---|---|---|
-| Modelo | 0,5930 | 0,2039 |
-| Mercado (media, sin margen) | **0,5789** | **0,1984** |
-| Pinnacle (subconjunto) | 0,5770 vs modelo 0,5918 | |
-
-Mejor mezcla: **a = 0,25** (log-loss 0,5773). Al contrario que en WTA, el
-modelo contiene información que el mercado no incorpora del todo, aunque
-el mercado sigue dominando.
-
-**2. La regla de producción no supera el margen a precios realistas.**
-
-| Precio | N | p modelo | q mercado | Victorias reales | EV teórico | ROI plano (IC 95%) | ROI Kelly |
-|---|---|---|---|---|---|---|---|
-| Media del mercado | 13.645 | 0,460 | 0,377 | 0,394 | +23,1% | **−5,0%** (−7,6..−2,5) | −1,3% |
-| Bet365 | 13.544 | 0,448 | 0,367 | 0,384 | +26,2% | −3,7% (−6,4..−0,8) | −0,1% |
-| Mejor cuota (optimista) | 16.792 | 0,456 | 0,399 | 0,408 | +30,4% | +3,1% (+0,2..+6,1) | +4,3% |
-
-Apostar a todos los lados a cuota media da −7,1%: la selección del modelo
-mejora unos 2 pp sobre el azar, pero no lo suficiente para cubrir el margen.
-Solo con la **mejor cuota del mercado** (el máximo entre todas las casas,
-al cierre; un techo que producción no alcanza siempre) sale positivo. El
-log real ATP (+1,6%, N=83) cae dentro de este rango.
-
-**3. Todo el daño está en las cuotas altas; los favoritos rozan el equilibrio.**
-
-| Subconjunto (cuota media) | N | ROI plano (IC 95%) |
-|---|---|---|
-| Cuota ≤ 3 | 8.366 | +0,9% (−1,2..+2,9) |
-| Cuota > 3 | 5.279 | −14,3% (−19,8..−8,6) |
-
-Con cuotas > 5 el modelo dice 18,4%, el mercado 11,7% y la realidad 9,8%
-(ROI −23,5%). Con la mejor cuota, el tramo ≤ 3 da +4,4% (IC +2,5..+6,3).
-
-**Pero la ventaja se está erosionando.** El tramo de favoritos a cuota media
-pasa de +3,0% en 2010–2017 a −0,8% en 2018–2026, con 2023 (−6,0%),
-2024 (−3,8%) y 2025 (−6,6%) en negativo. A mejor cuota: +6,6% → +2,7%,
-y 2023–2026 en torno a cero. Este corte por cuota sale de mirar estas
-mismas tablas, así que es una hipótesis, no una regla validada.
+La WTA real cuadra con el backtest. La ATP real (+1,6%, N=83) queda dentro
+del ruido; el backtest con N=13.902 manda.
 
 ## Conclusiones
 
@@ -143,32 +156,28 @@ mismas tablas, así que es una hipótesis, no una regla validada.
    calibración global es buena) pero no medía lo que importa para apostar.
    El gap de −24 pp **no es solo varianza**: es la sobreestimación
    sistemática del edge frente a un mercado más informado.
-2. **WTA**: sin ventaja; la selección es peor que el azar (N=9.038, 11 años,
-   IC claramente negativo). Excluida del auto-registro desde 2026-10-07,
-   (`AUTO_LOG_EXCLUDED_TOURS` en `scripts/daily_workflow.py`).
-3. **ATP**: el modelo aporta información (peso 0,25 en la mezcla) pero la
-   regla actual pierde a precio medio (−5,0%) y solo gana a la mejor cuota
-   disponible (+3,1%). Las cuotas > 3 pierden con claridad; los favoritos
-   rozan el equilibrio, con una ventaja que se ha ido erosionando y es ~0
-   en los últimos años.
+2. **Ni WTA ni ATP tienen ventaja**: el mercado domina, el modelo no le
+   añade información (peso 0 en la mezcla) y la selección es peor que el
+   azar en ambos. Los dos están excluidos del auto-registro desde
+   2026-10-07 (`AUTO_LOG_EXCLUDED_TOURS = {"wta", "atp"}` en
+   `scripts/daily_workflow.py`); se siguen escaneando y auditando. Davis
+   Cup, sin cuotas con que validarla, sigue pudiendo registrarse.
+3. **Anclar al mercado no crea edge** con las features actuales: el modelo
+   resultante es el propio mercado. Lo único positivo (a la mejor cuota)
+   viene de buscar precio, no de predecir mejor.
 4. El EV teórico del scanner y el workflow (+19–30% de media en las
    apuestas elegidas) no es una estimación creíble del retorno esperado y
    no debería usarse para dimensionar stakes. Tocar `_SHRINK_RATE` o
-   `MIN_EDGE` no lo arregla: ningún umbral de edge da ROI positivo a
-   precio medio.
+   `MIN_EDGE` no lo arregla.
 
-## Siguientes pasos posibles (no aplicados)
+## Qué haría falta para volver a apostar
 
-- ~~ATP: limitar a cuotas ≤ 3, o excluir también ATP del auto-registro.~~
-  **Aplicado 2026-10-07: ATP excluida** junto con WTA
-  (`AUTO_LOG_EXCLUDED_TOURS = {"wta", "atp"}`). Se descartó limitar a
-  cuotas ≤ 3: ese tramo está en equilibrio a precio medio, en declive, y el
-  corte salió de estas mismas tablas. Ambos tours se siguen escaneando y
-  auditando; solo Davis Cup (sin cuotas con que validarla) puede seguir
-  registrándose.
-- **Usar el mercado como base**: modelar la desviación respecto de la
-  probabilidad del mercado (p. ej. features + logit(q) como input) en vez
-  de predecir desde cero. El peso 0,25 en ATP sugiere que hay algo que
-  aprovechar; validarlo con este mismo script.
-- **Reportar un EV realista**: sustituir la p del modelo por la mezcla con
-  el mercado al calcular edge y EV.
+- **Información que el mercado no tenga**: las features actuales (Elo,
+  ranking, forma, H2H, descanso) ya están en el precio. Haría falta otra
+  fuente (estadísticas de saque/resto punto a punto, lesiones, etc.) y
+  validarla con `--anchored`: una feature solo vale si mejora el log-loss
+  de M1 de forma consistente fuera de muestra.
+- **Davis Cup**: su LR supera a su Elo en 7 pp de accuracy, mucho más que
+  en ATP/WTA, y tras la corrección `rust_factor_diff` pasa a ser su
+  coeficiente más fuerte. Sin cuotas no se puede contrastar con el
+  mercado; conviene revisarlo antes de que vuelva a tener datos frescos.

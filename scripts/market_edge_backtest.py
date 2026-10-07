@@ -69,7 +69,7 @@ def out_of_sample_predictions(features_path: Path) -> pd.DataFrame:
         X_train = scaler.fit_transform(train[_FEATURE_COLS].fillna(0.0).values)
         clf = LogisticRegression(C=1.0, max_iter=1000, random_state=42).fit(X_train, train["outcome"].values)
         probs = clf.predict_proba(scaler.transform(test[_FEATURE_COLS].fillna(0.0).values))[:, 1]
-        out = test[["match_date", "year", "winner", "loser"]].copy()
+        out = test[["match_date", "year", "winner", "loser"] + _FEATURE_COLS].copy()
         out["p"] = [apply_shrinkage(p) for p in probs]
         frames.append(out)
     pred = pd.concat(frames, ignore_index=True)
@@ -148,6 +148,50 @@ def select_bets(sides: pd.DataFrame, price: str) -> pd.DataFrame:
     return bets
 
 
+ANCHORED_MIN_TRAIN_YEARS = 3
+
+
+def _logit(p) -> np.ndarray:
+    p = np.clip(np.asarray(p, dtype=float), 1e-6, 1 - 1e-6)
+    return np.log(p / (1 - p))
+
+
+def anchored_predictions(matches: pd.DataFrame) -> pd.DataFrame:
+    """Market-anchored models, walk-forward over the years that have odds
+    (train on all earlier odds years, at least ANCHORED_MIN_TRAIN_YEARS):
+
+      M1: logit(q)                      -- the market alone, recalibrated
+      M2: logit(q) + logit(p_model)     -- market + current model's OOS p
+      M3: logit(q) + the 15 features    -- market + raw features (L2, C=0.1)
+
+    No intercept, and every input flips sign for the other side (elo_prob and
+    h2h_rate are centred at 0.5 so their loser view is an exact negation, as
+    in load_features_with_mirror), so P(A) + P(B) = 1 by construction.
+    """
+    feats = matches[_FEATURE_COLS].fillna({"elo_prob": 0.5, "h2h_rate": 0.5}).fillna(0.0).copy()
+    feats["elo_prob"] -= 0.5
+    feats["h2h_rate"] -= 0.5
+    F = feats.to_numpy()
+    sides = bet_sides(matches)  # winner rows then loser rows, same order as F / -F
+    X_feat = np.vstack([F, -F])
+    lq, lp = _logit(sides["q"]), _logit(sides["p"])
+    years = sorted(sides["year"].unique())
+    out = []
+    for test_year in years[ANCHORED_MIN_TRAIN_YEARS:]:
+        tr = (sides["year"] < test_year).to_numpy()
+        te = (sides["year"] == test_year).to_numpy()
+        res = sides[te].copy()
+        for name, X, C in (("M1", lq[:, None], 1e6), ("M2", np.column_stack([lq, lp]), 1e6)):
+            clf = LogisticRegression(fit_intercept=False, C=C, max_iter=1000).fit(X[tr], sides["y"][tr])
+            res[name] = clf.predict_proba(X[te])[:, 1]
+        scaler = StandardScaler(with_mean=False).fit(X_feat[tr])  # scale only: keeps the sign symmetry
+        X3 = np.column_stack([lq, scaler.transform(X_feat)])
+        clf = LogisticRegression(fit_intercept=False, C=0.1, max_iter=2000).fit(X3[tr], sides["y"][tr])
+        res["M3"] = clf.predict_proba(X3[te])[:, 1]
+        out.append(res)
+    return pd.concat(out, ignore_index=True)
+
+
 def _bootstrap_ci(x: np.ndarray, n: int = 2000, seed: int = 0) -> tuple[float, float]:
     rng = np.random.default_rng(seed)
     means = [rng.choice(x, len(x)).mean() for _ in range(n)]
@@ -165,7 +209,10 @@ def _summary(bets: pd.DataFrame, by: str) -> pd.DataFrame:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Backtest del edge del modelo contra cuotas historicas")
     parser.add_argument("--tour", choices=sorted(TOURS), default="wta")
-    tour = parser.parse_args().tour
+    parser.add_argument("--anchored", action="store_true",
+                        help="Tambien evalua modelos anclados al mercado (M1/M2/M3)")
+    args = parser.parse_args()
+    tour = args.tour
     cfg = TOURS[tour]
     warnings.filterwarnings("ignore")  # openpyxl "unknown extension" noise
     pred = out_of_sample_predictions(_ROOT / cfg["features"])
@@ -205,6 +252,25 @@ def main() -> None:
     print("C. Selected bets (avg odds) by odds band\n" + _summary(bets, "odds_band").to_string() + "\n")
     print("D. By edge band\n" + _summary(bets, "edge_band").to_string() + "\n")
     print("E. By year\n" + _summary(bets, "year")[["N", "EV", "ROI"]].T.to_string())
+
+    if not args.anchored:
+        return
+    anchored = anchored_predictions(matches)
+    print(f"\nF. Market-anchored models, test years {int(anchored['year'].min())}-{int(anchored['year'].max())}")
+    print("  log-loss: " + " | ".join(
+        f"{name} {log_loss(anchored['y'], anchored[col]):.4f}"
+        for name, col in (("market", "q"), ("model", "p"), ("M1", "M1"), ("M2", "M2"), ("M3", "M3"))))
+    for price in ("avg", "max"):
+        print(f"  [{price} odds] production rule")
+        for col in ("p", "M1", "M2", "M3"):
+            bets = select_bets(anchored.assign(p=anchored[col]), price)
+            if bets.empty:
+                print(f"    {col:3s} N=0")
+                continue
+            lo, hi = _bootstrap_ci(bets["ret"].to_numpy())
+            print(f"    {col:3s} N={len(bets):6d} ROI flat {bets['ret'].mean():+.1%} (95% CI {lo:+.1%}..{hi:+.1%})")
+        every = anchored[anchored[price] > 1]
+        print(f"    bet every side ROI {np.where(every['y'] == 1, every[price] - 1, -1.0).mean():+.1%}")
 
 
 if __name__ == "__main__":
