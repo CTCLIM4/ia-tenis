@@ -56,6 +56,7 @@ from src.data.staleness import StalenessLevel, evaluate_staleness
 from src.data.timezone_utils import lima_today
 from src.git_utils import commit_and_push
 from src.utils.notifier import send_picks_email
+from src.utils.telegram import send_signals as send_telegram_signals
 from src.utils.vpn_tracker import track_vpn_usage
 from src.value_analysis import (
     _SHRINK_HI, _SHRINK_LO, _SHRINK_RATE, LogMatchStatus,
@@ -146,10 +147,11 @@ def _pick_rows(r, qualifies_a: bool, qualifies_b: bool) -> list[dict]:
     match_label = f"{r.match.player_a} vs {r.match.player_b}"
     return [
         {"match": match_label, "pick": name, "odds": odds, "edge": val["edge"],
-         "kelly": val["kelly_fraction"], "bookmaker": bookmaker}
-        for qualifies, val, odds, name, bookmaker in (
-            (qualifies_a, r.val_a, r.match.odds_a, r.match.player_a, r.match.bookmaker_a),
-            (qualifies_b, r.val_b, r.match.odds_b, r.match.player_b, r.match.bookmaker_b),
+         "kelly": val["kelly_fraction"], "bookmaker": bookmaker, "p_model": p,
+         "tournament": r.match.tournament, "match_date": r.match.match_date.isoformat()}
+        for qualifies, val, odds, name, bookmaker, p in (
+            (qualifies_a, r.val_a, r.match.odds_a, r.match.player_a, r.match.bookmaker_a, r.pred["p_a_cal"]),
+            (qualifies_b, r.val_b, r.match.odds_b, r.match.player_b, r.match.bookmaker_b, r.pred["p_b_cal"]),
         )
         if qualifies
     ]
@@ -168,7 +170,7 @@ def _clv_tracking() -> dict | None:
 
 def run(
     dry_run: bool = False, retrain: bool = False, live_tournament_mode: bool = False,
-    tour: str = "both", days_ahead: int = 1, push: bool = True,
+    tour: str = "both", days_ahead: int = 1, push: bool = True, telegram: bool = True,
 ) -> list[dict]:
     if days_ahead < 1:
         raise ValueError("days_ahead debe ser al menos 1")
@@ -279,6 +281,10 @@ def run(
 
     if not dry_run:
         send_picks_email(selected, vpn_status, signals, _clv_tracking())
+        if telegram:
+            # Same gate as the logged picks (no warnings); posted with a
+            # not-a-bet disclaimer, see src/utils/telegram.py.
+            send_telegram_signals(selected + signals, lima_today())
         if selected and push:
             commit_and_push(
                 [VALUE_BETS_LOG],
@@ -300,6 +306,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--days-ahead", type=int, default=1)
     parser.add_argument("--no-push", action="store_true",
                         help="Guarda y notifica sin crear commit ni hacer push")
+    parser.add_argument("--no-telegram", action="store_true",
+                        help="No publica las senales en Telegram")
     parser.add_argument("--live-tournament", action="store_true", dest="live_tournament_mode",
                          help="Torneo activo confirmado: no excluir un tour por staleness, solo advertir "
                               "(igual que src/daily_scanner.py) -- el gate estricto por defecto sigue activo sin esta flag")
@@ -312,7 +320,7 @@ def main() -> None:
     if args.days_ahead < 1:
         parser.error("--days-ahead debe ser al menos 1")
     run(dry_run=args.dry_run, retrain=args.retrain, live_tournament_mode=args.live_tournament_mode,
-        tour=args.tour, days_ahead=args.days_ahead, push=not args.no_push)
+        tour=args.tour, days_ahead=args.days_ahead, push=not args.no_push, telegram=not args.no_telegram)
 
 
 if __name__ == "__main__":

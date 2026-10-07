@@ -33,6 +33,14 @@ def _no_real_clv_tracking(monkeypatch):
     monkeypatch.setattr(workflow, "_clv_tracking", lambda: _TRACKING_STUB)
 
 
+@pytest.fixture(autouse=True)
+def telegram_posts(monkeypatch):
+    # Never post to the real group from a test.
+    posts = []
+    monkeypatch.setattr(workflow, "send_telegram_signals", lambda signals, day: posts.append(signals) or True)
+    return posts
+
+
 def _pred():
     return {"p_a_raw": 0.6, "p_a_cal": 0.6, "p_b_raw": 0.4, "p_b_cal": 0.4, "features": {}}
 
@@ -602,3 +610,39 @@ class TestClvTracking:
         monkeypatch.setattr(clv_report, "summary", boom)
         assert _REAL_CLV_TRACKING() is None
         assert "corrupt snapshot" in capsys.readouterr().out
+
+
+class TestTelegram:
+    def test_posts_qualifying_signals_with_details(self, monkeypatch, telegram_posts):
+        wta_r = _result(match=_match(player_a="WTA Pick", tour="wta"),
+                        val_a=_val(edge=0.05, kelly=0.04, has_value=True))
+        weak = _result(match=_match(player_a="Weak", tour="wta"), val_a=_val(edge=0.01, kelly=0.005, has_value=True))
+        t = TestRun()
+        t._wire_common(monkeypatch, [wta_r, weak])
+        monkeypatch.setattr(workflow, "AUTO_LOG_EXCLUDED_TOURS", frozenset({"wta"}))
+
+        workflow.run()
+
+        assert len(telegram_posts) == 1
+        (post,) = telegram_posts[0]
+        assert post["pick"] == "WTA Pick" and post["p_model"] == 0.6
+        assert post["tournament"] and post["match_date"]
+
+    def test_warned_signals_are_not_posted(self, monkeypatch, telegram_posts):
+        suspicious = _result(match=_match(player_a="Too Good"), val_a=_val(edge=0.05, kelly=0.04, has_value=True))
+        suspicious.suspicious = True
+        t = TestRun()
+        t._wire_common(monkeypatch, [suspicious])
+        workflow.run()
+        assert telegram_posts == [[]]
+
+    def test_dry_run_and_no_telegram_post_nothing(self, monkeypatch, telegram_posts):
+        r = _result(val_a=_val(edge=0.05, kelly=0.04, has_value=True))
+        t = TestRun()
+        t._wire_common(monkeypatch, [r])
+        workflow.run(dry_run=True)
+        workflow.run(telegram=False)
+        assert telegram_posts == []
+
+    def test_cli_flag(self):
+        assert workflow.build_parser().parse_args(["--no-telegram"]).no_telegram is True
