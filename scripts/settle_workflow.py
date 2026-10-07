@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import re
 import sys
 from datetime import date as date_cls
 from pathlib import Path
@@ -92,6 +93,24 @@ def _ask_winner(row: dict) -> str | None:
     )
     answer = input(prompt).strip().lower()
     return answer if answer in ("a", "b") else None
+
+
+def _report_slug(rows: list[dict]) -> str:
+    """Filename slug from the tournaments actually settled, e.g. 'ATP US Open'
+    and 'WTA US Open' -> 'us-open'. Was hardcoded to 'cincinnati', which
+    mislabeled every later jornada (Monterrey, US Open...)."""
+    slugs: list[str] = []
+    for row in rows:
+        name = re.sub(r"^(ATP|WTA|Davis Cup|Davis)\s+", "", row.get("tournament", "").strip(), flags=re.I)
+        slug = re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
+        if slug and slug not in slugs:
+            slugs.append(slug)
+    return "-".join(slugs)
+
+
+def _report_filename(target: str, rows: list[dict]) -> str:
+    slug = _report_slug(rows)
+    return f"{target}-jornada-{slug}.md" if slug else f"{target}-jornada.md"
 
 
 def _build_report(target: str, settled: list[dict], log_path: str, bankroll: float = DEFAULT_BANKROLL) -> str:
@@ -190,18 +209,18 @@ def run(
     if not dry_run:
         _write_rows(log_path, rows, fieldnames)
 
-    report_path = str(Path(report_dir) / f"{target}-jornada-cincinnati.md")
+    # The report reflects every bet resolved for this match_date, not
+    # just the ones settled in this particular run — otherwise settling
+    # the same date in two batches (e.g. a rain-suspended match
+    # confirmed a day later) would silently overwrite the earlier
+    # batch's report instead of extending it.
+    all_settled_for_date = [
+        row for row in rows
+        if row.get("match_date") == target and row.get("status") == "ok"
+        and row.get("result") not in ("", "pending")
+    ]
+    report_path = str(Path(report_dir) / _report_filename(target, all_settled_for_date))
     if not dry_run:
-        # The report reflects every bet resolved for this match_date, not
-        # just the ones settled in this particular run — otherwise settling
-        # the same date in two batches (e.g. a rain-suspended match
-        # confirmed a day later) would silently overwrite the earlier
-        # batch's report instead of extending it.
-        all_settled_for_date = [
-            row for row in rows
-            if row.get("match_date") == target and row.get("status") == "ok"
-            and row.get("result") not in ("", "pending")
-        ]
         report = _build_report(target, all_settled_for_date, log_path)
         Path(report_path).parent.mkdir(parents=True, exist_ok=True)
         Path(report_path).write_text(report, encoding="utf-8")

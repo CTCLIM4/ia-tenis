@@ -129,7 +129,7 @@ class TestRun:
 
         settle.run(date(2026, 8, 19), log_path=str(path), report_dir=str(tmp_path))
 
-        report_path = tmp_path / "2026-08-19-jornada-cincinnati.md"
+        report_path = tmp_path / "2026-08-19-jornada-test-open.md"
         assert report_path.exists()
         content = report_path.read_text(encoding="utf-8")
         assert "A Player" in content
@@ -146,7 +146,7 @@ class TestRun:
         with open(path, newline="", encoding="utf-8") as f:
             rows = list(csv.DictReader(f))
         assert rows[0]["result"] == "pending"
-        assert not (tmp_path / "2026-08-19-jornada-cincinnati.md").exists()
+        assert not (tmp_path / "2026-08-19-jornada-test-open.md").exists()
         assert pushed == {}
 
     def test_pushes_csv_and_report_when_something_settled(self, tmp_path, monkeypatch):
@@ -162,7 +162,7 @@ class TestRun:
         settle.run(date(2026, 8, 19), log_path=str(path), report_dir=str(tmp_path))
 
         assert str(path) in pushed["paths"]
-        assert any("2026-08-19-jornada-cincinnati.md" in p for p in pushed["paths"])
+        assert any("2026-08-19-jornada-test-open.md" in p for p in pushed["paths"])
 
     def test_report_includes_bets_settled_in_an_earlier_run_same_date(self, tmp_path, monkeypatch):
         """Regression: settling the same date in two batches (e.g. some
@@ -183,7 +183,7 @@ class TestRun:
 
         settle.run(date(2026, 8, 30), log_path=str(path), report_dir=str(tmp_path))
 
-        report_path = tmp_path / "2026-08-30-jornada-cincinnati.md"
+        report_path = tmp_path / "2026-08-30-jornada-test-open.md"
         content = report_path.read_text(encoding="utf-8")
         assert "Already Settled Earlier" in content
         assert "Settled This Run" in content
@@ -196,7 +196,7 @@ class TestRun:
         settled = settle.run(date(2026, 8, 19), log_path=str(path), report_dir=str(tmp_path))
 
         assert settled == []
-        assert not (tmp_path / "2026-08-19-jornada-cincinnati.md").exists()
+        assert not (tmp_path / "2026-08-19-jornada-test-open.md").exists()
 
 
 class TestBuildReportBookmakerColumn:
@@ -210,7 +210,7 @@ class TestBuildReportBookmakerColumn:
 
         settle.run(date(2026, 8, 19), log_path=str(path), report_dir=str(tmp_path))
 
-        report_path = tmp_path / "2026-08-19-jornada-cincinnati.md"
+        report_path = tmp_path / "2026-08-19-jornada-test-open.md"
         content = report_path.read_text(encoding="utf-8")
         assert "bet365" in content
 
@@ -232,5 +232,36 @@ class TestBuildReportBookmakerColumn:
 
         settle.run(date(2026, 8, 19), log_path=str(path), report_dir=str(tmp_path))
 
-        report_path = tmp_path / "2026-08-19-jornada-cincinnati.md"
+        report_path = tmp_path / "2026-08-19-jornada-test-open.md"
         assert report_path.exists()
+
+
+class TestReportFilename:
+    """Regression: the report name was hardcoded to 'cincinnati', which
+    mislabeled every later jornada (Monterrey, US Open...)."""
+
+    def test_atp_and_wta_same_tournament_collapse_to_one_slug(self):
+        rows = [{"tournament": "ATP US Open"}, {"tournament": "WTA US Open"}]
+        assert settle._report_filename("2026-09-02", rows) == "2026-09-02-jornada-us-open.md"
+
+    def test_multiple_tournaments_are_joined_in_order(self):
+        rows = [{"tournament": "WTA Monterrey Open"}, {"tournament": "ATP Cincinnati Open"}]
+        assert settle._report_filename("2026-08-24", rows) == (
+            "2026-08-24-jornada-monterrey-open-cincinnati-open.md"
+        )
+
+    def test_missing_tournament_falls_back_to_plain_name(self):
+        assert settle._report_filename("2026-08-24", [{"tournament": ""}]) == "2026-08-24-jornada.md"
+
+    def test_run_names_report_after_settled_tournament(self, tmp_path, monkeypatch):
+        path = tmp_path / "value_bets_log.csv"
+        row = _row(match_date="2026-09-04", odds_a="2.0", kelly_a="0.05")
+        row["tournament"] = "ATP US Open"
+        _write_csv(path, [row])
+        monkeypatch.setattr(settle, "_ask_winner", lambda row: "a")
+        monkeypatch.setattr(settle, "commit_and_push", lambda *a, **kw: True)
+
+        settle.run(date(2026, 9, 4), log_path=str(path), report_dir=str(tmp_path))
+
+        assert (tmp_path / "2026-09-04-jornada-us-open.md").exists()
+        assert not list(tmp_path.glob("*cincinnati*"))
