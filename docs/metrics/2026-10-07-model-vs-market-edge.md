@@ -182,6 +182,37 @@ del ruido; el backtest con N=13.902 manda.
   modelo ATP en vez del específico (ver sección Davis) y validarlo antes
   contra cuotas reales.
 
+## Estadísticas de saque/resto ATP (probado, ya están en el precio)
+
+Reproducir: `python -m scripts.serve_stats_edge [--half-life D --prior-points K]`.
+
+Tennismylife trae por partido aces, dobles faltas, puntos de saque ganados
+y break points. Se calcularon secuencialmente (mismo orden sin fuga que el
+pipeline) habilidades de saque y de resto **ajustadas por rival**, con
+decaimiento exponencial y shrinkage. También se calcularon por superficie
+y una probabilidad de partido con un modelo de puntos iid (al mejor de 3 o 5 sets),
+además de las diferencias de aces, dobles faltas y break points salvados.
+
+| Vida media / prior | Modelo 15 → 15 + saque (sin mercado) | Mejora sobre M1 (anclado) | Años que mejora |
+|---|---|---|---|
+| 120 d / 150 pts | 0,6036 → 0,5995 | +0,26 mll | 11/14 |
+| 270 d / 300 pts | 0,6036 → **0,5990** | +0,24 mll | 11/14 |
+| 540 d / 600 pts | 0,6036 → 0,5988 | +0,17 mll | 10/14 |
+
+- **Mejoran el modelo**: −4,6 milésimas de log-loss, la mayor mejora de
+  cualquier feature probada. Aun así queda a 24 milésimas del mercado
+  (0,6029 vs 0,5789 en los partidos con cuota).
+- **Frente al mercado no aportan casi nada**: +0,2 milésimas sobre
+  logit(q), robusto a los parámetros pero mínimo.
+- **No generan apuestas rentables.** A cuota media casi no aparecen edges
+  del 3% (N = 6–24, ruido). A la mejor cuota el ROI baja frente a M1
+  (+5–6% vs +8,2%): las apuestas extra que añaden rinden menos que solo
+  buscar el mejor precio.
+
+Conclusión: el mercado ATP ya incorpora el saque y el resto. No se añaden
+a `FEATURE_COLS`; mejorarían la predicción, pero no el resultado de las
+apuestas, que es lo que importa aquí.
+
 ## Copa Davis
 
 Sin cuotas históricas no hay contraste con el mercado; la revisión se
