@@ -232,15 +232,16 @@ class TestRun:
         assert len(self.audit_decisions) == 2
         assert wta_r.val_a["kelly_fraction"] == 0.04  # untouched: never staked
 
-    def test_production_excludes_wta_and_atp(self):
-        # Neither showed edge vs the market at realistic prices (2026-10-07).
-        assert _PRODUCTION_EXCLUDED_TOURS == frozenset({"wta", "atp"})
+    def test_production_excludes_every_tour(self):
+        # No tour showed edge vs the market (2026-10-07); Davis has no odds to
+        # test and the ATP model predicts its rubbers better than its own model.
+        assert _PRODUCTION_EXCLUDED_TOURS == frozenset({"wta", "atp", "davis"})
 
-    def test_production_exclusion_logs_nothing_for_wta_and_atp(self, monkeypatch):
+    def test_production_exclusion_logs_nothing_for_any_tour(self, monkeypatch):
         picks = [
             _result(match=_match(player_a=f"{tour.upper()} Pick", tour=tour),
                     val_a=_val(edge=0.05, kelly=0.04, has_value=True))
-            for tour in ("wta", "atp")
+            for tour in ("wta", "atp", "davis")
         ]
         self._wire_common(monkeypatch, picks)
         monkeypatch.setattr(workflow, "AUTO_LOG_EXCLUDED_TOURS", _PRODUCTION_EXCLUDED_TOURS)
@@ -249,7 +250,7 @@ class TestRun:
         assert self.logged_queries == []
         assert self.sent["picks"] == []
         assert self.pushed == {}
-        assert len(self.audit_decisions) == 2
+        assert len(self.audit_decisions) == 3
 
     def test_applies_quarter_kelly_to_qualifying_side(self, monkeypatch):
         r = _result(val_a=_val(edge=0.05, kelly=0.04, has_value=True))

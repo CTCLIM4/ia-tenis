@@ -65,15 +65,17 @@ from src.value_analysis import (
 MIN_EDGE = 0.03
 KELLY_DIVISOR = 4
 # Tours still scanned and written to the prediction audit log, but never
-# auto-logged as bets or emailed. Both excluded since 2026-10-07 after
+# auto-logged as bets or emailed. All three excluded since 2026-10-07 after
 # replaying this exact rule on out-of-sample predictions against historical
 # market odds (docs/metrics/2026-10-07-model-vs-market-edge.md): WTA lost
-# -12.3% flat over 9,038 bets, worse than betting every side; ATP lost -5.0%
-# at average odds over 13,645 bets, positive only at the best available odds,
-# with what edge there was eroding since 2018. Davis Cup has no odds source
-# to test against. Remove a tour only with new evidence of edge from
+# -12.3% flat over 9,038 bets and ATP -10.6% over 13,902, both worse than
+# betting every side, and market-anchored models found no feature that adds
+# information the price lacks. Davis Cup has no odds to test against, and on
+# the same out-of-sample rubbers the ATP model beats the Davis-specific one
+# (log-loss 0.5798 vs 0.5864) -- so it has no better claim to an edge.
+# Remove a tour only with new evidence of edge from
 # scripts/market_edge_backtest.py.
-AUTO_LOG_EXCLUDED_TOURS = frozenset({"wta", "atp"})
+AUTO_LOG_EXCLUDED_TOURS = frozenset({"wta", "atp", "davis"})
 VALUE_BETS_LOG = "data/value_bets_log.csv"
 
 

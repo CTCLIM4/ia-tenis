@@ -158,10 +158,11 @@ del ruido; el backtest con N=13.902 manda.
    sistemática del edge frente a un mercado más informado.
 2. **Ni WTA ni ATP tienen ventaja**: el mercado domina, el modelo no le
    añade información (peso 0 en la mezcla) y la selección es peor que el
-   azar en ambos. Los dos están excluidos del auto-registro desde
-   2026-10-07 (`AUTO_LOG_EXCLUDED_TOURS = {"wta", "atp"}` en
-   `scripts/daily_workflow.py`); se siguen escaneando y auditando. Davis
-   Cup, sin cuotas con que validarla, sigue pudiendo registrarse.
+   azar en ambos. **Davis Cup** no se puede contrastar con el mercado, y el
+   modelo ATP predice sus partidos mejor que su propio modelo (ver sección
+   Davis). Los tres están excluidos del auto-registro desde 2026-10-07
+   (`AUTO_LOG_EXCLUDED_TOURS = {"wta", "atp", "davis"}` en
+   `scripts/daily_workflow.py`); se siguen escaneando y auditando.
 3. **Anclar al mercado no crea edge** con las features actuales: el modelo
    resultante es el propio mercado. Lo único positivo (a la mejor cuota)
    viene de buscar precio, no de predecir mejor.
@@ -177,7 +178,43 @@ del ruido; el backtest con N=13.902 manda.
   fuente (estadísticas de saque/resto punto a punto, lesiones, etc.) y
   validarla con `--anchored`: una feature solo vale si mejora el log-loss
   de M1 de forma consistente fuera de muestra.
-- **Davis Cup**: su LR supera a su Elo en 7 pp de accuracy, mucho más que
-  en ATP/WTA, y tras la corrección `rust_factor_diff` pasa a ser su
-  coeficiente más fuerte. Sin cuotas no se puede contrastar con el
-  mercado; conviene revisarlo antes de que vuelva a tener datos frescos.
+- **Davis Cup**: si algún día se reactiva, predecir sus partidos con el
+  modelo ATP en vez del específico (ver sección Davis) y validarlo antes
+  contra cuotas reales.
+
+## Copa Davis
+
+Sin cuotas históricas no hay contraste con el mercado; la revisión se
+limitó a la calidad del modelo específico (`davis_features.csv`, 7.496
+partidos fuera de muestra, 2000–2026).
+
+- **Sin fuga.** Los partidos de una eliminatoria están en orden
+  cronológico por `match_num`, y las métricas con el orden barajado (antes
+  de la corrección del loader) y con el orden correcto son prácticamente
+  iguales (68,89% vs 68,84%).
+- **La ventaja de 7 pp del LR sobre el Elo se debe a un Elo débil.** El
+  pipeline Davis construye su Elo solo con partidos de Copa Davis: el
+  jugador mediano tiene 4, y el 53% tiene menos de 5. El Elo solo acierta
+  el 61,2%; quien sostiene el modelo es el ranking ATP.
+- **`rust_factor_diff` es un indicador de debutante, no de óxido.**
+  `rust_factor` da 1,0 (el máximo) a quien no tiene historial, así que en un
+  historial solo-Davis señala a quien juega su primera eliminatoria, y los
+  debutantes pierden más (el ganador es el "más fresco" en el 9,7% de los
+  partidos y el menos en el 15,7%). Es información conocida antes del
+  partido.
+- **Calibración** dentro de ±2 pp en todos los tramos.
+- **El modelo ATP es mejor en los mismos partidos.** Los 7.496 partidos
+  Davis también están en el backtest ATP (que incluye las eliminatorias y
+  todo el circuito):
+
+| Modelo | Accuracy | Log-loss |
+|---|---|---|
+| Davis específico | 68,9% | 0,5864 |
+| **ATP** | 68,5% | **0,5798** |
+| Elo solo Davis | 61,2% | 0,6661 |
+
+La diferencia crece en los años recientes (2013–2026: 0,5871 frente a
+0,5974). Como el modelo ATP no tiene ventaja frente al mercado del circuito
+y es el mejor que hay para Davis, no hay base para apostar Davis: excluida
+del auto-registro desde 2026-10-07. Nunca se había registrado una apuesta
+Davis.
