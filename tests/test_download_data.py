@@ -735,3 +735,17 @@ class TestDownloadWtaYearDiscoveredUrl:
         monkeypatch.setattr(dd.urllib.request, "urlopen", fake_urlopen)
 
         assert dd._download_wta_year(2026, discovered_url=None) is True
+
+
+def test_script_imports_when_run_by_path_outside_repo_root(tmp_path):
+    """run_prediction.py runs `python scripts/download_data.py`, where the repo
+    root isn't on sys.path; the src.data.wta_supplement import must still work."""
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    script = Path(dd.__file__).resolve()
+    code = f"import runpy; runpy.run_path({str(script)!r}, run_name='not_main')"
+    result = subprocess.run([sys.executable, "-c", code], cwd=tmp_path,
+                            capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr

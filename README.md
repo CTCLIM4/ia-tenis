@@ -54,7 +54,7 @@ Correr los tests:
 ## Fuentes de datos
 
 - **ATP**: [stats.tennismylife.org](https://stats.tennismylife.org) (Tennismylife/TML-Database), licenciado bajo [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
-- **WTA**: [tennis-data.co.uk](http://www.tennis-data.co.uk).
+- **WTA**: historial de [Tennis-Data](https://www.tennis-data.co.uk/data.php). Cuando el archivo de la temporada actual va atrasado, se complementa con partidos confirmados del cuadro principal de [Valuebetennis](https://www.valuebetennis.com/donnees.htm) (CC BY 4.0; atribución: *Valuebetennis, Résultats et cotes de tennis depuis 2021*). El complemento solo se usa si al menos el 90% de los partidos elegibles puede vincularse con jugadoras conocidas; los casos ambiguos se excluyen.
 - **Cuotas** (opcional, para el analizador de value bets): [The Odds API](https://the-odds-api.com), vía la variable de entorno `ODDS_API_KEY`.
 
 Ninguno de estos datasets se incluye en este repositorio — ver el aviso abajo.

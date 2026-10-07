@@ -15,15 +15,25 @@ WTA  → tennis-data.co.uk           (public)  → data/raw/tennis_wta_tduk/{yea
        downloads fail (the site occasionally restructures paths between seasons).
 """
 import datetime
+import io
 import os
 import re
 import shutil
 import stat
+import sys
 import urllib.request
 from pathlib import Path
 
 import pandas as pd
 import requests
+
+# Run as `python scripts/download_data.py` (run_prediction.py, README), so the
+# repo root isn't on sys.path by default.
+_ROOT = Path(__file__).resolve().parent.parent
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+
+from src.data.wta_supplement import REQUIRED_COLUMNS as WTA_SUPPLEMENT_COLUMNS
 
 DATA_RAW = Path("data/raw")
 
@@ -138,7 +148,7 @@ def _merge_ongoing_into_year(year_df: pd.DataFrame, ongoing_df: pd.DataFrame) ->
 
 
 def _force_remove_readonly(func, path, exc):
-    """shutil.rmtree onexc callback: clear the read-only bit and retry.
+    """shutil.rmtree onerror callback: clear the read-only bit and retry.
 
     Git marks packed/loose objects under .git/objects read-only on Windows,
     which makes plain os.unlink/os.rmdir raise PermissionError. Clearing
@@ -171,7 +181,7 @@ def _cleanup_legacy_git_clone(dest: Path) -> None:
         path = dest / name
         try:
             if path.is_dir():
-                shutil.rmtree(path, onexc=_force_remove_readonly)
+                shutil.rmtree(path, onerror=_force_remove_readonly)
             elif path.exists():
                 path.unlink()
         except Exception as e:
@@ -233,6 +243,7 @@ def download_atp() -> None:
 
 WTA_START_YEAR = 2007
 WTA_DIR = DATA_RAW / "tennis_wta_tduk"
+WTA_SUPPLEMENT_URL = "https://www.valuebetennis.com/datasets/valuebetennis-matchs-{year}.csv"
 _WTA_HEADERS = {
     "User-Agent": (
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -354,6 +365,41 @@ def _download_wta_year(year: int, discovered_url: str | None = None) -> bool:
     return False
 
 
+def download_wta_supplement(year: int) -> bool:
+    """Refresh the current-year Valuebetennis CSV without replacing a good copy
+    on a download/schema failure. The loader only uses settled WTA main-draw
+    matches beyond tennis-data.co.uk's most recent match.
+
+    Valuebetennis, Résultats et cotes de tennis depuis 2021,
+    https://www.valuebetennis.com/donnees.htm (CC BY 4.0).
+    """
+    url = WTA_SUPPLEMENT_URL.format(year=year)
+    dest = WTA_DIR / f"valuebetennis_{year}.csv"
+    try:
+        response = requests.get(url, timeout=30)
+        response.raise_for_status()
+        data = response.content
+        parsed = pd.read_csv(io.BytesIO(data), sep=";", encoding="utf-8-sig", low_memory=False)
+        missing = WTA_SUPPLEMENT_COLUMNS - set(parsed.columns)
+        if missing or not parsed["genre"].eq("wta").any():
+            raise ValueError(f"invalid WTA supplement schema (missing: {sorted(missing)})")
+        if dest.exists() and dest.read_bytes() == data:
+            print(f"  WTA supplement {year} unchanged.")
+            return True
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        tmp = dest.with_suffix(".csv.tmp")
+        try:
+            tmp.write_bytes(data)
+            tmp.replace(dest)
+        finally:
+            tmp.unlink(missing_ok=True)
+        print(f"  WTA supplement {year} downloaded ({len(data)} bytes).")
+        return True
+    except Exception as e:
+        print(f"  WARNING: could not refresh WTA supplement {year}: {e}")
+        return False
+
+
 def download():
     DATA_RAW.mkdir(parents=True, exist_ok=True)
 
@@ -371,6 +417,8 @@ def download():
         for y in range(WTA_START_YEAR, current_year + 1)
     )
     print(f"  WTA: {ok} files ready in {WTA_DIR}")
+
+    download_wta_supplement(current_year)
 
     print("\nDownload step finished.")
 

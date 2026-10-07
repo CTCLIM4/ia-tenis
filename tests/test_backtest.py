@@ -5,6 +5,8 @@ from sklearn.preprocessing import StandardScaler
 
 import src.backtest.walkforward as walkforward_module
 from src.backtest.walkforward import _FEATURE_COLS, _MIRROR_FLIP_COLS, load_features_with_mirror, walk_forward_backtest
+from src.features.engineering import FeatureBuilder
+from src.models.elo import EloSystem
 
 
 def _synthetic_features(n: int = 2000, n_years: int = 12, start_year: int = 2010) -> pd.DataFrame:
@@ -243,3 +245,26 @@ class TestFeatureScaling:
 
         np.testing.assert_allclose(X_train_scaled.mean(axis=0), 0.0, atol=1e-8)
         np.testing.assert_allclose(X_train_scaled.std(axis=0), 1.0, atol=1e-8)
+
+
+def test_appending_later_matches_keeps_same_day_historical_features():
+    base = pd.DataFrame([
+        {"winner_name": f"Winner {i}", "loser_name": "Common Loser",
+         "surface": "hard", "match_date": pd.Timestamp("2026-09-27"),
+         "winner_rank": 100 + i, "loser_rank": 50, "sets_played": 2}
+        for i in range(20)
+    ])
+    later = pd.DataFrame([{
+        "winner_name": "Later Winner", "loser_name": "Later Loser",
+        "surface": "hard", "match_date": pd.Timestamp("2026-10-04"),
+        "winner_rank": 10, "loser_rank": 20, "sets_played": 2,
+    }])
+
+    def original_features(matches):
+        all_rows = walkforward_module.build_match_features(matches, EloSystem(), FeatureBuilder())
+        return all_rows[~all_rows["is_mirror"]].reset_index(drop=True)
+
+    before = original_features(base)
+    after = original_features(pd.concat([base, later], ignore_index=True)).iloc[:len(base)]
+
+    pd.testing.assert_frame_equal(before, after)

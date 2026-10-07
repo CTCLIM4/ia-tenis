@@ -6,6 +6,7 @@ from typing import Optional
 import pandas as pd
 
 from src.data.timezone_utils import lima_today
+from src.data.wta_supplement import load_supplement
 
 RAW_DATA_DIR = Path("data/raw")
 
@@ -214,4 +215,23 @@ def load_wta_matches(
             f"No WTA match files found in {tour_dir} for years {start_year}-{end_year}. "
             "Run scripts/download_data.py or download manually from tennis-data.co.uk/wta.php."
         )
-    return pd.concat(frames, ignore_index=True)
+    matches = pd.concat(frames, ignore_index=True)
+    for year in range(max(start_year, 2021), end_year + 1):
+        supplement_path = tour_dir / f"valuebetennis_{year}.csv"
+        if not supplement_path.exists():
+            continue
+        try:
+            extra, eligible, unresolved = load_supplement(
+                supplement_path, matches, year, lima_today(),
+            )
+        except Exception as e:
+            print(f"  WARNING: could not read WTA supplement {supplement_path}: {e}")
+            continue
+        if eligible and extra.empty:
+            print(f"  WARNING: WTA supplement coverage below 90% "
+                  f"({unresolved}/{eligible} unresolved); leaving primary data unchanged.")
+        elif not extra.empty:
+            print(f"  WTA supplement {year}: {len(extra)}/{eligible} settled main-draw "
+                  f"matches added ({unresolved} unresolved).")
+            matches = pd.concat([matches, extra], ignore_index=True)
+    return matches.sort_values("match_date", kind="stable").reset_index(drop=True)

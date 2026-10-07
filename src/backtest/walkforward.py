@@ -74,7 +74,10 @@ def build_match_features(
     # Defensive: the sequential no-lookahead processing below assumes
     # chronological order. Callers (src/data/loader.py) already sort, but
     # don't trust that invariant to hold at every call site.
-    df = df.sort_values("match_date").reset_index(drop=True)
+    # Keep the input order for matches sharing a date. An unstable sort can
+    # reshuffle old matches merely because newer rows were appended, changing
+    # historical features and backtest results without changing old data.
+    df = df.sort_values("match_date", kind="stable").reset_index(drop=True)
 
     records = []
     for _, row in df.iterrows():
