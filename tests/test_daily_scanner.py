@@ -18,6 +18,16 @@ from src.config import MAX_SUSPICIOUS_EDGE
 from src.odds_api import DEFAULT_BOOKMAKER
 
 
+@pytest.fixture(autouse=True)
+def _no_real_log_backups(monkeypatch):
+    # run_scan(auto_save=True) calls backup_logs() with its default paths,
+    # which copies the real logs into the real data/logs/ -- and the
+    # keep-last-7 rotation then evicts genuine production backups. Tests that
+    # assert on backup calls override this with their own monkeypatch.
+    import src.daily_scanner as scanner
+    monkeypatch.setattr(scanner, "backup_logs", lambda *a, **kw: None)
+
+
 class TestSportsIndexRetry:
     def test_transient_connection_reset_retries_then_succeeds(self, monkeypatch):
         import src.daily_scanner as scanner
