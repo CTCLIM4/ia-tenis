@@ -142,6 +142,30 @@ def _qualifying_sides(r) -> tuple[bool, bool]:
     return qualifies_a, qualifies_b
 
 
+def _pick_rows(r, qualifies_a: bool, qualifies_b: bool) -> list[dict]:
+    match_label = f"{r.match.player_a} vs {r.match.player_b}"
+    return [
+        {"match": match_label, "pick": name, "odds": odds, "edge": val["edge"],
+         "kelly": val["kelly_fraction"], "bookmaker": bookmaker}
+        for qualifies, val, odds, name, bookmaker in (
+            (qualifies_a, r.val_a, r.match.odds_a, r.match.player_a, r.match.bookmaker_a),
+            (qualifies_b, r.val_b, r.match.odds_b, r.match.player_b, r.match.bookmaker_b),
+        )
+        if qualifies
+    ]
+
+
+def _clv_tracking() -> dict | None:
+    """Snapshot/CLV status for the email; never lets a reporting problem
+    break the daily run."""
+    try:
+        from scripts.clv_report import summary
+        return summary(n_boot=500)
+    except Exception as e:
+        print(f"  Aviso: no se pudo calcular el seguimiento de CLV ({e}).")
+        return None
+
+
 def run(
     dry_run: bool = False, retrain: bool = False, live_tournament_mode: bool = False,
     tour: str = "both", days_ahead: int = 1, push: bool = True,
@@ -179,6 +203,7 @@ def run(
     graded = [(r, *_qualifying_sides(r)) for r in results]
 
     selected: list[dict] = []
+    signals: list[dict] = []  # qualifying picks in excluded tours: emailed for CLV tracking, never logged
     logged_results: set[int] = set()
     if results and not dry_run:
         backup_logs(files=(AUDIT_LOG_PATH, value_analysis.LOG_PATH), backup_dir=_ROOT / "data" / "logs")
@@ -188,6 +213,7 @@ def run(
         if r.match.tour in AUTO_LOG_EXCLUDED_TOURS:
             print(f"  {r.match.player_a} vs {r.match.player_b}: pick {r.match.tour.upper()} no registrado "
                   f"(tour excluido del auto-registro: sin edge demostrado frente al mercado).")
+            signals.extend(_pick_rows(r, qualifies_a, qualifies_b))
             continue
 
         status = LogMatchStatus.NEW
@@ -204,17 +230,7 @@ def run(
         r.val_a["kelly_fraction"] = (r.val_a["kelly_fraction"] / KELLY_DIVISOR) if qualifies_a else 0.0
         r.val_b["kelly_fraction"] = (r.val_b["kelly_fraction"] / KELLY_DIVISOR) if qualifies_b else 0.0
 
-        match_label = f"{r.match.player_a} vs {r.match.player_b}"
-        for qualifies, val, odds, name, bookmaker in (
-            (qualifies_a, r.val_a, r.match.odds_a, r.match.player_a, r.match.bookmaker_a),
-            (qualifies_b, r.val_b, r.match.odds_b, r.match.player_b, r.match.bookmaker_b),
-        ):
-            if qualifies:
-                selected.append({
-                    "match": match_label, "pick": name, "odds": odds,
-                    "edge": val["edge"], "kelly": val["kelly_fraction"],
-                    "bookmaker": bookmaker,
-                })
+        selected.extend(_pick_rows(r, qualifies_a, qualifies_b))
 
         if not dry_run:
             save = update_log_entry if status == LogMatchStatus.UPDATE else log_query
@@ -255,7 +271,7 @@ def run(
     print(f"\nVPN: {vpn_status}")
 
     if not dry_run:
-        send_picks_email(selected, vpn_status)
+        send_picks_email(selected, vpn_status, signals, _clv_tracking())
         if selected and push:
             commit_and_push(
                 [VALUE_BETS_LOG],

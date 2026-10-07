@@ -99,3 +99,19 @@ def test_main_without_snapshots_exits_cleanly(tmp_path, monkeypatch):
     with pytest.raises(SystemExit) as exc:
         clv.main()
     assert "Sin snapshots" in str(exc.value)
+
+
+def test_summary_end_to_end(snapshot_dir, tmp_path):
+    audit = tmp_path / "audit.csv"
+    _audit().to_csv(audit, index=False)
+    r = clv.summary(snapshot_dir, audit, 8, n_boot=50)
+    assert r["runs"] == 2 and r["events"] == 1 and r["events_with_close"] == 1
+    assert r["matches"] == 1 and r["slope"] > 0
+    assert r["picks"] == 1 and r["clv"] == pytest.approx(0.2)
+
+
+def test_summary_without_audit_rows_since_first_snapshot(snapshot_dir, tmp_path):
+    audit = tmp_path / "audit.csv"
+    _audit(timestamp="2026-09-01T08:00:00").to_csv(audit, index=False)
+    r = clv.summary(snapshot_dir, audit, 8, n_boot=50)
+    assert r["audit_rows"] == 0 and r["slope"] is None

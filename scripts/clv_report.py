@@ -168,6 +168,46 @@ def rule_picks(s: pd.DataFrame) -> pd.DataFrame:
     return picks
 
 
+def summary(snapshot_dir: Path = SNAPSHOT_DIR, audit_log: Path = AUDIT_LOG,
+            max_close_gap_hours: float = DEFAULT_MAX_CLOSE_GAP_HOURS, n_boot: int = 2000) -> dict:
+    """Everything the report prints, as a dict (also used by the daily email).
+    Keys are always present; values are None when there isn't data yet."""
+    out = {"runs": 0, "last_run": None, "runs_24h": 0, "credits_remaining": None, "events": 0,
+           "events_with_close": 0, "audit_rows": 0, "joined": 0, "matches": 0,
+           "slope": None, "slope_ci": None, "move": None, "picks": 0, "clv": None, "clv_ci": None,
+           "clv_by_tour": {}, "pick_p": None, "pick_q_scan": None, "pick_q_close": None}
+    snaps, runs = load_snapshots(snapshot_dir)
+    if snaps.empty:
+        return out
+    run_log = pd.read_csv(snapshot_dir / "runs.csv")
+    last = runs.iloc[-1]
+    out.update(runs=len(runs), last_run=last, runs_24h=int((runs > last - pd.Timedelta(hours=24)).sum()))
+    credits = pd.to_numeric(run_log.get("credits_remaining", pd.Series(dtype=float)), errors="coerce").dropna()
+    out["credits_remaining"] = int(credits.iloc[-1]) if len(credits) else None
+
+    events = event_lines(snaps, runs, max_close_gap_hours)
+    out.update(events=len(events), events_with_close=int(events["q_close_home"].notna().sum()))
+    if not audit_log.exists():
+        return out
+    audit = pd.read_csv(audit_log)
+    audit = audit[pd.to_datetime(audit["timestamp"]) >= runs.iloc[0].tz_convert(LIMA_TZ).tz_localize(None)]
+    joined = join_audit(audit, events) if len(audit) else audit
+    s = sides(joined, snaps, runs) if len(joined) else pd.DataFrame()
+    out.update(audit_rows=len(audit), joined=len(joined), matches=int(s["event_id"].nunique()) if len(s) else 0)
+    if s.empty:
+        return out
+    slope, lo, hi = line_move_slope(s, n_boot=n_boot)
+    out.update(slope=slope, slope_ci=(lo, hi), move=float(np.abs(s["q_close"] - s["q_scan"]).mean()))
+    picks = rule_picks(s)
+    out["picks"] = len(picks)
+    if len(picks):
+        out.update(clv=float(picks["clv"].mean()), clv_ci=_bootstrap_ci(picks["clv"].to_numpy()),
+                   clv_by_tour={t: (len(g), float(g["clv"].mean())) for t, g in picks.groupby("tour")},
+                   pick_p=float(picks["p"].mean()), pick_q_scan=float(picks["q_scan"].mean()),
+                   pick_q_close=float(picks["q_close"].mean()))
+    return out
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="CLV del modelo frente a la cuota de cierre")
     parser.add_argument("--max-close-gap-hours", type=float, default=DEFAULT_MAX_CLOSE_GAP_HOURS,
@@ -176,39 +216,32 @@ def main() -> None:
     parser.add_argument("--audit-log", type=Path, default=AUDIT_LOG)
     args = parser.parse_args()
 
-    snaps, runs = load_snapshots(args.snapshot_dir)
-    if snaps.empty:
+    r = summary(args.snapshot_dir, args.audit_log, args.max_close_gap_hours)
+    if not r["runs"]:
         sys.exit("Sin snapshots todavia (python -m scripts.snapshot_odds).")
-    events = event_lines(snaps, runs, args.max_close_gap_hours)
-    audit = pd.read_csv(args.audit_log)
-    audit = audit[pd.to_datetime(audit["timestamp"]) >= runs.iloc[0].tz_convert(LIMA_TZ).tz_localize(None)]
-    joined = join_audit(audit, events)
-    s = sides(joined, snaps, runs)
-
-    print(f"Snapshots: {len(runs)} corridas, {len(events)} partidos "
-          f"({events['q_close_home'].notna().sum()} con cierre a <= {args.max_close_gap_hours:g} h)")
-    print(f"Auditoria desde el primer snapshot: {len(audit)} predicciones, {len(joined)} cruzadas con un partido, "
-          f"{s['event_id'].nunique() if not s.empty else 0} con linea al escanear y al cierre\n")
-    if s.empty:
+    print(f"Snapshots: {r['runs']} corridas, {r['events']} partidos "
+          f"({r['events_with_close']} con cierre a <= {args.max_close_gap_hours:g} h)")
+    print(f"Auditoria desde el primer snapshot: {r['audit_rows']} predicciones, {r['joined']} cruzadas con un "
+          f"partido, {r['matches']} con linea al escanear y al cierre\n")
+    if r["slope"] is None:
         print("Aun no hay partidos con ambas lineas; vuelve a correrlo en unos dias.")
         return
 
-    slope, lo, hi = line_move_slope(s)
+    lo, hi = r["slope_ci"]
     print("A. El modelo predice el movimiento de la linea?")
-    print(f"  movimiento medio |q_cierre - q_escaneo| {np.abs(s['q_close'] - s['q_scan']).mean():.4f}")
-    print(f"  pendiente de (q_cierre - q_escaneo) sobre (p_modelo - q_escaneo): {slope:+.3f} "
+    print(f"  movimiento medio |q_cierre - q_escaneo| {r['move']:.4f}")
+    print(f"  pendiente de (q_cierre - q_escaneo) sobre (p_modelo - q_escaneo): {r['slope']:+.3f} "
           f"(IC 95% {lo:+.3f}..{hi:+.3f})")
     print("  > 0 con IC por encima de 0: la linea se mueve hacia el modelo (informacion no incorporada aun)\n")
 
-    picks = rule_picks(s)
-    print(f"B. Picks de la regla de produccion ({MIN_EDGE:.0%} <= edge <= {MAX_SUSPICIOUS_EDGE:.0%}), N={len(picks)}")
-    if picks.empty:
+    print(f"B. Picks de la regla de produccion ({MIN_EDGE:.0%} <= edge <= {MAX_SUSPICIOUS_EDGE:.0%}), N={r['picks']}")
+    if not r["picks"]:
         return
-    clo, chi = _bootstrap_ci(picks["clv"].to_numpy())
-    print(f"  CLV medio {picks['clv'].mean():+.1%} (IC 95% {clo:+.1%}..{chi:+.1%}); "
-          f"p modelo {picks['p'].mean():.3f} | q escaneo {picks['q_scan'].mean():.3f} | q cierre {picks['q_close'].mean():.3f}")
-    for tour, g in picks.groupby("tour"):
-        print(f"  {tour.upper()}: N={len(g)} CLV {g['clv'].mean():+.1%}")
+    clo, chi = r["clv_ci"]
+    print(f"  CLV medio {r['clv']:+.1%} (IC 95% {clo:+.1%}..{chi:+.1%}); p modelo {r['pick_p']:.3f} | "
+          f"q escaneo {r['pick_q_scan']:.3f} | q cierre {r['pick_q_close']:.3f}")
+    for tour, (n, c) in r["clv_by_tour"].items():
+        print(f"  {tour.upper()}: N={n} CLV {c:+.1%}")
 
 
 if __name__ == "__main__":

@@ -23,6 +23,16 @@ def _no_excluded_tours(monkeypatch):
     monkeypatch.setattr(workflow, "AUTO_LOG_EXCLUDED_TOURS", frozenset())
 
 
+_REAL_CLV_TRACKING = workflow._clv_tracking
+_TRACKING_STUB = {"stub": True}
+
+
+@pytest.fixture(autouse=True)
+def _no_real_clv_tracking(monkeypatch):
+    # The real one reads data/odds_snapshots/ and the production audit log.
+    monkeypatch.setattr(workflow, "_clv_tracking", lambda: _TRACKING_STUB)
+
+
 def _pred():
     return {"p_a_raw": 0.6, "p_a_cal": 0.6, "p_b_raw": 0.4, "p_b_cal": 0.4, "features": {}}
 
@@ -178,7 +188,8 @@ class TestRun:
         self.sent = {}
         monkeypatch.setattr(
             workflow, "send_picks_email",
-            lambda picks, vpn: self.sent.update(picks=picks, vpn=vpn) or True,
+            lambda picks, vpn, signals=None, tracking=None: self.sent.update(
+                picks=picks, vpn=vpn, signals=signals, tracking=tracking) or True,
         )
         self.pushed = {}
         monkeypatch.setattr(
@@ -229,6 +240,7 @@ class TestRun:
         assert [s["pick"] for s in selected] == ["ATP Pick"]
         assert [a[4] for a, _kw in self.logged_queries] == ["ATP Pick"]  # player_a
         assert [p["pick"] for p in self.sent["picks"]] == ["ATP Pick"]
+        assert [p["pick"] for p in self.sent["signals"]] == ["WTA Pick"]  # tracked, not bet
         assert len(self.audit_decisions) == 2
         assert wta_r.val_a["kelly_fraction"] == 0.04  # untouched: never staked
 
@@ -561,3 +573,21 @@ class TestRunLogIntegrity:
         assert {path.read_text(encoding="utf-8") for path in backups} == {
             "previous value log\n", "previous audit log\n",
         }
+
+
+class TestClvTracking:
+    def test_email_gets_tracking_status(self, monkeypatch):
+        t = TestRun()
+        t._wire_common(monkeypatch, [])
+        workflow.run()
+        assert t.sent["tracking"] is _TRACKING_STUB
+        assert t.sent["signals"] == []
+
+    def test_reporting_failure_never_breaks_the_run(self, monkeypatch, capsys):
+        import scripts.clv_report as clv_report
+
+        def boom(**kw):
+            raise ValueError("corrupt snapshot")
+        monkeypatch.setattr(clv_report, "summary", boom)
+        assert _REAL_CLV_TRACKING() is None
+        assert "corrupt snapshot" in capsys.readouterr().out

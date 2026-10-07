@@ -127,3 +127,49 @@ class TestPicksTableBookmakerColumn:
         # SAMPLE_PICKS (module-level) has no "bookmaker" key — must not raise.
         html = notifier.build_email_html(SAMPLE_PICKS, SAMPLE_VPN_OK)
         assert "Tirante vs Mensik" in html
+
+
+class TestTrackingPanels:
+    SIGNAL = {"match": "Sinner vs Rune", "pick": "Rune", "odds": 3.1, "edge": 0.045,
+              "kelly": 0.0, "bookmaker": "pinnacle"}
+
+    def test_stake_header_says_quarter_kelly(self):
+        # daily_workflow stakes 1/4 Kelly (KELLY_DIVISOR); the header said 1/2.
+        assert "1/4 Kelly" in notifier.build_email_html(SAMPLE_PICKS, SAMPLE_VPN_OK)
+
+    def test_lists_signals_or_says_none(self):
+        html = notifier.build_email_html([], SAMPLE_VPN_OK, signals=[self.SIGNAL])
+        assert "Sinner vs Rune" in html and "3.10" in html and "+4.5%" in html
+        assert "Ninguna hoy" in notifier.build_email_html([], SAMPLE_VPN_OK, signals=[])
+
+    def test_tracking_without_data(self):
+        html = notifier.build_email_html([], SAMPLE_VPN_OK, tracking={"runs": 0, "slope": None})
+        assert "Sin snapshots" in html and "aun no hay partidos" in html
+        assert "No disponible hoy" in notifier.build_email_html([], SAMPLE_VPN_OK, tracking=None)
+
+    def test_tracking_with_clv(self):
+        import pandas as pd
+        tracking = {"runs": 9, "runs_24h": 4, "last_run": pd.Timestamp("2026-10-20T18:00:00Z"),
+                    "events": 120, "credits_remaining": 310, "matches": 85,
+                    "slope": 0.12, "slope_ci": (-0.05, 0.29), "picks": 14, "clv": -0.021,
+                    "clv_ci": (-0.06, 0.02)}
+        html = notifier.build_email_html([], SAMPLE_VPN_OK, tracking=tracking)
+        assert "2026-10-20 13:00" in html  # Lima time
+        assert "310" in html and "+0.12" in html and "N=14" in html and "-2.1%" in html
+
+    def test_subject_mentions_signals(self, monkeypatch):
+        for k, v in ALL_ENV_VARS.items():
+            monkeypatch.setenv(k, v)
+        sent = {}
+
+        class _FakeSMTP:
+            def __init__(self, *a, **kw): pass
+            def __enter__(self): return self
+            def __exit__(self, *a): return False
+            def starttls(self): pass
+            def login(self, *a): pass
+            def send_message(self, msg): sent["msg"] = msg
+
+        monkeypatch.setattr(notifier.smtplib, "SMTP", _FakeSMTP)
+        notifier.send_picks_email([], SAMPLE_VPN_OK, signals=[self.SIGNAL])
+        assert sent["msg"]["Subject"] == "ia-tenis: 0 pick(s) del dia, 1 senal(es) en seguimiento"
