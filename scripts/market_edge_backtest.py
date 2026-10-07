@@ -1,7 +1,8 @@
 """Backtest the model's betting edge against historical WTA market odds.
 
 Uso:
-  python -m scripts.market_edge_backtest
+  python -m scripts.market_edge_backtest              # WTA
+  python -m scripts.market_edge_backtest --tour atp   # needs data/raw/tennis_atp_tduk_odds/
 
 Global calibration (src/calibration_metrics.py) asks "is P(win) right on
 average?". This asks the betting question: on the matches where the model
@@ -10,12 +11,23 @@ predictions (same walk-forward as src.backtest.walkforward, warmup 10 years,
 production shrinkage) are joined to Tennis-Data's historical odds (average,
 Bet365, max; Pinnacle until 2025) and the production selection rule is
 replayed: MIN_EDGE <= p - 1/odds <= MAX_SUSPICIOUS_EDGE, Kelly/4 capped at
-KELLY_CAP. WTA only: the ATP source (Tennismylife) carries no odds.
+KELLY_CAP.
+
+The model's ATP data (Tennismylife) carries no odds, so ATP odds come from
+Tennis-Data's ATP files, downloaded once (2026-10-07) from
+https://www.tennis-data.co.uk/data.php into data/raw/tennis_atp_tduk_odds/
+(gitignored, not refreshed by scripts/download_data.py). Names differ
+("Carlos Alcaraz" vs "Alcaraz C.") and Tennismylife dates every match with
+the tournament start, so ATP rows join on (last surname token, first
+initial) for both players with the Tennis-Data date 3 days before to 20
+days after, keeping only 1:1 pairs.
 
 See docs/metrics/2026-10-07-model-vs-market-edge.md.
 """
 from __future__ import annotations
 
+import argparse
+import re
 import sys
 import warnings
 from pathlib import Path
@@ -33,10 +45,17 @@ if str(_ROOT) not in sys.path:
 from scripts.daily_workflow import KELLY_DIVISOR, MIN_EDGE
 from src.backtest.walkforward import _FEATURE_COLS, load_features_with_mirror
 from src.config import MAX_SUSPICIOUS_EDGE
+from src.name_matching import normalize_name
 from src.value_analysis import KELLY_CAP, apply_shrinkage
 
 WARMUP_YEARS = 10
 ODDS_COLS = ["PSW", "PSL", "B365W", "B365L", "MaxW", "MaxL", "AvgW", "AvgL"]
+TOURS = {
+    "wta": {"features": "data/processed/wta_features.csv", "odds_dir": "data/raw/tennis_wta_tduk", "odds_glob": "20*w.xls*"},
+    "atp": {"features": "data/processed/atp_features.csv", "odds_dir": "data/raw/tennis_atp_tduk_odds", "odds_glob": "20*.xls*"},
+}
+ATP_DATE_WINDOW_DAYS = (-3, 20)
+_TD_INITIALS = re.compile(r"\s((?:[A-Za-z]\.-?\s?)+)$")
 
 
 def out_of_sample_predictions(features_path: Path) -> pd.DataFrame:
@@ -58,9 +77,9 @@ def out_of_sample_predictions(features_path: Path) -> pd.DataFrame:
     return pred
 
 
-def historical_odds(raw_dir: Path) -> pd.DataFrame:
+def historical_odds(raw_dir: Path, pattern: str) -> pd.DataFrame:
     frames = []
-    for path in sorted(raw_dir.glob("20*w.xls*")):
+    for path in sorted(raw_dir.glob(pattern)):
         x = pd.read_excel(path)
         frames.append(x[["Date", "Winner", "Loser"] + [c for c in ODDS_COLS if c in x]])
     odds = pd.concat(frames, ignore_index=True)
@@ -70,6 +89,34 @@ def historical_odds(raw_dir: Path) -> pd.DataFrame:
         odds[col] = pd.to_numeric(odds.get(col), errors="coerce")
     # A (date, winner, loser) key seen twice can't be attributed safely.
     return odds.drop_duplicates(["match_date", "winner", "loser"], keep=False)
+
+
+def player_key(name: str) -> str:
+    """'Bautista Agut R.' and 'Roberto Bautista Agut' -> 'agut|r'."""
+    name = str(name).strip()
+    m = _TD_INITIALS.search(name)
+    if m:  # Tennis-Data: surname then initials
+        surname, initials = name[: m.start()], m.group(1)
+    else:  # Tennismylife: given name(s) then surname
+        parts = name.split(" ", 1)
+        initials, surname = parts[0], (parts[1] if len(parts) > 1 else parts[0])
+    tokens = normalize_name(surname).replace("-", " ").split()
+    return (tokens[-1] if tokens else "") + "|" + normalize_name(initials)[:1]
+
+
+def join_odds(pred: pd.DataFrame, odds: pd.DataFrame, tour: str) -> pd.DataFrame:
+    if tour == "wta":
+        return pred.merge(odds, on=["match_date", "winner", "loser"], how="left")
+    pred = pred.assign(kw=pred["winner"].map(player_key), kl=pred["loser"].map(player_key), pid=range(len(pred)))
+    odds = odds.drop(columns=["winner", "loser"]).assign(
+        kw=odds["winner"].map(player_key), kl=odds["loser"].map(player_key), oid=range(len(odds)))
+    pairs = pred.merge(odds.rename(columns={"match_date": "odds_date"}), on=["kw", "kl"])
+    days = (pairs["odds_date"] - pairs["match_date"]).dt.days
+    lo, hi = ATP_DATE_WINDOW_DAYS
+    pairs = pairs[(days >= lo) & (days <= hi)]
+    pairs = pairs[pairs.groupby("pid")["oid"].transform("size").eq(1)
+                  & pairs.groupby("oid")["pid"].transform("size").eq(1)]
+    return pred.merge(pairs[["pid"] + [c for c in ODDS_COLS if c in pairs]], on="pid", how="left")
 
 
 def _devig(own: pd.Series, other: pd.Series) -> pd.Series:
@@ -116,13 +163,16 @@ def _summary(bets: pd.DataFrame, by: str) -> pd.DataFrame:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description="Backtest del edge del modelo contra cuotas historicas")
+    parser.add_argument("--tour", choices=sorted(TOURS), default="wta")
+    tour = parser.parse_args().tour
+    cfg = TOURS[tour]
     warnings.filterwarnings("ignore")  # openpyxl "unknown extension" noise
-    pred = out_of_sample_predictions(_ROOT / "data/processed/wta_features.csv")
-    matches = pred.merge(historical_odds(_ROOT / "data/raw/tennis_wta_tduk"),
-                         on=["match_date", "winner", "loser"], how="left")
+    pred = out_of_sample_predictions(_ROOT / cfg["features"])
+    matches = join_odds(pred, historical_odds(_ROOT / cfg["odds_dir"], cfg["odds_glob"]), tour)
     matches = matches[matches["AvgW"].gt(1) & matches["AvgL"].gt(1)]
     sides = bet_sides(matches)
-    print(f"Out-of-sample WTA {int(matches['year'].min())}-{int(matches['year'].max())}: "
+    print(f"Out-of-sample {tour.upper()} {int(matches['year'].min())}-{int(matches['year'].max())}: "
           f"{len(pred)} predictions, {len(matches)} with market odds\n")
 
     print("A. Accuracy over every side of every match")

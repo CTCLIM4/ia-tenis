@@ -37,3 +37,44 @@ def test_bet_sides_mirror_probabilities_and_devig():
     assert sides["y"].tolist() == [1, 0]
     assert sides["q"].sum() == pytest.approx(1.0)
     assert sides["q"].iloc[0] == pytest.approx((1 / 1.5) / (1 / 1.5 + 1 / 3.0))
+
+
+@pytest.mark.parametrize("tennis_data, tennismylife", [
+    ("Alcaraz C.", "Carlos Alcaraz"),
+    ("Bautista Agut R.", "Roberto Bautista Agut"),
+    ("Del Potro J.M.", "Juan Martin del Potro"),
+    ("de Minaur A.", "Alex de Minaur"),
+    ("Auger-Aliassime F.", "Felix Auger Aliassime"),
+    ("Van De Zandschulp B.", "Botic van de Zandschulp"),
+])
+def test_player_key_matches_both_name_formats(tennis_data, tennismylife):
+    assert meb.player_key(tennis_data) == meb.player_key(tennismylife)
+
+
+def test_player_key_separates_different_initials():
+    assert meb.player_key("Zverev A.") != meb.player_key("Mischa Zverev")
+
+
+def _odds_row(date, winner, loser, avg_w=1.5):
+    row = {c: float("nan") for c in meb.ODDS_COLS}
+    row.update(match_date=pd.Timestamp(date), winner=winner, loser=loser, AvgW=avg_w, AvgL=2.5)
+    return row
+
+
+def test_atp_join_uses_tournament_window_and_drops_ambiguous_pairs():
+    # Tennismylife dates every match with the tournament start date.
+    pred = pd.DataFrame({
+        "match_date": pd.to_datetime(["2024-01-15", "2024-01-15", "2024-03-04"]),
+        "year": 2024, "p": 0.6,
+        "winner": ["Carlos Alcaraz", "Alexander Zverev", "Carlos Alcaraz"],
+        "loser": ["Richard Gasquet", "Carlos Alcaraz", "Richard Gasquet"],
+    })
+    odds = pd.DataFrame([
+        _odds_row("2024-01-16", "Alcaraz C.", "Gasquet R.", avg_w=1.02),   # 1 day later: joins
+        _odds_row("2024-02-20", "Zverev A.", "Alcaraz C."),                # 36 days later: outside window
+        _odds_row("2024-03-06", "Alcaraz C.", "Gasquet R.", avg_w=1.10),   # second Alcaraz-Gasquet: joins row 3 only
+    ])
+    joined = meb.join_odds(pred, odds, "atp")
+    assert joined["AvgW"].tolist()[0] == 1.02
+    assert pd.isna(joined["AvgW"].tolist()[1])
+    assert joined["AvgW"].tolist()[2] == 1.10
