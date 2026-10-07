@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from datetime import date, datetime, timezone
+import urllib.error
 
 import pytest
 
@@ -15,6 +16,61 @@ from src.daily_scanner import (
 )
 from src.config import MAX_SUSPICIOUS_EDGE
 from src.odds_api import DEFAULT_BOOKMAKER
+
+
+class TestSportsIndexRetry:
+    def test_transient_connection_reset_retries_then_succeeds(self, monkeypatch):
+        import src.daily_scanner as scanner
+
+        calls = []
+        delays = []
+
+        def fetch(api_key):
+            calls.append(api_key)
+            if len(calls) < 3:
+                raise urllib.error.URLError(ConnectionResetError("reset"))
+            return [{"key": "tennis_atp_shanghai"}]
+
+        monkeypatch.setattr(scanner, "fetch_sports_index", fetch)
+        monkeypatch.setattr(scanner.time, "sleep", delays.append)
+
+        assert scanner._fetch_sports_index_with_retry("test-key") == [
+            {"key": "tennis_atp_shanghai"}
+        ]
+        assert len(calls) == 3
+        assert delays == [1.0, 2.0]
+
+    def test_persistent_failure_remains_visible(self, monkeypatch):
+        import src.daily_scanner as scanner
+
+        calls = []
+
+        def fetch(api_key):
+            calls.append(api_key)
+            raise urllib.error.URLError(ConnectionResetError("reset"))
+
+        monkeypatch.setattr(scanner, "fetch_sports_index", fetch)
+        monkeypatch.setattr(scanner.time, "sleep", lambda _: None)
+
+        with pytest.raises(urllib.error.URLError):
+            scanner._fetch_sports_index_with_retry("test-key")
+        assert len(calls) == 3
+
+    def test_authentication_error_is_not_retried(self, monkeypatch):
+        import src.daily_scanner as scanner
+
+        calls = []
+
+        def fetch(api_key):
+            calls.append(api_key)
+            raise urllib.error.HTTPError("https://example.invalid", 401, "Unauthorized", {}, None)
+
+        monkeypatch.setattr(scanner, "fetch_sports_index", fetch)
+        monkeypatch.setattr(scanner.time, "sleep", lambda _: pytest.fail("must not retry"))
+
+        with pytest.raises(urllib.error.HTTPError):
+            scanner._fetch_sports_index_with_retry("test-key")
+        assert len(calls) == 1
 
 
 # ── _is_within_window ─────────────────────────────────────────────────────────

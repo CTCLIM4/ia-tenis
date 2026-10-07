@@ -76,6 +76,27 @@ class TestNoMatch:
         assert match_player_name("Novak Djokovic", []) is None
 
 
+class TestFullNameVariants:
+    def test_extra_given_names_match_unique_complete_suffix(self):
+        canonical = ["Coleman Wong", "Chun Hun Wong", "Wayne Wong"]
+        assert match_player_name("Chak Lam Coleman Wong", canonical) == "Coleman Wong"
+
+    def test_extra_given_names_refuse_overlapping_suffixes(self):
+        canonical = ["Coleman Wong", "Lam Coleman Wong"]
+        assert match_player_name("Chak Lam Coleman Wong", canonical) is None
+
+    def test_surname_first_full_name_matches_unique_reverse(self):
+        canonical = ["Yibing Wu", "Di Wu", "Tung-Lin Wu"]
+        assert match_player_name("Wu Yibing", canonical) == "Yibing Wu"
+
+    def test_surname_first_reverse_refuses_normalized_duplicates(self):
+        canonical = ["Yibing Wu", "Yíbíng Wu"]
+        assert match_player_name("Wu Yibing", canonical) is None
+
+    def test_reverse_does_not_guess_from_shared_surname(self):
+        assert match_player_name("Wu Yibing", ["Di Wu", "Tung-Lin Wu"]) is None
+
+
 class TestKnownProblematicCases:
     """Verified against real behavior before writing these (see
     project_scanner_gaps_2026-09-18 memory) -- two of the four originally

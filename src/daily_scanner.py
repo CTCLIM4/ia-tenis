@@ -185,6 +185,30 @@ def _fetch_events_with_retry(
     return []
 
 
+def _fetch_sports_index_with_retry(
+    api_key: str, max_retries: int = 2, backoff_seconds: float = 1.0,
+) -> list[dict]:
+    """Retry transient failures of the required tournament-index request.
+
+    Unlike a per-tournament odds failure, exhausting this request must
+    raise: an empty index would falsely report a successful scan with no
+    matches. Authentication and other non-transient HTTP errors fail fast.
+    """
+    for attempt in range(max_retries + 1):
+        try:
+            return fetch_sports_index(api_key)
+        except urllib.error.HTTPError as exc:
+            if exc.code not in (429, 500, 502, 503, 504) or attempt == max_retries:
+                raise
+        except (urllib.error.URLError, TimeoutError):
+            if attempt == max_retries:
+                raise
+        delay = backoff_seconds * (attempt + 1)
+        print(f"  Aviso: fallo temporal al listar torneos; reintentando en {delay:g}s...")
+        time.sleep(delay)
+    raise RuntimeError("No se pudo listar torneos")
+
+
 def discover_matches(
     api_key: str,
     canonical_names_by_tour: dict[str, list[str]],
@@ -210,7 +234,7 @@ def discover_matches(
     per-event problem, since one bad event must not abort the whole scan.
     """
     allowed_bookmakers = resolve_allowed_bookmakers(bookmaker)
-    sports_index = fetch_sports_index(api_key)
+    sports_index = _fetch_sports_index_with_retry(api_key)
     tennis_sports = [s for s in list_tennis_sport_keys(sports_index) if s["tour"] in tours]
 
     matches: list[DiscoveredMatch] = []
