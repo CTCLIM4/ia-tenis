@@ -897,6 +897,21 @@ class TestScannerDedupBeforeLogging:
         rows = _read_scanner_log_rows(log_path)
         assert len(rows) == 1  # not duplicated
 
+    def test_scanner_audits_skipped_duplicate_as_passed_duplicate(self, monkeypatch, tmp_path):
+        # Was recorded as passed_user_declined, indistinguishable from a "no".
+        import src.daily_scanner as scanner
+
+        log_path = tmp_path / "value_bets_log.csv"
+        _, r = self._match_and_result(odds_a=3.80)
+        self._wire(monkeypatch, r, log_path)
+        decisions = []
+        monkeypatch.setattr(scanner, "log_prediction_audit", lambda *a, decision, **kw: decisions.append(decision))
+
+        scanner.run_scan(tours=("wta",), auto_save=True)
+        scanner.run_scan(tours=("wta",), auto_save=True)
+
+        assert decisions == ["logged", "passed_duplicate"]
+
     def test_scanner_updates_changed_odds(self, monkeypatch, tmp_path):
         import src.daily_scanner as scanner
 

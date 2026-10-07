@@ -391,6 +391,7 @@ def run_scan(
 
     for r in results:
         logged = save_all and r.is_value_bet
+        passed_reason = "user_declined"
         if logged:
             status, _existing = check_existing_log_entry(
                 r.match.tour, r.match.tournament, r.match.player_a, r.match.player_b,
@@ -399,11 +400,11 @@ def run_scan(
             if status == LogMatchStatus.DUPLICATE:
                 print(f"  Aviso: {r.match.player_a} vs {r.match.player_b} ya estaba "
                       f"logueado con odds similares (dentro de {ODDS_UPDATE_TOLERANCE*100:.0f}%), no se duplica.")
-                logged = False
+                logged, passed_reason = False, "duplicate"
             elif status == LogMatchStatus.RESOLVED:
                 print(f"  Aviso: {r.match.player_a} vs {r.match.player_b} ya tiene "
                       f"un resultado registrado, no se re-loguea.")
-                logged = False
+                logged, passed_reason = False, "duplicate"
             elif status == LogMatchStatus.UPDATE:
                 update_log_entry(
                     r.match.tour, r.match.tournament, r.match.surface, r.match.match_date,
@@ -423,7 +424,7 @@ def run_scan(
         try:
             decision = classify_audit_decision(
                 r.low_sample, r.suspicious, r.elo_ok, logged,
-                r.val_a["has_value"], r.val_b["has_value"],
+                r.val_a["has_value"], r.val_b["has_value"], passed_reason,
             )
             log_prediction_audit(
                 r.match.tour, r.match.tournament, r.match.surface, r.match.match_date,

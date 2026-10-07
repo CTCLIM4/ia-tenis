@@ -28,13 +28,16 @@ _AUDIT_LOG_FIELDS = [
     "edge_b", "ev_b", "kelly_b",
     "model_commit", "model_snapshot_id",
     "elo_found_a", "elo_found_b",
-    "decision",  # logged / passed_low_edge / passed_user_declined / blocked_suspicious / invalid_missing_elo
+    "decision",  # logged / passed_low_edge / passed_{PASSED_REASONS} / blocked_* / invalid_missing_elo
 ]
+
+
+PASSED_REASONS = ("user_declined", "duplicate", "tour_excluded", "below_min_edge")
 
 
 def classify_audit_decision(
     low_sample: bool, suspicious_edge: bool, elo_ok: bool, logged: bool,
-    has_value_a: bool, has_value_b: bool,
+    has_value_a: bool, has_value_b: bool, passed_reason: str = "user_declined",
 ) -> str:
     """Classify what happened to one evaluated prediction, for the audit
     log's `decision` column.
@@ -57,7 +60,15 @@ def classify_audit_decision(
     4. Then whether the user actually logged it to value_bets_log.csv.
     5. Then whether it even had positive edge on either side to log in the
        first place.
+    6. Otherwise it had value but wasn't logged, and `passed_reason` says
+       why (PASSED_REASONS): the user said no (the default, for the
+       interactive paths), it was already in the log ("duplicate"), its
+       tour is excluded from auto-logging ("tour_excluded"), or its edge
+       was below the workflow's MIN_EDGE ("below_min_edge"). Until
+       2026-10-07 all four were recorded as passed_user_declined.
     """
+    if passed_reason not in PASSED_REASONS:
+        raise ValueError(f"passed_reason desconocido: {passed_reason!r}")
     if not elo_ok:
         return "invalid_missing_elo"
     if low_sample:
@@ -68,7 +79,7 @@ def classify_audit_decision(
         return "logged"
     if not has_value_a and not has_value_b:
         return "passed_low_edge"
-    return "passed_user_declined"
+    return f"passed_{passed_reason}"
 
 
 def _migrate_log_header_if_needed() -> None:

@@ -86,6 +86,33 @@ class TestClassifyAuditDecision:
         )
         assert result == "passed_user_declined"
 
+    @pytest.mark.parametrize("reason", ["duplicate", "tour_excluded", "below_min_edge"])
+    def test_passed_reason_replaces_user_declined(self, reason):
+        # Until 2026-10-07 every "had value, not logged" was passed_user_declined,
+        # including auto-skipped duplicates and the workflow's own filters.
+        result = calibration_audit.classify_audit_decision(
+            low_sample=False, suspicious_edge=False, elo_ok=True, logged=False,
+            has_value_a=True, has_value_b=False, passed_reason=reason,
+        )
+        assert result == f"passed_{reason}"
+
+    def test_passed_reason_never_overrides_earlier_categories(self):
+        assert calibration_audit.classify_audit_decision(
+            low_sample=True, suspicious_edge=False, elo_ok=True, logged=False,
+            has_value_a=True, has_value_b=False, passed_reason="duplicate",
+        ) == "blocked_low_sample"
+        assert calibration_audit.classify_audit_decision(
+            low_sample=False, suspicious_edge=False, elo_ok=True, logged=False,
+            has_value_a=False, has_value_b=False, passed_reason="tour_excluded",
+        ) == "passed_low_edge"
+
+    def test_unknown_passed_reason_raises(self):
+        with pytest.raises(ValueError):
+            calibration_audit.classify_audit_decision(
+                low_sample=False, suspicious_edge=False, elo_ok=True, logged=False,
+                has_value_a=True, has_value_b=False, passed_reason="RECOVERY",
+            )
+
     def test_audit_log_no_unknown_recovery_in_code(self):
         """Regression guard: 7 rows in the real prediction_audit_log.csv
         (timestamps 2026-08-21 through 2026-08-27) carry
@@ -104,13 +131,15 @@ class TestClassifyAuditDecision:
         known_decisions = {
             "invalid_missing_elo", "blocked_low_sample", "blocked_suspicious_edge",
             "logged", "passed_low_edge", "passed_user_declined",
+            "passed_duplicate", "passed_tour_excluded", "passed_below_min_edge",
         }
-        for low_sample, suspicious_edge, elo_ok, logged, has_value_a, has_value_b in (
-            itertools.product((True, False), repeat=6)
+        for (low_sample, suspicious_edge, elo_ok, logged, has_value_a, has_value_b), reason in (
+            itertools.product(itertools.product((True, False), repeat=6), calibration_audit.PASSED_REASONS)
         ):
             result = calibration_audit.classify_audit_decision(
                 low_sample=low_sample, suspicious_edge=suspicious_edge, elo_ok=elo_ok,
                 logged=logged, has_value_a=has_value_a, has_value_b=has_value_b,
+                passed_reason=reason,
             )
             assert result != "UNKNOWN_RECOVERY"
             assert result in known_decisions, (

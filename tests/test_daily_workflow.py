@@ -241,7 +241,7 @@ class TestRun:
         assert [a[4] for a, _kw in self.logged_queries] == ["ATP Pick"]  # player_a
         assert [p["pick"] for p in self.sent["picks"]] == ["ATP Pick"]
         assert [p["pick"] for p in self.sent["signals"]] == ["WTA Pick"]  # tracked, not bet
-        assert len(self.audit_decisions) == 2
+        assert self.audit_decisions == ["passed_tour_excluded", "logged"]
         assert wta_r.val_a["kelly_fraction"] == 0.04  # untouched: never staked
 
     def test_production_excludes_every_tour(self):
@@ -312,14 +312,25 @@ class TestRun:
 
         assert len(self.logged_queries) == 1
 
-    def test_audit_log_marks_logged_vs_passed_user_declined(self, monkeypatch):
+    def test_audit_log_marks_logged_vs_passed_below_min_edge(self, monkeypatch):
+        # The workflow never asks the user: a value side under MIN_EDGE was
+        # passed by the rule (recorded as passed_user_declined until 2026-10-07).
         strong = _result(val_a=_val(edge=0.05, kelly=0.04, has_value=True))
         weak = _result(val_a=_val(edge=0.01, kelly=0.005, has_value=True))
         self._wire_common(monkeypatch, [strong, weak])
 
         workflow.run()
 
-        assert self.audit_decisions == ["logged", "passed_user_declined"]
+        assert self.audit_decisions == ["logged", "passed_below_min_edge"]
+
+    def test_audit_log_marks_skipped_duplicate(self, monkeypatch):
+        strong = _result(val_a=_val(edge=0.05, kelly=0.04, has_value=True))
+        self._wire_common(monkeypatch, [strong])
+        monkeypatch.setattr(workflow, "check_existing_log_entry", lambda *a: (LogMatchStatus.DUPLICATE, {}))
+
+        workflow.run()
+
+        assert self.audit_decisions == ["passed_duplicate"]
 
     def test_dry_run_does_not_log_notify_or_push(self, monkeypatch):
         strong = _result(val_a=_val(edge=0.05, kelly=0.04, has_value=True))

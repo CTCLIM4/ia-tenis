@@ -205,15 +205,20 @@ def run(
     selected: list[dict] = []
     signals: list[dict] = []  # qualifying picks in excluded tours: emailed for CLV tracking, never logged
     logged_results: set[int] = set()
+    # Why a match with value wasn't logged; the workflow never asks the user,
+    # so the default is the rule's own threshold.
+    passed_reasons: dict[int, str] = {}
     if results and not dry_run:
         backup_logs(files=(AUDIT_LOG_PATH, value_analysis.LOG_PATH), backup_dir=_ROOT / "data" / "logs")
     for r, qualifies_a, qualifies_b in graded:
         if not (qualifies_a or qualifies_b):
+            passed_reasons[id(r)] = "below_min_edge"
             continue
         if r.match.tour in AUTO_LOG_EXCLUDED_TOURS:
             print(f"  {r.match.player_a} vs {r.match.player_b}: pick {r.match.tour.upper()} no registrado "
                   f"(tour excluido del auto-registro: sin edge demostrado frente al mercado).")
             signals.extend(_pick_rows(r, qualifies_a, qualifies_b))
+            passed_reasons[id(r)] = "tour_excluded"
             continue
 
         status = LogMatchStatus.NEW
@@ -225,6 +230,7 @@ def run(
             if status in (LogMatchStatus.DUPLICATE, LogMatchStatus.RESOLVED):
                 print(f"  {r.match.player_a} vs {r.match.player_b}: ya registrado "
                       f"({status.value}); no se vuelve a guardar.")
+                passed_reasons[id(r)] = "duplicate"
                 continue
 
         r.val_a["kelly_fraction"] = (r.val_a["kelly_fraction"] / KELLY_DIVISOR) if qualifies_a else 0.0
@@ -250,6 +256,7 @@ def run(
                 decision = classify_audit_decision(
                     r.low_sample, r.suspicious, r.elo_ok, id(r) in logged_results,
                     r.val_a["has_value"], r.val_b["has_value"],
+                    passed_reasons.get(id(r), "below_min_edge"),
                 )
                 log_prediction_audit(
                     r.match.tour, r.match.tournament, r.match.surface, r.match.match_date,
