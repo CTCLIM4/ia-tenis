@@ -37,7 +37,7 @@ def _no_real_clv_tracking(monkeypatch):
 def telegram_posts(monkeypatch):
     # Never post to the real group from a test.
     posts = []
-    monkeypatch.setattr(workflow, "send_telegram_signals", lambda signals, day: posts.append(signals) or True)
+    monkeypatch.setattr(workflow, "send_telegram_predictions", lambda preds, day: posts.append(preds) or True)
     return posts
 
 
@@ -613,31 +613,32 @@ class TestClvTracking:
 
 
 class TestTelegram:
-    def test_posts_qualifying_signals_with_details(self, monkeypatch, telegram_posts):
-        wta_r = _result(match=_match(player_a="WTA Pick", tour="wta"),
-                        val_a=_val(edge=0.05, kelly=0.04, has_value=True))
-        weak = _result(match=_match(player_a="Weak", tour="wta"), val_a=_val(edge=0.01, kelly=0.005, has_value=True))
+    def test_posts_predictions_not_picks(self, monkeypatch, telegram_posts):
+        m = _match(player_a="Alexandrova E.", player_b="Andreeva M.", tour="wta")
+        m.raw_home, m.raw_away, m.commence_time = "Ekaterina Alexandrova", "Mirra Andreeva", "2026-10-08T11:00:00Z"
+        no_value = _result(match=m)  # no edge at all: still a prediction
         t = TestRun()
-        t._wire_common(monkeypatch, [wta_r, weak])
-        monkeypatch.setattr(workflow, "AUTO_LOG_EXCLUDED_TOURS", frozenset({"wta"}))
+        t._wire_common(monkeypatch, [no_value])
 
         workflow.run()
 
-        assert len(telegram_posts) == 1
-        (post,) = telegram_posts[0]
-        assert post["pick"] == "WTA Pick" and post["p_model"] == 0.6
-        assert post["tournament"] and post["match_date"]
+        assert telegram_posts == [[{
+            "tournament": "ATP Test Open", "match_date": "2026-08-19", "commence_time": "2026-10-08T11:00:00Z",
+            "player_a": "Ekaterina Alexandrova", "player_b": "Mirra Andreeva", "p_a": 0.6,
+        }]]
+        assert not {"odds", "edge", "pick"} & telegram_posts[0][0].keys()
 
-    def test_warned_signals_are_not_posted(self, monkeypatch, telegram_posts):
-        suspicious = _result(match=_match(player_a="Too Good"), val_a=_val(edge=0.05, kelly=0.04, has_value=True))
-        suspicious.suspicious = True
+    def test_skips_matches_the_model_cannot_rate(self, monkeypatch, telegram_posts):
+        rated = _result(match=_match(player_a="Rated"))
+        thin = _result(match=_match(player_a="Thin"), low_sample=True)
+        unknown = _result(match=_match(player_a="Unknown"), elo_ok=False)
         t = TestRun()
-        t._wire_common(monkeypatch, [suspicious])
+        t._wire_common(monkeypatch, [rated, thin, unknown])
         workflow.run()
-        assert telegram_posts == [[]]
+        assert [p["player_a"] for p in telegram_posts[0]] == ["Rated"]
 
     def test_dry_run_and_no_telegram_post_nothing(self, monkeypatch, telegram_posts):
-        r = _result(val_a=_val(edge=0.05, kelly=0.04, has_value=True))
+        r = _result()
         t = TestRun()
         t._wire_common(monkeypatch, [r])
         workflow.run(dry_run=True)

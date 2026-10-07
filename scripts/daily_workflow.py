@@ -56,7 +56,7 @@ from src.data.staleness import StalenessLevel, evaluate_staleness
 from src.data.timezone_utils import lima_today
 from src.git_utils import commit_and_push
 from src.utils.notifier import send_picks_email
-from src.utils.telegram import send_signals as send_telegram_signals
+from src.utils.telegram import send_predictions as send_telegram_predictions
 from src.utils.vpn_tracker import track_vpn_usage
 from src.value_analysis import (
     _SHRINK_HI, _SHRINK_LO, _SHRINK_RATE, LogMatchStatus,
@@ -147,14 +147,25 @@ def _pick_rows(r, qualifies_a: bool, qualifies_b: bool) -> list[dict]:
     match_label = f"{r.match.player_a} vs {r.match.player_b}"
     return [
         {"match": match_label, "pick": name, "odds": odds, "edge": val["edge"],
-         "kelly": val["kelly_fraction"], "bookmaker": bookmaker, "p_model": p,
-         "tournament": r.match.tournament, "match_date": r.match.match_date.isoformat()}
-        for qualifies, val, odds, name, bookmaker, p in (
-            (qualifies_a, r.val_a, r.match.odds_a, r.match.player_a, r.match.bookmaker_a, r.pred["p_a_cal"]),
-            (qualifies_b, r.val_b, r.match.odds_b, r.match.player_b, r.match.bookmaker_b, r.pred["p_b_cal"]),
+         "kelly": val["kelly_fraction"], "bookmaker": bookmaker}
+        for qualifies, val, odds, name, bookmaker in (
+            (qualifies_a, r.val_a, r.match.odds_a, r.match.player_a, r.match.bookmaker_a),
+            (qualifies_b, r.val_b, r.match.odds_b, r.match.player_b, r.match.bookmaker_b),
         )
         if qualifies
     ]
+
+
+def _prediction_row(r) -> dict:
+    """What the Telegram channel gets for one match: who plays and the
+    model's probability -- no pick, odds or edge."""
+    return {
+        "tournament": r.match.tournament, "match_date": r.match.match_date.isoformat(),
+        "commence_time": r.match.commence_time,
+        "player_a": r.match.raw_home or r.match.player_a,
+        "player_b": r.match.raw_away or r.match.player_b,
+        "p_a": r.pred["p_a_cal"],
+    }
 
 
 def _clv_tracking() -> dict | None:
@@ -282,9 +293,9 @@ def run(
     if not dry_run:
         send_picks_email(selected, vpn_status, signals, _clv_tracking())
         if telegram:
-            # Same gate as the logged picks (no warnings); posted with a
-            # not-a-bet disclaimer, see src/utils/telegram.py.
-            send_telegram_signals(selected + signals, lima_today())
+            # Predictions only (no picks/odds/edges), see src/utils/telegram.py.
+            send_telegram_predictions([_prediction_row(r) for r in results if r.elo_ok and not r.low_sample],
+                                      lima_today())
         if selected and push:
             commit_and_push(
                 [VALUE_BETS_LOG],

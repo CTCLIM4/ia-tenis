@@ -96,6 +96,7 @@ class DiscoveredMatch:
     raw_away: str
     bookmaker_a: str = ""
     bookmaker_b: str = ""
+    commence_time: str = ""  # ISO8601 UTC from The Odds API, for display
 
 
 @dataclass
@@ -271,6 +272,7 @@ def discover_matches(
                 odds_a=odds_home, odds_b=odds_away,
                 raw_home=home, raw_away=away,
                 bookmaker_a=bookmaker_home, bookmaker_b=bookmaker_away,
+                commence_time=commence_time,
             ))
 
     return matches
