@@ -77,6 +77,29 @@ def _write_launcher(launcher: Path, command: str) -> str:
     return task_command
 
 
+def _allow_on_battery(task_name: str):
+    """schtasks /create can't set power conditions, and its defaults keep a
+    task from starting on battery (it just sits "Queued") and kill it when
+    the laptop unplugs -- found 2026-10-07 on the production laptop. Also
+    turn on StartWhenAvailable so a run missed while asleep happens later."""
+    script = (
+        "$s = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries "
+        "-DontStopIfGoingOnBatteries -StartWhenAvailable; "
+        f"Set-ScheduledTask -TaskName '{task_name}' -Settings $s | Out-Null"
+    )
+    return subprocess.run(
+        ["powershell", "-NoProfile", "-NonInteractive", "-Command", script],
+        capture_output=True, text=True,
+    )
+
+
+def _create_and_configure(schtasks_cmd: list[str], task_name: str):
+    result = subprocess.run(schtasks_cmd, capture_output=True, text=True)
+    if result.returncode != 0:
+        return result
+    return _allow_on_battery(task_name)
+
+
 def create_task(
     hour: int = 8, minute: int = 0, task_name: str = DEFAULT_TASK_NAME,
     tour: str = "both", days_ahead: int = 1,
@@ -100,12 +123,12 @@ def create_task(
 
     task_command = _write_launcher(log_dir / LAUNCHER_NAME, command)
 
-    return subprocess.run(
+    return _create_and_configure(
         [
             "schtasks", "/create", "/tn", task_name, "/tr", task_command,
             "/sc", "daily", "/st", time_str, "/f",
         ],
-        capture_output=True, text=True,
+        task_name,
     )
 
 
@@ -123,15 +146,15 @@ def create_odds_snapshot_task(
     log_dir.mkdir(parents=True, exist_ok=True)
     script = _ROOT / "scripts" / "snapshot_odds.py"
     log_file = log_dir / "odds_snapshots.log"
-    command = f'"{sys.executable}" "{script}" >> "{log_file}" 2>&1'
+    command = f'"{sys.executable}" "{script}" --commit >> "{log_file}" 2>&1'
     task_command = _write_launcher(log_dir / ODDS_SNAPSHOT_LAUNCHER_NAME, command)
 
-    return subprocess.run(
+    return _create_and_configure(
         [
             "schtasks", "/create", "/tn", task_name, "/tr", task_command,
             "/sc", "hourly", "/mo", str(every_hours), "/st", f"{hour:02d}:{minute:02d}", "/f",
         ],
-        capture_output=True, text=True,
+        task_name,
     )
 
 

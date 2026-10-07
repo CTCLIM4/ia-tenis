@@ -142,3 +142,46 @@ def test_skips_bookmaker_missing_a_side():
     event = _event("e1", "2026-10-07T20:00:00Z", {"pinnacle": (1.8, 2.1)})
     event["bookmakers"][0]["markets"][0]["outcomes"].pop()
     assert snap.event_rows(event, "tennis_atp_x", "t") == []
+
+
+class TestMaybeCommit:
+    def _repo(self, monkeypatch, tmp_path):
+        import subprocess
+        import src.git_utils as git_utils
+
+        def git(*args):
+            return subprocess.run(["git", *args], cwd=tmp_path, check=True, capture_output=True, text=True)
+        git("init", "-q")
+        git("config", "user.email", "t@example.com")
+        git("config", "user.name", "t")
+        (tmp_path / "other.txt").write_text("base")
+        git("add", "other.txt")
+        git("commit", "-q", "-m", "base")
+        monkeypatch.setattr(git_utils, "_ROOT", tmp_path)
+        monkeypatch.setattr(snap, "_ROOT", tmp_path)
+        return git
+
+    def test_commits_only_snapshots_leaving_user_staging_alone(self, monkeypatch, tmp_path):
+        git = self._repo(monkeypatch, tmp_path)
+        out = tmp_path / "data" / "odds_snapshots"
+        out.mkdir(parents=True)
+        (out / "runs.csv").write_text("x\n")
+        (tmp_path / "other.txt").write_text("user work in progress")
+        git("add", "other.txt")
+
+        assert snap.maybe_commit(out, 24, now=NOW) is True
+
+        files = git("show", "--name-only", "--format=", "HEAD").stdout.split()
+        assert files == ["data/odds_snapshots/runs.csv"]
+        assert "M  other.txt" in git("status", "--porcelain").stdout  # still staged, not committed
+
+    def test_throttled_and_noop_without_changes(self, monkeypatch, tmp_path):
+        self._repo(monkeypatch, tmp_path)
+        out = tmp_path / "data" / "odds_snapshots"
+        out.mkdir(parents=True)
+        (out / "runs.csv").write_text("x\n")
+        assert snap.maybe_commit(out, 24) is True
+        (out / "runs.csv").write_text("x\ny\n")
+        assert snap.maybe_commit(out, 24) is False  # last commit is seconds old
+        assert snap.maybe_commit(out, 0) is True
+        assert snap.maybe_commit(out, 0) is False  # nothing changed

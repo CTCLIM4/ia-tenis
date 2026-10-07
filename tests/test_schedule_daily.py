@@ -234,3 +234,40 @@ class TestCreateOddsSnapshotTask:
             snapshot_odds.build_parser().parse_args(script_args)
         except SystemExit:
             pytest.fail(f"snapshot_odds.py rejects the scheduled command's arguments: {script_args}")
+
+
+class TestBatterySettings:
+    """Regression (2026-10-07): schtasks' defaults keep a task from starting
+    on battery, so on the production laptop it just sat "Queued"."""
+
+    def _calls(self, monkeypatch, tmp_path, create, create_rc=0):
+        calls = []
+
+        def fake_run(cmd, **kw):
+            calls.append(cmd)
+            return _FakeCompletedProcess(returncode=create_rc if "/create" in cmd else 0)
+
+        monkeypatch.setattr(schedule_daily.subprocess, "run", fake_run)
+        monkeypatch.setattr(schedule_daily, "_ROOT", tmp_path)
+        result = create()
+        return calls, result
+
+    @pytest.mark.parametrize("which", ["daily", "snapshots"])
+    def test_allows_battery_after_creating(self, monkeypatch, tmp_path, which):
+        create = (lambda: schedule_daily.create_task(task_name="t")) if which == "daily" \
+            else (lambda: schedule_daily.create_odds_snapshot_task(task_name="t"))
+        calls, result = self._calls(monkeypatch, tmp_path, create)
+        assert result.returncode == 0
+        create_idx = next(i for i, c in enumerate(calls) if "/create" in c)
+        ps = calls[create_idx + 1]
+        assert ps[0] == "powershell"
+        script = ps[-1]
+        for flag in ("-AllowStartIfOnBatteries", "-DontStopIfGoingOnBatteries", "-StartWhenAvailable"):
+            assert flag in script
+        assert "-TaskName 't'" in script
+
+    def test_skips_settings_when_create_fails(self, monkeypatch, tmp_path):
+        calls, result = self._calls(
+            monkeypatch, tmp_path, lambda: schedule_daily.create_task(task_name="t"), create_rc=1)
+        assert result.returncode == 1
+        assert not [c for c in calls if c[0] == "powershell"]

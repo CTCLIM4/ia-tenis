@@ -65,3 +65,39 @@ def commit_and_push(
     except Exception as e:
         print(f"  Aviso: fallo git ({e}).")
         return False
+
+
+def last_commit_time(path: str) -> int | None:
+    """Unix time of the last commit touching `path`, or None if never
+    committed or git is unavailable."""
+    import subprocess
+    try:
+        out = subprocess.run(
+            ["git", "log", "-1", "--format=%ct", "--", path],
+            cwd=_ROOT, capture_output=True, text=True, timeout=10, check=True,
+        ).stdout.strip()
+        return int(out) if out else None
+    except Exception:
+        return None
+
+
+def commit_paths(paths: list[str], message: str) -> bool:
+    """Commit only `paths` (local, never pushes). Anything else the user has
+    staged stays staged and out of this commit. Returns True if a commit was
+    made; failures are printed, never raised."""
+    import subprocess
+    try:
+        subprocess.run(["git", "add", "--", *paths], cwd=_ROOT, check=True, capture_output=True, text=True)
+        diff = subprocess.run(["git", "diff", "--cached", "--quiet", "--", *paths],
+                              cwd=_ROOT, capture_output=True, text=True)
+        if diff.returncode == 0:
+            return False
+        subprocess.run(["git", "commit", "-m", message, "--only", "--", *paths],
+                       cwd=_ROOT, check=True, capture_output=True, text=True)
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"  Aviso: fallo el comando git {e.cmd}: {(e.stderr or '').strip()}")
+        return False
+    except Exception as e:
+        print(f"  Aviso: fallo git ({e}).")
+        return False

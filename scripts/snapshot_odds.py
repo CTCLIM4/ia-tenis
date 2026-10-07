@@ -20,6 +20,11 @@ Credits: each tournament costs one credit per region (h2h only). The free
 plan has 500/month, shared with the daily scanner (~3 credits per active
 tournament per day). A run stops fetching once the remaining credits would
 drop below --min-remaining, so snapshots never starve the daily scan.
+
+--commit (used by the scheduled task) makes a local git commit of
+data/odds_snapshots/ at most once every --commit-every-hours: the data can't
+be re-fetched later, so it shouldn't live only in the working tree. It
+commits only those paths and never pushes.
 """
 from __future__ import annotations
 
@@ -40,11 +45,13 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 import src.config  # noqa: F401  (loads .env before ODDS_API_KEY is read)
+from src.git_utils import commit_paths, last_commit_time
 from src.odds_api import ODDS_API_BASE, list_tennis_sport_keys
 
 DEFAULT_OUT_DIR = _ROOT / "data" / "odds_snapshots"
 DEFAULT_REGIONS = "eu"
 DEFAULT_MIN_REMAINING = 150
+DEFAULT_COMMIT_EVERY_HOURS = 24
 SNAPSHOT_COLS = [
     "snapshot_utc", "sport_key", "event_id", "commence_time", "home", "away",
     "bookmaker", "bookmaker_last_update", "price_home", "price_away",
@@ -180,6 +187,16 @@ def take_snapshot(
     return run
 
 
+def maybe_commit(out_dir: Path, every_hours: float, now: Optional[datetime] = None) -> bool:
+    """Commit out_dir locally if its last commit is older than every_hours."""
+    now = now or _now()
+    rel = out_dir.resolve().relative_to(_ROOT).as_posix()
+    last = last_commit_time(rel)
+    if last is not None and now.timestamp() - last < every_hours * 3600:
+        return False
+    return commit_paths([rel], f"data: odds snapshots up to {_iso(now)}")
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Guarda snapshots de cuotas pre-partido ATP/WTA (The Odds API)")
     parser.add_argument("--regions", default=os.environ.get("ODDS_SNAPSHOT_REGIONS", DEFAULT_REGIONS),
@@ -188,6 +205,9 @@ def build_parser() -> argparse.ArgumentParser:
                         default=int(os.environ.get("ODDS_SNAPSHOT_MIN_REMAINING", DEFAULT_MIN_REMAINING)),
                         help="no gastar creditos por debajo de este saldo (reserva para el escaneo diario)")
     parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR)
+    parser.add_argument("--commit", action="store_true",
+                        help="commit local (sin push) de los snapshots si el ultimo tiene mas de --commit-every-hours")
+    parser.add_argument("--commit-every-hours", type=float, default=DEFAULT_COMMIT_EVERY_HOURS)
     return parser
 
 
@@ -201,6 +221,8 @@ def main() -> None:
           f"{run['events_prematch']} partido(s) pre-partido, {run['rows_written']} fila(s) nuevas, "
           f"{run['tournaments_skipped_budget']} torneo(s) saltados por presupuesto, "
           f"creditos restantes {run['credits_remaining']}")
+    if args.commit and maybe_commit(args.out_dir, args.commit_every_hours):
+        print("  Snapshots guardados en git (commit local, sin push).")
 
 
 if __name__ == "__main__":
