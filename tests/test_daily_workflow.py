@@ -1,10 +1,13 @@
 """Tests for scripts/daily_workflow.py — non-interactive daily scan + filters."""
 from __future__ import annotations
 
+import csv
 from datetime import date
 
 import scripts.daily_workflow as workflow
 from src.daily_scanner import DiscoveredMatch, EvaluatedMatch
+from src.features import FEATURE_COLS
+from src.value_analysis import LogMatchStatus
 
 
 def _pred():
@@ -153,9 +156,12 @@ class TestRun:
             workflow, "_atp_is_stale",
             lambda live_tournament_mode=False: stale_atp and not live_tournament_mode,
         )
+        monkeypatch.setattr(workflow, "_davis_is_stale", lambda live_tournament_mode=False: False)
         monkeypatch.setattr(workflow, "discover_matches", lambda *a, **kw: [r.match for r in results])
         monkeypatch.setattr(workflow, "evaluate_matches", lambda matches, models: results)
         monkeypatch.setattr(workflow, "track_vpn_usage", lambda: {"available": False})
+        monkeypatch.setattr(workflow, "backup_logs", lambda **kw: None)
+        monkeypatch.setattr(workflow, "check_existing_log_entry", lambda *a: (LogMatchStatus.NEW, None))
         self.sent = {}
         monkeypatch.setattr(
             workflow, "send_picks_email",
@@ -212,12 +218,12 @@ class TestRun:
         original_discover = workflow.discover_matches
         monkeypatch.setattr(
             workflow, "discover_matches",
-            lambda api_key, canonical, tours=("atp", "wta"): called_tours.setdefault("tours", tours) or [atp_r.match],
+            lambda api_key, canonical, tours=("atp", "wta"), days_ahead=1: called_tours.setdefault("tours", tours) or [atp_r.match],
         )
 
         workflow.run()
 
-        assert called_tours["tours"] == ("atp",)
+        assert called_tours["tours"] == ("atp", "davis")
 
     def test_skips_atp_matches_when_stale(self, monkeypatch):
         wta_r = _result(match=_match(player_a="WTA Pick", tour="wta"),
@@ -227,12 +233,12 @@ class TestRun:
         called_tours = {}
         monkeypatch.setattr(
             workflow, "discover_matches",
-            lambda api_key, canonical, tours=("atp", "wta"): called_tours.setdefault("tours", tours) or [wta_r.match],
+            lambda api_key, canonical, tours=("atp", "wta"), days_ahead=1: called_tours.setdefault("tours", tours) or [wta_r.match],
         )
 
         workflow.run()
 
-        assert called_tours["tours"] == ("wta",)
+        assert called_tours["tours"] == ("wta", "davis")
 
     def test_logs_query_only_for_qualifying_matches(self, monkeypatch):
         strong = _result(val_a=_val(edge=0.05, kelly=0.04, has_value=True))
@@ -290,6 +296,42 @@ class TestRun:
         assert len(self.sent["picks"]) == 1
         assert self.sent["vpn"] == {"available": False}
 
+    def test_no_push_still_logs_and_notifies(self, monkeypatch):
+        strong = _result(val_a=_val(edge=0.05, kelly=0.04, has_value=True))
+        self._wire_common(monkeypatch, [strong])
+
+        selected = workflow.run(push=False)
+
+        assert len(selected) == 1
+        assert selected[0]["kelly"] == 0.01
+        assert len(self.logged_queries) == 1
+        assert len(self.sent["picks"]) == 1
+        assert self.pushed == {}
+
+    def test_selected_tour_and_days_reach_discovery(self, monkeypatch):
+        self._wire_common(monkeypatch, [])
+        seen = {}
+
+        def load_models(tours, retrain):
+            seen["models"] = tours
+            return {}
+
+        monkeypatch.setattr(workflow, "_load_models", load_models)
+        monkeypatch.setattr(workflow, "discover_matches", lambda *a, **kw: seen.update(kw) or [])
+
+        workflow.run(tour="wta", days_ahead=2, dry_run=True)
+
+        assert seen["models"] == ("wta",)
+        assert seen["tours"] == ("wta",)
+        assert seen["days_ahead"] == 2
+
+    def test_stale_davis_tour_does_not_discover_matches(self, monkeypatch):
+        self._wire_common(monkeypatch, [])
+        monkeypatch.setattr(workflow, "_davis_is_stale", lambda live_tournament_mode=False: True)
+        monkeypatch.setattr(workflow, "discover_matches", lambda *a, **kw: (_ for _ in ()).throw(AssertionError("stale tour scanned")))
+
+        assert workflow.run(tour="davis", dry_run=True) == []
+
     def test_selected_picks_include_bookmaker(self, monkeypatch):
         m = DiscoveredMatch(
             tour="atp", tournament="ATP Test Open", surface="hard",
@@ -314,13 +356,13 @@ class TestRun:
         called_tours = {}
         monkeypatch.setattr(
             workflow, "discover_matches",
-            lambda api_key, canonical, tours=("atp", "wta"):
+            lambda api_key, canonical, tours=("atp", "wta"), days_ahead=1:
                 called_tours.setdefault("tours", tours) or [atp_r.match, wta_r.match],
         )
 
         workflow.run(live_tournament_mode=True)
 
-        assert called_tours["tours"] == ("atp", "wta")
+        assert called_tours["tours"] == ("atp", "wta", "davis")
 
     def test_default_mode_still_excludes_stale_tours(self, monkeypatch):
         # Regression guard: live_tournament_mode's relaxation must be
@@ -333,13 +375,13 @@ class TestRun:
         called_tours = {}
         monkeypatch.setattr(
             workflow, "discover_matches",
-            lambda api_key, canonical, tours=("atp", "wta"):
+            lambda api_key, canonical, tours=("atp", "wta"), days_ahead=1:
                 called_tours.setdefault("tours", tours) or [atp_r.match],
         )
 
         workflow.run()
 
-        assert called_tours["tours"] == ("atp",)
+        assert called_tours["tours"] == ("atp", "davis")
 
     def test_logs_query_with_bookmaker_from_match(self, monkeypatch):
         m = DiscoveredMatch(
@@ -356,3 +398,115 @@ class TestRun:
         _, kwargs = self.logged_queries[0]
         assert kwargs["bookmaker_a"] == "bet365"
         assert kwargs["bookmaker_b"] == "pinnacle"
+
+
+class TestRunLogIntegrity:
+    def _wire(self, monkeypatch, tmp_path, result):
+        log_path = tmp_path / "value_bets_log.csv"
+        monkeypatch.setattr("src.value_analysis.LOG_PATH", log_path)
+        monkeypatch.setenv("ODDS_API_KEY", "test-key")
+        monkeypatch.setattr(workflow, "_load_models", lambda tours, retrain: {})
+        monkeypatch.setattr(workflow, "_canonical_names", lambda models: {})
+        monkeypatch.setattr(workflow, "_atp_is_stale", lambda live_tournament_mode=False: False)
+        monkeypatch.setattr(workflow, "_wta_is_stale", lambda live_tournament_mode=False: False)
+        monkeypatch.setattr(workflow, "_davis_is_stale", lambda live_tournament_mode=False: False)
+        monkeypatch.setattr(workflow, "discover_matches", lambda *a, **kw: [result.match])
+        monkeypatch.setattr(workflow, "evaluate_matches", lambda matches, models: [result])
+        monkeypatch.setattr(workflow, "track_vpn_usage", lambda: {})
+        monkeypatch.setattr(workflow, "send_picks_email", lambda *a: True)
+        monkeypatch.setattr(workflow, "commit_and_push", lambda *a: True)
+        monkeypatch.setattr(workflow, "log_prediction_audit", lambda *a, **kw: None)
+        backups = []
+        monkeypatch.setattr(workflow, "backup_logs", lambda **kw: backups.append(log_path.exists()))
+        return log_path, backups
+
+    @staticmethod
+    def _result(odds_a=3.80):
+        result = _result(
+            match=_match(odds_a=odds_a),
+            val_a=_val(edge=0.05, kelly=0.04, has_value=True),
+        )
+        result.pred.update({
+            "features": {col: 0.0 for col in FEATURE_COLS},
+            "rank_a": None, "rank_b": None,
+            "rank_a_source": "", "rank_b_source": "",
+        })
+        return result
+
+    @staticmethod
+    def _rows(path):
+        with path.open(newline="", encoding="utf-8") as f:
+            return list(csv.DictReader(f))
+
+    def test_second_run_skips_pending_duplicate(self, monkeypatch, tmp_path):
+        result = self._result()
+        log_path, backups = self._wire(monkeypatch, tmp_path, result)
+        pushes = []
+        monkeypatch.setattr(workflow, "commit_and_push", lambda *a: pushes.append(a))
+
+        assert len(workflow.run()) == 1
+        assert workflow.run() == []
+
+        assert len(self._rows(log_path)) == 1
+        assert backups == [False, True]
+        assert len(pushes) == 1
+
+    def test_changed_odds_update_existing_row(self, monkeypatch, tmp_path):
+        first = self._result()
+        log_path, _ = self._wire(monkeypatch, tmp_path, first)
+        workflow.run()
+
+        updated = self._result(odds_a=3.90)
+        monkeypatch.setattr(workflow, "evaluate_matches", lambda matches, models: [updated])
+        assert len(workflow.run()) == 1
+
+        rows = self._rows(log_path)
+        assert len(rows) == 1
+        assert rows[0]["odds_a"] == "3.9"
+        assert rows[0]["kelly_a"] == "0.01"
+
+    def test_resolved_match_is_untouched(self, monkeypatch, tmp_path):
+        result = self._result()
+        log_path, _ = self._wire(monkeypatch, tmp_path, result)
+        workflow.run()
+        rows = self._rows(log_path)
+        rows[0]["result"] = "A_win"
+        with log_path.open("w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=rows[0].keys())
+            writer.writeheader()
+            writer.writerows(rows)
+
+        assert workflow.run() == []
+        assert self._rows(log_path)[0]["result"] == "A_win"
+        assert len(self._rows(log_path)) == 1
+
+    def test_backup_precedes_audit_write_even_without_picks(self, monkeypatch, tmp_path):
+        result = _result()
+        self._wire(monkeypatch, tmp_path, result)
+        calls = []
+        monkeypatch.setattr(workflow, "backup_logs", lambda **kw: calls.append("backup"))
+        monkeypatch.setattr(workflow, "log_prediction_audit", lambda *a, **kw: calls.append("audit"))
+
+        workflow.run()
+
+        assert calls == ["backup", "audit"]
+
+    def test_backup_copies_real_log_to_project_directory(self, monkeypatch, tmp_path):
+        from scripts.backup_logs import backup_logs
+
+        result = _result()
+        log_path, _ = self._wire(monkeypatch, tmp_path, result)
+        log_path.write_text("previous value log\n", encoding="utf-8")
+        audit_path = tmp_path / "prediction_audit_log.csv"
+        audit_path.write_text("previous audit log\n", encoding="utf-8")
+        monkeypatch.setattr(workflow, "AUDIT_LOG_PATH", audit_path)
+        monkeypatch.setattr(workflow, "_ROOT", tmp_path)
+        monkeypatch.setattr(workflow, "backup_logs", backup_logs)
+
+        workflow.run()
+
+        backups = list((tmp_path / "data" / "logs").glob("backup_*"))
+        assert len(backups) == 2
+        assert {path.read_text(encoding="utf-8") for path in backups} == {
+            "previous value log\n", "previous audit log\n",
+        }

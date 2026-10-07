@@ -5,12 +5,13 @@ Uso:
   python scripts/run_prediction.py --tour wta    # solo WTA
   python scripts/run_prediction.py --days-ahead 2  # incluye proximos 2 dias
   python scripts/run_prediction.py --log         # tambien escribe data/logs/daily_{fecha}.log
+  python scripts/run_prediction.py --no-download --dry-run  # verifica sin registrar picks ni enviar correo
 
 Flujo:
   1. Descarga data fresca (ATP + WTA + Davis Cup)
   2. Corre pipeline de features para cada tour
   3. Reentrena modelos LR
-  4. Ejecuta scanner diario (--auto-save, no interactivo)
+  4. Ejecuta el flujo diario (filtro de actualidad, edge >= 3%, 1/4 Kelly)
   5. Imprime resumen con picks generados
 """
 import argparse
@@ -60,7 +61,7 @@ def run(cmd: list[str], check: bool = True, stdin_input: str = "\n", log_file=No
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Runner unico: descarga data -> pipeline -> retrain -> scanner"
+        description="Runner unico: descarga data -> pipeline -> retrain -> flujo diario"
     )
     parser.add_argument("--tour", choices=["atp", "wta", "davis", "both"],
                         default="both", help="Tour para generar picks")
@@ -68,6 +69,8 @@ def build_parser() -> argparse.ArgumentParser:
                         help="Ventana de partidos a incluir (default: 1)")
     parser.add_argument("--no-download", action="store_true",
                         help="Saltar descarga de data (usar cache)")
+    parser.add_argument("--dry-run", action="store_true",
+                        help="Evalua picks sin escribir logs de apuestas, enviar correo ni hacer push")
     parser.add_argument("--log", action="store_true",
                         help="Tambien escribe la salida a data/logs/daily_{fecha}.log")
     return parser
@@ -75,6 +78,8 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main() -> None:
     args = build_parser().parse_args()
+    if args.days_ahead < 1:
+        build_parser().error("--days-ahead debe ser al menos 1")
 
     tours = ("atp", "wta", "davis") if args.tour == "both" else (args.tour,)
 
@@ -110,14 +115,16 @@ def main() -> None:
             )
             run([sys.executable, "-c", code], log_file=log_file)
 
-        # Step 4: Run scanner
+        # Step 4: Use the same selection and logging policy as the daily workflow.
         print("\n" + "=" * 60)
-        print("  PASO 4/4: Ejecutando scanner diario")
+        print("  PASO 4/4: Ejecutando flujo diario")
         print("=" * 60)
-        cmd = [sys.executable, "-m", "src.daily_scanner",
+        cmd = [sys.executable, "-m", "scripts.daily_workflow",
                "--tour", args.tour,
                "--days-ahead", str(args.days_ahead),
-               "--auto-save"]
+               "--no-push"]
+        if args.dry_run:
+            cmd.append("--dry-run")
         run(cmd, log_file=log_file)
 
         print("\n" + "=" * 60)

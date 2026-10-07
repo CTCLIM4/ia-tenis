@@ -5,6 +5,7 @@ import sys
 from datetime import date
 
 import scripts.run_prediction as run_prediction
+import scripts.daily_workflow as daily_workflow
 
 
 class TestLogPathForToday:
@@ -59,3 +60,33 @@ class TestRunWithLogFile:
                 pass
         content = log_path.read_text(encoding="utf-8")
         assert "ERROR" in content
+
+
+def test_runner_dispatches_to_daily_workflow_without_push(monkeypatch):
+    calls = []
+    monkeypatch.setattr(run_prediction, "run", lambda cmd, **kw: calls.append(cmd) or 0)
+    monkeypatch.setattr(sys, "argv", ["run_prediction.py", "--no-download", "--tour", "wta", "--days-ahead", "2"])
+
+    run_prediction.main()
+
+    assert calls[-1] == [
+        sys.executable, "-m", "scripts.daily_workflow", "--tour", "wta",
+        "--days-ahead", "2", "--no-push",
+    ]
+    assert not any("src.daily_scanner" in cmd for cmd in calls)
+    parsed = daily_workflow.build_parser().parse_args(calls[-1][3:])
+    assert (parsed.tour, parsed.days_ahead, parsed.no_push) == ("wta", 2, True)
+    assert len(calls) == 3  # pipeline, retrain, daily workflow
+
+
+def test_runner_dry_run_reaches_daily_workflow(monkeypatch):
+    calls = []
+    monkeypatch.setattr(run_prediction, "run", lambda cmd, **kw: calls.append(cmd) or 0)
+    monkeypatch.setattr(sys, "argv", ["run_prediction.py", "--no-download", "--dry-run", "--tour", "atp"])
+
+    run_prediction.main()
+
+    args = daily_workflow.build_parser().parse_args(calls[-1][3:])
+    assert args.dry_run is True
+    assert args.no_push is True
+    assert args.tour == "atp"

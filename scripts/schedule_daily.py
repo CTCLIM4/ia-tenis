@@ -6,9 +6,9 @@ Uso:
   python scripts/schedule_daily.py --hour 7 --minute 30
   python scripts/schedule_daily.py --remove            # borra la tarea
 
-CUIDADO: run_prediction.py ejecuta el scanner con auto-save hardcodeado (paso
-4/4) -- una vez programada la tarea, se auto-loguean value bets reales
-(Kelly real) en data/value_bets_log.csv todos los dias sin revision humana.
+run_prediction.py ejecuta daily_workflow (paso 4/4): guarda picks que superan
+el filtro de actualidad y edge >= 3% con 1/4 Kelly, y envia el correo diario.
+El runner pasa --no-push: la tarea programada nunca crea commits ni hace push.
 Ver docs/metrics/2026-09-18-scanner-automation.md.
 
 Nota sobre zona horaria: schtasks no tiene concepto de IANA timezone -- usa
@@ -55,7 +55,7 @@ def create_task(
     tour: str = "both", days_ahead: int = 1,
 ):
     """Create (or replace, idempotently) a daily Windows Scheduled Task
-    that runs scripts/run_prediction.py --auto-save --log at hour:minute
+    that runs scripts/run_prediction.py --log at hour:minute
     local time. Removes any existing task of the same name first -- never
     duplicates."""
     _validate_time(hour, minute)
@@ -105,7 +105,7 @@ def main() -> None:
         print(f"ERROR creando la tarea: {result.stderr}")
         sys.exit(result.returncode)
     print(f"Tarea '{args.task_name}' creada: corre todos los dias a las {args.hour:02d}:{args.minute:02d}.")
-    print("CUIDADO: auto-save esta activo -- se logueara Kelly real sin revision humana.")
+    print("El flujo diario registra picks elegibles con 1/4 Kelly y envia correo; no hace commit ni push.")
 
 
 if __name__ == "__main__":
