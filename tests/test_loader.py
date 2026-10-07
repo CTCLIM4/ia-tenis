@@ -405,3 +405,54 @@ def test_clean_wta_sets_played_defaults_to_zero_when_columns_missing():
     raw = raw.drop(columns=["Wsets", "Lsets"], errors="ignore")
     df = _clean_wta(raw, 2023)
     assert list(df["sets_played"]) == [0, 0, 0]
+
+
+def _one_tournament(rows):
+    """rows: (round, match_num, winner, loser) all sharing one tourney_date,
+    the way Tennismylife dates every match of a tournament."""
+    return pd.DataFrame([{
+        "tourney_id": "2024-580", "tourney_name": "AO", "surface": "Hard", "tourney_level": "G",
+        "tourney_date": 20240115, "match_num": num, "round": rnd,
+        "winner_name": w, "loser_name": l, "winner_rank": 1, "loser_rank": 2, "score": "6-3 6-4",
+    } for rnd, num, w, l in rows])
+
+
+def test_clean_orders_a_tournament_by_round_then_match_num():
+    # Regression (2026-10-07): every match of a Tennismylife tournament shares
+    # tourney_date, and an unstable sort on match_date alone listed later
+    # rounds before earlier ones in 99% of ATP tournaments -- so features for
+    # an early-round match were computed after that player's later matches.
+    raw = _one_tournament([
+        ("F", 7, "A", "B"), ("SF", 5, "A", "C"), ("BR", 6, "C", "D"), ("R16", 2, "A", "E"),
+        ("RR", 3, "A", "F"), ("QF", 4, "A", "G"), ("R128", 1, "A", "H"), ("R128", 0, "B", "I"),
+    ])
+    out = _clean(raw, reference_date=date(2024, 2, 1))
+    assert out["round"].tolist() == ["R128", "R128", "R16", "RR", "QF", "SF", "BR", "F"]
+    assert out.loc[out["round"] == "R128", "match_num"].tolist() == [0, 1]
+
+
+def test_clean_keeps_unknown_rounds_without_dropping_them():
+    raw = _one_tournament([("F", 3, "A", "B"), ("Q1", 1, "C", "D"), (None, 2, "E", "F")])
+    out = _clean(raw, reference_date=date(2024, 2, 1))
+    assert len(out) == 3
+    assert out["round"].tolist()[-1] == "F"
+
+
+def test_early_round_features_never_see_later_rounds_of_same_tournament():
+    from src.backtest.walkforward import build_match_features
+    from src.features.engineering import FeatureBuilder
+    from src.models.elo import EloSystem
+
+    # Raw rows deliberately listed final-first, as Tennismylife's order ended up.
+    raw = _one_tournament([("F", 3, "A", "B"), ("R64", 2, "A", "C"), ("R128", 1, "A", "D")])
+    feats = build_match_features(_clean(raw, reference_date=date(2024, 2, 1)), EloSystem(), FeatureBuilder())
+    first_round = feats[(~feats["is_mirror"]) & (feats["loser"] == "D")].iloc[0]
+    # Neither player has any earlier match, so nothing distinguishes them yet.
+    assert first_round["rest_diff"] == 0
+    assert first_round["elo_diff"] == 0
+
+
+def test_clean_tolerates_frames_without_round_or_tourney_id():
+    raw = pd.read_csv(StringIO(SAMPLE_CSV)).drop(columns=["round", "tourney_id", "match_num"])
+    out = _clean(raw)
+    assert out["match_date"].tolist() == sorted(out["match_date"].tolist())

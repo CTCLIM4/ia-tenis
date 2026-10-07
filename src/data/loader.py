@@ -35,6 +35,17 @@ def _count_sets_played(score) -> int:
     return len(_SET_SCORE_PATTERN.findall(_BRACKETED_PATTERN.sub("", score)))
 
 
+# Chronological order of rounds within one tournament. RR (ATP Finals,
+# United Cup, Davis Cup Finals groups) precedes the knockout QF/SF/F;
+# BR / 3rd/4th (Olympic bronze) is played after the SFs, before the F.
+_ROUND_ORDER = {
+    "Q1": 0, "Q2": 1, "Q3": 2, "Q4": 3,
+    "R128": 10, "R64": 11, "R32": 12, "R16": 13, "RR": 14,
+    "QF": 15, "SF": 16, "BR": 17, "3rd/4th": 17, "F": 18,
+}
+_UNKNOWN_ROUND_ORDER = 14  # mid-tournament: never ahead of the opening rounds or after the F
+
+
 def _clean(df: pd.DataFrame, reference_date: Optional[date] = None) -> pd.DataFrame:
     df = df.copy()
     df["match_date"] = pd.to_datetime(
@@ -50,7 +61,18 @@ def _clean(df: pd.DataFrame, reference_date: Optional[date] = None) -> pd.DataFr
         else:
             df[col] = float("nan")
     df["sets_played"] = df["score"].apply(_count_sets_played)
-    return df.sort_values("match_date").reset_index(drop=True)
+    # Every match of a Tennismylife tournament carries the same tourney_date,
+    # so match_date alone can't order them -- and an unstable sort on it put
+    # later rounds before earlier ones in ~99% of ATP tournaments, letting an
+    # early-round match's features see that player's later results (found
+    # 2026-10-07: rest_diff alone "beat" the closing market). Order within a
+    # tournament by round, then match_num.
+    rounds = df["round"] if "round" in df.columns else pd.Series(index=df.index, dtype=object)
+    df["_round_order"] = rounds.map(_ROUND_ORDER).fillna(_UNKNOWN_ROUND_ORDER)
+    sort_cols = ["match_date"] + [c for c in ("tourney_id",) if c in df.columns] + ["_round_order"] \
+        + [c for c in ("match_num",) if c in df.columns]
+    df = df.sort_values(sort_cols, kind="stable", na_position="last")
+    return df.drop(columns="_round_order").reset_index(drop=True)
 
 
 def load_atp_matches(
