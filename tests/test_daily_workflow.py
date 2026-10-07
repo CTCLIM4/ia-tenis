@@ -9,6 +9,19 @@ from src.daily_scanner import DiscoveredMatch, EvaluatedMatch
 from src.features import FEATURE_COLS
 from src.value_analysis import LogMatchStatus
 
+import pytest
+
+# Captured before the autouse fixture below swaps it out.
+_PRODUCTION_EXCLUDED_TOURS = workflow.AUTO_LOG_EXCLUDED_TOURS
+
+
+@pytest.fixture(autouse=True)
+def _no_excluded_tours(monkeypatch):
+    # Most tests exercise the logging/email/dedup mechanics with ATP picks;
+    # keep them independent of which tours production currently excludes.
+    # Exclusion itself is tested explicitly by overriding this again.
+    monkeypatch.setattr(workflow, "AUTO_LOG_EXCLUDED_TOURS", frozenset())
+
 
 def _pred():
     return {"p_a_raw": 0.6, "p_a_cal": 0.6, "p_b_raw": 0.4, "p_b_cal": 0.4, "features": {}}
@@ -201,14 +214,15 @@ class TestRun:
         assert len(selected) == 1
         assert selected[0]["pick"] == "Strong Pick"
 
-    def test_wta_pick_is_audited_but_never_logged_or_emailed(self, monkeypatch):
-        # WTA excluded from auto-logging (docs/metrics/2026-10-07-model-vs-market-edge.md):
+    def test_excluded_tour_pick_is_audited_but_never_logged_or_emailed(self, monkeypatch):
+        # An excluded tour (docs/metrics/2026-10-07-model-vs-market-edge.md) is
         # still scanned and audited for calibration, but no bet row, no email pick.
         wta_r = _result(match=_match(player_a="WTA Pick", tour="wta"),
                         val_a=_val(edge=0.05, kelly=0.04, has_value=True))
         atp_r = _result(match=_match(player_a="ATP Pick", tour="atp"),
                         val_a=_val(edge=0.05, kelly=0.04, has_value=True))
         self._wire_common(monkeypatch, [wta_r, atp_r])
+        monkeypatch.setattr(workflow, "AUTO_LOG_EXCLUDED_TOURS", frozenset({"wta"}))
 
         selected = workflow.run()
 
@@ -218,9 +232,24 @@ class TestRun:
         assert len(self.audit_decisions) == 2
         assert wta_r.val_a["kelly_fraction"] == 0.04  # untouched: never staked
 
-    def test_wta_is_in_excluded_tours(self):
-        assert "wta" in workflow.AUTO_LOG_EXCLUDED_TOURS
-        assert "atp" not in workflow.AUTO_LOG_EXCLUDED_TOURS
+    def test_production_excludes_wta_and_atp(self):
+        # Neither showed edge vs the market at realistic prices (2026-10-07).
+        assert _PRODUCTION_EXCLUDED_TOURS == frozenset({"wta", "atp"})
+
+    def test_production_exclusion_logs_nothing_for_wta_and_atp(self, monkeypatch):
+        picks = [
+            _result(match=_match(player_a=f"{tour.upper()} Pick", tour=tour),
+                    val_a=_val(edge=0.05, kelly=0.04, has_value=True))
+            for tour in ("wta", "atp")
+        ]
+        self._wire_common(monkeypatch, picks)
+        monkeypatch.setattr(workflow, "AUTO_LOG_EXCLUDED_TOURS", _PRODUCTION_EXCLUDED_TOURS)
+
+        assert workflow.run() == []
+        assert self.logged_queries == []
+        assert self.sent["picks"] == []
+        assert self.pushed == {}
+        assert len(self.audit_decisions) == 2
 
     def test_applies_quarter_kelly_to_qualifying_side(self, monkeypatch):
         r = _result(val_a=_val(edge=0.05, kelly=0.04, has_value=True))

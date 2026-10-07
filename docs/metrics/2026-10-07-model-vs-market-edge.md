@@ -144,7 +144,7 @@ mismas tablas, así que es una hipótesis, no una regla validada.
    El gap de −24 pp **no es solo varianza**: es la sobreestimación
    sistemática del edge frente a un mercado más informado.
 2. **WTA**: sin ventaja; la selección es peor que el azar (N=9.038, 11 años,
-   IC claramente negativo). Excluida del auto-registro desde 2026-10-07
+   IC claramente negativo). Excluida del auto-registro desde 2026-10-07,
    (`AUTO_LOG_EXCLUDED_TOURS` en `scripts/daily_workflow.py`).
 3. **ATP**: el modelo aporta información (peso 0,25 en la mezcla) pero la
    regla actual pierde a precio medio (−5,0%) y solo gana a la mejor cuota
@@ -159,9 +159,13 @@ mismas tablas, así que es una hipótesis, no una regla validada.
 
 ## Siguientes pasos posibles (no aplicados)
 
-- **ATP: limitar a cuotas ≤ 3**, o excluir también ATP del auto-registro.
-  El límite recorta el tramo que más pierde, pero el resto está en
-  equilibrio a precio medio y en declive.
+- ~~ATP: limitar a cuotas ≤ 3, o excluir también ATP del auto-registro.~~
+  **Aplicado 2026-10-07: ATP excluida** junto con WTA
+  (`AUTO_LOG_EXCLUDED_TOURS = {"wta", "atp"}`). Se descartó limitar a
+  cuotas ≤ 3: ese tramo está en equilibrio a precio medio, en declive, y el
+  corte salió de estas mismas tablas. Ambos tours se siguen escaneando y
+  auditando; solo Davis Cup (sin cuotas con que validarla) puede seguir
+  registrándose.
 - **Usar el mercado como base**: modelar la desviación respecto de la
   probabilidad del mercado (p. ej. features + logit(q) como input) en vez
   de predecir desde cero. El peso 0,25 en ATP sugiere que hay algo que
