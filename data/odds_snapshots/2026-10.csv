@@ -2427,3 +2427,956 @@ snapshot_utc,sport_key,event_id,commence_time,home,away,bookmaker,bookmaker_last
 2026-10-09T00:00:03Z,tennis_wta_china_open,758ed266322f4a6a8b6e3f87814d6088,2026-10-10T06:00:00Z,Mirra Andreeva,Nikola Bartunkova,matchbook,2026-10-08T23:59:42Z,1.39,3.2
 2026-10-09T00:00:03Z,tennis_wta_china_open,758ed266322f4a6a8b6e3f87814d6088,2026-10-10T06:00:00Z,Mirra Andreeva,Nikola Bartunkova,pinnacle,2026-10-08T23:59:43Z,1.4,3.16
 2026-10-09T00:00:03Z,tennis_wta_china_open,758ed266322f4a6a8b6e3f87814d6088,2026-10-10T06:00:00Z,Mirra Andreeva,Nikola Bartunkova,betonlineag,2026-10-09T00:00:01Z,1.4,3.03
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,9e9da1a2604439de365a38815946c567,2026-10-09T06:10:00Z,Alexander Zverev,Wu Yibing,onexbet,2026-10-09T05:59:59Z,1.1,7.33
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,9e9da1a2604439de365a38815946c567,2026-10-09T06:10:00Z,Alexander Zverev,Wu Yibing,pinnacle,2026-10-09T06:00:00Z,1.12,7.0
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,9e9da1a2604439de365a38815946c567,2026-10-09T06:10:00Z,Alexander Zverev,Wu Yibing,betanysports,2026-10-09T05:59:27Z,1.09,7.45
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,39b35a80c6dcdf3022287f85ce86188f,2026-10-09T06:10:00Z,Yannick Hanfmann,Frances Tiafoe,pinnacle,2026-10-09T06:00:01Z,3.27,1.38
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,39b35a80c6dcdf3022287f85ce86188f,2026-10-09T06:10:00Z,Yannick Hanfmann,Frances Tiafoe,betfair_ex_eu,2026-10-09T06:00:00Z,3.35,1.41
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,39b35a80c6dcdf3022287f85ce86188f,2026-10-09T06:10:00Z,Yannick Hanfmann,Frances Tiafoe,onexbet,2026-10-09T05:59:59Z,3.06,1.4
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,39b35a80c6dcdf3022287f85ce86188f,2026-10-09T06:10:00Z,Yannick Hanfmann,Frances Tiafoe,sport888,2026-10-09T05:59:59Z,3.3,1.33
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,39b35a80c6dcdf3022287f85ce86188f,2026-10-09T06:10:00Z,Yannick Hanfmann,Frances Tiafoe,matchbook,2026-10-09T06:00:00Z,3.35,1.4
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,39b35a80c6dcdf3022287f85ce86188f,2026-10-09T06:10:00Z,Yannick Hanfmann,Frances Tiafoe,coolbet,2026-10-09T05:59:16Z,3.18,1.36
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,39b35a80c6dcdf3022287f85ce86188f,2026-10-09T06:10:00Z,Yannick Hanfmann,Frances Tiafoe,williamhill,2026-10-09T05:59:42Z,3.3,1.33
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,7fa3afd6824f6f399b190a8b95e17b57,2026-10-09T06:20:00Z,Alex de Minaur,Alex Molcan,betfair_ex_eu,2026-10-09T06:00:00Z,1.41,3.35
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,7fa3afd6824f6f399b190a8b95e17b57,2026-10-09T06:20:00Z,Alex de Minaur,Alex Molcan,onexbet,2026-10-09T05:59:59Z,1.32,3.53
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,7fa3afd6824f6f399b190a8b95e17b57,2026-10-09T06:20:00Z,Alex de Minaur,Alex Molcan,betonlineag,2026-10-09T06:00:00Z,1.36,3.25
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,d7318a67a9f28a8d0dd1ebb4b2d0d1e5,2026-10-09T06:50:00Z,Alejandro Davidovich Fokina,Jenson Brooksby,betfair_ex_eu,2026-10-09T06:00:00Z,1.48,3.0
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,d7318a67a9f28a8d0dd1ebb4b2d0d1e5,2026-10-09T06:50:00Z,Alejandro Davidovich Fokina,Jenson Brooksby,pinnacle,2026-10-09T06:00:00Z,1.44,2.98
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,bd351fd9f9a56cd0cc2878d9ec9cda89,2026-10-09T07:20:00Z,Karen Khachanov,Arthur Fery,matchbook,2026-10-09T06:00:00Z,1.47,3.05
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,bd351fd9f9a56cd0cc2878d9ec9cda89,2026-10-09T07:20:00Z,Karen Khachanov,Arthur Fery,betfair_ex_eu,2026-10-09T06:00:00Z,1.47,3.05
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,bd351fd9f9a56cd0cc2878d9ec9cda89,2026-10-09T07:20:00Z,Karen Khachanov,Arthur Fery,coolbet,2026-10-09T05:59:16Z,1.43,2.85
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,bd351fd9f9a56cd0cc2878d9ec9cda89,2026-10-09T07:20:00Z,Karen Khachanov,Arthur Fery,pinnacle,2026-10-09T06:00:00Z,1.44,2.99
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,bd351fd9f9a56cd0cc2878d9ec9cda89,2026-10-09T07:20:00Z,Karen Khachanov,Arthur Fery,betonlineag,2026-10-09T06:00:00Z,1.42,2.93
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,bd351fd9f9a56cd0cc2878d9ec9cda89,2026-10-09T07:20:00Z,Karen Khachanov,Arthur Fery,betanysports,2026-10-09T05:59:27Z,1.43,2.9
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,6f099b10621643e85800f00fb324d82c,2026-10-09T08:00:00Z,Miomir Kecmanovic,Jakub Mensik,betfair_ex_eu,2026-10-09T06:00:00Z,3.85,1.34
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,6f099b10621643e85800f00fb324d82c,2026-10-09T08:00:00Z,Miomir Kecmanovic,Jakub Mensik,unibet_fr,2026-10-09T06:00:00Z,3.2,1.28
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,6f099b10621643e85800f00fb324d82c,2026-10-09T08:00:00Z,Miomir Kecmanovic,Jakub Mensik,winamax_de,2026-10-09T06:00:01Z,3.55,1.33
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,6f099b10621643e85800f00fb324d82c,2026-10-09T08:00:00Z,Miomir Kecmanovic,Jakub Mensik,winamax_fr,2026-10-09T06:00:01Z,3.45,1.31
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,6f099b10621643e85800f00fb324d82c,2026-10-09T08:00:00Z,Miomir Kecmanovic,Jakub Mensik,onexbet,2026-10-09T05:59:59Z,3.53,1.32
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,6f099b10621643e85800f00fb324d82c,2026-10-09T08:00:00Z,Miomir Kecmanovic,Jakub Mensik,matchbook,2026-10-09T06:00:00Z,3.85,1.34
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,6f099b10621643e85800f00fb324d82c,2026-10-09T08:00:00Z,Miomir Kecmanovic,Jakub Mensik,pinnacle,2026-10-09T06:00:01Z,3.81,1.3
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,6f099b10621643e85800f00fb324d82c,2026-10-09T08:00:00Z,Miomir Kecmanovic,Jakub Mensik,sport888,2026-10-09T05:59:59Z,3.5,1.3
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,6f099b10621643e85800f00fb324d82c,2026-10-09T08:00:00Z,Miomir Kecmanovic,Jakub Mensik,betonlineag,2026-10-09T06:00:00Z,3.68,1.3
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,6f099b10621643e85800f00fb324d82c,2026-10-09T08:00:00Z,Miomir Kecmanovic,Jakub Mensik,betanysports,2026-10-09T05:59:27Z,3.63,1.3
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,6f099b10621643e85800f00fb324d82c,2026-10-09T08:00:00Z,Miomir Kecmanovic,Jakub Mensik,coolbet,2026-10-09T05:59:16Z,3.55,1.3
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,6f099b10621643e85800f00fb324d82c,2026-10-09T08:00:00Z,Miomir Kecmanovic,Jakub Mensik,nordicbet,2026-10-09T05:59:43Z,3.45,1.32
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,6f099b10621643e85800f00fb324d82c,2026-10-09T08:00:00Z,Miomir Kecmanovic,Jakub Mensik,betsson,2026-10-09T05:59:59Z,3.45,1.32
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,6f099b10621643e85800f00fb324d82c,2026-10-09T08:00:00Z,Miomir Kecmanovic,Jakub Mensik,williamhill,2026-10-09T05:59:42Z,3.5,1.3
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T08:30:00Z,Alexander Bublik,Tomas Machac,betfair_ex_eu,2026-10-09T06:00:00Z,1.55,2.78
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T08:30:00Z,Alexander Bublik,Tomas Machac,onexbet,2026-10-09T05:59:59Z,1.53,2.58
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T08:30:00Z,Alexander Bublik,Tomas Machac,unibet_fr,2026-10-09T06:00:00Z,1.48,2.4
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T08:30:00Z,Alexander Bublik,Tomas Machac,matchbook,2026-10-09T06:00:00Z,1.55,2.78
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T08:30:00Z,Alexander Bublik,Tomas Machac,pinnacle,2026-10-09T06:00:01Z,1.53,2.66
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T08:30:00Z,Alexander Bublik,Tomas Machac,winamax_fr,2026-10-09T06:00:01Z,1.5,2.55
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T08:30:00Z,Alexander Bublik,Tomas Machac,winamax_de,2026-10-09T06:00:01Z,1.54,2.6
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T08:30:00Z,Alexander Bublik,Tomas Machac,betonlineag,2026-10-09T06:00:00Z,1.53,2.62
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T08:30:00Z,Alexander Bublik,Tomas Machac,betanysports,2026-10-09T05:59:27Z,1.53,2.58
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T08:30:00Z,Alexander Bublik,Tomas Machac,coolbet,2026-10-09T05:59:16Z,1.52,2.55
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T08:30:00Z,Alexander Bublik,Tomas Machac,betsson,2026-10-09T05:59:59Z,1.52,2.55
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T08:30:00Z,Alexander Bublik,Tomas Machac,nordicbet,2026-10-09T05:59:43Z,1.52,2.55
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,9195be0514275073aba14213083da83a,2026-10-09T09:00:00Z,Francisco Cerundolo,Roman Safiullin,betfair_ex_eu,2026-10-09T06:00:00Z,1.97,2.02
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,9195be0514275073aba14213083da83a,2026-10-09T09:00:00Z,Francisco Cerundolo,Roman Safiullin,onexbet,2026-10-09T05:59:59Z,1.89,1.96
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,9195be0514275073aba14213083da83a,2026-10-09T09:00:00Z,Francisco Cerundolo,Roman Safiullin,pinnacle,2026-10-09T06:00:00Z,1.89,1.99
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,9195be0514275073aba14213083da83a,2026-10-09T09:00:00Z,Francisco Cerundolo,Roman Safiullin,sport888,2026-10-09T05:59:59Z,1.85,1.95
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,9195be0514275073aba14213083da83a,2026-10-09T09:00:00Z,Francisco Cerundolo,Roman Safiullin,matchbook,2026-10-09T06:00:00Z,1.97,2.02
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,9195be0514275073aba14213083da83a,2026-10-09T09:00:00Z,Francisco Cerundolo,Roman Safiullin,coolbet,2026-10-09T05:59:16Z,1.87,1.95
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,9195be0514275073aba14213083da83a,2026-10-09T09:00:00Z,Francisco Cerundolo,Roman Safiullin,williamhill,2026-10-09T05:59:42Z,1.85,1.95
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,fd5bcb456e544631851e4ef71ef8ad43,2026-10-09T10:00:00Z,Novak Djokovic,Hubert Hurkacz,matchbook,2026-10-09T06:00:00Z,1.53,2.84
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,fd5bcb456e544631851e4ef71ef8ad43,2026-10-09T10:00:00Z,Novak Djokovic,Hubert Hurkacz,betfair_ex_eu,2026-10-09T06:00:00Z,1.53,2.84
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,fd5bcb456e544631851e4ef71ef8ad43,2026-10-09T10:00:00Z,Novak Djokovic,Hubert Hurkacz,nordicbet,2026-10-09T05:59:43Z,1.5,2.6
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,fd5bcb456e544631851e4ef71ef8ad43,2026-10-09T10:00:00Z,Novak Djokovic,Hubert Hurkacz,onexbet,2026-10-09T05:59:59Z,1.52,2.6
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,fd5bcb456e544631851e4ef71ef8ad43,2026-10-09T10:00:00Z,Novak Djokovic,Hubert Hurkacz,betsson,2026-10-09T05:59:59Z,1.5,2.6
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,fd5bcb456e544631851e4ef71ef8ad43,2026-10-09T10:00:00Z,Novak Djokovic,Hubert Hurkacz,coolbet,2026-10-09T05:59:16Z,1.5,2.6
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,fd5bcb456e544631851e4ef71ef8ad43,2026-10-09T10:00:00Z,Novak Djokovic,Hubert Hurkacz,winamax_de,2026-10-09T06:00:01Z,1.5,2.6
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,fd5bcb456e544631851e4ef71ef8ad43,2026-10-09T10:00:00Z,Novak Djokovic,Hubert Hurkacz,winamax_fr,2026-10-09T06:00:01Z,1.44,2.4
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,fd5bcb456e544631851e4ef71ef8ad43,2026-10-09T10:00:00Z,Novak Djokovic,Hubert Hurkacz,pinnacle,2026-10-09T06:00:01Z,1.54,2.64
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,fd5bcb456e544631851e4ef71ef8ad43,2026-10-09T10:00:00Z,Novak Djokovic,Hubert Hurkacz,betonlineag,2026-10-09T06:00:00Z,1.51,2.7
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,fd5bcb456e544631851e4ef71ef8ad43,2026-10-09T10:00:00Z,Novak Djokovic,Hubert Hurkacz,betanysports,2026-10-09T05:59:27Z,1.5,2.7
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,28d2881b2a6fd12a3dd67402513f1793,2026-10-09T11:10:00Z,Yi Zhou,Lorenzo Musetti,onexbet,2026-10-09T05:59:59Z,4.62,1.21
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,28d2881b2a6fd12a3dd67402513f1793,2026-10-09T11:10:00Z,Yi Zhou,Lorenzo Musetti,pinnacle,2026-10-09T06:00:01Z,4.93,1.21
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,28d2881b2a6fd12a3dd67402513f1793,2026-10-09T11:10:00Z,Yi Zhou,Lorenzo Musetti,sport888,2026-10-09T05:59:59Z,4.5,1.2
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,28d2881b2a6fd12a3dd67402513f1793,2026-10-09T11:10:00Z,Yi Zhou,Lorenzo Musetti,williamhill,2026-10-09T05:59:42Z,4.5,1.2
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T04:00:00Z,Tommy Paul,Adolfo Daniel Vallejo,betfair_ex_eu,2026-10-09T06:00:00Z,1.51,2.88
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T04:00:00Z,Tommy Paul,Adolfo Daniel Vallejo,onexbet,2026-10-09T05:59:59Z,1.47,2.77
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T04:00:00Z,Tommy Paul,Adolfo Daniel Vallejo,matchbook,2026-10-09T06:00:00Z,1.51,2.88
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T04:00:00Z,Tommy Paul,Adolfo Daniel Vallejo,pinnacle,2026-10-09T06:00:01Z,1.49,2.81
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T04:00:00Z,Tommy Paul,Adolfo Daniel Vallejo,betanysports,2026-10-09T05:59:27Z,1.49,2.7
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T04:00:00Z,Tommy Paul,Adolfo Daniel Vallejo,betsson,2026-10-09T05:59:59Z,1.46,2.75
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T04:00:00Z,Tommy Paul,Adolfo Daniel Vallejo,nordicbet,2026-10-09T05:59:43Z,1.46,2.75
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T04:00:00Z,Alejandro Tabilo,Pablo Carreno Busta,betfair_ex_eu,2026-10-09T06:00:00Z,1.6,2.56
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T04:00:00Z,Alejandro Tabilo,Pablo Carreno Busta,coolbet,2026-10-09T05:59:16Z,1.57,2.42
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T04:00:00Z,Alejandro Tabilo,Pablo Carreno Busta,matchbook,2026-10-09T06:00:00Z,1.59,2.56
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T04:00:00Z,Alejandro Tabilo,Pablo Carreno Busta,pinnacle,2026-10-09T06:00:01Z,1.58,2.5
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T04:00:00Z,Botic van de Zandschulp,Alex Michelsen,betfair_ex_eu,2026-10-09T06:00:00Z,2.64,1.58
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T04:00:00Z,Botic van de Zandschulp,Alex Michelsen,tipico_de,2026-10-09T06:00:01Z,2.55,1.45
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T04:00:00Z,Botic van de Zandschulp,Alex Michelsen,unibet_fr,2026-10-09T06:00:00Z,2.35,1.44
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T04:00:00Z,Botic van de Zandschulp,Alex Michelsen,coolbet,2026-10-09T05:59:16Z,2.55,1.52
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T04:00:00Z,Botic van de Zandschulp,Alex Michelsen,onexbet,2026-10-09T06:00:00Z,2.58,1.53
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T04:00:00Z,Botic van de Zandschulp,Alex Michelsen,winamax_de,2026-10-09T06:00:01Z,2.55,1.54
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T04:00:00Z,Botic van de Zandschulp,Alex Michelsen,winamax_fr,2026-10-09T06:00:01Z,2.5,1.52
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T04:00:00Z,Botic van de Zandschulp,Alex Michelsen,sport888,2026-10-09T05:59:59Z,2.5,1.53
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T04:00:00Z,Botic van de Zandschulp,Alex Michelsen,williamhill,2026-10-09T05:59:42Z,2.5,1.53
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T04:00:00Z,Botic van de Zandschulp,Alex Michelsen,matchbook,2026-10-09T06:00:00Z,2.64,1.58
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T04:00:00Z,Botic van de Zandschulp,Alex Michelsen,pinnacle,2026-10-09T06:00:01Z,2.57,1.55
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T04:00:00Z,Botic van de Zandschulp,Alex Michelsen,betonlineag,2026-10-09T06:00:00Z,2.53,1.56
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T04:00:00Z,Botic van de Zandschulp,Alex Michelsen,betanysports,2026-10-09T05:59:27Z,2.48,1.56
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T04:00:00Z,Arthur Fils,Pavel Kotov,betfair_ex_eu,2026-10-09T06:00:00Z,1.11,9.4
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T04:00:00Z,Arthur Fils,Pavel Kotov,matchbook,2026-10-09T06:00:00Z,1.11,9.4
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T04:00:00Z,Arthur Fils,Pavel Kotov,unibet_fr,2026-10-09T06:00:00Z,1.08,5.7
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T04:00:00Z,Arthur Fils,Pavel Kotov,winamax_de,2026-10-09T06:00:01Z,1.08,8.5
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T04:00:00Z,Arthur Fils,Pavel Kotov,winamax_fr,2026-10-09T06:00:01Z,1.08,8.0
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T04:00:00Z,Arthur Fils,Pavel Kotov,onexbet,2026-10-09T05:59:59Z,1.09,7.95
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T04:00:00Z,Arthur Fils,Pavel Kotov,pinnacle,2026-10-09T06:00:00Z,1.09,8.15
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T04:00:00Z,Arthur Fils,Pavel Kotov,nordicbet,2026-10-09T05:59:43Z,1.1,7.0
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T04:00:00Z,Arthur Fils,Pavel Kotov,betsson,2026-10-09T05:59:59Z,1.1,7.0
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T04:00:00Z,Arthur Fils,Pavel Kotov,betanysports,2026-10-09T05:59:27Z,1.08,7.45
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T04:00:00Z,Arthur Fils,Pavel Kotov,betonlineag,2026-10-09T06:00:00Z,1.09,7.88
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T04:00:00Z,Bu Yunchaokete,Casper Ruud,betfair_ex_eu,2026-10-09T06:00:00Z,2.32,1.7
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T04:00:00Z,Bu Yunchaokete,Casper Ruud,coolbet,2026-10-09T05:59:16Z,2.23,1.66
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T04:00:00Z,Bu Yunchaokete,Casper Ruud,matchbook,2026-10-09T06:00:00Z,2.34,1.7
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T04:00:00Z,Bu Yunchaokete,Casper Ruud,pinnacle,2026-10-09T06:00:01Z,2.3,1.67
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T04:00:00Z,Bu Yunchaokete,Casper Ruud,betonlineag,2026-10-09T06:00:00Z,2.3,1.67
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,betfair_ex_eu,2026-10-09T06:00:00Z,17.0,1.05
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,unibet_fr,2026-10-09T06:00:00Z,7.5,1.05
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,onexbet,2026-10-09T05:59:59Z,13.7,1.03
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,betsson,2026-10-09T05:59:59Z,12.0,1.03
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,nordicbet,2026-10-09T05:59:43Z,12.0,1.03
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,winamax_de,2026-10-09T06:00:01Z,14.5,1.03
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,winamax_fr,2026-10-09T06:00:01Z,12.0,1.03
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,williamhill,2026-10-09T05:59:42Z,12.0,1.03
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,matchbook,2026-10-09T06:00:00Z,17.0,1.05
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,sport888,2026-10-09T05:59:59Z,12.0,1.03
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,pinnacle,2026-10-09T06:00:00Z,14.72,1.04
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T04:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,matchbook,2026-10-09T06:00:00Z,18.0,1.05
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T04:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,onexbet,2026-10-09T05:59:59Z,15.5,1.02
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T04:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,betfair_ex_eu,2026-10-09T06:00:00Z,18.0,1.05
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T04:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,coolbet,2026-10-09T05:59:16Z,12.6,1.03
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T04:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,winamax_fr,2026-10-09T06:00:01Z,13.0,1.02
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T04:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,pinnacle,2026-10-09T06:00:01Z,14.53,1.04
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T04:00:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,betfair_ex_eu,2026-10-09T06:00:00Z,2.2,1.79
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T04:00:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,unibet_fr,2026-10-09T06:00:00Z,1.97,1.63
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T04:00:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,coolbet,2026-10-09T05:59:16Z,2.12,1.73
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T04:00:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,winamax_de,2026-10-09T06:00:01Z,2.1,1.72
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T04:00:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,winamax_fr,2026-10-09T06:00:01Z,1.98,1.64
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T04:00:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,onexbet,2026-10-09T06:00:00Z,2.14,1.74
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T04:00:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,matchbook,2026-10-09T06:00:00Z,2.2,1.79
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T04:00:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,pinnacle,2026-10-09T06:00:00Z,2.13,1.78
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T04:00:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,betonlineag,2026-10-09T06:00:00Z,2.09,1.78
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T04:00:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,betanysports,2026-10-09T05:59:27Z,1.99,1.78
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T04:00:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,unibet_se,2026-10-09T06:00:00Z,2.16,1.7
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T04:00:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,pmu_fr,2026-10-09T05:59:26Z,2.07,1.63
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T04:00:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,leovegas_se,2026-10-09T06:00:01Z,2.16,1.7
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T04:00:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,unibet_nl,2026-10-09T05:59:59Z,2.16,1.7
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T04:00:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,williamhill,2026-10-09T05:59:42Z,2.1,1.73
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,betfair_ex_eu,2026-10-09T06:00:00Z,1.18,5.8
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,tipico_de,2026-10-09T06:00:01Z,1.1,5.7
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,unibet_fr,2026-10-09T06:00:00Z,1.11,4.6
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,coolbet,2026-10-09T05:59:16Z,1.14,5.8
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,winamax_fr,2026-10-09T06:00:01Z,1.14,5.7
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,sport888,2026-10-09T05:59:59Z,1.14,5.5
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,matchbook,2026-10-09T06:00:00Z,1.18,5.8
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,pinnacle,2026-10-09T06:00:01Z,1.15,5.93
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,williamhill,2026-10-09T05:59:42Z,1.14,5.5
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,df311e3a27f098a8d7a759065ff2fb00,2026-10-10T04:00:00Z,Ignacio Buse,Zizou Bergs,betfair_ex_eu,2026-10-09T06:00:00Z,2.58,1.6
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,df311e3a27f098a8d7a759065ff2fb00,2026-10-10T04:00:00Z,Ignacio Buse,Zizou Bergs,matchbook,2026-10-09T06:00:00Z,2.58,1.6
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,df311e3a27f098a8d7a759065ff2fb00,2026-10-10T04:00:00Z,Ignacio Buse,Zizou Bergs,sport888,2026-10-09T05:59:59Z,2.38,1.57
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,df311e3a27f098a8d7a759065ff2fb00,2026-10-10T04:00:00Z,Ignacio Buse,Zizou Bergs,pinnacle,2026-10-09T06:00:00Z,2.51,1.57
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,df311e3a27f098a8d7a759065ff2fb00,2026-10-10T04:00:00Z,Ignacio Buse,Zizou Bergs,betonlineag,2026-10-09T06:00:00Z,2.47,1.59
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,df311e3a27f098a8d7a759065ff2fb00,2026-10-10T04:00:00Z,Ignacio Buse,Zizou Bergs,williamhill,2026-10-09T05:59:42Z,2.38,1.57
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,matchbook,2026-10-09T06:00:00Z,1.4,3.45
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,betfair_ex_eu,2026-10-09T06:00:00Z,1.4,3.45
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,coolbet,2026-10-09T05:59:16Z,1.34,3.3
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,unibet_fr,2026-10-09T06:00:00Z,1.27,3.0
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,sport888,2026-10-09T05:59:59Z,1.33,3.3
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,pinnacle,2026-10-09T06:00:01Z,1.36,3.39
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,betsson,2026-10-09T05:59:59Z,1.33,3.4
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,nordicbet,2026-10-09T05:59:43Z,1.33,3.4
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,betonlineag,2026-10-09T06:00:00Z,1.34,3.37
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,betanysports,2026-10-09T05:59:27Z,1.34,3.4
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T04:00:00Z,Learner Tien,Zachary Svajda,betfair_ex_eu,2026-10-09T06:00:00Z,1.35,3.75
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T04:00:00Z,Learner Tien,Zachary Svajda,onexbet,2026-10-09T05:59:59Z,1.31,3.6
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T04:00:00Z,Learner Tien,Zachary Svajda,unibet_fr,2026-10-09T06:00:00Z,1.25,3.15
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T04:00:00Z,Learner Tien,Zachary Svajda,winamax_de,2026-10-09T06:00:01Z,1.31,3.65
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T04:00:00Z,Learner Tien,Zachary Svajda,winamax_fr,2026-10-09T06:00:01Z,1.3,3.5
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T04:00:00Z,Learner Tien,Zachary Svajda,matchbook,2026-10-09T06:00:00Z,1.34,3.8
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T04:00:00Z,Learner Tien,Zachary Svajda,pinnacle,2026-10-09T06:00:00Z,1.33,3.62
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T04:00:00Z,Learner Tien,Zachary Svajda,tipico_de,2026-10-09T06:00:02Z,1.25,3.6
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T04:00:00Z,Learner Tien,Zachary Svajda,betonlineag,2026-10-09T06:00:00Z,1.32,3.49
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T04:00:00Z,Learner Tien,Zachary Svajda,nordicbet,2026-10-09T05:59:43Z,1.3,3.6
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T04:00:00Z,Learner Tien,Zachary Svajda,betsson,2026-10-09T05:59:59Z,1.3,3.6
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,83a3dfc3ecec15d3a3b663da0aefae6c,2026-10-10T04:00:00Z,Luciano Darderi,Stefanos Tsitsipas,matchbook,2026-10-09T06:00:00Z,3.2,1.42
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,83a3dfc3ecec15d3a3b663da0aefae6c,2026-10-10T04:00:00Z,Luciano Darderi,Stefanos Tsitsipas,betfair_ex_eu,2026-10-09T06:00:00Z,3.2,1.42
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,83a3dfc3ecec15d3a3b663da0aefae6c,2026-10-10T04:00:00Z,Luciano Darderi,Stefanos Tsitsipas,coolbet,2026-10-09T05:59:16Z,3.0,1.4
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,83a3dfc3ecec15d3a3b663da0aefae6c,2026-10-10T04:00:00Z,Luciano Darderi,Stefanos Tsitsipas,pinnacle,2026-10-09T06:00:01Z,3.11,1.41
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,83a3dfc3ecec15d3a3b663da0aefae6c,2026-10-10T04:00:00Z,Luciano Darderi,Stefanos Tsitsipas,betonlineag,2026-10-09T06:00:00Z,3.03,1.4
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,83a3dfc3ecec15d3a3b663da0aefae6c,2026-10-10T04:00:00Z,Luciano Darderi,Stefanos Tsitsipas,betanysports,2026-10-09T05:59:27Z,3.0,1.41
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T04:00:00Z,Matteo Arnaldi,Taylor Fritz,betfair_ex_eu,2026-10-09T06:00:00Z,4.5,1.26
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T04:00:00Z,Matteo Arnaldi,Taylor Fritz,sport888,2026-10-09T05:59:59Z,4.0,1.25
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T04:00:00Z,Matteo Arnaldi,Taylor Fritz,coolbet,2026-10-09T05:59:16Z,4.1,1.24
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T04:00:00Z,Matteo Arnaldi,Taylor Fritz,unibet_fr,2026-10-09T06:00:00Z,3.5,1.2
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T04:00:00Z,Matteo Arnaldi,Taylor Fritz,betsson,2026-10-09T05:59:59Z,4.1,1.24
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T04:00:00Z,Matteo Arnaldi,Taylor Fritz,nordicbet,2026-10-09T05:59:43Z,4.1,1.24
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T04:00:00Z,Matteo Arnaldi,Taylor Fritz,matchbook,2026-10-09T06:00:00Z,4.5,1.26
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T04:00:00Z,Matteo Arnaldi,Taylor Fritz,winamax_de,2026-10-09T06:00:01Z,4.0,1.24
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T04:00:00Z,Matteo Arnaldi,Taylor Fritz,winamax_fr,2026-10-09T06:00:01Z,3.55,1.2
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T04:00:00Z,Matteo Arnaldi,Taylor Fritz,pinnacle,2026-10-09T06:00:01Z,4.31,1.25
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T04:00:00Z,Matteo Arnaldi,Taylor Fritz,betonlineag,2026-10-09T06:00:00Z,4.04,1.26
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T04:00:00Z,Matteo Arnaldi,Taylor Fritz,betanysports,2026-10-09T05:59:27Z,4.0,1.26
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,matchbook,2026-10-09T06:00:00Z,3.25,1.43
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,betfair_ex_eu,2026-10-09T06:00:00Z,3.25,1.43
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,pinnacle,2026-10-09T06:00:00Z,3.15,1.41
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,betanysports,2026-10-09T05:59:27Z,3.0,1.4
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T04:00:00Z,Sebastian Baez,Valentin Vacherot,unibet_fr,2026-10-09T06:00:00Z,3.0,1.27
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T04:00:00Z,Sebastian Baez,Valentin Vacherot,coolbet,2026-10-09T05:59:16Z,3.3,1.34
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T04:00:00Z,Sebastian Baez,Valentin Vacherot,betfair_ex_eu,2026-10-09T06:00:00Z,3.5,1.36
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T04:00:00Z,Sebastian Baez,Valentin Vacherot,winamax_de,2026-10-09T06:00:01Z,3.35,1.32
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T04:00:00Z,Sebastian Baez,Valentin Vacherot,winamax_fr,2026-10-09T06:00:01Z,3.0,1.28
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T04:00:00Z,Sebastian Baez,Valentin Vacherot,onexbet,2026-10-09T05:59:59Z,3.33,1.35
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T04:00:00Z,Sebastian Baez,Valentin Vacherot,matchbook,2026-10-09T06:00:00Z,3.5,1.37
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T04:00:00Z,Sebastian Baez,Valentin Vacherot,pinnacle,2026-10-09T06:00:01Z,3.39,1.35
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T04:00:00Z,Sebastian Baez,Valentin Vacherot,betonlineag,2026-10-09T06:00:00Z,3.25,1.36
+2026-10-09T06:00:05Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T04:00:00Z,Sebastian Baez,Valentin Vacherot,betanysports,2026-10-09T05:59:27Z,3.29,1.36
+2026-10-09T06:00:05Z,tennis_wta_china_open,10ff295353bc42df59a57a02170e241d,2026-10-09T07:00:00Z,Qinwen Zheng,Elina Svitolina,coolbet,2026-10-09T05:59:52Z,2.17,1.7
+2026-10-09T06:00:05Z,tennis_wta_china_open,10ff295353bc42df59a57a02170e241d,2026-10-09T07:00:00Z,Qinwen Zheng,Elina Svitolina,betfair_ex_eu,2026-10-09T05:59:52Z,2.3,1.75
+2026-10-09T06:00:05Z,tennis_wta_china_open,10ff295353bc42df59a57a02170e241d,2026-10-09T07:00:00Z,Qinwen Zheng,Elina Svitolina,sport888,2026-10-09T05:59:36Z,2.1,1.73
+2026-10-09T06:00:05Z,tennis_wta_china_open,10ff295353bc42df59a57a02170e241d,2026-10-09T07:00:00Z,Qinwen Zheng,Elina Svitolina,williamhill,2026-10-09T05:59:37Z,2.1,1.73
+2026-10-09T06:00:05Z,tennis_wta_china_open,10ff295353bc42df59a57a02170e241d,2026-10-09T07:00:00Z,Qinwen Zheng,Elina Svitolina,onexbet,2026-10-09T05:59:20Z,2.19,1.69
+2026-10-09T06:00:05Z,tennis_wta_china_open,10ff295353bc42df59a57a02170e241d,2026-10-09T07:00:00Z,Qinwen Zheng,Elina Svitolina,matchbook,2026-10-09T05:59:52Z,2.3,1.75
+2026-10-09T06:00:05Z,tennis_wta_china_open,10ff295353bc42df59a57a02170e241d,2026-10-09T07:00:00Z,Qinwen Zheng,Elina Svitolina,pinnacle,2026-10-09T05:59:52Z,2.23,1.74
+2026-10-09T06:00:05Z,tennis_wta_china_open,10ff295353bc42df59a57a02170e241d,2026-10-09T07:00:00Z,Qinwen Zheng,Elina Svitolina,betonlineag,2026-10-09T05:59:51Z,2.08,1.78
+2026-10-09T06:00:05Z,tennis_wta_china_open,10ff295353bc42df59a57a02170e241d,2026-10-09T07:00:00Z,Qinwen Zheng,Elina Svitolina,betanysports,2026-10-09T05:59:42Z,2.05,1.74
+2026-10-09T06:00:05Z,tennis_wta_china_open,ffe256b7d5ecc81af36b822714191ded,2026-10-09T11:00:00Z,Elise Mertens,Iga Swiatek,matchbook,2026-10-09T05:59:52Z,4.8,1.25
+2026-10-09T06:00:05Z,tennis_wta_china_open,ffe256b7d5ecc81af36b822714191ded,2026-10-09T11:00:00Z,Elise Mertens,Iga Swiatek,betfair_ex_eu,2026-10-09T05:59:52Z,4.8,1.25
+2026-10-09T06:00:05Z,tennis_wta_china_open,ffe256b7d5ecc81af36b822714191ded,2026-10-09T11:00:00Z,Elise Mertens,Iga Swiatek,sport888,2026-10-09T05:59:36Z,4.0,1.25
+2026-10-09T06:00:05Z,tennis_wta_china_open,ffe256b7d5ecc81af36b822714191ded,2026-10-09T11:00:00Z,Elise Mertens,Iga Swiatek,williamhill,2026-10-09T05:59:37Z,4.0,1.25
+2026-10-09T06:00:05Z,tennis_wta_china_open,ffe256b7d5ecc81af36b822714191ded,2026-10-09T11:00:00Z,Elise Mertens,Iga Swiatek,coolbet,2026-10-09T05:59:52Z,4.3,1.22
+2026-10-09T06:00:05Z,tennis_wta_china_open,ffe256b7d5ecc81af36b822714191ded,2026-10-09T11:00:00Z,Elise Mertens,Iga Swiatek,pinnacle,2026-10-09T05:59:52Z,4.57,1.24
+2026-10-09T06:00:05Z,tennis_wta_china_open,ffe256b7d5ecc81af36b822714191ded,2026-10-09T11:00:00Z,Elise Mertens,Iga Swiatek,betonlineag,2026-10-09T05:59:51Z,4.27,1.23
+2026-10-09T06:00:05Z,tennis_wta_china_open,ffe256b7d5ecc81af36b822714191ded,2026-10-09T11:00:00Z,Elise Mertens,Iga Swiatek,betanysports,2026-10-09T05:59:42Z,4.3,1.22
+2026-10-09T06:00:05Z,tennis_wta_china_open,758ed266322f4a6a8b6e3f87814d6088,2026-10-10T06:00:00Z,Mirra Andreeva,Nikola Bartunkova,betfair_ex_eu,2026-10-09T05:59:52Z,1.44,3.2
+2026-10-09T06:00:05Z,tennis_wta_china_open,758ed266322f4a6a8b6e3f87814d6088,2026-10-10T06:00:00Z,Mirra Andreeva,Nikola Bartunkova,onexbet,2026-10-09T05:59:20Z,1.39,3.04
+2026-10-09T06:00:05Z,tennis_wta_china_open,758ed266322f4a6a8b6e3f87814d6088,2026-10-10T06:00:00Z,Mirra Andreeva,Nikola Bartunkova,matchbook,2026-10-09T05:59:52Z,1.44,3.2
+2026-10-09T06:00:05Z,tennis_wta_china_open,758ed266322f4a6a8b6e3f87814d6088,2026-10-10T06:00:00Z,Mirra Andreeva,Nikola Bartunkova,betclic_fr,2026-10-09T05:58:27Z,1.36,2.9
+2026-10-09T06:00:05Z,tennis_wta_china_open,758ed266322f4a6a8b6e3f87814d6088,2026-10-10T06:00:00Z,Mirra Andreeva,Nikola Bartunkova,pinnacle,2026-10-09T05:59:52Z,1.41,3.13
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T12:10:00Z,Alexander Bublik,Tomas Machac,betfair_ex_eu,2026-10-09T12:00:05Z,1.51,2.9
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T12:10:00Z,Alexander Bublik,Tomas Machac,onexbet,2026-10-09T12:00:04Z,1.5,2.62
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T12:10:00Z,Alexander Bublik,Tomas Machac,unibet_fr,2026-10-09T11:59:47Z,1.43,2.55
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T12:10:00Z,Alexander Bublik,Tomas Machac,gtbets,2026-10-09T11:59:31Z,1.45,2.71
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T12:10:00Z,Alexander Bublik,Tomas Machac,matchbook,2026-10-09T12:00:04Z,1.51,2.9
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T12:10:00Z,Alexander Bublik,Tomas Machac,tipico_de,2026-10-09T12:00:04Z,1.47,2.5
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T12:10:00Z,Alexander Bublik,Tomas Machac,unibet_nl,2026-10-09T11:59:30Z,1.43,2.8
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T12:10:00Z,Alexander Bublik,Tomas Machac,pmu_fr,2026-10-09T11:59:47Z,1.38,2.65
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T12:10:00Z,Alexander Bublik,Tomas Machac,unibet_se,2026-10-09T11:59:47Z,1.43,2.8
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T12:10:00Z,Alexander Bublik,Tomas Machac,leovegas_se,2026-10-09T11:59:46Z,1.43,2.8
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T12:10:00Z,Alexander Bublik,Tomas Machac,pinnacle,2026-10-09T12:00:04Z,1.51,2.73
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T12:10:00Z,Alexander Bublik,Tomas Machac,sport888,2026-10-09T11:59:50Z,1.5,2.6
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T12:10:00Z,Alexander Bublik,Tomas Machac,winamax_fr,2026-10-09T11:59:48Z,1.47,2.65
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T12:10:00Z,Alexander Bublik,Tomas Machac,winamax_de,2026-10-09T11:59:48Z,1.49,2.75
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T12:10:00Z,Alexander Bublik,Tomas Machac,betonlineag,2026-10-09T12:00:04Z,1.48,2.8
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T12:10:00Z,Alexander Bublik,Tomas Machac,coolbet,2026-10-09T11:59:17Z,1.47,2.7
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T12:10:00Z,Alexander Bublik,Tomas Machac,williamhill,2026-10-09T11:59:30Z,1.5,2.6
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T12:10:00Z,Alexander Bublik,Tomas Machac,betsson,2026-10-09T11:59:31Z,1.48,2.7
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,7a32c48cac88a3d55ff9303c25cb94f2,2026-10-09T12:10:00Z,Alexander Bublik,Tomas Machac,nordicbet,2026-10-09T11:59:46Z,1.48,2.7
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,betfair_ex_eu,2026-10-09T12:00:05Z,16.0,1.05
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,onexbet,2026-10-09T12:00:04Z,8.65,1.08
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,unibet_se,2026-10-09T11:59:47Z,11.0,1.04
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,unibet_nl,2026-10-09T11:59:30Z,11.0,1.04
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,leovegas_se,2026-10-09T11:59:46Z,11.0,1.04
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,matchbook,2026-10-09T12:00:04Z,15.5,1.05
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,pinnacle,2026-10-09T12:00:04Z,15.17,1.04
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,onexbet,2026-10-09T12:00:04Z,1.16,5.58
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,betfair_ex_eu,2026-10-09T12:00:05Z,1.18,6.0
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,betsson,2026-10-09T11:59:31Z,1.15,5.6
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,tipico_de,2026-10-09T12:00:04Z,1.11,5.5
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,nordicbet,2026-10-09T11:59:46Z,1.15,5.6
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,gtbets,2026-10-09T11:59:31Z,1.15,5.57
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,unibet_fr,2026-10-09T11:59:47Z,1.12,4.8
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,coolbet,2026-10-09T11:59:17Z,1.15,5.5
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,winamax_de,2026-10-09T11:59:48Z,1.15,5.9
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,winamax_fr,2026-10-09T11:59:48Z,1.14,5.6
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,pmu_fr,2026-10-09T11:59:47Z,1.11,5.0
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,matchbook,2026-10-09T12:00:04Z,1.18,6.2
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,pinnacle,2026-10-09T12:00:04Z,1.15,6.04
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,matchbook,2026-10-09T12:00:04Z,1.37,3.5
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,betfair_ex_eu,2026-10-09T12:00:05Z,1.36,3.5
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,unibet_nl,2026-10-09T11:59:30Z,1.35,3.2
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,unibet_se,2026-10-09T11:59:47Z,1.35,3.2
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,leovegas_se,2026-10-09T11:59:46Z,1.35,3.2
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,unibet_fr,2026-10-09T11:59:47Z,1.29,3.1
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,winamax_de,2026-10-09T11:59:48Z,1.35,3.4
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,winamax_fr,2026-10-09T11:59:48Z,1.34,3.25
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,williamhill,2026-10-09T11:59:31Z,1.33,3.3
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,matchbook,2026-10-09T12:00:04Z,3.2,1.41
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,betfair_ex_eu,2026-10-09T12:00:05Z,3.2,1.41
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,unibet_fr,2026-10-09T11:59:47Z,2.8,1.35
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,coolbet,2026-10-09T11:59:17Z,3.03,1.39
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,leovegas_se,2026-10-09T11:59:46Z,3.15,1.36
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,unibet_se,2026-10-09T11:59:47Z,3.15,1.36
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,unibet_nl,2026-10-09T11:59:30Z,3.15,1.36
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,pmu_fr,2026-10-09T11:59:47Z,3.0,1.3
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,nordicbet,2026-10-09T11:59:46Z,3.05,1.39
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,betsson,2026-10-09T11:59:31Z,3.05,1.39
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,williamhill,2026-10-09T11:59:31Z,2.9,1.4
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T05:10:00Z,Alejandro Tabilo,Pablo Carreno Busta,unibet_se,2026-10-09T11:59:47Z,1.56,2.43
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T05:10:00Z,Alejandro Tabilo,Pablo Carreno Busta,betfair_ex_eu,2026-10-09T12:00:05Z,1.61,2.58
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T05:10:00Z,Alejandro Tabilo,Pablo Carreno Busta,unibet_nl,2026-10-09T11:59:30Z,1.56,2.43
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T05:10:00Z,Alejandro Tabilo,Pablo Carreno Busta,pmu_fr,2026-10-09T11:59:47Z,1.5,2.32
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T05:10:00Z,Alejandro Tabilo,Pablo Carreno Busta,leovegas_se,2026-10-09T11:59:46Z,1.56,2.43
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T05:10:00Z,Alejandro Tabilo,Pablo Carreno Busta,winamax_fr,2026-10-09T11:59:48Z,1.54,2.45
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T05:10:00Z,Alejandro Tabilo,Pablo Carreno Busta,unibet_fr,2026-10-09T11:59:47Z,1.51,2.25
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T05:10:00Z,Alejandro Tabilo,Pablo Carreno Busta,onexbet,2026-10-09T12:00:04Z,1.58,2.44
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T05:10:00Z,Alejandro Tabilo,Pablo Carreno Busta,matchbook,2026-10-09T12:00:04Z,1.61,2.56
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T05:10:00Z,Alejandro Tabilo,Pablo Carreno Busta,pinnacle,2026-10-09T12:00:04Z,1.59,2.5
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T05:10:00Z,Alejandro Tabilo,Pablo Carreno Busta,betanysports,2026-10-09T11:59:47Z,1.57,2.45
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T05:10:00Z,Alejandro Tabilo,Pablo Carreno Busta,nordicbet,2026-10-09T11:59:47Z,1.57,2.42
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T05:10:00Z,Alejandro Tabilo,Pablo Carreno Busta,betsson,2026-10-09T11:59:31Z,1.57,2.42
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,betfair_ex_eu,2026-10-09T12:00:05Z,2.34,1.71
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,unibet_fr,2026-10-09T11:59:47Z,2.1,1.62
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,onexbet,2026-10-09T12:00:04Z,2.23,1.68
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,unibet_nl,2026-10-09T11:59:30Z,2.2,1.67
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,unibet_se,2026-10-09T11:59:47Z,2.2,1.67
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,pmu_fr,2026-10-09T11:59:47Z,2.1,1.61
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,leovegas_se,2026-10-09T11:59:46Z,2.2,1.67
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,gtbets,2026-10-09T11:59:31Z,2.21,1.67
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,matchbook,2026-10-09T12:00:04Z,2.34,1.71
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,pinnacle,2026-10-09T12:00:04Z,2.31,1.68
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,nordicbet,2026-10-09T11:59:47Z,2.23,1.66
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,betsson,2026-10-09T11:59:31Z,2.23,1.66
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,williamhill,2026-10-09T11:59:31Z,2.2,1.67
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,betfair_ex_eu,2026-10-09T12:00:05Z,2.22,1.75
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,unibet_fr,2026-10-09T11:59:47Z,2.0,1.66
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,winamax_fr,2026-10-09T11:59:48Z,2.0,1.64
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,onexbet,2026-10-09T12:00:04Z,2.18,1.72
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,matchbook,2026-10-09T12:00:04Z,2.22,1.74
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,pinnacle,2026-10-09T12:00:04Z,2.19,1.75
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,betonlineag,2026-10-09T12:00:04Z,2.16,1.74
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,betanysports,2026-10-09T11:59:47Z,2.06,1.74
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,unibet_se,2026-10-09T11:59:47Z,2.15,1.7
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,pmu_fr,2026-10-09T11:59:47Z,2.05,1.63
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,leovegas_se,2026-10-09T11:59:46Z,2.15,1.7
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,unibet_nl,2026-10-09T11:59:30Z,2.15,1.7
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,nordicbet,2026-10-09T11:59:47Z,2.12,1.73
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,betsson,2026-10-09T11:59:31Z,2.12,1.73
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T05:10:00Z,Matteo Arnaldi,Taylor Fritz,unibet_se,2026-10-09T11:59:47Z,4.1,1.24
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T05:10:00Z,Matteo Arnaldi,Taylor Fritz,williamhill,2026-10-09T11:59:31Z,4.0,1.25
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T05:10:00Z,Matteo Arnaldi,Taylor Fritz,onexbet,2026-10-09T12:00:04Z,3.96,1.27
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T05:10:00Z,Matteo Arnaldi,Taylor Fritz,unibet_nl,2026-10-09T11:59:30Z,4.1,1.24
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T05:10:00Z,Matteo Arnaldi,Taylor Fritz,leovegas_se,2026-10-09T11:59:46Z,4.1,1.24
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T05:10:00Z,Matteo Arnaldi,Taylor Fritz,unibet_fr,2026-10-09T11:59:47Z,3.75,1.2
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T05:10:00Z,Matteo Arnaldi,Taylor Fritz,matchbook,2026-10-09T12:00:04Z,4.4,1.26
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T05:10:00Z,Matteo Arnaldi,Taylor Fritz,winamax_fr,2026-10-09T11:59:48Z,3.65,1.21
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T05:10:00Z,Matteo Arnaldi,Taylor Fritz,pinnacle,2026-10-09T12:00:04Z,4.19,1.27
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T06:20:00Z,Arthur Fils,Pavel Kotov,pmu_fr,2026-10-09T11:59:47Z,1.03,7.5
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T06:20:00Z,Arthur Fils,Pavel Kotov,matchbook,2026-10-09T12:00:04Z,1.11,9.6
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T06:20:00Z,Arthur Fils,Pavel Kotov,leovegas_se,2026-10-09T11:59:46Z,1.07,8.5
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T06:20:00Z,Arthur Fils,Pavel Kotov,unibet_nl,2026-10-09T11:59:30Z,1.07,8.5
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T06:20:00Z,Arthur Fils,Pavel Kotov,unibet_se,2026-10-09T11:59:47Z,1.07,8.5
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T06:20:00Z,Arthur Fils,Pavel Kotov,onexbet,2026-10-09T12:00:04Z,1.09,8.15
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T06:20:00Z,Learner Tien,Zachary Svajda,unibet_se,2026-10-09T11:59:47Z,1.3,3.5
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T06:20:00Z,Learner Tien,Zachary Svajda,onexbet,2026-10-09T12:00:04Z,1.3,3.65
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T06:20:00Z,Learner Tien,Zachary Svajda,unibet_nl,2026-10-09T11:59:30Z,1.3,3.5
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T06:20:00Z,Learner Tien,Zachary Svajda,leovegas_se,2026-10-09T11:59:46Z,1.3,3.5
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T06:20:00Z,Learner Tien,Zachary Svajda,pmu_fr,2026-10-09T11:59:47Z,1.26,3.3
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T06:20:00Z,Learner Tien,Zachary Svajda,unibet_fr,2026-10-09T11:59:47Z,1.26,3.25
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T06:20:00Z,Learner Tien,Zachary Svajda,matchbook,2026-10-09T12:00:04Z,1.34,3.7
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T06:20:00Z,Learner Tien,Zachary Svajda,williamhill,2026-10-09T11:59:31Z,1.33,3.3
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T07:30:00Z,Tommy Paul,Adolfo Daniel Vallejo,betfair_ex_eu,2026-10-09T12:00:05Z,1.48,2.98
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T07:30:00Z,Tommy Paul,Adolfo Daniel Vallejo,unibet_se,2026-10-09T11:59:47Z,1.43,2.75
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T07:30:00Z,Tommy Paul,Adolfo Daniel Vallejo,matchbook,2026-10-09T12:00:04Z,1.49,3.0
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T07:30:00Z,Tommy Paul,Adolfo Daniel Vallejo,unibet_nl,2026-10-09T11:59:31Z,1.43,2.75
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T07:30:00Z,Tommy Paul,Adolfo Daniel Vallejo,leovegas_se,2026-10-09T11:59:46Z,1.43,2.75
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T07:30:00Z,Tommy Paul,Adolfo Daniel Vallejo,pmu_fr,2026-10-09T11:59:47Z,1.4,2.63
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T07:30:00Z,Tommy Paul,Adolfo Daniel Vallejo,unibet_fr,2026-10-09T11:59:47Z,1.4,2.6
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T07:30:00Z,Tommy Paul,Adolfo Daniel Vallejo,williamhill,2026-10-09T11:59:31Z,1.5,2.6
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,df311e3a27f098a8d7a759065ff2fb00,2026-10-10T07:30:00Z,Ignacio Buse,Zizou Bergs,betfair_ex_eu,2026-10-09T12:00:05Z,2.6,1.6
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,df311e3a27f098a8d7a759065ff2fb00,2026-10-10T07:30:00Z,Ignacio Buse,Zizou Bergs,pmu_fr,2026-10-09T11:59:47Z,2.38,1.47
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,df311e3a27f098a8d7a759065ff2fb00,2026-10-10T07:30:00Z,Ignacio Buse,Zizou Bergs,unibet_nl,2026-10-09T11:59:30Z,2.48,1.54
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,df311e3a27f098a8d7a759065ff2fb00,2026-10-10T07:30:00Z,Ignacio Buse,Zizou Bergs,leovegas_se,2026-10-09T11:59:46Z,2.48,1.54
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,df311e3a27f098a8d7a759065ff2fb00,2026-10-10T07:30:00Z,Ignacio Buse,Zizou Bergs,unibet_se,2026-10-09T11:59:47Z,2.48,1.54
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,df311e3a27f098a8d7a759065ff2fb00,2026-10-10T07:30:00Z,Ignacio Buse,Zizou Bergs,onexbet,2026-10-09T12:00:04Z,2.49,1.56
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,df311e3a27f098a8d7a759065ff2fb00,2026-10-10T07:30:00Z,Ignacio Buse,Zizou Bergs,matchbook,2026-10-09T12:00:04Z,2.6,1.59
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,df311e3a27f098a8d7a759065ff2fb00,2026-10-10T07:30:00Z,Ignacio Buse,Zizou Bergs,unibet_fr,2026-10-09T11:59:47Z,2.3,1.5
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,df311e3a27f098a8d7a759065ff2fb00,2026-10-10T07:30:00Z,Ignacio Buse,Zizou Bergs,pinnacle,2026-10-09T12:00:04Z,2.52,1.58
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,df311e3a27f098a8d7a759065ff2fb00,2026-10-10T07:30:00Z,Ignacio Buse,Zizou Bergs,nordicbet,2026-10-09T11:59:47Z,2.42,1.57
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,df311e3a27f098a8d7a759065ff2fb00,2026-10-10T07:30:00Z,Ignacio Buse,Zizou Bergs,betsson,2026-10-09T11:59:31Z,2.42,1.57
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,83a3dfc3ecec15d3a3b663da0aefae6c,2026-10-10T07:30:00Z,Luciano Darderi,Stefanos Tsitsipas,matchbook,2026-10-09T12:00:04Z,3.15,1.41
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,83a3dfc3ecec15d3a3b663da0aefae6c,2026-10-10T07:30:00Z,Luciano Darderi,Stefanos Tsitsipas,betfair_ex_eu,2026-10-09T12:00:05Z,3.2,1.41
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,83a3dfc3ecec15d3a3b663da0aefae6c,2026-10-10T07:30:00Z,Luciano Darderi,Stefanos Tsitsipas,unibet_fr,2026-10-09T11:59:47Z,2.7,1.37
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,83a3dfc3ecec15d3a3b663da0aefae6c,2026-10-10T07:30:00Z,Luciano Darderi,Stefanos Tsitsipas,williamhill,2026-10-09T11:59:31Z,2.9,1.4
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T09:00:00Z,Botic van de Zandschulp,Alex Michelsen,betfair_ex_eu,2026-10-09T12:00:05Z,2.68,1.57
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T09:00:00Z,Botic van de Zandschulp,Alex Michelsen,unibet_fr,2026-10-09T11:59:47Z,2.45,1.45
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T09:00:00Z,Botic van de Zandschulp,Alex Michelsen,betsson,2026-10-09T11:59:31Z,2.55,1.52
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T09:00:00Z,Botic van de Zandschulp,Alex Michelsen,nordicbet,2026-10-09T11:59:47Z,2.55,1.52
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T09:00:00Z,Botic van de Zandschulp,Alex Michelsen,pmu_fr,2026-10-09T11:59:47Z,2.43,1.45
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T09:00:00Z,Botic van de Zandschulp,Alex Michelsen,matchbook,2026-10-09T12:00:04Z,2.68,1.57
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T09:00:00Z,Botic van de Zandschulp,Alex Michelsen,pinnacle,2026-10-09T12:00:04Z,2.58,1.56
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,matchbook,2026-10-09T12:00:04Z,19.5,1.05
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,onexbet,2026-10-09T12:00:04Z,18.0,1.01
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,betfair_ex_eu,2026-10-09T12:00:05Z,19.5,1.04
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,coolbet,2026-10-09T11:59:17Z,14.4,1.02
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,gtbets,2026-10-09T11:59:31Z,13.66,1.02
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,winamax_de,2026-10-09T11:59:48Z,17.0,1.02
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,winamax_fr,2026-10-09T11:59:48Z,13.5,1.02
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,sport888,2026-10-09T11:59:50Z,12.0,1.03
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,unibet_nl,2026-10-09T11:59:31Z,12.5,1.03
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,unibet_se,2026-10-09T11:59:47Z,12.5,1.03
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,leovegas_se,2026-10-09T11:59:46Z,12.5,1.03
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,pinnacle,2026-10-09T12:00:04Z,15.37,1.04
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,williamhill,2026-10-09T11:59:31Z,12.0,1.03
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,nordicbet,2026-10-09T11:59:47Z,14.0,1.02
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,betsson,2026-10-09T11:59:31Z,14.0,1.02
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,unibet_fr,2026-10-09T11:59:47Z,3.15,1.28
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,coolbet,2026-10-09T11:59:17Z,3.42,1.32
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,betfair_ex_eu,2026-10-09T12:00:05Z,3.6,1.34
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,winamax_de,2026-10-09T11:59:48Z,3.4,1.31
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,winamax_fr,2026-10-09T11:59:48Z,3.1,1.28
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,onexbet,2026-10-09T12:00:04Z,3.38,1.34
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,matchbook,2026-10-09T12:00:04Z,3.6,1.34
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,sport888,2026-10-09T11:59:49Z,3.3,1.33
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,pmu_fr,2026-10-09T11:59:47Z,3.15,1.27
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,unibet_se,2026-10-09T11:59:47Z,3.35,1.33
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,unibet_nl,2026-10-09T11:59:31Z,3.35,1.33
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,leovegas_se,2026-10-09T11:59:46Z,3.35,1.33
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,pinnacle,2026-10-09T12:00:04Z,3.51,1.34
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,betonlineag,2026-10-09T12:00:04Z,3.37,1.34
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,betanysports,2026-10-09T11:59:47Z,3.4,1.34
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,betsson,2026-10-09T11:59:31Z,3.4,1.32
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,nordicbet,2026-10-09T11:59:47Z,3.4,1.32
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,williamhill,2026-10-09T11:59:31Z,3.3,1.33
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,bd69690bbcda67d0a8bcaa6f591baa47,2026-10-11T04:00:00Z,Alejandro Davidovich Fokina,Frances Tiafoe,betfair_ex_eu,2026-10-09T12:00:05Z,2.0,1.79
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,bd69690bbcda67d0a8bcaa6f591baa47,2026-10-11T04:00:00Z,Alejandro Davidovich Fokina,Frances Tiafoe,leovegas_se,2026-10-09T11:59:46Z,2.2,1.67
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,bd69690bbcda67d0a8bcaa6f591baa47,2026-10-11T04:00:00Z,Alejandro Davidovich Fokina,Frances Tiafoe,pmu_fr,2026-10-09T11:59:47Z,2.1,1.61
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,bd69690bbcda67d0a8bcaa6f591baa47,2026-10-11T04:00:00Z,Alejandro Davidovich Fokina,Frances Tiafoe,unibet_se,2026-10-09T11:59:47Z,2.2,1.67
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,bd69690bbcda67d0a8bcaa6f591baa47,2026-10-11T04:00:00Z,Alejandro Davidovich Fokina,Frances Tiafoe,sport888,2026-10-09T11:59:49Z,2.1,1.73
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,bd69690bbcda67d0a8bcaa6f591baa47,2026-10-11T04:00:00Z,Alejandro Davidovich Fokina,Frances Tiafoe,onexbet,2026-10-09T12:00:04Z,2.17,1.72
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,ed0f82f195d0edeb15e0672bf51496a0,2026-10-11T04:00:00Z,Alex de Minaur,Rei Sakamoto,gtbets,2026-10-09T11:59:31Z,1.31,3.46
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,ed0f82f195d0edeb15e0672bf51496a0,2026-10-11T04:00:00Z,Alex de Minaur,Rei Sakamoto,betfair_ex_eu,2026-10-09T12:00:05Z,1.35,3.6
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,ed0f82f195d0edeb15e0672bf51496a0,2026-10-11T04:00:00Z,Alex de Minaur,Rei Sakamoto,onexbet,2026-10-09T12:00:04Z,1.31,3.6
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,ed0f82f195d0edeb15e0672bf51496a0,2026-10-11T04:00:00Z,Alex de Minaur,Rei Sakamoto,tipico_de,2026-10-09T12:00:04Z,1.25,3.6
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,ed0f82f195d0edeb15e0672bf51496a0,2026-10-11T04:00:00Z,Alex de Minaur,Rei Sakamoto,winamax_fr,2026-10-09T11:59:48Z,1.24,3.25
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,ed0f82f195d0edeb15e0672bf51496a0,2026-10-11T04:00:00Z,Alex de Minaur,Rei Sakamoto,winamax_de,2026-10-09T11:59:48Z,1.28,3.65
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,ed0f82f195d0edeb15e0672bf51496a0,2026-10-11T04:00:00Z,Alex de Minaur,Rei Sakamoto,leovegas_se,2026-10-09T11:59:46Z,1.3,3.55
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,ed0f82f195d0edeb15e0672bf51496a0,2026-10-11T04:00:00Z,Alex de Minaur,Rei Sakamoto,unibet_se,2026-10-09T11:59:47Z,1.3,3.55
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,ed0f82f195d0edeb15e0672bf51496a0,2026-10-11T04:00:00Z,Alex de Minaur,Rei Sakamoto,pmu_fr,2026-10-09T11:59:47Z,1.25,3.35
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,ed0f82f195d0edeb15e0672bf51496a0,2026-10-11T04:00:00Z,Alex de Minaur,Rei Sakamoto,unibet_nl,2026-10-09T11:59:31Z,1.3,3.55
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,ed0f82f195d0edeb15e0672bf51496a0,2026-10-11T04:00:00Z,Alex de Minaur,Rei Sakamoto,sport888,2026-10-09T11:59:49Z,1.29,3.6
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e6003c91bfcfdd647a80a0852a7460c8,2026-10-11T04:00:00Z,Alexander Zverev,Quentin Halys,betfair_ex_eu,2026-10-09T12:00:05Z,1.14,6.0
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e6003c91bfcfdd647a80a0852a7460c8,2026-10-11T04:00:00Z,Alexander Zverev,Quentin Halys,onexbet,2026-10-09T12:00:04Z,1.16,5.48
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e6003c91bfcfdd647a80a0852a7460c8,2026-10-11T04:00:00Z,Alexander Zverev,Quentin Halys,unibet_fr,2026-10-09T11:59:47Z,1.11,4.6
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e6003c91bfcfdd647a80a0852a7460c8,2026-10-11T04:00:00Z,Alexander Zverev,Quentin Halys,gtbets,2026-10-09T11:59:31Z,1.16,5.5
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e6003c91bfcfdd647a80a0852a7460c8,2026-10-11T04:00:00Z,Alexander Zverev,Quentin Halys,pmu_fr,2026-10-09T11:59:47Z,1.12,4.9
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e6003c91bfcfdd647a80a0852a7460c8,2026-10-11T04:00:00Z,Alexander Zverev,Quentin Halys,leovegas_se,2026-10-09T11:59:46Z,1.16,5.25
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e6003c91bfcfdd647a80a0852a7460c8,2026-10-11T04:00:00Z,Alexander Zverev,Quentin Halys,unibet_se,2026-10-09T11:59:47Z,1.16,5.25
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e6003c91bfcfdd647a80a0852a7460c8,2026-10-11T04:00:00Z,Alexander Zverev,Quentin Halys,unibet_nl,2026-10-09T11:59:31Z,1.16,5.3
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e6003c91bfcfdd647a80a0852a7460c8,2026-10-11T04:00:00Z,Alexander Zverev,Quentin Halys,pinnacle,2026-10-09T12:00:04Z,1.17,5.7
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e6003c91bfcfdd647a80a0852a7460c8,2026-10-11T04:00:00Z,Alexander Zverev,Quentin Halys,winamax_de,2026-10-09T11:59:48Z,1.14,5.7
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e6003c91bfcfdd647a80a0852a7460c8,2026-10-11T04:00:00Z,Alexander Zverev,Quentin Halys,winamax_fr,2026-10-09T11:59:48Z,1.11,4.7
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e6003c91bfcfdd647a80a0852a7460c8,2026-10-11T04:00:00Z,Alexander Zverev,Quentin Halys,tipico_de,2026-10-09T12:00:04Z,1.13,5.2
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e9d3e24e28821a6cf2331d48f2a9ccaf,2026-10-11T04:00:00Z,Ben Shelton,Arthur Gea,unibet_fr,2026-10-09T11:59:47Z,1.29,2.9
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e9d3e24e28821a6cf2331d48f2a9ccaf,2026-10-11T04:00:00Z,Ben Shelton,Arthur Gea,gtbets,2026-10-09T11:59:31Z,1.28,3.41
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e9d3e24e28821a6cf2331d48f2a9ccaf,2026-10-11T04:00:00Z,Ben Shelton,Arthur Gea,betfair_ex_eu,2026-10-09T12:00:05Z,1.37,3.4
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e9d3e24e28821a6cf2331d48f2a9ccaf,2026-10-11T04:00:00Z,Ben Shelton,Arthur Gea,onexbet,2026-10-09T12:00:04Z,1.36,3.27
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e9d3e24e28821a6cf2331d48f2a9ccaf,2026-10-11T04:00:00Z,Ben Shelton,Arthur Gea,tipico_de,2026-10-09T12:00:04Z,1.3,3.2
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e9d3e24e28821a6cf2331d48f2a9ccaf,2026-10-11T04:00:00Z,Ben Shelton,Arthur Gea,winamax_fr,2026-10-09T11:59:48Z,1.29,2.9
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e9d3e24e28821a6cf2331d48f2a9ccaf,2026-10-11T04:00:00Z,Ben Shelton,Arthur Gea,winamax_de,2026-10-09T11:59:48Z,1.34,3.2
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e9d3e24e28821a6cf2331d48f2a9ccaf,2026-10-11T04:00:00Z,Ben Shelton,Arthur Gea,leovegas_se,2026-10-09T11:59:46Z,1.35,3.2
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e9d3e24e28821a6cf2331d48f2a9ccaf,2026-10-11T04:00:00Z,Ben Shelton,Arthur Gea,unibet_se,2026-10-09T11:59:47Z,1.35,3.2
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e9d3e24e28821a6cf2331d48f2a9ccaf,2026-10-11T04:00:00Z,Ben Shelton,Arthur Gea,pmu_fr,2026-10-09T11:59:47Z,1.3,3.05
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e9d3e24e28821a6cf2331d48f2a9ccaf,2026-10-11T04:00:00Z,Ben Shelton,Arthur Gea,unibet_nl,2026-10-09T11:59:31Z,1.35,3.2
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e9d3e24e28821a6cf2331d48f2a9ccaf,2026-10-11T04:00:00Z,Ben Shelton,Arthur Gea,pinnacle,2026-10-09T12:00:04Z,1.36,3.39
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e9d3e24e28821a6cf2331d48f2a9ccaf,2026-10-11T04:00:00Z,Ben Shelton,Arthur Gea,sport888,2026-10-09T11:59:49Z,1.36,3.1
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e9d3e24e28821a6cf2331d48f2a9ccaf,2026-10-11T04:00:00Z,Ben Shelton,Arthur Gea,nordicbet,2026-10-09T11:59:47Z,1.35,3.25
+2026-10-09T12:00:07Z,tennis_atp_shanghai_masters,e9d3e24e28821a6cf2331d48f2a9ccaf,2026-10-11T04:00:00Z,Ben Shelton,Arthur Gea,betsson,2026-10-09T11:59:31Z,1.35,3.25
+2026-10-09T12:00:07Z,tennis_wta_china_open,758ed266322f4a6a8b6e3f87814d6088,2026-10-10T07:00:00Z,Mirra Andreeva,Nikola Bartunkova,unibet_nl,2026-10-09T11:59:58Z,1.36,3.2
+2026-10-09T12:00:07Z,tennis_wta_china_open,758ed266322f4a6a8b6e3f87814d6088,2026-10-10T07:00:00Z,Mirra Andreeva,Nikola Bartunkova,betfair_ex_eu,2026-10-09T11:59:58Z,1.43,3.25
+2026-10-09T12:00:07Z,tennis_wta_china_open,758ed266322f4a6a8b6e3f87814d6088,2026-10-10T07:00:00Z,Mirra Andreeva,Nikola Bartunkova,leovegas_se,2026-10-09T11:59:58Z,1.36,3.2
+2026-10-09T12:00:07Z,tennis_wta_china_open,758ed266322f4a6a8b6e3f87814d6088,2026-10-10T07:00:00Z,Mirra Andreeva,Nikola Bartunkova,unibet_se,2026-10-09T11:59:27Z,1.36,3.2
+2026-10-09T12:00:07Z,tennis_wta_china_open,758ed266322f4a6a8b6e3f87814d6088,2026-10-10T07:00:00Z,Mirra Andreeva,Nikola Bartunkova,coolbet,2026-10-09T11:59:41Z,1.39,3.03
+2026-10-09T12:00:07Z,tennis_wta_china_open,758ed266322f4a6a8b6e3f87814d6088,2026-10-10T07:00:00Z,Mirra Andreeva,Nikola Bartunkova,matchbook,2026-10-09T11:59:58Z,1.43,3.25
+2026-10-09T12:00:07Z,tennis_wta_china_open,758ed266322f4a6a8b6e3f87814d6088,2026-10-10T07:00:00Z,Mirra Andreeva,Nikola Bartunkova,unibet_fr,2026-10-09T11:59:24Z,1.34,2.75
+2026-10-09T12:00:07Z,tennis_wta_china_open,758ed266322f4a6a8b6e3f87814d6088,2026-10-10T07:00:00Z,Mirra Andreeva,Nikola Bartunkova,betclic_fr,2026-10-09T11:59:19Z,1.38,3.0
+2026-10-09T12:00:07Z,tennis_wta_china_open,758ed266322f4a6a8b6e3f87814d6088,2026-10-10T07:00:00Z,Mirra Andreeva,Nikola Bartunkova,winamax_fr,2026-10-09T11:59:26Z,1.34,2.8
+2026-10-09T12:00:07Z,tennis_wta_china_open,758ed266322f4a6a8b6e3f87814d6088,2026-10-10T07:00:00Z,Mirra Andreeva,Nikola Bartunkova,pinnacle,2026-10-09T11:59:58Z,1.41,3.15
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,betfair_ex_eu,2026-10-09T17:59:36Z,13.5,1.06
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,unibet_fr,2026-10-09T17:59:02Z,7.3,1.05
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,tipico_de,2026-10-09T17:52:54Z,8.2,1.04
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,winamax_de,2026-10-09T17:59:43Z,14.0,1.04
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,williamhill,2026-10-09T17:59:35Z,11.0,1.04
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,matchbook,2026-10-09T17:59:36Z,15.0,1.06
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,sport888,2026-10-09T17:59:02Z,11.0,1.04
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,pinnacle,2026-10-09T17:59:02Z,13.61,1.04
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,onexbet,2026-10-09T17:59:02Z,1.16,5.55
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,betfair_ex_eu,2026-10-09T17:59:36Z,1.17,6.4
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,winamax_de,2026-10-09T17:59:43Z,1.14,6.25
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,winamax_fr,2026-10-09T17:59:07Z,1.13,5.9
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,matchbook,2026-10-09T17:59:36Z,1.17,6.4
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,pinnacle,2026-10-09T17:59:02Z,1.16,5.91
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,betonlineag,2026-10-09T17:59:02Z,1.15,5.83
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,betanysports,2026-10-09T17:59:05Z,1.15,5.5
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,matchbook,2026-10-09T17:59:36Z,1.41,3.4
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,betfair_ex_eu,2026-10-09T17:59:36Z,1.4,3.4
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,gtbets,2026-10-09T17:59:55Z,1.32,3.23
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,coolbet,2026-10-09T17:59:54Z,1.36,3.18
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,unibet_fr,2026-10-09T17:59:02Z,1.32,2.9
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,onexbet,2026-10-09T17:59:02Z,1.38,3.17
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,tipico_de,2026-10-09T17:59:35Z,1.3,3.2
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,winamax_de,2026-10-09T17:59:43Z,1.38,3.25
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,winamax_fr,2026-10-09T17:59:07Z,1.36,3.1
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,sport888,2026-10-09T17:59:02Z,1.36,3.1
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,williamhill,2026-10-09T17:59:35Z,1.36,3.1
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,pinnacle,2026-10-09T17:59:02Z,1.4,3.2
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,betsson,2026-10-09T17:59:36Z,1.37,3.15
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,nordicbet,2026-10-09T17:59:54Z,1.37,3.15
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,betonlineag,2026-10-09T17:59:02Z,1.36,3.25
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,betanysports,2026-10-09T17:59:05Z,1.36,3.25
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,onexbet,2026-10-09T17:59:02Z,3.17,1.38
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,matchbook,2026-10-09T17:59:36Z,3.1,1.45
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,betfair_ex_eu,2026-10-09T17:59:36Z,3.1,1.45
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,unibet_fr,2026-10-09T17:59:03Z,3.0,1.36
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,coolbet,2026-10-09T17:59:54Z,3.0,1.4
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,sport888,2026-10-09T17:59:02Z,2.75,1.44
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,betonlineag,2026-10-09T17:59:03Z,3.0,1.42
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,betanysports,2026-10-09T17:59:05Z,3.0,1.41
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,williamhill,2026-10-09T17:59:35Z,2.75,1.44
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T05:10:00Z,Alejandro Tabilo,Pablo Carreno Busta,betfair_ex_eu,2026-10-09T17:59:36Z,1.62,2.56
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T05:10:00Z,Alejandro Tabilo,Pablo Carreno Busta,coolbet,2026-10-09T17:59:54Z,1.58,2.4
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T05:10:00Z,Alejandro Tabilo,Pablo Carreno Busta,matchbook,2026-10-09T17:59:36Z,1.63,2.56
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T05:10:00Z,Alejandro Tabilo,Pablo Carreno Busta,pinnacle,2026-10-09T17:59:02Z,1.62,2.42
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T05:10:00Z,Alejandro Tabilo,Pablo Carreno Busta,betonlineag,2026-10-09T17:59:03Z,1.62,2.4
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T05:10:00Z,Alejandro Tabilo,Pablo Carreno Busta,betanysports,2026-10-09T17:59:05Z,1.59,2.4
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,betfair_ex_eu,2026-10-09T17:59:36Z,2.24,1.79
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,winamax_de,2026-10-09T17:59:43Z,2.15,1.74
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,winamax_fr,2026-10-09T17:59:07Z,2.1,1.72
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,coolbet,2026-10-09T17:59:54Z,2.15,1.71
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,unibet_fr,2026-10-09T17:59:03Z,2.05,1.63
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,onexbet,2026-10-09T17:59:02Z,2.15,1.73
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,sport888,2026-10-09T17:59:02Z,2.1,1.73
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,unibet_nl,2026-10-09T17:59:03Z,2.16,1.7
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,unibet_se,2026-10-09T17:59:36Z,2.16,1.7
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,pmu_fr,2026-10-09T17:59:03Z,2.06,1.63
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,leovegas_se,2026-10-09T17:59:56Z,2.16,1.7
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,matchbook,2026-10-09T17:59:36Z,2.24,1.78
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,pinnacle,2026-10-09T17:59:02Z,2.17,1.76
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,betonlineag,2026-10-09T17:59:03Z,2.16,1.74
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,betanysports,2026-10-09T17:59:05Z,2.1,1.71
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,nordicbet,2026-10-09T17:59:54Z,2.2,1.68
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,betsson,2026-10-09T17:59:36Z,2.2,1.68
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,williamhill,2026-10-09T17:59:35Z,2.1,1.73
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,betfair_ex_eu,2026-10-09T17:59:36Z,2.38,1.7
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,unibet_fr,2026-10-09T17:59:03Z,2.1,1.62
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,coolbet,2026-10-09T17:59:54Z,2.2,1.68
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,winamax_de,2026-10-09T17:59:43Z,2.2,1.7
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,sport888,2026-10-09T17:59:02Z,2.2,1.67
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,winamax_fr,2026-10-09T17:59:07Z,2.15,1.68
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,onexbet,2026-10-09T17:59:02Z,2.22,1.69
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,matchbook,2026-10-09T17:59:36Z,2.38,1.72
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,pinnacle,2026-10-09T17:59:02Z,2.25,1.71
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,tipico_de,2026-10-09T17:59:35Z,2.15,1.62
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,betonlineag,2026-10-09T17:59:03Z,2.24,1.69
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,betanysports,2026-10-09T17:59:05Z,2.14,1.69
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,williamhill,2026-10-09T17:59:35Z,2.2,1.67
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,nordicbet,2026-10-09T17:59:54Z,2.19,1.68
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,betsson,2026-10-09T17:59:36Z,2.19,1.68
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T05:10:00Z,Matteo Arnaldi,Taylor Fritz,betfair_ex_eu,2026-10-09T17:59:36Z,4.4,1.28
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T05:10:00Z,Matteo Arnaldi,Taylor Fritz,matchbook,2026-10-09T17:59:36Z,4.4,1.28
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T05:10:00Z,Matteo Arnaldi,Taylor Fritz,winamax_de,2026-10-09T17:59:43Z,4.2,1.25
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T05:10:00Z,Matteo Arnaldi,Taylor Fritz,winamax_fr,2026-10-09T17:59:06Z,4.0,1.24
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T05:10:00Z,Matteo Arnaldi,Taylor Fritz,betonlineag,2026-10-09T17:59:03Z,4.18,1.25
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T05:10:00Z,Matteo Arnaldi,Taylor Fritz,betanysports,2026-10-09T17:59:05Z,4.05,1.25
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T06:20:00Z,Arthur Fils,Pavel Kotov,betfair_ex_eu,2026-10-09T17:59:36Z,1.12,8.8
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T06:20:00Z,Arthur Fils,Pavel Kotov,coolbet,2026-10-09T17:59:54Z,1.1,7.1
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T06:20:00Z,Arthur Fils,Pavel Kotov,pmu_fr,2026-10-09T17:59:03Z,1.04,6.75
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T06:20:00Z,Arthur Fils,Pavel Kotov,matchbook,2026-10-09T17:59:36Z,1.12,8.8
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T06:20:00Z,Arthur Fils,Pavel Kotov,leovegas_se,2026-10-09T17:59:56Z,1.09,7.5
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T06:20:00Z,Arthur Fils,Pavel Kotov,unibet_nl,2026-10-09T17:59:03Z,1.09,7.5
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T06:20:00Z,Arthur Fils,Pavel Kotov,unibet_se,2026-10-09T17:59:36Z,1.09,7.5
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T06:20:00Z,Arthur Fils,Pavel Kotov,onexbet,2026-10-09T17:59:02Z,1.09,7.8
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T06:20:00Z,Arthur Fils,Pavel Kotov,sport888,2026-10-09T17:59:02Z,1.1,7.0
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T06:20:00Z,Arthur Fils,Pavel Kotov,pinnacle,2026-10-09T17:59:02Z,1.09,8.01
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T06:20:00Z,Arthur Fils,Pavel Kotov,williamhill,2026-10-09T17:59:35Z,1.1,7.0
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T06:20:00Z,Arthur Fils,Pavel Kotov,betanysports,2026-10-09T17:59:05Z,1.09,7.45
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T06:20:00Z,Arthur Fils,Pavel Kotov,betonlineag,2026-10-09T17:59:03Z,1.1,7.32
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T06:20:00Z,Learner Tien,Zachary Svajda,betfair_ex_eu,2026-10-09T17:59:36Z,1.36,3.65
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T06:20:00Z,Learner Tien,Zachary Svajda,onexbet,2026-10-09T17:59:02Z,1.31,3.6
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T06:20:00Z,Learner Tien,Zachary Svajda,matchbook,2026-10-09T17:59:36Z,1.36,3.65
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T06:20:00Z,Learner Tien,Zachary Svajda,pinnacle,2026-10-09T17:59:02Z,1.33,3.58
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T06:20:00Z,Learner Tien,Zachary Svajda,betonlineag,2026-10-09T17:59:03Z,1.3,3.67
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T07:30:00Z,Tommy Paul,Adolfo Daniel Vallejo,betfair_ex_eu,2026-10-09T17:59:36Z,1.52,2.84
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T07:30:00Z,Tommy Paul,Adolfo Daniel Vallejo,onexbet,2026-10-09T17:59:02Z,1.48,2.73
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T07:30:00Z,Tommy Paul,Adolfo Daniel Vallejo,matchbook,2026-10-09T17:59:36Z,1.52,2.84
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T07:30:00Z,Tommy Paul,Adolfo Daniel Vallejo,gtbets,2026-10-09T17:59:55Z,1.47,2.7
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T07:30:00Z,Tommy Paul,Adolfo Daniel Vallejo,winamax_de,2026-10-09T17:59:43Z,1.5,2.7
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T07:30:00Z,Tommy Paul,Adolfo Daniel Vallejo,unibet_fr,2026-10-09T17:59:03Z,1.42,2.55
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T07:30:00Z,Tommy Paul,Adolfo Daniel Vallejo,winamax_fr,2026-10-09T17:59:07Z,1.48,2.65
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T07:30:00Z,Tommy Paul,Adolfo Daniel Vallejo,pinnacle,2026-10-09T17:59:02Z,1.5,2.75
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T07:30:00Z,Tommy Paul,Adolfo Daniel Vallejo,betonlineag,2026-10-09T17:59:03Z,1.48,2.78
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T07:30:00Z,Tommy Paul,Adolfo Daniel Vallejo,betanysports,2026-10-09T17:59:05Z,1.48,2.7
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T07:30:00Z,Tommy Paul,Adolfo Daniel Vallejo,betsson,2026-10-09T17:59:36Z,1.48,2.65
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T07:30:00Z,Tommy Paul,Adolfo Daniel Vallejo,nordicbet,2026-10-09T17:59:54Z,1.48,2.65
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,df311e3a27f098a8d7a759065ff2fb00,2026-10-10T07:30:00Z,Ignacio Buse,Zizou Bergs,betfair_ex_eu,2026-10-09T17:59:36Z,2.58,1.61
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,df311e3a27f098a8d7a759065ff2fb00,2026-10-10T07:30:00Z,Ignacio Buse,Zizou Bergs,matchbook,2026-10-09T17:59:36Z,2.58,1.61
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,df311e3a27f098a8d7a759065ff2fb00,2026-10-10T07:30:00Z,Ignacio Buse,Zizou Bergs,betonlineag,2026-10-09T17:59:03Z,2.48,1.59
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,df311e3a27f098a8d7a759065ff2fb00,2026-10-10T07:30:00Z,Ignacio Buse,Zizou Bergs,betanysports,2026-10-09T17:59:05Z,2.45,1.57
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,83a3dfc3ecec15d3a3b663da0aefae6c,2026-10-10T07:30:00Z,Luciano Darderi,Stefanos Tsitsipas,matchbook,2026-10-09T17:59:36Z,3.05,1.47
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,83a3dfc3ecec15d3a3b663da0aefae6c,2026-10-10T07:30:00Z,Luciano Darderi,Stefanos Tsitsipas,betfair_ex_eu,2026-10-09T17:59:36Z,3.05,1.47
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,83a3dfc3ecec15d3a3b663da0aefae6c,2026-10-10T07:30:00Z,Luciano Darderi,Stefanos Tsitsipas,onexbet,2026-10-09T17:59:02Z,2.92,1.43
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,83a3dfc3ecec15d3a3b663da0aefae6c,2026-10-10T07:30:00Z,Luciano Darderi,Stefanos Tsitsipas,coolbet,2026-10-09T17:59:54Z,2.93,1.41
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,83a3dfc3ecec15d3a3b663da0aefae6c,2026-10-10T07:30:00Z,Luciano Darderi,Stefanos Tsitsipas,winamax_de,2026-10-09T17:59:43Z,3.05,1.41
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,83a3dfc3ecec15d3a3b663da0aefae6c,2026-10-10T07:30:00Z,Luciano Darderi,Stefanos Tsitsipas,winamax_fr,2026-10-09T17:59:06Z,2.95,1.4
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,83a3dfc3ecec15d3a3b663da0aefae6c,2026-10-10T07:30:00Z,Luciano Darderi,Stefanos Tsitsipas,pinnacle,2026-10-09T17:59:02Z,2.95,1.45
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,83a3dfc3ecec15d3a3b663da0aefae6c,2026-10-10T07:30:00Z,Luciano Darderi,Stefanos Tsitsipas,betonlineag,2026-10-09T17:59:03Z,2.84,1.45
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,83a3dfc3ecec15d3a3b663da0aefae6c,2026-10-10T07:30:00Z,Luciano Darderi,Stefanos Tsitsipas,betanysports,2026-10-09T17:59:05Z,2.95,1.43
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T09:00:00Z,Botic van de Zandschulp,Alex Michelsen,betfair_ex_eu,2026-10-09T17:59:36Z,2.76,1.55
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T09:00:00Z,Botic van de Zandschulp,Alex Michelsen,coolbet,2026-10-09T17:59:54Z,2.6,1.5
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T09:00:00Z,Botic van de Zandschulp,Alex Michelsen,betsson,2026-10-09T17:59:36Z,2.6,1.5
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T09:00:00Z,Botic van de Zandschulp,Alex Michelsen,onexbet,2026-10-09T17:59:02Z,2.6,1.52
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T09:00:00Z,Botic van de Zandschulp,Alex Michelsen,nordicbet,2026-10-09T17:59:54Z,2.6,1.5
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T09:00:00Z,Botic van de Zandschulp,Alex Michelsen,winamax_de,2026-10-09T17:59:43Z,2.6,1.54
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T09:00:00Z,Botic van de Zandschulp,Alex Michelsen,pmu_fr,2026-10-09T17:59:03Z,2.48,1.43
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T09:00:00Z,Botic van de Zandschulp,Alex Michelsen,unibet_se,2026-10-09T17:59:36Z,2.6,1.5
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T09:00:00Z,Botic van de Zandschulp,Alex Michelsen,leovegas_se,2026-10-09T17:59:56Z,2.6,1.5
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T09:00:00Z,Botic van de Zandschulp,Alex Michelsen,unibet_nl,2026-10-09T17:59:03Z,2.6,1.5
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T09:00:00Z,Botic van de Zandschulp,Alex Michelsen,sport888,2026-10-09T17:59:02Z,2.6,1.5
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T09:00:00Z,Botic van de Zandschulp,Alex Michelsen,williamhill,2026-10-09T17:59:35Z,2.6,1.5
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T09:00:00Z,Botic van de Zandschulp,Alex Michelsen,matchbook,2026-10-09T17:59:36Z,2.76,1.55
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T09:00:00Z,Botic van de Zandschulp,Alex Michelsen,pinnacle,2026-10-09T17:59:02Z,2.68,1.52
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T09:00:00Z,Botic van de Zandschulp,Alex Michelsen,betonlineag,2026-10-09T17:59:03Z,2.62,1.53
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T09:00:00Z,Botic van de Zandschulp,Alex Michelsen,betanysports,2026-10-09T17:59:05Z,2.55,1.54
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,matchbook,2026-10-09T17:59:36Z,20.0,1.04
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,onexbet,2026-10-09T17:59:02Z,15.5,1.02
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,coolbet,2026-10-09T17:59:54Z,12.6,1.03
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,winamax_de,2026-10-09T17:59:43Z,16.0,1.03
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,winamax_fr,2026-10-09T17:59:06Z,13.0,1.02
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,betonlineag,2026-10-09T17:59:03Z,14.16,1.03
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,nordicbet,2026-10-09T17:59:54Z,13.0,1.03
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,betsson,2026-10-09T17:59:36Z,13.0,1.03
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,unibet_fr,2026-10-09T17:59:03Z,3.55,1.27
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,betfair_ex_eu,2026-10-09T17:59:36Z,3.7,1.35
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,winamax_de,2026-10-09T17:59:43Z,3.5,1.33
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,winamax_fr,2026-10-09T17:59:06Z,3.4,1.31
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,matchbook,2026-10-09T17:59:36Z,3.75,1.35
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,pinnacle,2026-10-09T17:59:02Z,3.54,1.34
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,betonlineag,2026-10-09T17:59:03Z,3.47,1.33
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,betanysports,2026-10-09T17:59:05Z,3.4,1.33
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,52d52225f4c13f3a96b8bff7a3a53de9,2026-10-11T04:00:00Z,Karen Khachanov,Adrian Mannarino,unibet_nl,2026-10-09T17:59:03Z,1.28,3.7
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,52d52225f4c13f3a96b8bff7a3a53de9,2026-10-11T04:00:00Z,Karen Khachanov,Adrian Mannarino,unibet_se,2026-10-09T17:59:36Z,1.28,3.7
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,52d52225f4c13f3a96b8bff7a3a53de9,2026-10-11T04:00:00Z,Karen Khachanov,Adrian Mannarino,pmu_fr,2026-10-09T17:59:03Z,1.23,3.5
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,52d52225f4c13f3a96b8bff7a3a53de9,2026-10-11T04:00:00Z,Karen Khachanov,Adrian Mannarino,leovegas_se,2026-10-09T17:59:56Z,1.28,3.7
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,52d52225f4c13f3a96b8bff7a3a53de9,2026-10-11T04:00:00Z,Karen Khachanov,Adrian Mannarino,onexbet,2026-10-09T17:59:03Z,1.32,3.53
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,52d52225f4c13f3a96b8bff7a3a53de9,2026-10-11T04:00:00Z,Karen Khachanov,Adrian Mannarino,gtbets,2026-10-09T17:59:55Z,1.28,3.71
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,52d52225f4c13f3a96b8bff7a3a53de9,2026-10-11T04:00:00Z,Karen Khachanov,Adrian Mannarino,winamax_de,2026-10-09T17:59:44Z,1.29,3.6
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,52d52225f4c13f3a96b8bff7a3a53de9,2026-10-11T04:00:00Z,Karen Khachanov,Adrian Mannarino,winamax_fr,2026-10-09T17:59:07Z,1.24,3.2
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,52d52225f4c13f3a96b8bff7a3a53de9,2026-10-11T04:00:00Z,Karen Khachanov,Adrian Mannarino,unibet_fr,2026-10-09T17:59:03Z,1.24,3.15
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,52d52225f4c13f3a96b8bff7a3a53de9,2026-10-11T04:00:00Z,Karen Khachanov,Adrian Mannarino,betfair_ex_eu,2026-10-09T17:59:36Z,1.29,3.75
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,52d52225f4c13f3a96b8bff7a3a53de9,2026-10-11T04:00:00Z,Karen Khachanov,Adrian Mannarino,tipico_de,2026-10-09T17:59:35Z,1.25,3.6
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,52d52225f4c13f3a96b8bff7a3a53de9,2026-10-11T04:00:00Z,Karen Khachanov,Adrian Mannarino,pinnacle,2026-10-09T17:59:02Z,1.32,3.7
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,52d52225f4c13f3a96b8bff7a3a53de9,2026-10-11T04:00:00Z,Karen Khachanov,Adrian Mannarino,betonlineag,2026-10-09T17:59:03Z,1.29,3.8
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,bd69690bbcda67d0a8bcaa6f591baa47,2026-10-11T04:00:00Z,Alejandro Davidovich Fokina,Frances Tiafoe,betfair_ex_eu,2026-10-09T17:59:36Z,1.53,1.76
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,bd69690bbcda67d0a8bcaa6f591baa47,2026-10-11T04:00:00Z,Alejandro Davidovich Fokina,Frances Tiafoe,leovegas_se,2026-10-09T17:59:56Z,1.92,1.88
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,bd69690bbcda67d0a8bcaa6f591baa47,2026-10-11T04:00:00Z,Alejandro Davidovich Fokina,Frances Tiafoe,pmu_fr,2026-10-09T17:59:03Z,1.83,1.8
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,bd69690bbcda67d0a8bcaa6f591baa47,2026-10-11T04:00:00Z,Alejandro Davidovich Fokina,Frances Tiafoe,unibet_se,2026-10-09T17:59:36Z,1.92,1.88
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,bd69690bbcda67d0a8bcaa6f591baa47,2026-10-11T04:00:00Z,Alejandro Davidovich Fokina,Frances Tiafoe,sport888,2026-10-09T17:59:02Z,2.0,1.8
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,bd69690bbcda67d0a8bcaa6f591baa47,2026-10-11T04:00:00Z,Alejandro Davidovich Fokina,Frances Tiafoe,onexbet,2026-10-09T17:59:03Z,1.94,1.91
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,bd69690bbcda67d0a8bcaa6f591baa47,2026-10-11T04:00:00Z,Alejandro Davidovich Fokina,Frances Tiafoe,gtbets,2026-10-09T17:59:55Z,2.06,1.79
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,bd69690bbcda67d0a8bcaa6f591baa47,2026-10-11T04:00:00Z,Alejandro Davidovich Fokina,Frances Tiafoe,unibet_nl,2026-10-09T17:59:03Z,1.92,1.88
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,bd69690bbcda67d0a8bcaa6f591baa47,2026-10-11T04:00:00Z,Alejandro Davidovich Fokina,Frances Tiafoe,williamhill,2026-10-09T17:59:35Z,2.0,1.8
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,bd69690bbcda67d0a8bcaa6f591baa47,2026-10-11T04:00:00Z,Alejandro Davidovich Fokina,Frances Tiafoe,unibet_fr,2026-10-09T17:59:03Z,1.83,1.74
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,bd69690bbcda67d0a8bcaa6f591baa47,2026-10-11T04:00:00Z,Alejandro Davidovich Fokina,Frances Tiafoe,winamax_de,2026-10-09T17:59:44Z,1.94,1.84
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,bd69690bbcda67d0a8bcaa6f591baa47,2026-10-11T04:00:00Z,Alejandro Davidovich Fokina,Frances Tiafoe,tipico_de,2026-10-09T17:59:35Z,1.95,1.75
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,bd69690bbcda67d0a8bcaa6f591baa47,2026-10-11T04:00:00Z,Alejandro Davidovich Fokina,Frances Tiafoe,winamax_fr,2026-10-09T17:59:07Z,1.84,1.74
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,bd69690bbcda67d0a8bcaa6f591baa47,2026-10-11T04:00:00Z,Alejandro Davidovich Fokina,Frances Tiafoe,pinnacle,2026-10-09T17:59:02Z,1.93,1.96
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,bd69690bbcda67d0a8bcaa6f591baa47,2026-10-11T04:00:00Z,Alejandro Davidovich Fokina,Frances Tiafoe,nordicbet,2026-10-09T17:59:54Z,1.96,1.86
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,bd69690bbcda67d0a8bcaa6f591baa47,2026-10-11T04:00:00Z,Alejandro Davidovich Fokina,Frances Tiafoe,betsson,2026-10-09T17:59:36Z,1.96,1.86
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,bd69690bbcda67d0a8bcaa6f591baa47,2026-10-11T04:00:00Z,Alejandro Davidovich Fokina,Frances Tiafoe,betonlineag,2026-10-09T17:59:03Z,1.89,1.93
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,ed0f82f195d0edeb15e0672bf51496a0,2026-10-11T04:00:00Z,Alex de Minaur,Rei Sakamoto,gtbets,2026-10-09T17:59:55Z,1.31,3.26
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,ed0f82f195d0edeb15e0672bf51496a0,2026-10-11T04:00:00Z,Alex de Minaur,Rei Sakamoto,betfair_ex_eu,2026-10-09T17:59:36Z,1.42,3.2
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,ed0f82f195d0edeb15e0672bf51496a0,2026-10-11T04:00:00Z,Alex de Minaur,Rei Sakamoto,onexbet,2026-10-09T17:59:03Z,1.39,3.1
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,ed0f82f195d0edeb15e0672bf51496a0,2026-10-11T04:00:00Z,Alex de Minaur,Rei Sakamoto,tipico_de,2026-10-09T17:59:35Z,1.35,2.95
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,ed0f82f195d0edeb15e0672bf51496a0,2026-10-11T04:00:00Z,Alex de Minaur,Rei Sakamoto,winamax_fr,2026-10-09T17:59:07Z,1.32,2.8
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,ed0f82f195d0edeb15e0672bf51496a0,2026-10-11T04:00:00Z,Alex de Minaur,Rei Sakamoto,winamax_de,2026-10-09T17:59:43Z,1.37,3.05
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,ed0f82f195d0edeb15e0672bf51496a0,2026-10-11T04:00:00Z,Alex de Minaur,Rei Sakamoto,leovegas_se,2026-10-09T17:59:56Z,1.34,3.3
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,ed0f82f195d0edeb15e0672bf51496a0,2026-10-11T04:00:00Z,Alex de Minaur,Rei Sakamoto,unibet_se,2026-10-09T17:59:36Z,1.34,3.3
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,ed0f82f195d0edeb15e0672bf51496a0,2026-10-11T04:00:00Z,Alex de Minaur,Rei Sakamoto,pmu_fr,2026-10-09T17:59:03Z,1.28,3.1
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,ed0f82f195d0edeb15e0672bf51496a0,2026-10-11T04:00:00Z,Alex de Minaur,Rei Sakamoto,unibet_nl,2026-10-09T17:59:03Z,1.34,3.3
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,ed0f82f195d0edeb15e0672bf51496a0,2026-10-11T04:00:00Z,Alex de Minaur,Rei Sakamoto,sport888,2026-10-09T17:59:02Z,1.4,2.9
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,ed0f82f195d0edeb15e0672bf51496a0,2026-10-11T04:00:00Z,Alex de Minaur,Rei Sakamoto,nordicbet,2026-10-09T17:59:54Z,1.37,3.1
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,ed0f82f195d0edeb15e0672bf51496a0,2026-10-11T04:00:00Z,Alex de Minaur,Rei Sakamoto,betsson,2026-10-09T17:59:36Z,1.37,3.1
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,ed0f82f195d0edeb15e0672bf51496a0,2026-10-11T04:00:00Z,Alex de Minaur,Rei Sakamoto,williamhill,2026-10-09T17:59:35Z,1.4,2.9
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,ed0f82f195d0edeb15e0672bf51496a0,2026-10-11T04:00:00Z,Alex de Minaur,Rei Sakamoto,pinnacle,2026-10-09T17:59:02Z,1.42,3.09
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,ed0f82f195d0edeb15e0672bf51496a0,2026-10-11T04:00:00Z,Alex de Minaur,Rei Sakamoto,betonlineag,2026-10-09T17:59:03Z,1.36,3.26
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,97b9d913872cac78c1809329d557d089,2026-10-11T04:00:00Z,Alexander Bublik,Brandon Nakashima,pmu_fr,2026-10-09T17:59:03Z,2.02,1.65
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,97b9d913872cac78c1809329d557d089,2026-10-11T04:00:00Z,Alexander Bublik,Brandon Nakashima,leovegas_se,2026-10-09T17:59:56Z,2.12,1.72
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,97b9d913872cac78c1809329d557d089,2026-10-11T04:00:00Z,Alexander Bublik,Brandon Nakashima,unibet_se,2026-10-09T17:59:36Z,2.12,1.72
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,97b9d913872cac78c1809329d557d089,2026-10-11T04:00:00Z,Alexander Bublik,Brandon Nakashima,unibet_nl,2026-10-09T17:59:03Z,2.12,1.72
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,97b9d913872cac78c1809329d557d089,2026-10-11T04:00:00Z,Alexander Bublik,Brandon Nakashima,onexbet,2026-10-09T17:59:03Z,2.14,1.74
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,97b9d913872cac78c1809329d557d089,2026-10-11T04:00:00Z,Alexander Bublik,Brandon Nakashima,gtbets,2026-10-09T17:59:55Z,2.13,1.72
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,97b9d913872cac78c1809329d557d089,2026-10-11T04:00:00Z,Alexander Bublik,Brandon Nakashima,betfair_ex_eu,2026-10-09T17:59:36Z,1.7,1.64
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,97b9d913872cac78c1809329d557d089,2026-10-11T04:00:00Z,Alexander Bublik,Brandon Nakashima,unibet_fr,2026-10-09T17:59:03Z,2.0,1.61
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,97b9d913872cac78c1809329d557d089,2026-10-11T04:00:00Z,Alexander Bublik,Brandon Nakashima,winamax_fr,2026-10-09T17:59:07Z,2.05,1.58
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,97b9d913872cac78c1809329d557d089,2026-10-11T04:00:00Z,Alexander Bublik,Brandon Nakashima,winamax_de,2026-10-09T17:59:44Z,2.2,1.66
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,97b9d913872cac78c1809329d557d089,2026-10-11T04:00:00Z,Alexander Bublik,Brandon Nakashima,pinnacle,2026-10-09T17:59:02Z,2.28,1.69
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,97b9d913872cac78c1809329d557d089,2026-10-11T04:00:00Z,Alexander Bublik,Brandon Nakashima,betonlineag,2026-10-09T17:59:03Z,2.35,1.65
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e6003c91bfcfdd647a80a0852a7460c8,2026-10-11T04:00:00Z,Alexander Zverev,Quentin Halys,betfair_ex_eu,2026-10-09T17:59:36Z,1.18,6.0
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e6003c91bfcfdd647a80a0852a7460c8,2026-10-11T04:00:00Z,Alexander Zverev,Quentin Halys,onexbet,2026-10-09T17:59:03Z,1.17,5.45
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e6003c91bfcfdd647a80a0852a7460c8,2026-10-11T04:00:00Z,Alexander Zverev,Quentin Halys,unibet_fr,2026-10-09T17:59:03Z,1.11,4.55
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e6003c91bfcfdd647a80a0852a7460c8,2026-10-11T04:00:00Z,Alexander Zverev,Quentin Halys,gtbets,2026-10-09T17:59:55Z,1.16,5.58
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e6003c91bfcfdd647a80a0852a7460c8,2026-10-11T04:00:00Z,Alexander Zverev,Quentin Halys,unibet_nl,2026-10-09T17:59:03Z,1.16,5.25
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e6003c91bfcfdd647a80a0852a7460c8,2026-10-11T04:00:00Z,Alexander Zverev,Quentin Halys,pinnacle,2026-10-09T17:59:02Z,1.16,5.84
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e6003c91bfcfdd647a80a0852a7460c8,2026-10-11T04:00:00Z,Alexander Zverev,Quentin Halys,winamax_de,2026-10-09T17:59:43Z,1.12,6.0
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e6003c91bfcfdd647a80a0852a7460c8,2026-10-11T04:00:00Z,Alexander Zverev,Quentin Halys,winamax_fr,2026-10-09T17:59:07Z,1.09,5.0
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e6003c91bfcfdd647a80a0852a7460c8,2026-10-11T04:00:00Z,Alexander Zverev,Quentin Halys,tipico_de,2026-10-09T17:59:35Z,1.11,5.5
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e6003c91bfcfdd647a80a0852a7460c8,2026-10-11T04:00:00Z,Alexander Zverev,Quentin Halys,sport888,2026-10-09T17:59:02Z,1.08,7.5
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e6003c91bfcfdd647a80a0852a7460c8,2026-10-11T04:00:00Z,Alexander Zverev,Quentin Halys,nordicbet,2026-10-09T17:59:54Z,1.15,5.6
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e6003c91bfcfdd647a80a0852a7460c8,2026-10-11T04:00:00Z,Alexander Zverev,Quentin Halys,betsson,2026-10-09T17:59:36Z,1.15,5.6
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e6003c91bfcfdd647a80a0852a7460c8,2026-10-11T04:00:00Z,Alexander Zverev,Quentin Halys,williamhill,2026-10-09T17:59:35Z,1.08,7.5
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e6003c91bfcfdd647a80a0852a7460c8,2026-10-11T04:00:00Z,Alexander Zverev,Quentin Halys,betonlineag,2026-10-09T17:59:03Z,1.15,5.76
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e9d3e24e28821a6cf2331d48f2a9ccaf,2026-10-11T04:00:00Z,Ben Shelton,Arthur Gea,unibet_fr,2026-10-09T17:59:03Z,1.3,2.85
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e9d3e24e28821a6cf2331d48f2a9ccaf,2026-10-11T04:00:00Z,Ben Shelton,Arthur Gea,onexbet,2026-10-09T17:59:03Z,1.37,3.22
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e9d3e24e28821a6cf2331d48f2a9ccaf,2026-10-11T04:00:00Z,Ben Shelton,Arthur Gea,winamax_fr,2026-10-09T17:59:07Z,1.3,2.9
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e9d3e24e28821a6cf2331d48f2a9ccaf,2026-10-11T04:00:00Z,Ben Shelton,Arthur Gea,winamax_de,2026-10-09T17:59:43Z,1.35,3.2
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e9d3e24e28821a6cf2331d48f2a9ccaf,2026-10-11T04:00:00Z,Ben Shelton,Arthur Gea,pinnacle,2026-10-09T17:59:02Z,1.37,3.35
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e9d3e24e28821a6cf2331d48f2a9ccaf,2026-10-11T04:00:00Z,Ben Shelton,Arthur Gea,nordicbet,2026-10-09T17:59:54Z,1.36,3.2
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e9d3e24e28821a6cf2331d48f2a9ccaf,2026-10-11T04:00:00Z,Ben Shelton,Arthur Gea,betsson,2026-10-09T17:59:36Z,1.36,3.2
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e9d3e24e28821a6cf2331d48f2a9ccaf,2026-10-11T04:00:00Z,Ben Shelton,Arthur Gea,williamhill,2026-10-09T17:59:35Z,1.36,3.1
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,e9d3e24e28821a6cf2331d48f2a9ccaf,2026-10-11T04:00:00Z,Ben Shelton,Arthur Gea,betonlineag,2026-10-09T17:59:03Z,1.35,3.26
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,83fc3ac10a670054d814b0753ad75430,2026-10-11T04:00:00Z,Francisco Cerundolo,Jakub Mensik,betfair_ex_eu,2026-10-09T17:59:36Z,1.65,1.7
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,83fc3ac10a670054d814b0753ad75430,2026-10-11T04:00:00Z,Francisco Cerundolo,Jakub Mensik,leovegas_se,2026-10-09T17:59:56Z,2.1,1.73
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,83fc3ac10a670054d814b0753ad75430,2026-10-11T04:00:00Z,Francisco Cerundolo,Jakub Mensik,pmu_fr,2026-10-09T17:59:03Z,2.02,1.66
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,83fc3ac10a670054d814b0753ad75430,2026-10-11T04:00:00Z,Francisco Cerundolo,Jakub Mensik,unibet_se,2026-10-09T17:59:36Z,2.1,1.73
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,83fc3ac10a670054d814b0753ad75430,2026-10-11T04:00:00Z,Francisco Cerundolo,Jakub Mensik,onexbet,2026-10-09T17:59:03Z,2.27,1.66
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,83fc3ac10a670054d814b0753ad75430,2026-10-11T04:00:00Z,Francisco Cerundolo,Jakub Mensik,unibet_nl,2026-10-09T17:59:03Z,2.1,1.73
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,83fc3ac10a670054d814b0753ad75430,2026-10-11T04:00:00Z,Francisco Cerundolo,Jakub Mensik,winamax_de,2026-10-09T17:59:44Z,2.3,1.62
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,83fc3ac10a670054d814b0753ad75430,2026-10-11T04:00:00Z,Francisco Cerundolo,Jakub Mensik,tipico_de,2026-10-09T17:59:35Z,2.15,1.62
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,83fc3ac10a670054d814b0753ad75430,2026-10-11T04:00:00Z,Francisco Cerundolo,Jakub Mensik,unibet_fr,2026-10-09T17:59:03Z,2.1,1.54
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,83fc3ac10a670054d814b0753ad75430,2026-10-11T04:00:00Z,Francisco Cerundolo,Jakub Mensik,winamax_fr,2026-10-09T17:59:07Z,2.1,1.54
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,83fc3ac10a670054d814b0753ad75430,2026-10-11T04:00:00Z,Francisco Cerundolo,Jakub Mensik,pinnacle,2026-10-09T17:59:02Z,2.37,1.65
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,83fc3ac10a670054d814b0753ad75430,2026-10-11T04:00:00Z,Francisco Cerundolo,Jakub Mensik,betonlineag,2026-10-09T17:59:03Z,2.35,1.65
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,7af1a6a9a980efbcc4cfa5a9ffed7fda,2026-10-11T04:00:00Z,Hubert Hurkacz,Yi Zhou,betfair_ex_eu,2026-10-09T17:59:36Z,1.08,5.7
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,7af1a6a9a980efbcc4cfa5a9ffed7fda,2026-10-11T04:00:00Z,Hubert Hurkacz,Yi Zhou,unibet_se,2026-10-09T17:59:36Z,1.13,6.0
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,7af1a6a9a980efbcc4cfa5a9ffed7fda,2026-10-11T04:00:00Z,Hubert Hurkacz,Yi Zhou,unibet_nl,2026-10-09T17:59:03Z,1.13,6.0
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,7af1a6a9a980efbcc4cfa5a9ffed7fda,2026-10-11T04:00:00Z,Hubert Hurkacz,Yi Zhou,pmu_fr,2026-10-09T17:59:03Z,1.09,5.5
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,7af1a6a9a980efbcc4cfa5a9ffed7fda,2026-10-11T04:00:00Z,Hubert Hurkacz,Yi Zhou,onexbet,2026-10-09T17:59:03Z,1.13,4.82
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,7af1a6a9a980efbcc4cfa5a9ffed7fda,2026-10-11T04:00:00Z,Hubert Hurkacz,Yi Zhou,leovegas_se,2026-10-09T17:59:56Z,1.13,6.0
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,7af1a6a9a980efbcc4cfa5a9ffed7fda,2026-10-11T04:00:00Z,Hubert Hurkacz,Yi Zhou,unibet_fr,2026-10-09T17:59:03Z,1.09,4.95
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,7af1a6a9a980efbcc4cfa5a9ffed7fda,2026-10-11T04:00:00Z,Hubert Hurkacz,Yi Zhou,winamax_de,2026-10-09T17:59:44Z,1.13,5.8
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,7af1a6a9a980efbcc4cfa5a9ffed7fda,2026-10-11T04:00:00Z,Hubert Hurkacz,Yi Zhou,winamax_fr,2026-10-09T17:59:07Z,1.1,4.7
+2026-10-09T18:00:03Z,tennis_atp_shanghai_masters,7af1a6a9a980efbcc4cfa5a9ffed7fda,2026-10-11T04:00:00Z,Hubert Hurkacz,Yi Zhou,pinnacle,2026-10-09T17:59:02Z,1.13,6.87
+2026-10-09T18:00:03Z,tennis_wta_china_open,758ed266322f4a6a8b6e3f87814d6088,2026-10-10T07:00:00Z,Mirra Andreeva,Nikola Bartunkova,betfair_ex_eu,2026-10-09T17:59:47Z,1.44,3.2
+2026-10-09T18:00:03Z,tennis_wta_china_open,758ed266322f4a6a8b6e3f87814d6088,2026-10-10T07:00:00Z,Mirra Andreeva,Nikola Bartunkova,onexbet,2026-10-09T17:59:29Z,1.37,3.15
+2026-10-09T18:00:03Z,tennis_wta_china_open,758ed266322f4a6a8b6e3f87814d6088,2026-10-10T07:00:00Z,Mirra Andreeva,Nikola Bartunkova,matchbook,2026-10-09T18:00:04Z,1.44,3.2
+2026-10-09T18:00:03Z,tennis_wta_china_open,758ed266322f4a6a8b6e3f87814d6088,2026-10-10T07:00:00Z,Mirra Andreeva,Nikola Bartunkova,winamax_fr,2026-10-09T17:59:31Z,1.38,3.0
+2026-10-09T18:00:03Z,tennis_wta_china_open,758ed266322f4a6a8b6e3f87814d6088,2026-10-10T07:00:00Z,Mirra Andreeva,Nikola Bartunkova,winamax_de,2026-10-09T17:59:31Z,1.4,3.1
+2026-10-09T18:00:03Z,tennis_wta_china_open,4e6e552efb6c99dec55161f2fad0fad7,2026-10-10T11:00:00Z,Qinwen Zheng,Elise Mertens,winamax_de,2026-10-09T17:59:31Z,1.68,2.25
+2026-10-09T18:00:03Z,tennis_wta_china_open,4e6e552efb6c99dec55161f2fad0fad7,2026-10-10T11:00:00Z,Qinwen Zheng,Elise Mertens,betfair_ex_eu,2026-10-09T17:59:47Z,1.71,2.34
+2026-10-09T18:00:03Z,tennis_wta_china_open,4e6e552efb6c99dec55161f2fad0fad7,2026-10-10T11:00:00Z,Qinwen Zheng,Elise Mertens,coolbet,2026-10-09T17:59:51Z,1.66,2.23
+2026-10-09T18:00:03Z,tennis_wta_china_open,4e6e552efb6c99dec55161f2fad0fad7,2026-10-10T11:00:00Z,Qinwen Zheng,Elise Mertens,onexbet,2026-10-09T17:59:29Z,1.67,2.24
+2026-10-09T18:00:03Z,tennis_wta_china_open,4e6e552efb6c99dec55161f2fad0fad7,2026-10-10T11:00:00Z,Qinwen Zheng,Elise Mertens,sport888,2026-10-09T17:59:13Z,1.67,2.2
+2026-10-09T18:00:03Z,tennis_wta_china_open,4e6e552efb6c99dec55161f2fad0fad7,2026-10-10T11:00:00Z,Qinwen Zheng,Elise Mertens,williamhill,2026-10-09T18:00:04Z,1.67,2.2
+2026-10-09T18:00:03Z,tennis_wta_china_open,4e6e552efb6c99dec55161f2fad0fad7,2026-10-10T11:00:00Z,Qinwen Zheng,Elise Mertens,nordicbet,2026-10-09T17:59:47Z,1.67,2.22
+2026-10-09T18:00:03Z,tennis_wta_china_open,4e6e552efb6c99dec55161f2fad0fad7,2026-10-10T11:00:00Z,Qinwen Zheng,Elise Mertens,winamax_fr,2026-10-09T17:59:31Z,1.66,2.2
+2026-10-09T18:00:03Z,tennis_wta_china_open,4e6e552efb6c99dec55161f2fad0fad7,2026-10-10T11:00:00Z,Qinwen Zheng,Elise Mertens,betclic_fr,2026-10-09T17:59:25Z,1.66,2.2
+2026-10-09T18:00:03Z,tennis_wta_china_open,4e6e552efb6c99dec55161f2fad0fad7,2026-10-10T11:00:00Z,Qinwen Zheng,Elise Mertens,betsson,2026-10-09T17:59:13Z,1.67,2.22
+2026-10-09T18:00:03Z,tennis_wta_china_open,4e6e552efb6c99dec55161f2fad0fad7,2026-10-10T11:00:00Z,Qinwen Zheng,Elise Mertens,unibet_fr,2026-10-09T17:59:47Z,1.58,2.05
+2026-10-09T18:00:03Z,tennis_wta_china_open,4e6e552efb6c99dec55161f2fad0fad7,2026-10-10T11:00:00Z,Qinwen Zheng,Elise Mertens,leovegas_se,2026-10-09T17:59:07Z,1.67,2.2
+2026-10-09T18:00:03Z,tennis_wta_china_open,4e6e552efb6c99dec55161f2fad0fad7,2026-10-10T11:00:00Z,Qinwen Zheng,Elise Mertens,unibet_se,2026-10-09T17:59:29Z,1.67,2.2
+2026-10-09T18:00:03Z,tennis_wta_china_open,4e6e552efb6c99dec55161f2fad0fad7,2026-10-10T11:00:00Z,Qinwen Zheng,Elise Mertens,unibet_nl,2026-10-09T17:59:14Z,1.67,2.2
+2026-10-09T18:00:03Z,tennis_wta_china_open,4e6e552efb6c99dec55161f2fad0fad7,2026-10-10T11:00:00Z,Qinwen Zheng,Elise Mertens,pmu_fr,2026-10-09T17:59:48Z,1.6,2.1
+2026-10-09T18:00:03Z,tennis_wta_china_open,4e6e552efb6c99dec55161f2fad0fad7,2026-10-10T11:00:00Z,Qinwen Zheng,Elise Mertens,gtbets,2026-10-09T17:59:34Z,1.65,2.25
+2026-10-09T18:00:03Z,tennis_wta_china_open,4e6e552efb6c99dec55161f2fad0fad7,2026-10-10T11:00:00Z,Qinwen Zheng,Elise Mertens,tipico_de,2026-10-09T18:00:05Z,1.62,2.25
+2026-10-09T18:00:03Z,tennis_wta_china_open,4e6e552efb6c99dec55161f2fad0fad7,2026-10-10T11:00:00Z,Qinwen Zheng,Elise Mertens,pinnacle,2026-10-09T18:00:04Z,1.69,2.28
+2026-10-09T18:00:03Z,tennis_wta_china_open,4e6e552efb6c99dec55161f2fad0fad7,2026-10-10T11:00:00Z,Qinwen Zheng,Elise Mertens,matchbook,2026-10-09T18:00:04Z,1.71,2.34
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,betfair_ex_eu,2026-10-09T23:59:54Z,11.0,1.09
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,coolbet,2026-10-10T00:00:05Z,11.3,1.04
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,onexbet,2026-10-09T23:52:21Z,7.43,1.1
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,betsson,2026-10-09T23:59:48Z,11.0,1.04
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,nordicbet,2026-10-09T23:58:10Z,11.0,1.04
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,winamax_de,2026-10-09T23:59:35Z,11.5,1.05
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,winamax_fr,2026-10-09T23:59:31Z,10.0,1.04
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,matchbook,2026-10-09T23:59:49Z,11.0,1.09
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,pinnacle,2026-10-09T23:59:49Z,10.99,1.06
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,betonlineag,2026-10-10T00:00:06Z,9.74,1.07
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,ab66ba3701bc01f34a870505b2ed3664,2026-10-10T04:00:00Z,Camilo Ugo Carabelli,Felix Auger-Aliassime,betanysports,2026-10-09T23:58:59Z,11.2,1.04
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,betfair_ex_eu,2026-10-09T23:59:54Z,1.17,6.6
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,unibet_fr,2026-10-09T23:59:30Z,1.13,4.95
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,matchbook,2026-10-09T23:59:49Z,1.17,6.6
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,pinnacle,2026-10-09T23:59:49Z,1.16,5.99
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,betonlineag,2026-10-10T00:00:06Z,1.14,5.96
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,53f263949a01c4a81c3836741dc47fcb,2026-10-10T04:00:00Z,Daniil Medvedev,Jan-Lennard Struff,betanysports,2026-10-09T23:58:59Z,1.14,5.75
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,matchbook,2026-10-09T23:59:49Z,1.39,3.5
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,betfair_ex_eu,2026-10-09T23:59:54Z,1.39,3.5
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,unibet_fr,2026-10-09T23:59:30Z,1.32,3.0
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,winamax_de,2026-10-09T23:59:35Z,1.37,3.25
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,winamax_fr,2026-10-09T23:59:31Z,1.36,3.15
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,sport888,2026-10-09T23:59:14Z,1.33,3.3
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,williamhill,2026-10-09T23:59:14Z,1.33,3.3
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,pinnacle,2026-10-09T23:59:49Z,1.38,3.29
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,betsson,2026-10-09T23:59:48Z,1.35,3.25
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,0a4906a9969f8d393827e3f7139c07b3,2026-10-10T04:00:00Z,Jiri Lehecka,Nuno Borges,nordicbet,2026-10-09T23:58:10Z,1.35,3.25
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,onexbet,2026-10-09T23:52:21Z,3.01,1.41
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,matchbook,2026-10-09T23:59:49Z,3.1,1.46
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,betfair_ex_eu,2026-10-09T23:59:54Z,3.1,1.46
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,gtbets,2026-10-09T23:59:50Z,3.0,1.4
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,unibet_fr,2026-10-09T23:59:30Z,3.0,1.39
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,winamax_fr,2026-10-09T23:59:31Z,3.0,1.39
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,sport888,2026-10-09T23:59:14Z,2.9,1.4
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,leovegas_se,2026-10-09T23:59:53Z,3.1,1.36
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,unibet_se,2026-10-10T00:00:05Z,3.1,1.36
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,unibet_nl,2026-10-09T23:59:18Z,3.1,1.36
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,pmu_fr,2026-10-09T23:59:48Z,2.95,1.32
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,pinnacle,2026-10-09T23:59:49Z,3.06,1.42
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,betonlineag,2026-10-10T00:00:06Z,2.92,1.43
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,betanysports,2026-10-09T23:58:59Z,2.95,1.43
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,nordicbet,2026-10-09T23:58:10Z,3.0,1.4
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,betsson,2026-10-09T23:59:48Z,3.0,1.4
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,065609858b049e7674a0b4ed0a6be527,2026-10-10T04:00:00Z,Thiago Agustin Tirante,Rafael Jodar,williamhill,2026-10-09T23:59:14Z,2.9,1.4
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T05:10:00Z,Alejandro Tabilo,Pablo Carreno Busta,betfair_ex_eu,2026-10-09T23:59:54Z,1.65,2.5
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T05:10:00Z,Alejandro Tabilo,Pablo Carreno Busta,winamax_de,2026-10-09T23:59:35Z,1.6,2.4
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T05:10:00Z,Alejandro Tabilo,Pablo Carreno Busta,winamax_fr,2026-10-09T23:59:31Z,1.58,2.35
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T05:10:00Z,Alejandro Tabilo,Pablo Carreno Busta,unibet_fr,2026-10-09T23:59:30Z,1.53,2.3
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T05:10:00Z,Alejandro Tabilo,Pablo Carreno Busta,matchbook,2026-10-09T23:59:49Z,1.65,2.5
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T05:10:00Z,Alejandro Tabilo,Pablo Carreno Busta,sport888,2026-10-09T23:59:14Z,1.61,2.3
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T05:10:00Z,Alejandro Tabilo,Pablo Carreno Busta,williamhill,2026-10-09T23:59:14Z,1.62,2.3
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T05:10:00Z,Alejandro Tabilo,Pablo Carreno Busta,pinnacle,2026-10-09T23:59:49Z,1.64,2.39
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T05:10:00Z,Alejandro Tabilo,Pablo Carreno Busta,betonlineag,2026-10-10T00:00:06Z,1.62,2.42
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,0ba9530b1d1041cc4c380ad01c4274f7,2026-10-10T05:10:00Z,Alejandro Tabilo,Pablo Carreno Busta,betanysports,2026-10-09T23:58:59Z,1.61,2.35
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,betfair_ex_eu,2026-10-09T23:59:54Z,2.12,1.87
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,winamax_de,2026-10-09T23:59:35Z,2.1,1.78
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,winamax_fr,2026-10-09T23:59:32Z,2.05,1.74
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,coolbet,2026-10-10T00:00:05Z,2.08,1.76
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,unibet_fr,2026-10-09T23:59:30Z,2.05,1.67
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,onexbet,2026-10-09T23:52:21Z,2.13,1.75
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,sport888,2026-10-09T23:59:14Z,2.0,1.8
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,gtbets,2026-10-09T23:59:51Z,2.1,1.67
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,matchbook,2026-10-09T23:59:49Z,2.12,1.87
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,tipico_de,2026-10-09T23:59:30Z,2.05,1.7
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,pinnacle,2026-10-09T23:59:49Z,2.07,1.83
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,betonlineag,2026-10-10T00:00:06Z,2.02,1.82
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,betanysports,2026-10-09T23:58:59Z,2.0,1.77
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,nordicbet,2026-10-09T23:58:10Z,2.15,1.71
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,betsson,2026-10-09T23:59:48Z,2.15,1.71
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,16b8670ad9de7b11f2d10124fe4f2917,2026-10-10T05:10:00Z,Bu Yunchaokete,Casper Ruud,williamhill,2026-10-09T23:59:14Z,2.0,1.8
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,betfair_ex_eu,2026-10-09T23:59:54Z,2.32,1.74
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,winamax_de,2026-10-09T23:59:35Z,2.25,1.68
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,winamax_fr,2026-10-09T23:59:32Z,2.2,1.66
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,onexbet,2026-10-09T23:52:21Z,2.23,1.68
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,matchbook,2026-10-09T23:59:49Z,2.32,1.74
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,pinnacle,2026-10-09T23:59:49Z,2.27,1.7
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,nordicbet,2026-10-09T23:58:10Z,2.22,1.67
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,450360a425a5b30032be061533efc51a,2026-10-10T05:10:00Z,Dalibor Svrcina,Tomas Martin Etcheverry,betsson,2026-10-09T23:59:48Z,2.22,1.67
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T05:10:00Z,Matteo Arnaldi,Taylor Fritz,betfair_ex_eu,2026-10-09T23:59:54Z,4.2,1.3
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T05:10:00Z,Matteo Arnaldi,Taylor Fritz,coolbet,2026-10-10T00:00:05Z,4.0,1.25
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T05:10:00Z,Matteo Arnaldi,Taylor Fritz,unibet_fr,2026-10-09T23:59:30Z,3.9,1.2
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T05:10:00Z,Matteo Arnaldi,Taylor Fritz,matchbook,2026-10-09T23:59:49Z,4.2,1.3
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T05:10:00Z,Matteo Arnaldi,Taylor Fritz,pinnacle,2026-10-09T23:59:49Z,4.21,1.26
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T05:10:00Z,Matteo Arnaldi,Taylor Fritz,betonlineag,2026-10-10T00:00:06Z,4.03,1.26
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,26d5d67b3a435622bd6308bcdbe7b10e,2026-10-10T05:10:00Z,Matteo Arnaldi,Taylor Fritz,betanysports,2026-10-09T23:58:59Z,3.95,1.26
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T06:20:00Z,Arthur Fils,Pavel Kotov,unibet_fr,2026-10-09T23:59:30Z,1.09,5.7
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T06:20:00Z,Arthur Fils,Pavel Kotov,winamax_de,2026-10-09T23:59:35Z,1.1,7.75
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T06:20:00Z,Arthur Fils,Pavel Kotov,winamax_fr,2026-10-09T23:59:31Z,1.09,7.25
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T06:20:00Z,Arthur Fils,Pavel Kotov,onexbet,2026-10-09T23:52:21Z,1.09,7.85
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T06:20:00Z,Arthur Fils,Pavel Kotov,pinnacle,2026-10-09T23:59:49Z,1.1,7.87
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,055b1621c396157741db4c035bdfbf97,2026-10-10T06:20:00Z,Arthur Fils,Pavel Kotov,betonlineag,2026-10-10T00:00:06Z,1.09,7.88
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T06:20:00Z,Learner Tien,Zachary Svajda,betfair_ex_eu,2026-10-09T23:59:54Z,1.34,3.85
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T06:20:00Z,Learner Tien,Zachary Svajda,onexbet,2026-10-09T23:52:21Z,1.32,3.53
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T06:20:00Z,Learner Tien,Zachary Svajda,unibet_fr,2026-10-09T23:59:30Z,1.28,3.25
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T06:20:00Z,Learner Tien,Zachary Svajda,winamax_de,2026-10-09T23:59:35Z,1.32,3.6
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T06:20:00Z,Learner Tien,Zachary Svajda,winamax_fr,2026-10-09T23:59:31Z,1.31,3.45
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T06:20:00Z,Learner Tien,Zachary Svajda,matchbook,2026-10-09T23:59:49Z,1.34,3.85
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T06:20:00Z,Learner Tien,Zachary Svajda,pinnacle,2026-10-09T23:59:49Z,1.32,3.67
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T06:20:00Z,Learner Tien,Zachary Svajda,tipico_de,2026-10-09T23:59:30Z,1.27,3.4
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T06:20:00Z,Learner Tien,Zachary Svajda,betonlineag,2026-10-10T00:00:06Z,1.32,3.49
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T06:20:00Z,Learner Tien,Zachary Svajda,nordicbet,2026-10-09T23:58:10Z,1.31,3.5
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,4d08f2ba5bba7246b62dd126b7d80b12,2026-10-10T06:20:00Z,Learner Tien,Zachary Svajda,betsson,2026-10-09T23:59:48Z,1.31,3.5
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T07:30:00Z,Tommy Paul,Adolfo Daniel Vallejo,betfair_ex_eu,2026-10-09T23:59:54Z,1.53,2.84
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T07:30:00Z,Tommy Paul,Adolfo Daniel Vallejo,onexbet,2026-10-09T23:52:21Z,1.49,2.7
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T07:30:00Z,Tommy Paul,Adolfo Daniel Vallejo,matchbook,2026-10-09T23:59:49Z,1.53,2.84
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T07:30:00Z,Tommy Paul,Adolfo Daniel Vallejo,unibet_fr,2026-10-09T23:59:30Z,1.42,2.6
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T07:30:00Z,Tommy Paul,Adolfo Daniel Vallejo,pinnacle,2026-10-09T23:59:49Z,1.49,2.81
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,2432e144409714e5088f29c941e9a174,2026-10-10T07:30:00Z,Tommy Paul,Adolfo Daniel Vallejo,betonlineag,2026-10-10T00:00:06Z,1.49,2.72
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,df311e3a27f098a8d7a759065ff2fb00,2026-10-10T07:30:00Z,Ignacio Buse,Zizou Bergs,betfair_ex_eu,2026-10-09T23:59:54Z,2.56,1.63
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,df311e3a27f098a8d7a759065ff2fb00,2026-10-10T07:30:00Z,Ignacio Buse,Zizou Bergs,matchbook,2026-10-09T23:59:49Z,2.56,1.63
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,df311e3a27f098a8d7a759065ff2fb00,2026-10-10T07:30:00Z,Ignacio Buse,Zizou Bergs,unibet_fr,2026-10-09T23:59:30Z,2.35,1.5
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,df311e3a27f098a8d7a759065ff2fb00,2026-10-10T07:30:00Z,Ignacio Buse,Zizou Bergs,pinnacle,2026-10-09T23:59:49Z,2.5,1.59
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,df311e3a27f098a8d7a759065ff2fb00,2026-10-10T07:30:00Z,Ignacio Buse,Zizou Bergs,betonlineag,2026-10-10T00:00:06Z,2.47,1.59
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,83a3dfc3ecec15d3a3b663da0aefae6c,2026-10-10T07:30:00Z,Luciano Darderi,Stefanos Tsitsipas,matchbook,2026-10-09T23:59:49Z,3.15,1.46
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,83a3dfc3ecec15d3a3b663da0aefae6c,2026-10-10T07:30:00Z,Luciano Darderi,Stefanos Tsitsipas,betfair_ex_eu,2026-10-09T23:59:54Z,3.15,1.46
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,83a3dfc3ecec15d3a3b663da0aefae6c,2026-10-10T07:30:00Z,Luciano Darderi,Stefanos Tsitsipas,unibet_fr,2026-10-09T23:59:30Z,2.8,1.37
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,83a3dfc3ecec15d3a3b663da0aefae6c,2026-10-10T07:30:00Z,Luciano Darderi,Stefanos Tsitsipas,pinnacle,2026-10-09T23:59:49Z,2.96,1.45
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,83a3dfc3ecec15d3a3b663da0aefae6c,2026-10-10T07:30:00Z,Luciano Darderi,Stefanos Tsitsipas,betonlineag,2026-10-10T00:00:06Z,2.92,1.43
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T09:00:00Z,Botic van de Zandschulp,Alex Michelsen,betfair_ex_eu,2026-10-09T23:59:54Z,2.74,1.56
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T09:00:00Z,Botic van de Zandschulp,Alex Michelsen,unibet_fr,2026-10-09T23:59:30Z,2.5,1.45
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T09:00:00Z,Botic van de Zandschulp,Alex Michelsen,matchbook,2026-10-09T23:59:49Z,2.74,1.56
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,e0c5ded7e6d646cff787232a176cf72a,2026-10-10T09:00:00Z,Botic van de Zandschulp,Alex Michelsen,betanysports,2026-10-09T23:58:59Z,2.6,1.53
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,matchbook,2026-10-09T23:59:49Z,19.0,1.05
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,onexbet,2026-10-09T23:52:21Z,14.8,1.03
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,betfair_ex_eu,2026-10-09T23:59:54Z,19.0,1.05
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,unibet_fr,2026-10-09T23:59:30Z,9.4,1.02
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,coolbet,2026-10-10T00:00:05Z,14.4,1.02
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,tipico_de,2026-10-09T23:59:30Z,9.0,1.03
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,sport888,2026-10-09T23:59:14Z,15.0,1.02
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,pinnacle,2026-10-09T23:59:49Z,16.36,1.03
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,14d23eb588c1738ee5f06755abbca7d6,2026-10-10T10:00:00Z,Juan Manuel Cerundolo,Carlos Alcaraz,williamhill,2026-10-09T23:59:14Z,15.0,1.02
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,unibet_fr,2026-10-09T23:59:30Z,3.5,1.29
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,betfair_ex_eu,2026-10-09T23:59:54Z,3.8,1.35
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,winamax_de,2026-10-09T23:59:35Z,3.6,1.32
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,winamax_fr,2026-10-09T23:59:31Z,3.45,1.31
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,tipico_de,2026-10-09T23:59:30Z,3.6,1.25
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,matchbook,2026-10-09T23:59:49Z,3.8,1.35
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,pinnacle,2026-10-09T23:59:49Z,3.6,1.33
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,betonlineag,2026-10-10T00:00:06Z,3.49,1.32
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,betanysports,2026-10-09T23:58:59Z,3.4,1.32
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,betsson,2026-10-09T23:59:48Z,3.5,1.31
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,e6e26f542ae70879e6846cf1721d2f08,2026-10-10T11:10:00Z,Sebastian Baez,Valentin Vacherot,nordicbet,2026-10-09T23:58:10Z,3.5,1.31
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,52d52225f4c13f3a96b8bff7a3a53de9,2026-10-11T04:00:00Z,Karen Khachanov,Adrian Mannarino,onexbet,2026-10-09T23:52:21Z,1.31,3.6
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,52d52225f4c13f3a96b8bff7a3a53de9,2026-10-11T04:00:00Z,Karen Khachanov,Adrian Mannarino,betfair_ex_eu,2026-10-09T23:59:54Z,1.34,3.75
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,52d52225f4c13f3a96b8bff7a3a53de9,2026-10-11T04:00:00Z,Karen Khachanov,Adrian Mannarino,pinnacle,2026-10-09T23:59:49Z,1.32,3.72
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,bd69690bbcda67d0a8bcaa6f591baa47,2026-10-11T04:00:00Z,Alejandro Davidovich Fokina,Frances Tiafoe,betfair_ex_eu,2026-10-09T23:59:54Z,1.92,1.98
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,bd69690bbcda67d0a8bcaa6f591baa47,2026-10-11T04:00:00Z,Alejandro Davidovich Fokina,Frances Tiafoe,pinnacle,2026-10-09T23:59:49Z,1.94,1.94
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,bd69690bbcda67d0a8bcaa6f591baa47,2026-10-11T04:00:00Z,Alejandro Davidovich Fokina,Frances Tiafoe,betonlineag,2026-10-10T00:00:06Z,1.93,1.89
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,ed0f82f195d0edeb15e0672bf51496a0,2026-10-11T04:00:00Z,Alex de Minaur,Rei Sakamoto,betfair_ex_eu,2026-10-09T23:59:54Z,1.42,2.88
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,ed0f82f195d0edeb15e0672bf51496a0,2026-10-11T04:00:00Z,Alex de Minaur,Rei Sakamoto,pinnacle,2026-10-09T23:59:49Z,1.42,3.08
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,ed0f82f195d0edeb15e0672bf51496a0,2026-10-11T04:00:00Z,Alex de Minaur,Rei Sakamoto,betonlineag,2026-10-10T00:00:06Z,1.4,3.03
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,97b9d913872cac78c1809329d557d089,2026-10-11T04:00:00Z,Alexander Bublik,Brandon Nakashima,pmu_fr,2026-10-09T23:59:48Z,2.18,1.56
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,97b9d913872cac78c1809329d557d089,2026-10-11T04:00:00Z,Alexander Bublik,Brandon Nakashima,leovegas_se,2026-10-09T23:59:54Z,2.28,1.63
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,97b9d913872cac78c1809329d557d089,2026-10-11T04:00:00Z,Alexander Bublik,Brandon Nakashima,unibet_se,2026-10-10T00:00:05Z,2.28,1.63
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,97b9d913872cac78c1809329d557d089,2026-10-11T04:00:00Z,Alexander Bublik,Brandon Nakashima,unibet_nl,2026-10-09T23:59:18Z,2.28,1.63
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,97b9d913872cac78c1809329d557d089,2026-10-11T04:00:00Z,Alexander Bublik,Brandon Nakashima,onexbet,2026-10-09T23:52:21Z,2.2,1.7
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,97b9d913872cac78c1809329d557d089,2026-10-11T04:00:00Z,Alexander Bublik,Brandon Nakashima,betfair_ex_eu,2026-10-09T23:59:54Z,2.24,1.55
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,97b9d913872cac78c1809329d557d089,2026-10-11T04:00:00Z,Alexander Bublik,Brandon Nakashima,betonlineag,2026-10-10T00:00:06Z,2.3,1.67
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,97b9d913872cac78c1809329d557d089,2026-10-11T04:00:00Z,Alexander Bublik,Brandon Nakashima,tipico_de,2026-10-09T23:59:30Z,2.1,1.65
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,e6003c91bfcfdd647a80a0852a7460c8,2026-10-11T04:00:00Z,Alexander Zverev,Quentin Halys,betfair_ex_eu,2026-10-09T23:59:54Z,1.16,6.2
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,e6003c91bfcfdd647a80a0852a7460c8,2026-10-11T04:00:00Z,Alexander Zverev,Quentin Halys,onexbet,2026-10-09T23:52:21Z,1.16,5.5
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,e6003c91bfcfdd647a80a0852a7460c8,2026-10-11T04:00:00Z,Alexander Zverev,Quentin Halys,pinnacle,2026-10-09T23:59:49Z,1.16,5.83
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,e6003c91bfcfdd647a80a0852a7460c8,2026-10-11T04:00:00Z,Alexander Zverev,Quentin Halys,betonlineag,2026-10-10T00:00:06Z,1.14,6.05
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,e9d3e24e28821a6cf2331d48f2a9ccaf,2026-10-11T04:00:00Z,Ben Shelton,Arthur Gea,betfair_ex_eu,2026-10-09T23:59:54Z,1.37,3.5
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,e9d3e24e28821a6cf2331d48f2a9ccaf,2026-10-11T04:00:00Z,Ben Shelton,Arthur Gea,pinnacle,2026-10-09T23:59:49Z,1.36,3.37
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,e9d3e24e28821a6cf2331d48f2a9ccaf,2026-10-11T04:00:00Z,Ben Shelton,Arthur Gea,betonlineag,2026-10-10T00:00:06Z,1.31,3.63
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,83fc3ac10a670054d814b0753ad75430,2026-10-11T04:00:00Z,Francisco Cerundolo,Jakub Mensik,betfair_ex_eu,2026-10-09T23:59:54Z,2.24,1.71
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,83fc3ac10a670054d814b0753ad75430,2026-10-11T04:00:00Z,Francisco Cerundolo,Jakub Mensik,leovegas_se,2026-10-09T23:59:53Z,2.28,1.63
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,83fc3ac10a670054d814b0753ad75430,2026-10-11T04:00:00Z,Francisco Cerundolo,Jakub Mensik,pmu_fr,2026-10-09T23:59:48Z,2.17,1.56
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,83fc3ac10a670054d814b0753ad75430,2026-10-11T04:00:00Z,Francisco Cerundolo,Jakub Mensik,unibet_se,2026-10-10T00:00:05Z,2.28,1.63
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,83fc3ac10a670054d814b0753ad75430,2026-10-11T04:00:00Z,Francisco Cerundolo,Jakub Mensik,onexbet,2026-10-09T23:52:21Z,2.32,1.64
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,83fc3ac10a670054d814b0753ad75430,2026-10-11T04:00:00Z,Francisco Cerundolo,Jakub Mensik,unibet_nl,2026-10-09T23:59:18Z,2.28,1.63
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,83fc3ac10a670054d814b0753ad75430,2026-10-11T04:00:00Z,Francisco Cerundolo,Jakub Mensik,gtbets,2026-10-09T23:59:51Z,2.31,1.62
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,83fc3ac10a670054d814b0753ad75430,2026-10-11T04:00:00Z,Francisco Cerundolo,Jakub Mensik,tipico_de,2026-10-09T23:59:30Z,2.25,1.57
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,83fc3ac10a670054d814b0753ad75430,2026-10-11T04:00:00Z,Francisco Cerundolo,Jakub Mensik,pinnacle,2026-10-09T23:59:49Z,2.3,1.68
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,7af1a6a9a980efbcc4cfa5a9ffed7fda,2026-10-11T04:00:00Z,Hubert Hurkacz,Yi Zhou,betfair_ex_eu,2026-10-09T23:59:54Z,1.14,6.8
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,7af1a6a9a980efbcc4cfa5a9ffed7fda,2026-10-11T04:00:00Z,Hubert Hurkacz,Yi Zhou,onexbet,2026-10-09T23:52:21Z,1.14,6.12
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,7af1a6a9a980efbcc4cfa5a9ffed7fda,2026-10-11T04:00:00Z,Hubert Hurkacz,Yi Zhou,unibet_fr,2026-10-09T23:59:30Z,1.09,4.85
+2026-10-10T00:00:06Z,tennis_atp_shanghai_masters,7af1a6a9a980efbcc4cfa5a9ffed7fda,2026-10-11T04:00:00Z,Hubert Hurkacz,Yi Zhou,pinnacle,2026-10-09T23:59:49Z,1.14,6.33
+2026-10-10T00:00:06Z,tennis_wta_china_open,758ed266322f4a6a8b6e3f87814d6088,2026-10-10T07:00:00Z,Mirra Andreeva,Nikola Bartunkova,betfair_ex_eu,2026-10-09T23:59:59Z,1.45,3.15
+2026-10-10T00:00:06Z,tennis_wta_china_open,758ed266322f4a6a8b6e3f87814d6088,2026-10-10T07:00:00Z,Mirra Andreeva,Nikola Bartunkova,coolbet,2026-10-09T23:59:42Z,1.4,3.0
+2026-10-10T00:00:06Z,tennis_wta_china_open,758ed266322f4a6a8b6e3f87814d6088,2026-10-10T07:00:00Z,Mirra Andreeva,Nikola Bartunkova,matchbook,2026-10-09T23:59:57Z,1.45,3.15
+2026-10-10T00:00:06Z,tennis_wta_china_open,758ed266322f4a6a8b6e3f87814d6088,2026-10-10T07:00:00Z,Mirra Andreeva,Nikola Bartunkova,tipico_de,2026-10-09T23:59:40Z,1.35,3.1
+2026-10-10T00:00:06Z,tennis_wta_china_open,758ed266322f4a6a8b6e3f87814d6088,2026-10-10T07:00:00Z,Mirra Andreeva,Nikola Bartunkova,pinnacle,2026-10-09T23:59:40Z,1.42,3.11
+2026-10-10T00:00:06Z,tennis_wta_china_open,758ed266322f4a6a8b6e3f87814d6088,2026-10-10T07:00:00Z,Mirra Andreeva,Nikola Bartunkova,betonlineag,2026-10-09T23:59:08Z,1.41,3.01
+2026-10-10T00:00:06Z,tennis_wta_china_open,758ed266322f4a6a8b6e3f87814d6088,2026-10-10T07:00:00Z,Mirra Andreeva,Nikola Bartunkova,betanysports,2026-10-09T23:59:26Z,1.41,3.0
+2026-10-10T00:00:06Z,tennis_wta_china_open,4e6e552efb6c99dec55161f2fad0fad7,2026-10-10T11:00:00Z,Qinwen Zheng,Elise Mertens,betfair_ex_eu,2026-10-09T23:59:59Z,1.75,2.32
+2026-10-10T00:00:06Z,tennis_wta_china_open,4e6e552efb6c99dec55161f2fad0fad7,2026-10-10T11:00:00Z,Qinwen Zheng,Elise Mertens,coolbet,2026-10-09T23:59:42Z,1.68,2.2
+2026-10-10T00:00:06Z,tennis_wta_china_open,4e6e552efb6c99dec55161f2fad0fad7,2026-10-10T11:00:00Z,Qinwen Zheng,Elise Mertens,onexbet,2026-10-09T23:59:40Z,1.68,2.22
+2026-10-10T00:00:06Z,tennis_wta_china_open,4e6e552efb6c99dec55161f2fad0fad7,2026-10-10T11:00:00Z,Qinwen Zheng,Elise Mertens,leovegas_se,2026-10-09T23:59:24Z,1.68,2.2
+2026-10-10T00:00:06Z,tennis_wta_china_open,4e6e552efb6c99dec55161f2fad0fad7,2026-10-10T11:00:00Z,Qinwen Zheng,Elise Mertens,unibet_se,2026-10-09T23:59:24Z,1.68,2.2
+2026-10-10T00:00:06Z,tennis_wta_china_open,4e6e552efb6c99dec55161f2fad0fad7,2026-10-10T11:00:00Z,Qinwen Zheng,Elise Mertens,unibet_nl,2026-10-09T23:59:08Z,1.68,2.2
+2026-10-10T00:00:06Z,tennis_wta_china_open,4e6e552efb6c99dec55161f2fad0fad7,2026-10-10T11:00:00Z,Qinwen Zheng,Elise Mertens,pinnacle,2026-10-09T23:59:40Z,1.72,2.23
+2026-10-10T00:00:06Z,tennis_wta_china_open,4e6e552efb6c99dec55161f2fad0fad7,2026-10-10T11:00:00Z,Qinwen Zheng,Elise Mertens,matchbook,2026-10-09T23:59:57Z,1.75,2.32
+2026-10-10T00:00:06Z,tennis_wta_china_open,4e6e552efb6c99dec55161f2fad0fad7,2026-10-10T11:00:00Z,Qinwen Zheng,Elise Mertens,betonlineag,2026-10-09T23:59:08Z,1.69,2.24
