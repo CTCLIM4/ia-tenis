@@ -9385,3 +9385,735 @@ snapshot_utc,sport_key,event_id,commence_time,home,away,bookmaker,bookmaker_last
 2026-10-27T06:00:03Z,tennis_wta_pan_pacific_open,8cc69dee985efaaa4d02ce47ce9ae17a,2026-10-28T04:00:00Z,Alycia Parks,Kimberly Birrell,leovegas_se,2026-10-27T06:00:00Z,2.48,1.54
 2026-10-27T06:00:03Z,tennis_wta_pan_pacific_open,8cc69dee985efaaa4d02ce47ce9ae17a,2026-10-28T04:00:00Z,Alycia Parks,Kimberly Birrell,pinnacle,2026-10-27T05:59:59Z,2.48,1.6
 2026-10-27T06:00:03Z,tennis_wta_pan_pacific_open,8cc69dee985efaaa4d02ce47ce9ae17a,2026-10-28T04:00:00Z,Alycia Parks,Kimberly Birrell,betonlineag,2026-10-27T05:59:59Z,2.49,1.59
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7803d8ad15e62ae9b557be677f69e021,2026-10-27T12:30:00Z,Jerome Kym,Arthur Rinderknech,pinnacle,2026-10-27T11:59:53Z,1.85,2.05
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7803d8ad15e62ae9b557be677f69e021,2026-10-27T12:30:00Z,Jerome Kym,Arthur Rinderknech,betanysports,2026-10-27T11:59:53Z,1.83,2.0
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7803d8ad15e62ae9b557be677f69e021,2026-10-27T12:30:00Z,Jerome Kym,Arthur Rinderknech,matchbook,2026-10-27T11:59:53Z,1.87,2.12
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7803d8ad15e62ae9b557be677f69e021,2026-10-27T12:30:00Z,Jerome Kym,Arthur Rinderknech,leovegas_se,2026-10-27T11:59:32Z,1.73,2.1
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7803d8ad15e62ae9b557be677f69e021,2026-10-27T12:30:00Z,Jerome Kym,Arthur Rinderknech,pmu_fr,2026-10-27T11:59:53Z,1.65,2.0
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7803d8ad15e62ae9b557be677f69e021,2026-10-27T12:30:00Z,Jerome Kym,Arthur Rinderknech,betfair_ex_eu,2026-10-27T11:59:53Z,1.87,2.12
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7803d8ad15e62ae9b557be677f69e021,2026-10-27T12:30:00Z,Jerome Kym,Arthur Rinderknech,betonlineag,2026-10-27T11:59:53Z,1.82,2.02
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7803d8ad15e62ae9b557be677f69e021,2026-10-27T12:30:00Z,Jerome Kym,Arthur Rinderknech,unibet_se,2026-10-27T11:59:53Z,1.73,2.1
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7803d8ad15e62ae9b557be677f69e021,2026-10-27T12:30:00Z,Jerome Kym,Arthur Rinderknech,unibet_nl,2026-10-27T11:59:53Z,1.73,2.1
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7803d8ad15e62ae9b557be677f69e021,2026-10-27T12:30:00Z,Jerome Kym,Arthur Rinderknech,winamax_fr,2026-10-27T11:59:33Z,1.8,1.92
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7803d8ad15e62ae9b557be677f69e021,2026-10-27T12:30:00Z,Jerome Kym,Arthur Rinderknech,winamax_de,2026-10-27T11:58:49Z,1.86,2.0
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7803d8ad15e62ae9b557be677f69e021,2026-10-27T12:30:00Z,Jerome Kym,Arthur Rinderknech,unibet_fr,2026-10-27T11:59:11Z,1.78,1.97
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7803d8ad15e62ae9b557be677f69e021,2026-10-27T12:30:00Z,Jerome Kym,Arthur Rinderknech,betsson,2026-10-27T11:56:56Z,1.8,1.99
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7803d8ad15e62ae9b557be677f69e021,2026-10-27T12:30:00Z,Jerome Kym,Arthur Rinderknech,nordicbet,2026-10-27T11:59:33Z,1.8,1.99
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7803d8ad15e62ae9b557be677f69e021,2026-10-27T12:30:00Z,Jerome Kym,Arthur Rinderknech,onexbet,2026-10-27T11:59:53Z,1.79,2.07
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7803d8ad15e62ae9b557be677f69e021,2026-10-27T12:30:00Z,Jerome Kym,Arthur Rinderknech,betclic_fr,2026-10-27T11:58:15Z,1.78,1.97
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7803d8ad15e62ae9b557be677f69e021,2026-10-27T12:30:00Z,Jerome Kym,Arthur Rinderknech,marathonbet,2026-10-27T11:59:17Z,1.77,2.04
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,3c6239f48e3a272aa8f7bb0ae354f14a,2026-10-27T13:00:00Z,Alejandro Tabilo,Rafael Jodar,pinnacle,2026-10-27T11:59:53Z,3.55,1.34
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,3c6239f48e3a272aa8f7bb0ae354f14a,2026-10-27T13:00:00Z,Alejandro Tabilo,Rafael Jodar,betanysports,2026-10-27T11:59:53Z,3.4,1.32
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,3c6239f48e3a272aa8f7bb0ae354f14a,2026-10-27T13:00:00Z,Alejandro Tabilo,Rafael Jodar,matchbook,2026-10-27T11:59:53Z,3.75,1.36
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,3c6239f48e3a272aa8f7bb0ae354f14a,2026-10-27T13:00:00Z,Alejandro Tabilo,Rafael Jodar,leovegas_se,2026-10-27T11:59:32Z,3.4,1.32
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,3c6239f48e3a272aa8f7bb0ae354f14a,2026-10-27T13:00:00Z,Alejandro Tabilo,Rafael Jodar,pmu_fr,2026-10-27T11:59:53Z,3.2,1.26
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,3c6239f48e3a272aa8f7bb0ae354f14a,2026-10-27T13:00:00Z,Alejandro Tabilo,Rafael Jodar,betfair_ex_eu,2026-10-27T11:59:53Z,3.75,1.36
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,3c6239f48e3a272aa8f7bb0ae354f14a,2026-10-27T13:00:00Z,Alejandro Tabilo,Rafael Jodar,betonlineag,2026-10-27T11:59:53Z,3.37,1.34
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,3c6239f48e3a272aa8f7bb0ae354f14a,2026-10-27T13:00:00Z,Alejandro Tabilo,Rafael Jodar,unibet_se,2026-10-27T11:59:53Z,3.4,1.32
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,3c6239f48e3a272aa8f7bb0ae354f14a,2026-10-27T13:00:00Z,Alejandro Tabilo,Rafael Jodar,unibet_nl,2026-10-27T11:59:53Z,3.4,1.32
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,3c6239f48e3a272aa8f7bb0ae354f14a,2026-10-27T13:00:00Z,Alejandro Tabilo,Rafael Jodar,sport888,2026-10-27T11:59:53Z,3.3,1.33
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,3c6239f48e3a272aa8f7bb0ae354f14a,2026-10-27T13:00:00Z,Alejandro Tabilo,Rafael Jodar,winamax_fr,2026-10-27T11:59:33Z,3.45,1.27
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,3c6239f48e3a272aa8f7bb0ae354f14a,2026-10-27T13:00:00Z,Alejandro Tabilo,Rafael Jodar,winamax_de,2026-10-27T11:58:49Z,3.75,1.3
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,3c6239f48e3a272aa8f7bb0ae354f14a,2026-10-27T13:00:00Z,Alejandro Tabilo,Rafael Jodar,unibet_fr,2026-10-27T11:59:11Z,3.3,1.27
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,3c6239f48e3a272aa8f7bb0ae354f14a,2026-10-27T13:00:00Z,Alejandro Tabilo,Rafael Jodar,williamhill,2026-10-27T11:59:11Z,3.3,1.33
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,3c6239f48e3a272aa8f7bb0ae354f14a,2026-10-27T13:00:00Z,Alejandro Tabilo,Rafael Jodar,betsson,2026-10-27T11:56:56Z,3.45,1.3
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,3c6239f48e3a272aa8f7bb0ae354f14a,2026-10-27T13:00:00Z,Alejandro Tabilo,Rafael Jodar,nordicbet,2026-10-27T11:59:33Z,3.45,1.3
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,3c6239f48e3a272aa8f7bb0ae354f14a,2026-10-27T13:00:00Z,Alejandro Tabilo,Rafael Jodar,onexbet,2026-10-27T11:59:53Z,3.46,1.33
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,3c6239f48e3a272aa8f7bb0ae354f14a,2026-10-27T13:00:00Z,Alejandro Tabilo,Rafael Jodar,betclic_fr,2026-10-27T11:58:15Z,3.35,1.29
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,3c6239f48e3a272aa8f7bb0ae354f14a,2026-10-27T13:00:00Z,Alejandro Tabilo,Rafael Jodar,marathonbet,2026-10-27T11:59:17Z,3.42,1.31
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7e3e5dde6da7e8cb88cd907563786e42,2026-10-27T13:40:00Z,Alex Michelsen,Botic van de Zandschulp,pinnacle,2026-10-27T11:59:53Z,1.53,2.68
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7e3e5dde6da7e8cb88cd907563786e42,2026-10-27T13:40:00Z,Alex Michelsen,Botic van de Zandschulp,betanysports,2026-10-27T11:59:53Z,1.51,2.65
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7e3e5dde6da7e8cb88cd907563786e42,2026-10-27T13:40:00Z,Alex Michelsen,Botic van de Zandschulp,matchbook,2026-10-27T11:59:53Z,1.57,2.74
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7e3e5dde6da7e8cb88cd907563786e42,2026-10-27T13:40:00Z,Alex Michelsen,Botic van de Zandschulp,betfair_ex_eu,2026-10-27T11:59:53Z,1.56,2.74
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7e3e5dde6da7e8cb88cd907563786e42,2026-10-27T13:40:00Z,Alex Michelsen,Botic van de Zandschulp,betonlineag,2026-10-27T11:59:53Z,1.53,2.62
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7e3e5dde6da7e8cb88cd907563786e42,2026-10-27T13:40:00Z,Alex Michelsen,Botic van de Zandschulp,sport888,2026-10-27T11:59:53Z,1.53,2.5
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7e3e5dde6da7e8cb88cd907563786e42,2026-10-27T13:40:00Z,Alex Michelsen,Botic van de Zandschulp,winamax_fr,2026-10-27T11:59:33Z,1.46,2.55
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7e3e5dde6da7e8cb88cd907563786e42,2026-10-27T13:40:00Z,Alex Michelsen,Botic van de Zandschulp,winamax_de,2026-10-27T11:58:49Z,1.5,2.7
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7e3e5dde6da7e8cb88cd907563786e42,2026-10-27T13:40:00Z,Alex Michelsen,Botic van de Zandschulp,unibet_fr,2026-10-27T11:59:11Z,1.42,2.6
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7e3e5dde6da7e8cb88cd907563786e42,2026-10-27T13:40:00Z,Alex Michelsen,Botic van de Zandschulp,williamhill,2026-10-27T11:59:11Z,1.53,2.5
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7e3e5dde6da7e8cb88cd907563786e42,2026-10-27T13:40:00Z,Alex Michelsen,Botic van de Zandschulp,betsson,2026-10-27T11:56:56Z,1.45,2.7
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7e3e5dde6da7e8cb88cd907563786e42,2026-10-27T13:40:00Z,Alex Michelsen,Botic van de Zandschulp,nordicbet,2026-10-27T11:59:33Z,1.45,2.7
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7e3e5dde6da7e8cb88cd907563786e42,2026-10-27T13:40:00Z,Alex Michelsen,Botic van de Zandschulp,tipico_de,2026-10-27T11:59:54Z,1.4,2.7
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7e3e5dde6da7e8cb88cd907563786e42,2026-10-27T13:40:00Z,Alex Michelsen,Botic van de Zandschulp,onexbet,2026-10-27T11:59:53Z,1.48,2.73
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7e3e5dde6da7e8cb88cd907563786e42,2026-10-27T13:40:00Z,Alex Michelsen,Botic van de Zandschulp,betclic_fr,2026-10-27T11:58:15Z,1.44,2.7
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,7e3e5dde6da7e8cb88cd907563786e42,2026-10-27T13:40:00Z,Alex Michelsen,Botic van de Zandschulp,marathonbet,2026-10-27T11:59:17Z,1.46,2.69
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0fb51999c3020ac1f14f5cebbed40671,2026-10-27T14:10:00Z,Giovanni Mpetshi Perricard,Arthur Fils,leovegas_se,2026-10-27T11:59:32Z,3.8,1.27
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0fb51999c3020ac1f14f5cebbed40671,2026-10-27T14:10:00Z,Giovanni Mpetshi Perricard,Arthur Fils,pmu_fr,2026-10-27T11:59:53Z,3.55,1.21
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0fb51999c3020ac1f14f5cebbed40671,2026-10-27T14:10:00Z,Giovanni Mpetshi Perricard,Arthur Fils,betfair_ex_eu,2026-10-27T11:59:53Z,4.1,1.31
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0fb51999c3020ac1f14f5cebbed40671,2026-10-27T14:10:00Z,Giovanni Mpetshi Perricard,Arthur Fils,unibet_se,2026-10-27T11:59:53Z,3.8,1.27
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0fb51999c3020ac1f14f5cebbed40671,2026-10-27T14:10:00Z,Giovanni Mpetshi Perricard,Arthur Fils,unibet_nl,2026-10-27T11:59:53Z,3.8,1.27
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0fb51999c3020ac1f14f5cebbed40671,2026-10-27T14:10:00Z,Giovanni Mpetshi Perricard,Arthur Fils,sport888,2026-10-27T11:59:53Z,3.5,1.3
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0fb51999c3020ac1f14f5cebbed40671,2026-10-27T14:10:00Z,Giovanni Mpetshi Perricard,Arthur Fils,winamax_fr,2026-10-27T11:59:33Z,3.8,1.23
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0fb51999c3020ac1f14f5cebbed40671,2026-10-27T14:10:00Z,Giovanni Mpetshi Perricard,Arthur Fils,unibet_fr,2026-10-27T11:59:11Z,3.65,1.26
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0fb51999c3020ac1f14f5cebbed40671,2026-10-27T14:10:00Z,Giovanni Mpetshi Perricard,Arthur Fils,williamhill,2026-10-27T11:59:11Z,3.5,1.3
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0fb51999c3020ac1f14f5cebbed40671,2026-10-27T14:10:00Z,Giovanni Mpetshi Perricard,Arthur Fils,betsson,2026-10-27T11:56:56Z,3.6,1.28
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0fb51999c3020ac1f14f5cebbed40671,2026-10-27T14:10:00Z,Giovanni Mpetshi Perricard,Arthur Fils,nordicbet,2026-10-27T11:59:33Z,3.6,1.28
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0fb51999c3020ac1f14f5cebbed40671,2026-10-27T14:10:00Z,Giovanni Mpetshi Perricard,Arthur Fils,tipico_de,2026-10-27T11:59:54Z,3.6,1.25
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0fb51999c3020ac1f14f5cebbed40671,2026-10-27T14:10:00Z,Giovanni Mpetshi Perricard,Arthur Fils,onexbet,2026-10-27T11:59:53Z,3.69,1.3
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0fb51999c3020ac1f14f5cebbed40671,2026-10-27T14:10:00Z,Giovanni Mpetshi Perricard,Arthur Fils,betclic_fr,2026-10-27T11:58:15Z,3.55,1.27
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0fb51999c3020ac1f14f5cebbed40671,2026-10-27T14:10:00Z,Giovanni Mpetshi Perricard,Arthur Fils,marathonbet,2026-10-27T11:59:17Z,3.64,1.28
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0fb51999c3020ac1f14f5cebbed40671,2026-10-27T14:10:00Z,Giovanni Mpetshi Perricard,Arthur Fils,coolbet,2026-10-27T11:59:11Z,3.7,1.28
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0fb51999c3020ac1f14f5cebbed40671,2026-10-27T14:10:00Z,Giovanni Mpetshi Perricard,Arthur Fils,pinnacle,2026-10-27T11:59:53Z,3.92,1.29
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0fb51999c3020ac1f14f5cebbed40671,2026-10-27T14:10:00Z,Giovanni Mpetshi Perricard,Arthur Fils,betonlineag,2026-10-27T11:59:53Z,3.68,1.3
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,a22f58e89e8b3130ae03006d1cb2d9ee,2026-10-27T17:00:00Z,Ben Shelton,Aleksandar Kovacevic,leovegas_se,2026-10-27T11:59:32Z,1.2,4.6
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,a22f58e89e8b3130ae03006d1cb2d9ee,2026-10-27T17:00:00Z,Ben Shelton,Aleksandar Kovacevic,pmu_fr,2026-10-27T11:59:53Z,1.15,4.3
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,a22f58e89e8b3130ae03006d1cb2d9ee,2026-10-27T17:00:00Z,Ben Shelton,Aleksandar Kovacevic,unibet_se,2026-10-27T11:59:53Z,1.2,4.6
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,a22f58e89e8b3130ae03006d1cb2d9ee,2026-10-27T17:00:00Z,Ben Shelton,Aleksandar Kovacevic,unibet_nl,2026-10-27T11:59:53Z,1.2,4.6
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,a22f58e89e8b3130ae03006d1cb2d9ee,2026-10-27T17:00:00Z,Ben Shelton,Aleksandar Kovacevic,winamax_fr,2026-10-27T11:59:33Z,1.17,4.5
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,a22f58e89e8b3130ae03006d1cb2d9ee,2026-10-27T17:00:00Z,Ben Shelton,Aleksandar Kovacevic,winamax_de,2026-10-27T11:58:49Z,1.2,5.0
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,a22f58e89e8b3130ae03006d1cb2d9ee,2026-10-27T17:00:00Z,Ben Shelton,Aleksandar Kovacevic,onexbet,2026-10-27T11:59:53Z,1.21,4.62
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,a22f58e89e8b3130ae03006d1cb2d9ee,2026-10-27T17:00:00Z,Ben Shelton,Aleksandar Kovacevic,marathonbet,2026-10-27T11:59:17Z,1.2,4.55
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,a22f58e89e8b3130ae03006d1cb2d9ee,2026-10-27T17:00:00Z,Ben Shelton,Aleksandar Kovacevic,pinnacle,2026-10-27T11:59:53Z,1.21,4.95
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0ccce6d326e553ba75890585346be8db,2026-10-27T18:10:00Z,Stan Wawrinka,Jiri Lehecka,pinnacle,2026-10-27T11:59:53Z,5.46,1.18
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0ccce6d326e553ba75890585346be8db,2026-10-27T18:10:00Z,Stan Wawrinka,Jiri Lehecka,betanysports,2026-10-27T11:59:53Z,5.1,1.17
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0ccce6d326e553ba75890585346be8db,2026-10-27T18:10:00Z,Stan Wawrinka,Jiri Lehecka,matchbook,2026-10-27T11:59:53Z,6.2,1.18
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0ccce6d326e553ba75890585346be8db,2026-10-27T18:10:00Z,Stan Wawrinka,Jiri Lehecka,betfair_ex_eu,2026-10-27T11:59:53Z,6.2,1.18
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0ccce6d326e553ba75890585346be8db,2026-10-27T18:10:00Z,Stan Wawrinka,Jiri Lehecka,betonlineag,2026-10-27T11:59:53Z,5.1,1.17
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0ccce6d326e553ba75890585346be8db,2026-10-27T18:10:00Z,Stan Wawrinka,Jiri Lehecka,sport888,2026-10-27T11:59:53Z,5.0,1.17
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0ccce6d326e553ba75890585346be8db,2026-10-27T18:10:00Z,Stan Wawrinka,Jiri Lehecka,winamax_fr,2026-10-27T11:59:33Z,4.6,1.16
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0ccce6d326e553ba75890585346be8db,2026-10-27T18:10:00Z,Stan Wawrinka,Jiri Lehecka,winamax_de,2026-10-27T11:58:49Z,5.2,1.19
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0ccce6d326e553ba75890585346be8db,2026-10-27T18:10:00Z,Stan Wawrinka,Jiri Lehecka,unibet_fr,2026-10-27T11:59:11Z,4.3,1.16
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0ccce6d326e553ba75890585346be8db,2026-10-27T18:10:00Z,Stan Wawrinka,Jiri Lehecka,williamhill,2026-10-27T11:59:11Z,5.0,1.17
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0ccce6d326e553ba75890585346be8db,2026-10-27T18:10:00Z,Stan Wawrinka,Jiri Lehecka,betsson,2026-10-27T11:56:56Z,4.8,1.17
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0ccce6d326e553ba75890585346be8db,2026-10-27T18:10:00Z,Stan Wawrinka,Jiri Lehecka,nordicbet,2026-10-27T11:59:33Z,4.8,1.17
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0ccce6d326e553ba75890585346be8db,2026-10-27T18:10:00Z,Stan Wawrinka,Jiri Lehecka,tipico_de,2026-10-27T11:59:54Z,4.9,1.14
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0ccce6d326e553ba75890585346be8db,2026-10-27T18:10:00Z,Stan Wawrinka,Jiri Lehecka,onexbet,2026-10-27T11:59:53Z,5.01,1.19
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0ccce6d326e553ba75890585346be8db,2026-10-27T18:10:00Z,Stan Wawrinka,Jiri Lehecka,betclic_fr,2026-10-27T11:58:15Z,4.7,1.17
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,0ccce6d326e553ba75890585346be8db,2026-10-27T18:10:00Z,Stan Wawrinka,Jiri Lehecka,marathonbet,2026-10-27T11:59:17Z,4.95,1.17
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,de8fa64cdc8ed6fe9bd1fc42c6f115c6,2026-10-28T11:00:00Z,Nuno Borges,Casper Ruud,winamax_fr,2026-10-27T11:59:33Z,2.55,1.4
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,de8fa64cdc8ed6fe9bd1fc42c6f115c6,2026-10-28T11:00:00Z,Nuno Borges,Casper Ruud,betfair_ex_eu,2026-10-27T11:59:53Z,2.88,1.51
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,de8fa64cdc8ed6fe9bd1fc42c6f115c6,2026-10-28T11:00:00Z,Nuno Borges,Casper Ruud,coolbet,2026-10-27T11:59:11Z,2.85,1.43
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,de8fa64cdc8ed6fe9bd1fc42c6f115c6,2026-10-28T11:00:00Z,Nuno Borges,Casper Ruud,unibet_fr,2026-10-27T11:59:11Z,2.55,1.39
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,de8fa64cdc8ed6fe9bd1fc42c6f115c6,2026-10-28T11:00:00Z,Nuno Borges,Casper Ruud,matchbook,2026-10-27T11:59:53Z,2.9,1.5
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,de8fa64cdc8ed6fe9bd1fc42c6f115c6,2026-10-28T11:00:00Z,Nuno Borges,Casper Ruud,unibet_nl,2026-10-27T11:59:53Z,2.75,1.45
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,de8fa64cdc8ed6fe9bd1fc42c6f115c6,2026-10-28T11:00:00Z,Nuno Borges,Casper Ruud,unibet_se,2026-10-27T11:59:53Z,2.75,1.45
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,de8fa64cdc8ed6fe9bd1fc42c6f115c6,2026-10-28T11:00:00Z,Nuno Borges,Casper Ruud,leovegas_se,2026-10-27T11:59:32Z,2.75,1.45
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,de8fa64cdc8ed6fe9bd1fc42c6f115c6,2026-10-28T11:00:00Z,Nuno Borges,Casper Ruud,pmu_fr,2026-10-27T11:59:53Z,2.6,1.4
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,de8fa64cdc8ed6fe9bd1fc42c6f115c6,2026-10-28T11:00:00Z,Nuno Borges,Casper Ruud,pinnacle,2026-10-27T11:59:53Z,2.9,1.46
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,622faf457a6ffd6d9effd2bc93280bac,2026-10-28T11:00:00Z,Rémy Bertola,Denis Shapovalov,betfair_ex_eu,2026-10-27T11:59:53Z,3.55,1.37
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,622faf457a6ffd6d9effd2bc93280bac,2026-10-28T11:00:00Z,Rémy Bertola,Denis Shapovalov,matchbook,2026-10-27T11:59:53Z,3.55,1.37
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,622faf457a6ffd6d9effd2bc93280bac,2026-10-28T11:00:00Z,Rémy Bertola,Denis Shapovalov,onexbet,2026-10-27T11:59:53Z,3.33,1.35
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,622faf457a6ffd6d9effd2bc93280bac,2026-10-28T11:00:00Z,Rémy Bertola,Denis Shapovalov,coolbet,2026-10-27T11:59:11Z,3.25,1.35
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,622faf457a6ffd6d9effd2bc93280bac,2026-10-28T11:00:00Z,Rémy Bertola,Denis Shapovalov,marathonbet,2026-10-27T11:59:17Z,3.28,1.33
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,622faf457a6ffd6d9effd2bc93280bac,2026-10-28T11:00:00Z,Rémy Bertola,Denis Shapovalov,pinnacle,2026-10-27T11:59:53Z,3.33,1.37
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,8f999f650b2a7e10b180a15fc7f863c1,2026-10-28T11:00:00Z,Yannick Hanfmann,Jan-Lennard Struff,matchbook,2026-10-27T11:59:53Z,2.14,1.82
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,8f999f650b2a7e10b180a15fc7f863c1,2026-10-28T11:00:00Z,Yannick Hanfmann,Jan-Lennard Struff,betfair_ex_eu,2026-10-27T11:59:53Z,2.16,1.82
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,8f999f650b2a7e10b180a15fc7f863c1,2026-10-28T11:00:00Z,Yannick Hanfmann,Jan-Lennard Struff,onexbet,2026-10-27T11:59:53Z,2.04,1.81
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,8f999f650b2a7e10b180a15fc7f863c1,2026-10-28T11:00:00Z,Yannick Hanfmann,Jan-Lennard Struff,marathonbet,2026-10-27T11:59:17Z,2.01,1.79
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,af913a4b884253b828e9314e74cfb6b3,2026-10-28T11:00:00Z,Novak Djokovic,Ugo Humbert,betanysports,2026-10-27T11:59:53Z,1.37,3.2
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,af913a4b884253b828e9314e74cfb6b3,2026-10-28T11:00:00Z,Novak Djokovic,Ugo Humbert,matchbook,2026-10-27T11:59:53Z,1.42,3.25
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,af913a4b884253b828e9314e74cfb6b3,2026-10-28T11:00:00Z,Novak Djokovic,Ugo Humbert,betfair_ex_eu,2026-10-27T11:59:53Z,1.42,3.25
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,af913a4b884253b828e9314e74cfb6b3,2026-10-28T11:00:00Z,Novak Djokovic,Ugo Humbert,betonlineag,2026-10-27T11:59:53Z,1.36,3.25
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,af913a4b884253b828e9314e74cfb6b3,2026-10-28T11:00:00Z,Novak Djokovic,Ugo Humbert,winamax_fr,2026-10-27T11:59:33Z,1.35,2.95
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,af913a4b884253b828e9314e74cfb6b3,2026-10-28T11:00:00Z,Novak Djokovic,Ugo Humbert,winamax_de,2026-10-27T11:58:49Z,1.39,3.15
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,af913a4b884253b828e9314e74cfb6b3,2026-10-28T11:00:00Z,Novak Djokovic,Ugo Humbert,unibet_fr,2026-10-27T11:59:11Z,1.33,2.85
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,af913a4b884253b828e9314e74cfb6b3,2026-10-28T11:00:00Z,Novak Djokovic,Ugo Humbert,betsson,2026-10-27T11:56:56Z,1.37,3.05
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,af913a4b884253b828e9314e74cfb6b3,2026-10-28T11:00:00Z,Novak Djokovic,Ugo Humbert,nordicbet,2026-10-27T11:59:33Z,1.37,3.05
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,af913a4b884253b828e9314e74cfb6b3,2026-10-28T11:00:00Z,Novak Djokovic,Ugo Humbert,betclic_fr,2026-10-27T11:58:15Z,1.36,3.0
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,4131305472a4538a7dd867552b8a5154,2026-10-28T11:00:00Z,Taylor Fritz,Rinky Hijikata,betfair_ex_eu,2026-10-27T11:59:53Z,1.12,7.0
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,4131305472a4538a7dd867552b8a5154,2026-10-28T11:00:00Z,Taylor Fritz,Rinky Hijikata,onexbet,2026-10-27T11:59:53Z,1.1,7.5
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,4131305472a4538a7dd867552b8a5154,2026-10-28T11:00:00Z,Taylor Fritz,Rinky Hijikata,marathonbet,2026-10-27T11:59:17Z,1.09,7.2
+2026-10-27T12:00:07Z,tennis_atp_swiss_indoors,4131305472a4538a7dd867552b8a5154,2026-10-28T11:00:00Z,Taylor Fritz,Rinky Hijikata,matchbook,2026-10-27T11:59:53Z,1.13,7.2
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,3a73a96665b992e825c1256066d9abf1,2026-10-27T12:30:00Z,Tommy Paul,Andrey Rublev,betonlineag,2026-10-27T11:59:54Z,1.78,2.09
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,3a73a96665b992e825c1256066d9abf1,2026-10-27T12:30:00Z,Tommy Paul,Andrey Rublev,leovegas_se,2026-10-27T11:59:54Z,1.8,2.0
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,3a73a96665b992e825c1256066d9abf1,2026-10-27T12:30:00Z,Tommy Paul,Andrey Rublev,pmu_fr,2026-10-27T11:59:54Z,1.73,1.92
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,3a73a96665b992e825c1256066d9abf1,2026-10-27T12:30:00Z,Tommy Paul,Andrey Rublev,betanysports,2026-10-27T11:59:54Z,1.77,2.0
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,3a73a96665b992e825c1256066d9abf1,2026-10-27T12:30:00Z,Tommy Paul,Andrey Rublev,matchbook,2026-10-27T11:59:54Z,1.85,2.16
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,3a73a96665b992e825c1256066d9abf1,2026-10-27T12:30:00Z,Tommy Paul,Andrey Rublev,pinnacle,2026-10-27T11:59:54Z,1.81,2.1
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,3a73a96665b992e825c1256066d9abf1,2026-10-27T12:30:00Z,Tommy Paul,Andrey Rublev,betfair_ex_eu,2026-10-27T11:59:54Z,1.85,2.16
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,3a73a96665b992e825c1256066d9abf1,2026-10-27T12:30:00Z,Tommy Paul,Andrey Rublev,unibet_nl,2026-10-27T11:59:54Z,1.8,2.0
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,3a73a96665b992e825c1256066d9abf1,2026-10-27T12:30:00Z,Tommy Paul,Andrey Rublev,unibet_se,2026-10-27T11:59:54Z,1.8,2.0
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,3a73a96665b992e825c1256066d9abf1,2026-10-27T12:30:00Z,Tommy Paul,Andrey Rublev,winamax_fr,2026-10-27T11:59:34Z,1.7,2.05
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,3a73a96665b992e825c1256066d9abf1,2026-10-27T12:30:00Z,Tommy Paul,Andrey Rublev,winamax_de,2026-10-27T11:59:14Z,1.76,2.1
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,3a73a96665b992e825c1256066d9abf1,2026-10-27T12:30:00Z,Tommy Paul,Andrey Rublev,unibet_fr,2026-10-27T11:59:54Z,1.68,2.0
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,3a73a96665b992e825c1256066d9abf1,2026-10-27T12:30:00Z,Tommy Paul,Andrey Rublev,betsson,2026-10-27T11:56:57Z,1.72,2.08
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,3a73a96665b992e825c1256066d9abf1,2026-10-27T12:30:00Z,Tommy Paul,Andrey Rublev,nordicbet,2026-10-27T11:59:32Z,1.72,2.08
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,3a73a96665b992e825c1256066d9abf1,2026-10-27T12:30:00Z,Tommy Paul,Andrey Rublev,tipico_de,2026-10-27T11:59:15Z,1.72,2.0
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,3a73a96665b992e825c1256066d9abf1,2026-10-27T12:30:00Z,Tommy Paul,Andrey Rublev,onexbet,2026-10-27T11:59:54Z,1.75,2.13
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,3a73a96665b992e825c1256066d9abf1,2026-10-27T12:30:00Z,Tommy Paul,Andrey Rublev,betclic_fr,2026-10-27T11:58:16Z,1.72,2.03
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,3a73a96665b992e825c1256066d9abf1,2026-10-27T12:30:00Z,Tommy Paul,Andrey Rublev,marathonbet,2026-10-27T11:58:12Z,1.73,2.1
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,c79e026be2881d605ce1f181243a44cf,2026-10-27T13:40:00Z,Karen Khachanov,Carlos Alcaraz,matchbook,2026-10-27T11:59:54Z,5.1,1.24
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,c79e026be2881d605ce1f181243a44cf,2026-10-27T13:40:00Z,Karen Khachanov,Carlos Alcaraz,betfair_ex_eu,2026-10-27T11:59:54Z,5.1,1.24
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,c79e026be2881d605ce1f181243a44cf,2026-10-27T13:40:00Z,Karen Khachanov,Carlos Alcaraz,unibet_fr,2026-10-27T11:59:54Z,4.25,1.17
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,c79e026be2881d605ce1f181243a44cf,2026-10-27T13:40:00Z,Karen Khachanov,Carlos Alcaraz,onexbet,2026-10-27T11:59:54Z,4.66,1.21
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,c79e026be2881d605ce1f181243a44cf,2026-10-27T13:40:00Z,Karen Khachanov,Carlos Alcaraz,marathonbet,2026-10-27T11:58:12Z,4.6,1.19
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,2121f3ad0a65fd648051aae488ff71ce,2026-10-27T14:00:00Z,Adrian Mannarino,Ignacio Buse,leovegas_se,2026-10-27T11:59:54Z,1.54,2.48
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,2121f3ad0a65fd648051aae488ff71ce,2026-10-27T14:00:00Z,Adrian Mannarino,Ignacio Buse,pmu_fr,2026-10-27T11:59:54Z,1.48,2.38
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,2121f3ad0a65fd648051aae488ff71ce,2026-10-27T14:00:00Z,Adrian Mannarino,Ignacio Buse,betfair_ex_eu,2026-10-27T11:59:54Z,1.65,2.5
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,2121f3ad0a65fd648051aae488ff71ce,2026-10-27T14:00:00Z,Adrian Mannarino,Ignacio Buse,unibet_nl,2026-10-27T11:59:54Z,1.54,2.48
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,2121f3ad0a65fd648051aae488ff71ce,2026-10-27T14:00:00Z,Adrian Mannarino,Ignacio Buse,matchbook,2026-10-27T11:59:54Z,1.65,2.5
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,2121f3ad0a65fd648051aae488ff71ce,2026-10-27T14:00:00Z,Adrian Mannarino,Ignacio Buse,unibet_se,2026-10-27T11:59:54Z,1.54,2.48
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,2121f3ad0a65fd648051aae488ff71ce,2026-10-27T14:00:00Z,Adrian Mannarino,Ignacio Buse,sport888,2026-10-27T11:59:32Z,1.61,2.3
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,2121f3ad0a65fd648051aae488ff71ce,2026-10-27T14:00:00Z,Adrian Mannarino,Ignacio Buse,winamax_fr,2026-10-27T11:59:34Z,1.52,2.4
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,2121f3ad0a65fd648051aae488ff71ce,2026-10-27T14:00:00Z,Adrian Mannarino,Ignacio Buse,winamax_de,2026-10-27T11:59:14Z,1.56,2.5
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,2121f3ad0a65fd648051aae488ff71ce,2026-10-27T14:00:00Z,Adrian Mannarino,Ignacio Buse,unibet_fr,2026-10-27T11:59:54Z,1.5,2.35
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,2121f3ad0a65fd648051aae488ff71ce,2026-10-27T14:00:00Z,Adrian Mannarino,Ignacio Buse,williamhill,2026-10-27T11:59:32Z,1.62,2.3
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,2121f3ad0a65fd648051aae488ff71ce,2026-10-27T14:00:00Z,Adrian Mannarino,Ignacio Buse,betsson,2026-10-27T11:56:57Z,1.53,2.46
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,2121f3ad0a65fd648051aae488ff71ce,2026-10-27T14:00:00Z,Adrian Mannarino,Ignacio Buse,nordicbet,2026-10-27T11:59:32Z,1.53,2.46
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,2121f3ad0a65fd648051aae488ff71ce,2026-10-27T14:00:00Z,Adrian Mannarino,Ignacio Buse,onexbet,2026-10-27T11:59:54Z,1.59,2.42
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,2121f3ad0a65fd648051aae488ff71ce,2026-10-27T14:00:00Z,Adrian Mannarino,Ignacio Buse,betclic_fr,2026-10-27T11:58:16Z,1.52,2.43
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,2121f3ad0a65fd648051aae488ff71ce,2026-10-27T14:00:00Z,Adrian Mannarino,Ignacio Buse,marathonbet,2026-10-27T11:58:12Z,1.57,2.39
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,2121f3ad0a65fd648051aae488ff71ce,2026-10-27T14:00:00Z,Adrian Mannarino,Ignacio Buse,betonlineag,2026-10-27T11:59:54Z,1.65,2.35
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,2121f3ad0a65fd648051aae488ff71ce,2026-10-27T14:00:00Z,Adrian Mannarino,Ignacio Buse,pinnacle,2026-10-27T11:59:54Z,1.62,2.42
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,2121f3ad0a65fd648051aae488ff71ce,2026-10-27T14:00:00Z,Adrian Mannarino,Ignacio Buse,betanysports,2026-10-27T11:59:54Z,1.59,2.45
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,e9aca20f62c49ea43ad8b9d91f00330b,2026-10-27T15:10:00Z,Cameron Norrie,Francisco Cerundolo,matchbook,2026-10-27T11:59:54Z,2.86,1.52
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,e9aca20f62c49ea43ad8b9d91f00330b,2026-10-27T15:10:00Z,Cameron Norrie,Francisco Cerundolo,betfair_ex_eu,2026-10-27T11:59:54Z,2.86,1.52
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,e9aca20f62c49ea43ad8b9d91f00330b,2026-10-27T15:10:00Z,Cameron Norrie,Francisco Cerundolo,unibet_fr,2026-10-27T11:59:54Z,2.6,1.42
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,0bf567898c610e332a53d119bf4d2c77,2026-10-27T16:30:00Z,Alexander Zverev,Martin Landaluce,betonlineag,2026-10-27T11:59:54Z,1.09,7.88
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,0bf567898c610e332a53d119bf4d2c77,2026-10-27T16:30:00Z,Alexander Zverev,Martin Landaluce,matchbook,2026-10-27T11:59:54Z,1.09,10.0
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,0bf567898c610e332a53d119bf4d2c77,2026-10-27T16:30:00Z,Alexander Zverev,Martin Landaluce,pinnacle,2026-10-27T11:59:54Z,1.09,8.57
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,0bf567898c610e332a53d119bf4d2c77,2026-10-27T16:30:00Z,Alexander Zverev,Martin Landaluce,betfair_ex_eu,2026-10-27T11:59:54Z,1.09,10.0
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,0bf567898c610e332a53d119bf4d2c77,2026-10-27T16:30:00Z,Alexander Zverev,Martin Landaluce,winamax_fr,2026-10-27T11:59:34Z,1.06,7.5
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,0bf567898c610e332a53d119bf4d2c77,2026-10-27T16:30:00Z,Alexander Zverev,Martin Landaluce,winamax_de,2026-10-27T11:59:14Z,1.08,9.0
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,0bf567898c610e332a53d119bf4d2c77,2026-10-27T16:30:00Z,Alexander Zverev,Martin Landaluce,unibet_fr,2026-10-27T11:59:54Z,1.07,6.5
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,0bf567898c610e332a53d119bf4d2c77,2026-10-27T16:30:00Z,Alexander Zverev,Martin Landaluce,onexbet,2026-10-27T11:59:54Z,1.09,8.2
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,0bf567898c610e332a53d119bf4d2c77,2026-10-27T16:30:00Z,Alexander Zverev,Martin Landaluce,marathonbet,2026-10-27T11:58:12Z,1.08,7.7
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,705dce2eaaf74f7b3cb3f919d2f1ea8d,2026-10-27T19:00:00Z,Flavio Cobolli,Grigor Dimitrov,betonlineag,2026-10-27T11:59:54Z,1.53,2.62
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,705dce2eaaf74f7b3cb3f919d2f1ea8d,2026-10-27T19:00:00Z,Flavio Cobolli,Grigor Dimitrov,matchbook,2026-10-27T11:59:54Z,1.54,2.8
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,705dce2eaaf74f7b3cb3f919d2f1ea8d,2026-10-27T19:00:00Z,Flavio Cobolli,Grigor Dimitrov,pinnacle,2026-10-27T11:59:54Z,1.53,2.68
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,705dce2eaaf74f7b3cb3f919d2f1ea8d,2026-10-27T19:00:00Z,Flavio Cobolli,Grigor Dimitrov,betfair_ex_eu,2026-10-27T11:59:54Z,1.54,2.8
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,705dce2eaaf74f7b3cb3f919d2f1ea8d,2026-10-27T19:00:00Z,Flavio Cobolli,Grigor Dimitrov,winamax_fr,2026-10-27T11:59:34Z,1.46,2.55
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,705dce2eaaf74f7b3cb3f919d2f1ea8d,2026-10-27T19:00:00Z,Flavio Cobolli,Grigor Dimitrov,winamax_de,2026-10-27T11:59:14Z,1.5,2.7
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,705dce2eaaf74f7b3cb3f919d2f1ea8d,2026-10-27T19:00:00Z,Flavio Cobolli,Grigor Dimitrov,unibet_fr,2026-10-27T11:59:54Z,1.46,2.45
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T10:30:00Z,Learner Tien,Alex de Minaur,marathonbet,2026-10-27T11:58:12Z,1.92,1.87
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T10:30:00Z,Learner Tien,Alex de Minaur,betclic_fr,2026-10-27T11:58:16Z,1.84,1.8
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T10:30:00Z,Learner Tien,Alex de Minaur,betfair_ex_eu,2026-10-27T11:59:54Z,1.99,1.97
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T10:30:00Z,Learner Tien,Alex de Minaur,unibet_fr,2026-10-27T11:59:54Z,1.82,1.78
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T10:30:00Z,Learner Tien,Alex de Minaur,betsson,2026-10-27T11:56:57Z,1.91,1.86
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T10:30:00Z,Learner Tien,Alex de Minaur,williamhill,2026-10-27T11:59:32Z,1.91,1.91
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T10:30:00Z,Learner Tien,Alex de Minaur,coolbet,2026-10-27T11:59:58Z,1.92,1.89
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T10:30:00Z,Learner Tien,Alex de Minaur,onexbet,2026-10-27T11:59:54Z,1.95,1.9
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T10:30:00Z,Learner Tien,Alex de Minaur,sport888,2026-10-27T11:59:32Z,1.91,1.91
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T10:30:00Z,Learner Tien,Alex de Minaur,nordicbet,2026-10-27T11:59:32Z,1.91,1.86
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T10:30:00Z,Learner Tien,Alex de Minaur,winamax_fr,2026-10-27T11:59:34Z,1.84,1.78
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T10:30:00Z,Learner Tien,Alex de Minaur,matchbook,2026-10-27T11:59:54Z,1.98,1.96
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T10:30:00Z,Learner Tien,Alex de Minaur,tipico_de,2026-10-27T11:59:15Z,1.9,1.8
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T10:30:00Z,Learner Tien,Alex de Minaur,unibet_nl,2026-10-27T11:59:54Z,1.92,1.88
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T10:30:00Z,Learner Tien,Alex de Minaur,unibet_se,2026-10-27T11:59:54Z,1.92,1.88
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T10:30:00Z,Learner Tien,Alex de Minaur,pmu_fr,2026-10-27T11:59:54Z,1.83,1.8
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T10:30:00Z,Learner Tien,Alex de Minaur,leovegas_se,2026-10-27T11:59:54Z,1.92,1.88
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T10:30:00Z,Learner Tien,Alex de Minaur,pinnacle,2026-10-27T11:59:54Z,1.96,1.93
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,01c5f7c5dda8e39a8d33c84b8d9e323d,2026-10-28T10:30:00Z,Tallon Griekspoor,Brandon Nakashima,matchbook,2026-10-27T11:59:54Z,3.05,1.47
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,01c5f7c5dda8e39a8d33c84b8d9e323d,2026-10-28T10:30:00Z,Tallon Griekspoor,Brandon Nakashima,betfair_ex_eu,2026-10-27T11:59:54Z,3.0,1.47
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,01c5f7c5dda8e39a8d33c84b8d9e323d,2026-10-28T10:30:00Z,Tallon Griekspoor,Brandon Nakashima,sport888,2026-10-27T11:59:32Z,2.75,1.44
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,01c5f7c5dda8e39a8d33c84b8d9e323d,2026-10-28T10:30:00Z,Tallon Griekspoor,Brandon Nakashima,williamhill,2026-10-27T11:59:32Z,2.75,1.44
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,84b3d47944a12f77e8f84c6442665671,2026-10-28T10:30:00Z,Lorenzo Musetti,Frances Tiafoe,betonlineag,2026-10-27T11:59:54Z,2.02,1.82
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,84b3d47944a12f77e8f84c6442665671,2026-10-28T10:30:00Z,Lorenzo Musetti,Frances Tiafoe,betanysports,2026-10-27T11:59:54Z,2.0,1.83
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,84b3d47944a12f77e8f84c6442665671,2026-10-28T10:30:00Z,Lorenzo Musetti,Frances Tiafoe,matchbook,2026-10-27T11:59:54Z,2.06,1.91
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,84b3d47944a12f77e8f84c6442665671,2026-10-28T10:30:00Z,Lorenzo Musetti,Frances Tiafoe,pinnacle,2026-10-27T11:59:54Z,2.03,1.86
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,84b3d47944a12f77e8f84c6442665671,2026-10-28T10:30:00Z,Lorenzo Musetti,Frances Tiafoe,betfair_ex_eu,2026-10-27T11:59:54Z,2.06,1.91
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,84b3d47944a12f77e8f84c6442665671,2026-10-28T10:30:00Z,Lorenzo Musetti,Frances Tiafoe,sport888,2026-10-27T11:59:32Z,2.0,1.8
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,84b3d47944a12f77e8f84c6442665671,2026-10-28T10:30:00Z,Lorenzo Musetti,Frances Tiafoe,williamhill,2026-10-27T11:59:32Z,2.0,1.8
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,84b3d47944a12f77e8f84c6442665671,2026-10-28T10:30:00Z,Lorenzo Musetti,Frances Tiafoe,onexbet,2026-10-27T11:59:54Z,1.98,1.87
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,84b3d47944a12f77e8f84c6442665671,2026-10-28T10:30:00Z,Lorenzo Musetti,Frances Tiafoe,marathonbet,2026-10-27T11:58:12Z,1.95,1.84
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,484a0fff5b3739c2bbc79cafff73007c,2026-10-28T10:30:00Z,Jurij Rodionov,Nikoloz Basilashvili,matchbook,2026-10-27T11:59:54Z,2.28,1.77
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,484a0fff5b3739c2bbc79cafff73007c,2026-10-28T10:30:00Z,Jurij Rodionov,Nikoloz Basilashvili,betfair_ex_eu,2026-10-27T11:59:54Z,2.28,1.77
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,484a0fff5b3739c2bbc79cafff73007c,2026-10-28T10:30:00Z,Jurij Rodionov,Nikoloz Basilashvili,onexbet,2026-10-27T11:59:54Z,2.2,1.7
+2026-10-27T12:00:07Z,tennis_atp_vienna_open,484a0fff5b3739c2bbc79cafff73007c,2026-10-28T10:30:00Z,Jurij Rodionov,Nikoloz Basilashvili,marathonbet,2026-10-27T11:58:12Z,2.17,1.68
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,25ce39ca9e48b2351cf2d7163f921bb7,2026-10-28T01:30:00Z,Kamilla Rakhimova,Ekaterina Alexandrova,onexbet,2026-10-27T11:59:53Z,3.44,1.32
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,25ce39ca9e48b2351cf2d7163f921bb7,2026-10-28T01:30:00Z,Kamilla Rakhimova,Ekaterina Alexandrova,unibet_fr,2026-10-27T11:59:11Z,3.05,1.28
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,25ce39ca9e48b2351cf2d7163f921bb7,2026-10-28T01:30:00Z,Kamilla Rakhimova,Ekaterina Alexandrova,betfair_ex_eu,2026-10-27T11:59:53Z,3.65,1.34
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,25ce39ca9e48b2351cf2d7163f921bb7,2026-10-28T01:30:00Z,Kamilla Rakhimova,Ekaterina Alexandrova,williamhill,2026-10-27T11:59:32Z,3.3,1.33
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,25ce39ca9e48b2351cf2d7163f921bb7,2026-10-28T01:30:00Z,Kamilla Rakhimova,Ekaterina Alexandrova,nordicbet,2026-10-27T11:59:32Z,3.35,1.32
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,25ce39ca9e48b2351cf2d7163f921bb7,2026-10-28T01:30:00Z,Kamilla Rakhimova,Ekaterina Alexandrova,sport888,2026-10-27T11:59:53Z,3.3,1.33
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,25ce39ca9e48b2351cf2d7163f921bb7,2026-10-28T01:30:00Z,Kamilla Rakhimova,Ekaterina Alexandrova,betsson,2026-10-27T11:56:57Z,3.35,1.32
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,25ce39ca9e48b2351cf2d7163f921bb7,2026-10-28T01:30:00Z,Kamilla Rakhimova,Ekaterina Alexandrova,betclic_fr,2026-10-27T11:58:37Z,3.1,1.29
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,25ce39ca9e48b2351cf2d7163f921bb7,2026-10-28T01:30:00Z,Kamilla Rakhimova,Ekaterina Alexandrova,winamax_fr,2026-10-27T11:59:12Z,3.1,1.28
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,25ce39ca9e48b2351cf2d7163f921bb7,2026-10-28T01:30:00Z,Kamilla Rakhimova,Ekaterina Alexandrova,winamax_de,2026-10-27T11:59:55Z,3.35,1.32
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,25ce39ca9e48b2351cf2d7163f921bb7,2026-10-28T01:30:00Z,Kamilla Rakhimova,Ekaterina Alexandrova,marathonbet,2026-10-27T11:59:18Z,3.42,1.31
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,25ce39ca9e48b2351cf2d7163f921bb7,2026-10-28T01:30:00Z,Kamilla Rakhimova,Ekaterina Alexandrova,tipico_de,2026-10-27T11:59:13Z,3.2,1.3
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,25ce39ca9e48b2351cf2d7163f921bb7,2026-10-28T01:30:00Z,Kamilla Rakhimova,Ekaterina Alexandrova,leovegas_se,2026-10-27T11:59:32Z,3.65,1.28
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,25ce39ca9e48b2351cf2d7163f921bb7,2026-10-28T01:30:00Z,Kamilla Rakhimova,Ekaterina Alexandrova,pmu_fr,2026-10-27T11:59:54Z,3.45,1.24
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,25ce39ca9e48b2351cf2d7163f921bb7,2026-10-28T01:30:00Z,Kamilla Rakhimova,Ekaterina Alexandrova,unibet_se,2026-10-27T11:59:32Z,3.65,1.28
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,25ce39ca9e48b2351cf2d7163f921bb7,2026-10-28T01:30:00Z,Kamilla Rakhimova,Ekaterina Alexandrova,unibet_nl,2026-10-27T11:59:32Z,3.65,1.28
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,25ce39ca9e48b2351cf2d7163f921bb7,2026-10-28T01:30:00Z,Kamilla Rakhimova,Ekaterina Alexandrova,pinnacle,2026-10-27T11:59:53Z,3.58,1.33
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,890be98a36df8c80a2d9cf81b180b48a,2026-10-28T02:40:00Z,Cristina Bucsa,Maya Joint,unibet_fr,2026-10-27T11:59:11Z,2.15,1.56
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,890be98a36df8c80a2d9cf81b180b48a,2026-10-28T02:40:00Z,Cristina Bucsa,Maya Joint,onexbet,2026-10-27T11:59:53Z,2.34,1.61
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,890be98a36df8c80a2d9cf81b180b48a,2026-10-28T02:40:00Z,Cristina Bucsa,Maya Joint,williamhill,2026-10-27T11:59:32Z,2.2,1.67
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,890be98a36df8c80a2d9cf81b180b48a,2026-10-28T02:40:00Z,Cristina Bucsa,Maya Joint,betfair_ex_eu,2026-10-27T11:59:53Z,2.32,1.7
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,890be98a36df8c80a2d9cf81b180b48a,2026-10-28T02:40:00Z,Cristina Bucsa,Maya Joint,nordicbet,2026-10-27T11:59:32Z,2.26,1.62
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,890be98a36df8c80a2d9cf81b180b48a,2026-10-28T02:40:00Z,Cristina Bucsa,Maya Joint,winamax_fr,2026-10-27T11:59:12Z,2.15,1.56
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,890be98a36df8c80a2d9cf81b180b48a,2026-10-28T02:40:00Z,Cristina Bucsa,Maya Joint,coolbet,2026-10-27T11:59:58Z,2.27,1.64
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,890be98a36df8c80a2d9cf81b180b48a,2026-10-28T02:40:00Z,Cristina Bucsa,Maya Joint,winamax_de,2026-10-27T11:59:55Z,2.25,1.62
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,890be98a36df8c80a2d9cf81b180b48a,2026-10-28T02:40:00Z,Cristina Bucsa,Maya Joint,marathonbet,2026-10-27T11:59:18Z,2.32,1.6
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,890be98a36df8c80a2d9cf81b180b48a,2026-10-28T02:40:00Z,Cristina Bucsa,Maya Joint,matchbook,2026-10-27T11:59:53Z,2.32,1.7
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,890be98a36df8c80a2d9cf81b180b48a,2026-10-28T02:40:00Z,Cristina Bucsa,Maya Joint,sport888,2026-10-27T11:59:53Z,2.2,1.67
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,890be98a36df8c80a2d9cf81b180b48a,2026-10-28T02:40:00Z,Cristina Bucsa,Maya Joint,betsson,2026-10-27T11:56:57Z,2.26,1.62
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,890be98a36df8c80a2d9cf81b180b48a,2026-10-28T02:40:00Z,Cristina Bucsa,Maya Joint,betclic_fr,2026-10-27T11:58:37Z,2.16,1.57
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,890be98a36df8c80a2d9cf81b180b48a,2026-10-28T02:40:00Z,Cristina Bucsa,Maya Joint,tipico_de,2026-10-27T11:59:13Z,2.25,1.57
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,890be98a36df8c80a2d9cf81b180b48a,2026-10-28T02:40:00Z,Cristina Bucsa,Maya Joint,pmu_fr,2026-10-27T11:59:54Z,2.23,1.53
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,890be98a36df8c80a2d9cf81b180b48a,2026-10-28T02:40:00Z,Cristina Bucsa,Maya Joint,unibet_se,2026-10-27T11:59:32Z,2.35,1.6
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,890be98a36df8c80a2d9cf81b180b48a,2026-10-28T02:40:00Z,Cristina Bucsa,Maya Joint,leovegas_se,2026-10-27T11:59:32Z,2.35,1.6
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,890be98a36df8c80a2d9cf81b180b48a,2026-10-28T02:40:00Z,Cristina Bucsa,Maya Joint,unibet_nl,2026-10-27T11:59:32Z,2.35,1.6
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,890be98a36df8c80a2d9cf81b180b48a,2026-10-28T02:40:00Z,Cristina Bucsa,Maya Joint,pinnacle,2026-10-27T11:59:53Z,2.3,1.68
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T03:50:00Z,Aliaksandra Sasnovich,Diana Shnaider,unibet_fr,2026-10-27T11:59:11Z,3.4,1.23
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T03:50:00Z,Aliaksandra Sasnovich,Diana Shnaider,onexbet,2026-10-27T11:59:53Z,3.94,1.26
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T03:50:00Z,Aliaksandra Sasnovich,Diana Shnaider,williamhill,2026-10-27T11:59:32Z,3.6,1.29
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T03:50:00Z,Aliaksandra Sasnovich,Diana Shnaider,betfair_ex_eu,2026-10-27T11:59:53Z,4.0,1.29
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T03:50:00Z,Aliaksandra Sasnovich,Diana Shnaider,nordicbet,2026-10-27T11:59:32Z,3.75,1.26
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T03:50:00Z,Aliaksandra Sasnovich,Diana Shnaider,winamax_fr,2026-10-27T11:59:12Z,3.4,1.23
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T03:50:00Z,Aliaksandra Sasnovich,Diana Shnaider,coolbet,2026-10-27T11:59:58Z,3.8,1.27
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T03:50:00Z,Aliaksandra Sasnovich,Diana Shnaider,winamax_de,2026-10-27T11:59:55Z,3.8,1.26
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T03:50:00Z,Aliaksandra Sasnovich,Diana Shnaider,marathonbet,2026-10-27T11:59:18Z,3.9,1.25
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T03:50:00Z,Aliaksandra Sasnovich,Diana Shnaider,matchbook,2026-10-27T11:59:53Z,4.0,1.29
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T03:50:00Z,Aliaksandra Sasnovich,Diana Shnaider,sport888,2026-10-27T11:59:53Z,3.6,1.29
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T03:50:00Z,Aliaksandra Sasnovich,Diana Shnaider,betsson,2026-10-27T11:56:57Z,3.75,1.26
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T03:50:00Z,Aliaksandra Sasnovich,Diana Shnaider,betclic_fr,2026-10-27T11:58:37Z,3.45,1.23
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T03:50:00Z,Aliaksandra Sasnovich,Diana Shnaider,tipico_de,2026-10-27T11:59:13Z,3.8,1.22
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T03:50:00Z,Aliaksandra Sasnovich,Diana Shnaider,pinnacle,2026-10-27T11:59:53Z,3.98,1.29
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,a9fac6056a7fb978aceab5182f56271b,2026-10-28T08:00:00Z,Alexandra Eala,Talia Gibson,betfair_ex_eu,2026-10-27T11:59:53Z,1.38,3.45
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,a9fac6056a7fb978aceab5182f56271b,2026-10-28T08:00:00Z,Alexandra Eala,Talia Gibson,coolbet,2026-10-27T11:59:58Z,1.32,3.42
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,a9fac6056a7fb978aceab5182f56271b,2026-10-28T08:00:00Z,Alexandra Eala,Talia Gibson,betclic_fr,2026-10-27T11:58:37Z,1.31,3.25
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,a9fac6056a7fb978aceab5182f56271b,2026-10-28T08:00:00Z,Alexandra Eala,Talia Gibson,matchbook,2026-10-27T11:59:53Z,1.35,3.55
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,a9fac6056a7fb978aceab5182f56271b,2026-10-28T08:00:00Z,Alexandra Eala,Talia Gibson,winamax_de,2026-10-27T11:59:55Z,1.35,3.4
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,a9fac6056a7fb978aceab5182f56271b,2026-10-28T08:00:00Z,Alexandra Eala,Talia Gibson,winamax_fr,2026-10-27T11:59:12Z,1.32,3.15
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,a9fac6056a7fb978aceab5182f56271b,2026-10-28T08:00:00Z,Alexandra Eala,Talia Gibson,pinnacle,2026-10-27T11:59:53Z,1.36,3.49
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T01:30:00Z,Elena Rybakina,Yulia Putintseva,unibet_fr,2026-10-27T11:59:11Z,1.1,5.0
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T01:30:00Z,Elena Rybakina,Yulia Putintseva,onexbet,2026-10-27T11:59:53Z,1.15,5.54
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T01:30:00Z,Elena Rybakina,Yulia Putintseva,williamhill,2026-10-27T11:59:32Z,1.05,10.0
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T01:30:00Z,Elena Rybakina,Yulia Putintseva,betfair_ex_eu,2026-10-27T11:59:53Z,1.14,6.8
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T01:30:00Z,Elena Rybakina,Yulia Putintseva,nordicbet,2026-10-27T11:59:32Z,1.12,5.8
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T01:30:00Z,Elena Rybakina,Yulia Putintseva,winamax_fr,2026-10-27T11:59:12Z,1.1,5.1
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T01:30:00Z,Elena Rybakina,Yulia Putintseva,coolbet,2026-10-27T11:59:58Z,1.13,6.1
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T01:30:00Z,Elena Rybakina,Yulia Putintseva,winamax_de,2026-10-27T11:59:55Z,1.12,6.0
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T01:30:00Z,Elena Rybakina,Yulia Putintseva,marathonbet,2026-10-27T11:59:18Z,1.14,5.5
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T01:30:00Z,Elena Rybakina,Yulia Putintseva,sport888,2026-10-27T11:59:53Z,1.05,10.0
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T01:30:00Z,Elena Rybakina,Yulia Putintseva,betsson,2026-10-27T11:56:57Z,1.12,5.8
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T01:30:00Z,Elena Rybakina,Yulia Putintseva,betclic_fr,2026-10-27T11:58:37Z,1.1,5.2
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T01:30:00Z,Elena Rybakina,Yulia Putintseva,matchbook,2026-10-27T11:59:53Z,1.14,6.6
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T01:30:00Z,Elena Rybakina,Yulia Putintseva,tipico_de,2026-10-27T11:59:13Z,1.1,5.7
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T01:30:00Z,Leylah Fernandez,Elise Mertens,unibet_fr,2026-10-27T11:59:11Z,1.78,1.82
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T01:30:00Z,Leylah Fernandez,Elise Mertens,onexbet,2026-10-27T11:59:53Z,1.93,1.9
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T01:30:00Z,Leylah Fernandez,Elise Mertens,williamhill,2026-10-27T11:59:32Z,1.95,1.85
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T01:30:00Z,Leylah Fernandez,Elise Mertens,betfair_ex_eu,2026-10-27T11:59:53Z,1.91,1.87
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T01:30:00Z,Leylah Fernandez,Elise Mertens,nordicbet,2026-10-27T11:59:32Z,1.86,1.91
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T01:30:00Z,Leylah Fernandez,Elise Mertens,winamax_fr,2026-10-27T11:59:12Z,1.78,1.82
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T01:30:00Z,Leylah Fernandez,Elise Mertens,coolbet,2026-10-27T11:59:58Z,1.91,1.91
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T01:30:00Z,Leylah Fernandez,Elise Mertens,winamax_de,2026-10-27T11:59:55Z,1.88,1.92
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T01:30:00Z,Leylah Fernandez,Elise Mertens,marathonbet,2026-10-27T11:59:18Z,1.89,1.9
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T01:30:00Z,Leylah Fernandez,Elise Mertens,sport888,2026-10-27T11:59:53Z,1.8,2.0
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T01:30:00Z,Leylah Fernandez,Elise Mertens,betsson,2026-10-27T11:56:57Z,1.89,1.89
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T01:30:00Z,Leylah Fernandez,Elise Mertens,betclic_fr,2026-10-27T11:58:37Z,1.8,1.84
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T01:30:00Z,Leylah Fernandez,Elise Mertens,matchbook,2026-10-27T11:59:53Z,1.91,1.87
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T01:30:00Z,Leylah Fernandez,Elise Mertens,tipico_de,2026-10-27T11:59:13Z,1.85,1.85
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T01:30:00Z,Naomi Osaka,Mia Pohánková,winamax_de,2026-10-27T11:59:55Z,1.26,3.85
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T01:30:00Z,Naomi Osaka,Mia Pohánková,betsson,2026-10-27T11:56:57Z,1.25,3.85
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T01:30:00Z,Naomi Osaka,Mia Pohánková,unibet_fr,2026-10-27T11:59:11Z,1.22,3.45
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T01:30:00Z,Naomi Osaka,Mia Pohánková,winamax_fr,2026-10-27T11:59:12Z,1.22,3.4
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T01:30:00Z,Naomi Osaka,Mia Pohánková,betfair_ex_eu,2026-10-27T11:59:53Z,1.06,3.55
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T01:30:00Z,Naomi Osaka,Mia Pohánková,nordicbet,2026-10-27T11:59:32Z,1.26,3.75
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T01:30:00Z,Naomi Osaka,Mia Pohánková,williamhill,2026-10-27T11:59:32Z,1.29,3.6
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T01:30:00Z,Naomi Osaka,Mia Pohánková,sport888,2026-10-27T11:59:53Z,1.29,3.6
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T01:30:00Z,Naomi Osaka,Mia Pohánková,onexbet,2026-10-27T11:59:53Z,1.15,5.55
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T01:30:00Z,Naomi Osaka,Mia Pohánková,coolbet,2026-10-27T11:59:58Z,1.17,5.1
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T01:30:00Z,Naomi Osaka,Mia Pohánková,matchbook,2026-10-27T11:59:53Z,1.05,1.11
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T01:30:00Z,Naomi Osaka,Mia Pohánková,betclic_fr,2026-10-27T11:58:37Z,1.22,3.55
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,8cc69dee985efaaa4d02ce47ce9ae17a,2026-10-29T04:00:00Z,Alycia Parks,Kimberly Birrell,betfair_ex_eu,2026-10-27T11:59:53Z,2.5,1.64
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,8cc69dee985efaaa4d02ce47ce9ae17a,2026-10-29T04:00:00Z,Alycia Parks,Kimberly Birrell,winamax_fr,2026-10-27T11:59:12Z,2.3,1.56
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,8cc69dee985efaaa4d02ce47ce9ae17a,2026-10-29T04:00:00Z,Alycia Parks,Kimberly Birrell,winamax_de,2026-10-27T11:59:55Z,2.4,1.62
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,8cc69dee985efaaa4d02ce47ce9ae17a,2026-10-29T04:00:00Z,Alycia Parks,Kimberly Birrell,onexbet,2026-10-27T11:59:53Z,2.43,1.57
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,8cc69dee985efaaa4d02ce47ce9ae17a,2026-10-29T04:00:00Z,Alycia Parks,Kimberly Birrell,betclic_fr,2026-10-27T11:58:37Z,2.31,1.57
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,8cc69dee985efaaa4d02ce47ce9ae17a,2026-10-29T04:00:00Z,Alycia Parks,Kimberly Birrell,marathonbet,2026-10-27T11:59:18Z,2.41,1.56
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,8cc69dee985efaaa4d02ce47ce9ae17a,2026-10-29T04:00:00Z,Alycia Parks,Kimberly Birrell,pinnacle,2026-10-27T11:59:53Z,2.45,1.61
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,8cc69dee985efaaa4d02ce47ce9ae17a,2026-10-29T04:00:00Z,Alycia Parks,Kimberly Birrell,sport888,2026-10-27T11:59:53Z,2.38,1.57
+2026-10-27T12:00:07Z,tennis_wta_pan_pacific_open,8cc69dee985efaaa4d02ce47ce9ae17a,2026-10-29T04:00:00Z,Alycia Parks,Kimberly Birrell,williamhill,2026-10-27T11:59:32Z,2.38,1.57
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,8f999f650b2a7e10b180a15fc7f863c1,2026-10-28T11:10:00Z,Yannick Hanfmann,Jan-Lennard Struff,matchbook,2026-10-28T05:59:45Z,2.16,1.85
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,8f999f650b2a7e10b180a15fc7f863c1,2026-10-28T11:10:00Z,Yannick Hanfmann,Jan-Lennard Struff,betfair_ex_eu,2026-10-28T05:59:45Z,2.16,1.85
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,8f999f650b2a7e10b180a15fc7f863c1,2026-10-28T11:10:00Z,Yannick Hanfmann,Jan-Lennard Struff,sport888,2026-10-28T05:59:45Z,2.1,1.73
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,8f999f650b2a7e10b180a15fc7f863c1,2026-10-28T11:10:00Z,Yannick Hanfmann,Jan-Lennard Struff,unibet_fr,2026-10-28T05:59:02Z,1.92,1.7
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,8f999f650b2a7e10b180a15fc7f863c1,2026-10-28T11:10:00Z,Yannick Hanfmann,Jan-Lennard Struff,williamhill,2026-10-28T05:59:01Z,2.1,1.73
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,8f999f650b2a7e10b180a15fc7f863c1,2026-10-28T11:10:00Z,Yannick Hanfmann,Jan-Lennard Struff,unibet_se,2026-10-28T05:59:45Z,2.02,1.79
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,8f999f650b2a7e10b180a15fc7f863c1,2026-10-28T11:10:00Z,Yannick Hanfmann,Jan-Lennard Struff,leovegas_se,2026-10-28T05:59:45Z,2.02,1.79
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,8f999f650b2a7e10b180a15fc7f863c1,2026-10-28T11:10:00Z,Yannick Hanfmann,Jan-Lennard Struff,unibet_nl,2026-10-28T05:59:01Z,2.02,1.79
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,8f999f650b2a7e10b180a15fc7f863c1,2026-10-28T11:10:00Z,Yannick Hanfmann,Jan-Lennard Struff,pmu_fr,2026-10-28T05:59:45Z,1.93,1.71
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,8f999f650b2a7e10b180a15fc7f863c1,2026-10-28T11:10:00Z,Yannick Hanfmann,Jan-Lennard Struff,onexbet,2026-10-28T05:59:00Z,2.07,1.79
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,8f999f650b2a7e10b180a15fc7f863c1,2026-10-28T11:10:00Z,Yannick Hanfmann,Jan-Lennard Struff,marathonbet,2026-10-28T05:59:28Z,2.04,1.77
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,8f999f650b2a7e10b180a15fc7f863c1,2026-10-28T11:10:00Z,Yannick Hanfmann,Jan-Lennard Struff,pinnacle,2026-10-28T05:59:45Z,2.13,1.79
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,8f999f650b2a7e10b180a15fc7f863c1,2026-10-28T11:10:00Z,Yannick Hanfmann,Jan-Lennard Struff,betonlineag,2026-10-28T05:59:05Z,2.09,1.78
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,8f999f650b2a7e10b180a15fc7f863c1,2026-10-28T11:10:00Z,Yannick Hanfmann,Jan-Lennard Struff,betanysports,2026-10-28T05:59:01Z,2.1,1.77
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,622faf457a6ffd6d9effd2bc93280bac,2026-10-28T12:20:00Z,Rémy Bertola,Denis Shapovalov,betfair_ex_eu,2026-10-28T05:59:45Z,3.65,1.37
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,622faf457a6ffd6d9effd2bc93280bac,2026-10-28T12:20:00Z,Rémy Bertola,Denis Shapovalov,matchbook,2026-10-28T05:59:45Z,3.65,1.37
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,622faf457a6ffd6d9effd2bc93280bac,2026-10-28T12:20:00Z,Rémy Bertola,Denis Shapovalov,sport888,2026-10-28T05:59:45Z,3.3,1.33
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,622faf457a6ffd6d9effd2bc93280bac,2026-10-28T12:20:00Z,Rémy Bertola,Denis Shapovalov,unibet_fr,2026-10-28T05:59:02Z,2.9,1.31
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,622faf457a6ffd6d9effd2bc93280bac,2026-10-28T12:20:00Z,Rémy Bertola,Denis Shapovalov,williamhill,2026-10-28T05:59:01Z,3.3,1.33
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,622faf457a6ffd6d9effd2bc93280bac,2026-10-28T12:20:00Z,Rémy Bertola,Denis Shapovalov,unibet_se,2026-10-28T05:59:45Z,3.1,1.36
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,622faf457a6ffd6d9effd2bc93280bac,2026-10-28T12:20:00Z,Rémy Bertola,Denis Shapovalov,leovegas_se,2026-10-28T05:59:45Z,3.1,1.36
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,622faf457a6ffd6d9effd2bc93280bac,2026-10-28T12:20:00Z,Rémy Bertola,Denis Shapovalov,unibet_nl,2026-10-28T05:59:01Z,3.1,1.36
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,622faf457a6ffd6d9effd2bc93280bac,2026-10-28T12:20:00Z,Rémy Bertola,Denis Shapovalov,pmu_fr,2026-10-28T05:59:45Z,2.95,1.3
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,622faf457a6ffd6d9effd2bc93280bac,2026-10-28T12:20:00Z,Rémy Bertola,Denis Shapovalov,onexbet,2026-10-28T05:59:00Z,3.27,1.36
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,622faf457a6ffd6d9effd2bc93280bac,2026-10-28T12:20:00Z,Rémy Bertola,Denis Shapovalov,marathonbet,2026-10-28T05:59:28Z,3.22,1.34
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,622faf457a6ffd6d9effd2bc93280bac,2026-10-28T12:20:00Z,Rémy Bertola,Denis Shapovalov,pinnacle,2026-10-28T05:59:45Z,3.64,1.33
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,622faf457a6ffd6d9effd2bc93280bac,2026-10-28T12:20:00Z,Rémy Bertola,Denis Shapovalov,betonlineag,2026-10-28T05:59:05Z,3.63,1.31
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,622faf457a6ffd6d9effd2bc93280bac,2026-10-28T12:20:00Z,Rémy Bertola,Denis Shapovalov,betanysports,2026-10-28T05:59:01Z,3.4,1.32
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,de8fa64cdc8ed6fe9bd1fc42c6f115c6,2026-10-28T13:00:00Z,Nuno Borges,Casper Ruud,winamax_fr,2026-10-28T05:59:46Z,2.65,1.43
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,de8fa64cdc8ed6fe9bd1fc42c6f115c6,2026-10-28T13:00:00Z,Nuno Borges,Casper Ruud,betclic_fr,2026-10-28T05:59:34Z,2.7,1.43
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,de8fa64cdc8ed6fe9bd1fc42c6f115c6,2026-10-28T13:00:00Z,Nuno Borges,Casper Ruud,betfair_ex_eu,2026-10-28T05:59:45Z,2.86,1.52
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,de8fa64cdc8ed6fe9bd1fc42c6f115c6,2026-10-28T13:00:00Z,Nuno Borges,Casper Ruud,winamax_de,2026-10-28T05:59:03Z,2.85,1.47
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,de8fa64cdc8ed6fe9bd1fc42c6f115c6,2026-10-28T13:00:00Z,Nuno Borges,Casper Ruud,marathonbet,2026-10-28T05:59:28Z,2.8,1.43
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,de8fa64cdc8ed6fe9bd1fc42c6f115c6,2026-10-28T13:00:00Z,Nuno Borges,Casper Ruud,coolbet,2026-10-28T05:59:24Z,2.78,1.45
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,de8fa64cdc8ed6fe9bd1fc42c6f115c6,2026-10-28T13:00:00Z,Nuno Borges,Casper Ruud,onexbet,2026-10-28T05:59:00Z,2.84,1.45
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,de8fa64cdc8ed6fe9bd1fc42c6f115c6,2026-10-28T13:00:00Z,Nuno Borges,Casper Ruud,matchbook,2026-10-28T05:59:45Z,2.86,1.52
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,de8fa64cdc8ed6fe9bd1fc42c6f115c6,2026-10-28T13:00:00Z,Nuno Borges,Casper Ruud,unibet_nl,2026-10-28T05:59:01Z,2.8,1.43
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,de8fa64cdc8ed6fe9bd1fc42c6f115c6,2026-10-28T13:00:00Z,Nuno Borges,Casper Ruud,unibet_se,2026-10-28T05:59:45Z,2.8,1.43
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,de8fa64cdc8ed6fe9bd1fc42c6f115c6,2026-10-28T13:00:00Z,Nuno Borges,Casper Ruud,leovegas_se,2026-10-28T05:59:45Z,2.8,1.43
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,de8fa64cdc8ed6fe9bd1fc42c6f115c6,2026-10-28T13:00:00Z,Nuno Borges,Casper Ruud,pmu_fr,2026-10-28T05:59:46Z,2.63,1.38
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,de8fa64cdc8ed6fe9bd1fc42c6f115c6,2026-10-28T13:00:00Z,Nuno Borges,Casper Ruud,pinnacle,2026-10-28T05:59:45Z,2.85,1.48
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,de8fa64cdc8ed6fe9bd1fc42c6f115c6,2026-10-28T13:00:00Z,Nuno Borges,Casper Ruud,betonlineag,2026-10-28T05:59:05Z,2.7,1.51
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,de8fa64cdc8ed6fe9bd1fc42c6f115c6,2026-10-28T13:00:00Z,Nuno Borges,Casper Ruud,betanysports,2026-10-28T05:59:01Z,2.8,1.45
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,af913a4b884253b828e9314e74cfb6b3,2026-10-28T14:10:00Z,Novak Djokovic,Ugo Humbert,pinnacle,2026-10-28T05:59:45Z,1.38,3.3
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,af913a4b884253b828e9314e74cfb6b3,2026-10-28T14:10:00Z,Novak Djokovic,Ugo Humbert,betanysports,2026-10-28T05:59:01Z,1.38,3.1
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,af913a4b884253b828e9314e74cfb6b3,2026-10-28T14:10:00Z,Novak Djokovic,Ugo Humbert,matchbook,2026-10-28T05:59:45Z,1.42,3.3
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,af913a4b884253b828e9314e74cfb6b3,2026-10-28T14:10:00Z,Novak Djokovic,Ugo Humbert,leovegas_se,2026-10-28T05:59:45Z,1.35,3.2
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,af913a4b884253b828e9314e74cfb6b3,2026-10-28T14:10:00Z,Novak Djokovic,Ugo Humbert,pmu_fr,2026-10-28T05:59:46Z,1.29,3.0
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,af913a4b884253b828e9314e74cfb6b3,2026-10-28T14:10:00Z,Novak Djokovic,Ugo Humbert,betfair_ex_eu,2026-10-28T05:59:45Z,1.42,3.3
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,af913a4b884253b828e9314e74cfb6b3,2026-10-28T14:10:00Z,Novak Djokovic,Ugo Humbert,betonlineag,2026-10-28T05:59:05Z,1.38,3.14
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,af913a4b884253b828e9314e74cfb6b3,2026-10-28T14:10:00Z,Novak Djokovic,Ugo Humbert,unibet_se,2026-10-28T05:59:45Z,1.35,3.2
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,af913a4b884253b828e9314e74cfb6b3,2026-10-28T14:10:00Z,Novak Djokovic,Ugo Humbert,unibet_nl,2026-10-28T05:59:01Z,1.35,3.2
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,af913a4b884253b828e9314e74cfb6b3,2026-10-28T14:10:00Z,Novak Djokovic,Ugo Humbert,sport888,2026-10-28T05:59:45Z,1.36,3.1
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,af913a4b884253b828e9314e74cfb6b3,2026-10-28T14:10:00Z,Novak Djokovic,Ugo Humbert,unibet_fr,2026-10-28T05:59:02Z,1.35,3.05
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,af913a4b884253b828e9314e74cfb6b3,2026-10-28T14:10:00Z,Novak Djokovic,Ugo Humbert,williamhill,2026-10-28T05:59:01Z,1.36,3.1
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,af913a4b884253b828e9314e74cfb6b3,2026-10-28T14:10:00Z,Novak Djokovic,Ugo Humbert,onexbet,2026-10-28T05:59:00Z,1.38,3.17
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,af913a4b884253b828e9314e74cfb6b3,2026-10-28T14:10:00Z,Novak Djokovic,Ugo Humbert,marathonbet,2026-10-28T05:59:28Z,1.36,3.12
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,4131305472a4538a7dd867552b8a5154,2026-10-28T17:00:00Z,Taylor Fritz,Rinky Hijikata,leovegas_se,2026-10-28T05:59:45Z,1.11,6.5
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,4131305472a4538a7dd867552b8a5154,2026-10-28T17:00:00Z,Taylor Fritz,Rinky Hijikata,pmu_fr,2026-10-28T05:59:46Z,1.07,6.0
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,4131305472a4538a7dd867552b8a5154,2026-10-28T17:00:00Z,Taylor Fritz,Rinky Hijikata,betfair_ex_eu,2026-10-28T05:59:45Z,1.15,7.2
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,4131305472a4538a7dd867552b8a5154,2026-10-28T17:00:00Z,Taylor Fritz,Rinky Hijikata,unibet_se,2026-10-28T05:59:45Z,1.11,6.5
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,4131305472a4538a7dd867552b8a5154,2026-10-28T17:00:00Z,Taylor Fritz,Rinky Hijikata,unibet_nl,2026-10-28T05:59:01Z,1.11,6.5
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,4131305472a4538a7dd867552b8a5154,2026-10-28T17:00:00Z,Taylor Fritz,Rinky Hijikata,sport888,2026-10-28T05:59:45Z,1.12,6.0
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,4131305472a4538a7dd867552b8a5154,2026-10-28T17:00:00Z,Taylor Fritz,Rinky Hijikata,winamax_fr,2026-10-28T05:59:46Z,1.09,6.0
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,4131305472a4538a7dd867552b8a5154,2026-10-28T17:00:00Z,Taylor Fritz,Rinky Hijikata,winamax_de,2026-10-28T05:59:03Z,1.12,7.25
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,4131305472a4538a7dd867552b8a5154,2026-10-28T17:00:00Z,Taylor Fritz,Rinky Hijikata,unibet_fr,2026-10-28T05:59:02Z,1.08,5.4
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,4131305472a4538a7dd867552b8a5154,2026-10-28T17:00:00Z,Taylor Fritz,Rinky Hijikata,williamhill,2026-10-28T05:59:01Z,1.12,6.0
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,4131305472a4538a7dd867552b8a5154,2026-10-28T17:00:00Z,Taylor Fritz,Rinky Hijikata,betsson,2026-10-28T05:59:46Z,1.1,6.4
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,4131305472a4538a7dd867552b8a5154,2026-10-28T17:00:00Z,Taylor Fritz,Rinky Hijikata,nordicbet,2026-10-28T05:59:01Z,1.1,6.4
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,4131305472a4538a7dd867552b8a5154,2026-10-28T17:00:00Z,Taylor Fritz,Rinky Hijikata,tipico_de,2026-10-28T05:59:23Z,1.08,6.5
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,4131305472a4538a7dd867552b8a5154,2026-10-28T17:00:00Z,Taylor Fritz,Rinky Hijikata,onexbet,2026-10-28T05:59:00Z,1.13,6.49
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,4131305472a4538a7dd867552b8a5154,2026-10-28T17:00:00Z,Taylor Fritz,Rinky Hijikata,betclic_fr,2026-10-28T05:59:34Z,1.1,6.2
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,4131305472a4538a7dd867552b8a5154,2026-10-28T17:00:00Z,Taylor Fritz,Rinky Hijikata,marathonbet,2026-10-28T05:59:28Z,1.12,6.25
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,4131305472a4538a7dd867552b8a5154,2026-10-28T17:00:00Z,Taylor Fritz,Rinky Hijikata,coolbet,2026-10-28T05:59:24Z,1.12,6.4
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,4131305472a4538a7dd867552b8a5154,2026-10-28T17:00:00Z,Taylor Fritz,Rinky Hijikata,matchbook,2026-10-28T05:59:45Z,1.15,7.2
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,4131305472a4538a7dd867552b8a5154,2026-10-28T17:00:00Z,Taylor Fritz,Rinky Hijikata,betonlineag,2026-10-28T05:59:05Z,1.14,5.96
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,4131305472a4538a7dd867552b8a5154,2026-10-28T17:00:00Z,Taylor Fritz,Rinky Hijikata,pinnacle,2026-10-28T05:59:45Z,1.13,6.48
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,4131305472a4538a7dd867552b8a5154,2026-10-28T17:00:00Z,Taylor Fritz,Rinky Hijikata,betanysports,2026-10-28T05:59:01Z,1.12,6.2
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,6f5b58b184eac6128deada4527006869,2026-10-28T18:10:00Z,Hubert Hurkacz,Holger Rune,matchbook,2026-10-28T05:59:45Z,1.56,2.74
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,6f5b58b184eac6128deada4527006869,2026-10-28T18:10:00Z,Hubert Hurkacz,Holger Rune,betfair_ex_eu,2026-10-28T05:59:45Z,1.56,2.74
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,6f5b58b184eac6128deada4527006869,2026-10-28T18:10:00Z,Hubert Hurkacz,Holger Rune,betsson,2026-10-28T05:59:46Z,1.49,2.55
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,6f5b58b184eac6128deada4527006869,2026-10-28T18:10:00Z,Hubert Hurkacz,Holger Rune,marathonbet,2026-10-28T05:59:28Z,1.48,2.62
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,6f5b58b184eac6128deada4527006869,2026-10-28T18:10:00Z,Hubert Hurkacz,Holger Rune,sport888,2026-10-28T05:59:45Z,1.5,2.6
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,6f5b58b184eac6128deada4527006869,2026-10-28T18:10:00Z,Hubert Hurkacz,Holger Rune,onexbet,2026-10-28T05:59:00Z,1.5,2.66
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,6f5b58b184eac6128deada4527006869,2026-10-28T18:10:00Z,Hubert Hurkacz,Holger Rune,coolbet,2026-10-28T05:59:24Z,1.5,2.6
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,6f5b58b184eac6128deada4527006869,2026-10-28T18:10:00Z,Hubert Hurkacz,Holger Rune,nordicbet,2026-10-28T05:59:01Z,1.49,2.55
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,6f5b58b184eac6128deada4527006869,2026-10-28T18:10:00Z,Hubert Hurkacz,Holger Rune,williamhill,2026-10-28T05:59:01Z,1.5,2.6
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,6f5b58b184eac6128deada4527006869,2026-10-28T18:10:00Z,Hubert Hurkacz,Holger Rune,unibet_fr,2026-10-28T05:59:03Z,1.44,2.4
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,6f5b58b184eac6128deada4527006869,2026-10-28T18:10:00Z,Hubert Hurkacz,Holger Rune,betclic_fr,2026-10-28T05:59:34Z,1.48,2.55
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,6f5b58b184eac6128deada4527006869,2026-10-28T18:10:00Z,Hubert Hurkacz,Holger Rune,tipico_de,2026-10-28T05:59:23Z,1.45,2.55
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,6f5b58b184eac6128deada4527006869,2026-10-28T18:10:00Z,Hubert Hurkacz,Holger Rune,winamax_fr,2026-10-28T05:59:46Z,1.48,2.5
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,6f5b58b184eac6128deada4527006869,2026-10-28T18:10:00Z,Hubert Hurkacz,Holger Rune,winamax_de,2026-10-28T05:59:03Z,1.52,2.65
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,6f5b58b184eac6128deada4527006869,2026-10-28T18:10:00Z,Hubert Hurkacz,Holger Rune,pinnacle,2026-10-28T05:59:45Z,1.53,2.66
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,6f5b58b184eac6128deada4527006869,2026-10-28T18:10:00Z,Hubert Hurkacz,Holger Rune,unibet_nl,2026-10-28T05:59:01Z,1.5,2.55
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,6f5b58b184eac6128deada4527006869,2026-10-28T18:10:00Z,Hubert Hurkacz,Holger Rune,leovegas_se,2026-10-28T05:59:45Z,1.5,2.55
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,6f5b58b184eac6128deada4527006869,2026-10-28T18:10:00Z,Hubert Hurkacz,Holger Rune,unibet_se,2026-10-28T05:59:45Z,1.5,2.55
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,6f5b58b184eac6128deada4527006869,2026-10-28T18:10:00Z,Hubert Hurkacz,Holger Rune,pmu_fr,2026-10-28T05:59:46Z,1.44,2.43
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,6f5b58b184eac6128deada4527006869,2026-10-28T18:10:00Z,Hubert Hurkacz,Holger Rune,betonlineag,2026-10-28T05:59:05Z,1.53,2.62
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,6f5b58b184eac6128deada4527006869,2026-10-28T18:10:00Z,Hubert Hurkacz,Holger Rune,betanysports,2026-10-28T05:59:01Z,1.56,2.5
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,17b7cfaa2dc6c21f39412e6017f54e9b,2026-10-29T10:00:00Z,Alex Michelsen,Arthur Fils,coolbet,2026-10-28T05:59:24Z,2.78,1.45
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,17b7cfaa2dc6c21f39412e6017f54e9b,2026-10-29T10:00:00Z,Alex Michelsen,Arthur Fils,betfair_ex_eu,2026-10-28T05:59:45Z,2.84,1.47
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,17b7cfaa2dc6c21f39412e6017f54e9b,2026-10-29T10:00:00Z,Alex Michelsen,Arthur Fils,marathonbet,2026-10-28T05:59:28Z,2.76,1.44
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,17b7cfaa2dc6c21f39412e6017f54e9b,2026-10-29T10:00:00Z,Alex Michelsen,Arthur Fils,onexbet,2026-10-28T05:59:00Z,2.8,1.46
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,17b7cfaa2dc6c21f39412e6017f54e9b,2026-10-29T10:00:00Z,Alex Michelsen,Arthur Fils,nordicbet,2026-10-28T05:59:01Z,2.75,1.44
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,17b7cfaa2dc6c21f39412e6017f54e9b,2026-10-29T10:00:00Z,Alex Michelsen,Arthur Fils,sport888,2026-10-28T05:59:45Z,2.75,1.44
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,17b7cfaa2dc6c21f39412e6017f54e9b,2026-10-29T10:00:00Z,Alex Michelsen,Arthur Fils,betsson,2026-10-28T05:59:46Z,2.75,1.44
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,17b7cfaa2dc6c21f39412e6017f54e9b,2026-10-29T10:00:00Z,Alex Michelsen,Arthur Fils,unibet_fr,2026-10-28T05:59:03Z,2.55,1.39
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,17b7cfaa2dc6c21f39412e6017f54e9b,2026-10-29T10:00:00Z,Alex Michelsen,Arthur Fils,betclic_fr,2026-10-28T05:59:34Z,2.6,1.4
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,17b7cfaa2dc6c21f39412e6017f54e9b,2026-10-29T10:00:00Z,Alex Michelsen,Arthur Fils,williamhill,2026-10-28T05:59:01Z,2.75,1.44
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,17b7cfaa2dc6c21f39412e6017f54e9b,2026-10-29T10:00:00Z,Alex Michelsen,Arthur Fils,matchbook,2026-10-28T05:59:45Z,2.74,1.41
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,17b7cfaa2dc6c21f39412e6017f54e9b,2026-10-29T10:00:00Z,Alex Michelsen,Arthur Fils,tipico_de,2026-10-28T05:59:23Z,2.7,1.4
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,17b7cfaa2dc6c21f39412e6017f54e9b,2026-10-29T10:00:00Z,Alex Michelsen,Arthur Fils,winamax_fr,2026-10-28T05:59:46Z,2.65,1.43
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,17b7cfaa2dc6c21f39412e6017f54e9b,2026-10-29T10:00:00Z,Alex Michelsen,Arthur Fils,winamax_de,2026-10-28T05:59:03Z,2.85,1.47
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,17b7cfaa2dc6c21f39412e6017f54e9b,2026-10-29T10:00:00Z,Alex Michelsen,Arthur Fils,unibet_se,2026-10-28T05:59:45Z,2.8,1.43
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,17b7cfaa2dc6c21f39412e6017f54e9b,2026-10-29T10:00:00Z,Alex Michelsen,Arthur Fils,unibet_nl,2026-10-28T05:59:01Z,2.8,1.43
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,17b7cfaa2dc6c21f39412e6017f54e9b,2026-10-29T10:00:00Z,Alex Michelsen,Arthur Fils,pmu_fr,2026-10-28T05:59:46Z,2.63,1.38
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,17b7cfaa2dc6c21f39412e6017f54e9b,2026-10-29T10:00:00Z,Alex Michelsen,Arthur Fils,leovegas_se,2026-10-28T05:59:45Z,2.8,1.43
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,53d4ccf860436088aa717efdf2c38d25,2026-10-29T10:00:00Z,Ben Shelton,Jerome Kym,sport888,2026-10-28T05:59:45Z,1.29,3.6
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,53d4ccf860436088aa717efdf2c38d25,2026-10-29T10:00:00Z,Ben Shelton,Jerome Kym,onexbet,2026-10-28T05:59:00Z,1.25,4.16
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,53d4ccf860436088aa717efdf2c38d25,2026-10-29T10:00:00Z,Ben Shelton,Jerome Kym,betsson,2026-10-28T05:59:46Z,1.25,3.9
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,53d4ccf860436088aa717efdf2c38d25,2026-10-29T10:00:00Z,Ben Shelton,Jerome Kym,betclic_fr,2026-10-28T05:59:34Z,1.22,3.6
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,53d4ccf860436088aa717efdf2c38d25,2026-10-29T10:00:00Z,Ben Shelton,Jerome Kym,betfair_ex_eu,2026-10-28T05:59:45Z,1.25,3.6
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,53d4ccf860436088aa717efdf2c38d25,2026-10-29T10:00:00Z,Ben Shelton,Jerome Kym,williamhill,2026-10-28T05:59:01Z,1.29,3.6
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,53d4ccf860436088aa717efdf2c38d25,2026-10-29T10:00:00Z,Ben Shelton,Jerome Kym,unibet_fr,2026-10-28T05:59:03Z,1.21,3.5
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,53d4ccf860436088aa717efdf2c38d25,2026-10-29T10:00:00Z,Ben Shelton,Jerome Kym,marathonbet,2026-10-28T05:59:28Z,1.23,4.1
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,53d4ccf860436088aa717efdf2c38d25,2026-10-29T10:00:00Z,Ben Shelton,Jerome Kym,nordicbet,2026-10-28T05:59:01Z,1.25,3.9
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,53d4ccf860436088aa717efdf2c38d25,2026-10-29T10:00:00Z,Ben Shelton,Jerome Kym,coolbet,2026-10-28T05:59:24Z,1.25,4.0
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,53d4ccf860436088aa717efdf2c38d25,2026-10-29T10:00:00Z,Ben Shelton,Jerome Kym,tipico_de,2026-10-28T05:59:23Z,1.2,4.0
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,53d4ccf860436088aa717efdf2c38d25,2026-10-29T10:00:00Z,Ben Shelton,Jerome Kym,winamax_de,2026-10-28T05:59:02Z,1.26,4.1
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,53d4ccf860436088aa717efdf2c38d25,2026-10-29T10:00:00Z,Ben Shelton,Jerome Kym,winamax_fr,2026-10-28T05:59:46Z,1.23,3.8
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,53d4ccf860436088aa717efdf2c38d25,2026-10-29T10:00:00Z,Ben Shelton,Jerome Kym,matchbook,2026-10-28T05:59:45Z,1.21,3.4
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,53d4ccf860436088aa717efdf2c38d25,2026-10-29T10:00:00Z,Ben Shelton,Jerome Kym,unibet_se,2026-10-28T05:59:45Z,1.22,4.25
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,53d4ccf860436088aa717efdf2c38d25,2026-10-29T10:00:00Z,Ben Shelton,Jerome Kym,unibet_nl,2026-10-28T05:59:01Z,1.22,4.25
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,53d4ccf860436088aa717efdf2c38d25,2026-10-29T10:00:00Z,Ben Shelton,Jerome Kym,pmu_fr,2026-10-28T05:59:46Z,1.17,3.95
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,53d4ccf860436088aa717efdf2c38d25,2026-10-29T10:00:00Z,Ben Shelton,Jerome Kym,leovegas_se,2026-10-28T05:59:45Z,1.22,4.25
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,381536c46bd1e16a9236502df3f748e5,2026-10-29T10:00:00Z,Daniel Altmaier,Jiri Lehecka,matchbook,2026-10-28T05:59:45Z,4.2,1.14
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,381536c46bd1e16a9236502df3f748e5,2026-10-29T10:00:00Z,Daniel Altmaier,Jiri Lehecka,betfair_ex_eu,2026-10-28T05:59:45Z,4.7,1.14
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,381536c46bd1e16a9236502df3f748e5,2026-10-29T10:00:00Z,Daniel Altmaier,Jiri Lehecka,nordicbet,2026-10-28T05:59:01Z,4.7,1.18
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,381536c46bd1e16a9236502df3f748e5,2026-10-29T10:00:00Z,Daniel Altmaier,Jiri Lehecka,unibet_fr,2026-10-28T05:59:03Z,4.15,1.15
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,381536c46bd1e16a9236502df3f748e5,2026-10-29T10:00:00Z,Daniel Altmaier,Jiri Lehecka,betsson,2026-10-28T05:59:46Z,4.7,1.18
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,381536c46bd1e16a9236502df3f748e5,2026-10-29T10:00:00Z,Daniel Altmaier,Jiri Lehecka,marathonbet,2026-10-28T05:59:28Z,4.95,1.17
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,381536c46bd1e16a9236502df3f748e5,2026-10-29T10:00:00Z,Daniel Altmaier,Jiri Lehecka,onexbet,2026-10-28T05:59:00Z,5.01,1.19
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,381536c46bd1e16a9236502df3f748e5,2026-10-29T10:00:00Z,Daniel Altmaier,Jiri Lehecka,coolbet,2026-10-28T05:59:24Z,4.8,1.19
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,381536c46bd1e16a9236502df3f748e5,2026-10-29T10:00:00Z,Daniel Altmaier,Jiri Lehecka,betclic_fr,2026-10-28T05:59:35Z,4.3,1.16
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,381536c46bd1e16a9236502df3f748e5,2026-10-29T10:00:00Z,Daniel Altmaier,Jiri Lehecka,tipico_de,2026-10-28T05:59:23Z,5.0,1.13
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,381536c46bd1e16a9236502df3f748e5,2026-10-29T10:00:00Z,Daniel Altmaier,Jiri Lehecka,winamax_fr,2026-10-28T05:59:46Z,4.6,1.17
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,381536c46bd1e16a9236502df3f748e5,2026-10-29T10:00:00Z,Daniel Altmaier,Jiri Lehecka,winamax_de,2026-10-28T05:59:02Z,5.1,1.19
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,381536c46bd1e16a9236502df3f748e5,2026-10-29T10:00:00Z,Daniel Altmaier,Jiri Lehecka,sport888,2026-10-28T05:59:45Z,5.0,1.17
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,381536c46bd1e16a9236502df3f748e5,2026-10-29T10:00:00Z,Daniel Altmaier,Jiri Lehecka,williamhill,2026-10-28T05:59:01Z,5.0,1.17
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,f7fa6060659fec573d7a7df3881aff82,2026-10-29T10:00:00Z,Valentin Vacherot,Rafael Jodar,betclic_fr,2026-10-28T05:59:34Z,3.25,1.26
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,f7fa6060659fec573d7a7df3881aff82,2026-10-29T10:00:00Z,Valentin Vacherot,Rafael Jodar,onexbet,2026-10-28T05:59:00Z,3.46,1.33
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,f7fa6060659fec573d7a7df3881aff82,2026-10-29T10:00:00Z,Valentin Vacherot,Rafael Jodar,betfair_ex_eu,2026-10-28T05:59:45Z,3.3,1.3
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,f7fa6060659fec573d7a7df3881aff82,2026-10-29T10:00:00Z,Valentin Vacherot,Rafael Jodar,nordicbet,2026-10-28T05:59:01Z,3.5,1.29
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,f7fa6060659fec573d7a7df3881aff82,2026-10-29T10:00:00Z,Valentin Vacherot,Rafael Jodar,matchbook,2026-10-28T05:59:45Z,3.3,1.3
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,f7fa6060659fec573d7a7df3881aff82,2026-10-29T10:00:00Z,Valentin Vacherot,Rafael Jodar,unibet_fr,2026-10-28T05:59:03Z,3.2,1.25
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,f7fa6060659fec573d7a7df3881aff82,2026-10-29T10:00:00Z,Valentin Vacherot,Rafael Jodar,marathonbet,2026-10-28T05:59:28Z,3.42,1.31
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,f7fa6060659fec573d7a7df3881aff82,2026-10-29T10:00:00Z,Valentin Vacherot,Rafael Jodar,betsson,2026-10-28T05:59:46Z,3.5,1.29
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,f7fa6060659fec573d7a7df3881aff82,2026-10-29T10:00:00Z,Valentin Vacherot,Rafael Jodar,coolbet,2026-10-28T05:59:24Z,3.42,1.32
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,f7fa6060659fec573d7a7df3881aff82,2026-10-29T10:00:00Z,Valentin Vacherot,Rafael Jodar,sport888,2026-10-28T05:59:45Z,3.3,1.33
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,f7fa6060659fec573d7a7df3881aff82,2026-10-29T10:00:00Z,Valentin Vacherot,Rafael Jodar,williamhill,2026-10-28T05:59:01Z,3.3,1.33
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,f7fa6060659fec573d7a7df3881aff82,2026-10-29T10:00:00Z,Valentin Vacherot,Rafael Jodar,tipico_de,2026-10-28T05:59:23Z,3.6,1.25
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,f7fa6060659fec573d7a7df3881aff82,2026-10-29T10:00:00Z,Valentin Vacherot,Rafael Jodar,winamax_de,2026-10-28T05:59:03Z,3.7,1.31
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,f7fa6060659fec573d7a7df3881aff82,2026-10-29T10:00:00Z,Valentin Vacherot,Rafael Jodar,winamax_fr,2026-10-28T05:59:46Z,3.4,1.28
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,f7fa6060659fec573d7a7df3881aff82,2026-10-29T10:00:00Z,Valentin Vacherot,Rafael Jodar,pinnacle,2026-10-28T05:59:45Z,3.46,1.35
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,f7fa6060659fec573d7a7df3881aff82,2026-10-29T10:00:00Z,Valentin Vacherot,Rafael Jodar,pmu_fr,2026-10-28T05:59:46Z,3.5,1.22
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,f7fa6060659fec573d7a7df3881aff82,2026-10-29T10:00:00Z,Valentin Vacherot,Rafael Jodar,unibet_se,2026-10-28T05:59:45Z,3.7,1.28
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,f7fa6060659fec573d7a7df3881aff82,2026-10-29T10:00:00Z,Valentin Vacherot,Rafael Jodar,leovegas_se,2026-10-28T05:59:45Z,3.7,1.28
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,f7fa6060659fec573d7a7df3881aff82,2026-10-29T10:00:00Z,Valentin Vacherot,Rafael Jodar,unibet_nl,2026-10-28T05:59:01Z,3.7,1.28
+2026-10-28T06:00:04Z,tennis_atp_swiss_indoors,f7fa6060659fec573d7a7df3881aff82,2026-10-29T10:00:00Z,Valentin Vacherot,Rafael Jodar,betonlineag,2026-10-28T05:59:05Z,3.37,1.34
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,01c5f7c5dda8e39a8d33c84b8d9e323d,2026-10-28T12:30:00Z,Tallon Griekspoor,Brandon Nakashima,betonlineag,2026-10-28T05:59:24Z,2.8,1.47
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,01c5f7c5dda8e39a8d33c84b8d9e323d,2026-10-28T12:30:00Z,Tallon Griekspoor,Brandon Nakashima,pmu_fr,2026-10-28T05:59:46Z,2.7,1.38
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,01c5f7c5dda8e39a8d33c84b8d9e323d,2026-10-28T12:30:00Z,Tallon Griekspoor,Brandon Nakashima,betanysports,2026-10-28T05:59:46Z,2.8,1.45
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,01c5f7c5dda8e39a8d33c84b8d9e323d,2026-10-28T12:30:00Z,Tallon Griekspoor,Brandon Nakashima,matchbook,2026-10-28T05:59:45Z,2.9,1.52
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,01c5f7c5dda8e39a8d33c84b8d9e323d,2026-10-28T12:30:00Z,Tallon Griekspoor,Brandon Nakashima,pinnacle,2026-10-28T05:59:45Z,2.9,1.46
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,01c5f7c5dda8e39a8d33c84b8d9e323d,2026-10-28T12:30:00Z,Tallon Griekspoor,Brandon Nakashima,betfair_ex_eu,2026-10-28T05:59:45Z,2.9,1.52
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,01c5f7c5dda8e39a8d33c84b8d9e323d,2026-10-28T12:30:00Z,Tallon Griekspoor,Brandon Nakashima,unibet_fr,2026-10-28T05:59:01Z,2.55,1.39
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,01c5f7c5dda8e39a8d33c84b8d9e323d,2026-10-28T12:30:00Z,Tallon Griekspoor,Brandon Nakashima,tipico_de,2026-10-28T05:59:24Z,2.85,1.37
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,01c5f7c5dda8e39a8d33c84b8d9e323d,2026-10-28T12:30:00Z,Tallon Griekspoor,Brandon Nakashima,onexbet,2026-10-28T05:59:46Z,2.88,1.44
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,01c5f7c5dda8e39a8d33c84b8d9e323d,2026-10-28T12:30:00Z,Tallon Griekspoor,Brandon Nakashima,marathonbet,2026-10-28T05:59:51Z,2.84,1.42
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,ad2ec395411c7dd956e92178f00c0c8d,2026-10-28T12:30:00Z,Daniel Merida Aguilar,Daniil Medvedev,betonlineag,2026-10-28T05:59:24Z,3.68,1.3
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,ad2ec395411c7dd956e92178f00c0c8d,2026-10-28T12:30:00Z,Daniel Merida Aguilar,Daniil Medvedev,leovegas_se,2026-10-28T05:59:01Z,3.3,1.33
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,ad2ec395411c7dd956e92178f00c0c8d,2026-10-28T12:30:00Z,Daniel Merida Aguilar,Daniil Medvedev,pmu_fr,2026-10-28T05:59:46Z,3.15,1.28
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,ad2ec395411c7dd956e92178f00c0c8d,2026-10-28T12:30:00Z,Daniel Merida Aguilar,Daniil Medvedev,betanysports,2026-10-28T05:59:46Z,3.5,1.31
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,ad2ec395411c7dd956e92178f00c0c8d,2026-10-28T12:30:00Z,Daniel Merida Aguilar,Daniil Medvedev,matchbook,2026-10-28T05:59:45Z,3.95,1.33
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,ad2ec395411c7dd956e92178f00c0c8d,2026-10-28T12:30:00Z,Daniel Merida Aguilar,Daniil Medvedev,pinnacle,2026-10-28T05:59:45Z,3.78,1.31
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,ad2ec395411c7dd956e92178f00c0c8d,2026-10-28T12:30:00Z,Daniel Merida Aguilar,Daniil Medvedev,betfair_ex_eu,2026-10-28T05:59:45Z,3.95,1.33
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,ad2ec395411c7dd956e92178f00c0c8d,2026-10-28T12:30:00Z,Daniel Merida Aguilar,Daniil Medvedev,unibet_nl,2026-10-28T05:59:47Z,3.3,1.33
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,ad2ec395411c7dd956e92178f00c0c8d,2026-10-28T12:30:00Z,Daniel Merida Aguilar,Daniil Medvedev,unibet_se,2026-10-28T05:59:01Z,3.3,1.33
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,ad2ec395411c7dd956e92178f00c0c8d,2026-10-28T12:30:00Z,Daniel Merida Aguilar,Daniil Medvedev,sport888,2026-10-28T06:00:07Z,3.5,1.3
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,ad2ec395411c7dd956e92178f00c0c8d,2026-10-28T12:30:00Z,Daniel Merida Aguilar,Daniil Medvedev,winamax_fr,2026-10-28T05:59:47Z,3.3,1.3
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,ad2ec395411c7dd956e92178f00c0c8d,2026-10-28T12:30:00Z,Daniel Merida Aguilar,Daniil Medvedev,winamax_de,2026-10-28T05:59:04Z,3.55,1.33
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,ad2ec395411c7dd956e92178f00c0c8d,2026-10-28T12:30:00Z,Daniel Merida Aguilar,Daniil Medvedev,unibet_fr,2026-10-28T05:59:01Z,3.1,1.27
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,ad2ec395411c7dd956e92178f00c0c8d,2026-10-28T12:30:00Z,Daniel Merida Aguilar,Daniil Medvedev,williamhill,2026-10-28T05:59:24Z,3.5,1.3
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,ad2ec395411c7dd956e92178f00c0c8d,2026-10-28T12:30:00Z,Daniel Merida Aguilar,Daniil Medvedev,coolbet,2026-10-28T05:59:24Z,3.6,1.29
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,ad2ec395411c7dd956e92178f00c0c8d,2026-10-28T12:30:00Z,Daniel Merida Aguilar,Daniil Medvedev,betsson,2026-10-28T05:59:46Z,3.35,1.31
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,ad2ec395411c7dd956e92178f00c0c8d,2026-10-28T12:30:00Z,Daniel Merida Aguilar,Daniil Medvedev,nordicbet,2026-10-28T05:59:01Z,3.35,1.31
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,ad2ec395411c7dd956e92178f00c0c8d,2026-10-28T12:30:00Z,Daniel Merida Aguilar,Daniil Medvedev,tipico_de,2026-10-28T05:59:24Z,3.4,1.27
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,ad2ec395411c7dd956e92178f00c0c8d,2026-10-28T12:30:00Z,Daniel Merida Aguilar,Daniil Medvedev,onexbet,2026-10-28T05:59:46Z,3.46,1.33
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,ad2ec395411c7dd956e92178f00c0c8d,2026-10-28T12:30:00Z,Daniel Merida Aguilar,Daniil Medvedev,betclic_fr,2026-10-28T05:59:35Z,3.3,1.3
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,ad2ec395411c7dd956e92178f00c0c8d,2026-10-28T12:30:00Z,Daniel Merida Aguilar,Daniil Medvedev,marathonbet,2026-10-28T05:59:51Z,3.42,1.31
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,84b3d47944a12f77e8f84c6442665671,2026-10-28T13:40:00Z,Lorenzo Musetti,Frances Tiafoe,betonlineag,2026-10-28T05:59:24Z,2.09,1.78
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,84b3d47944a12f77e8f84c6442665671,2026-10-28T13:40:00Z,Lorenzo Musetti,Frances Tiafoe,leovegas_se,2026-10-28T05:59:01Z,1.97,1.82
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,84b3d47944a12f77e8f84c6442665671,2026-10-28T13:40:00Z,Lorenzo Musetti,Frances Tiafoe,pmu_fr,2026-10-28T05:59:46Z,1.89,1.75
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,84b3d47944a12f77e8f84c6442665671,2026-10-28T13:40:00Z,Lorenzo Musetti,Frances Tiafoe,betanysports,2026-10-28T05:59:46Z,2.05,1.8
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,84b3d47944a12f77e8f84c6442665671,2026-10-28T13:40:00Z,Lorenzo Musetti,Frances Tiafoe,matchbook,2026-10-28T05:59:45Z,2.14,1.85
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,84b3d47944a12f77e8f84c6442665671,2026-10-28T13:40:00Z,Lorenzo Musetti,Frances Tiafoe,pinnacle,2026-10-28T05:59:45Z,2.09,1.81
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,84b3d47944a12f77e8f84c6442665671,2026-10-28T13:40:00Z,Lorenzo Musetti,Frances Tiafoe,betfair_ex_eu,2026-10-28T05:59:45Z,2.14,1.85
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,84b3d47944a12f77e8f84c6442665671,2026-10-28T13:40:00Z,Lorenzo Musetti,Frances Tiafoe,unibet_nl,2026-10-28T05:59:47Z,1.97,1.82
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,84b3d47944a12f77e8f84c6442665671,2026-10-28T13:40:00Z,Lorenzo Musetti,Frances Tiafoe,unibet_se,2026-10-28T05:59:01Z,1.97,1.82
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,84b3d47944a12f77e8f84c6442665671,2026-10-28T13:40:00Z,Lorenzo Musetti,Frances Tiafoe,winamax_fr,2026-10-28T05:59:47Z,1.96,1.78
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,84b3d47944a12f77e8f84c6442665671,2026-10-28T13:40:00Z,Lorenzo Musetti,Frances Tiafoe,winamax_de,2026-10-28T05:59:04Z,2.0,1.84
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,84b3d47944a12f77e8f84c6442665671,2026-10-28T13:40:00Z,Lorenzo Musetti,Frances Tiafoe,unibet_fr,2026-10-28T05:59:01Z,1.86,1.74
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,84b3d47944a12f77e8f84c6442665671,2026-10-28T13:40:00Z,Lorenzo Musetti,Frances Tiafoe,onexbet,2026-10-28T05:59:46Z,2.03,1.82
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,84b3d47944a12f77e8f84c6442665671,2026-10-28T13:40:00Z,Lorenzo Musetti,Frances Tiafoe,betclic_fr,2026-10-28T05:59:35Z,1.96,1.79
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,84b3d47944a12f77e8f84c6442665671,2026-10-28T13:40:00Z,Lorenzo Musetti,Frances Tiafoe,marathonbet,2026-10-28T05:59:51Z,2.0,1.8
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,fa400409de3b36b41d7f8316d636197e,2026-10-28T14:50:00Z,Jakub Mensik,Adrian Mannarino,matchbook,2026-10-28T05:59:45Z,1.23,5.1
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,fa400409de3b36b41d7f8316d636197e,2026-10-28T14:50:00Z,Jakub Mensik,Adrian Mannarino,betfair_ex_eu,2026-10-28T05:59:46Z,1.22,5.1
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,fa400409de3b36b41d7f8316d636197e,2026-10-28T14:50:00Z,Jakub Mensik,Adrian Mannarino,nordicbet,2026-10-28T05:59:01Z,1.19,4.5
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,fa400409de3b36b41d7f8316d636197e,2026-10-28T14:50:00Z,Jakub Mensik,Adrian Mannarino,marathonbet,2026-10-28T05:59:51Z,1.2,4.55
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,fa400409de3b36b41d7f8316d636197e,2026-10-28T14:50:00Z,Jakub Mensik,Adrian Mannarino,sport888,2026-10-28T06:00:07Z,1.2,4.5
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,fa400409de3b36b41d7f8316d636197e,2026-10-28T14:50:00Z,Jakub Mensik,Adrian Mannarino,onexbet,2026-10-28T05:59:46Z,1.21,4.61
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,fa400409de3b36b41d7f8316d636197e,2026-10-28T14:50:00Z,Jakub Mensik,Adrian Mannarino,coolbet,2026-10-28T05:59:24Z,1.2,4.6
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,fa400409de3b36b41d7f8316d636197e,2026-10-28T14:50:00Z,Jakub Mensik,Adrian Mannarino,unibet_fr,2026-10-28T05:59:01Z,1.16,4.0
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,fa400409de3b36b41d7f8316d636197e,2026-10-28T14:50:00Z,Jakub Mensik,Adrian Mannarino,williamhill,2026-10-28T05:59:24Z,1.2,4.5
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,fa400409de3b36b41d7f8316d636197e,2026-10-28T14:50:00Z,Jakub Mensik,Adrian Mannarino,betclic_fr,2026-10-28T05:59:35Z,1.19,4.4
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,fa400409de3b36b41d7f8316d636197e,2026-10-28T14:50:00Z,Jakub Mensik,Adrian Mannarino,betsson,2026-10-28T05:59:46Z,1.19,4.5
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,fa400409de3b36b41d7f8316d636197e,2026-10-28T14:50:00Z,Jakub Mensik,Adrian Mannarino,winamax_fr,2026-10-28T05:59:47Z,1.18,4.4
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,fa400409de3b36b41d7f8316d636197e,2026-10-28T14:50:00Z,Jakub Mensik,Adrian Mannarino,winamax_de,2026-10-28T05:59:04Z,1.21,4.8
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,fa400409de3b36b41d7f8316d636197e,2026-10-28T14:50:00Z,Jakub Mensik,Adrian Mannarino,tipico_de,2026-10-28T05:59:24Z,1.16,4.5
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,fa400409de3b36b41d7f8316d636197e,2026-10-28T14:50:00Z,Jakub Mensik,Adrian Mannarino,pinnacle,2026-10-28T05:59:45Z,1.21,4.94
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,fa400409de3b36b41d7f8316d636197e,2026-10-28T14:50:00Z,Jakub Mensik,Adrian Mannarino,unibet_se,2026-10-28T05:59:01Z,1.21,4.4
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,fa400409de3b36b41d7f8316d636197e,2026-10-28T14:50:00Z,Jakub Mensik,Adrian Mannarino,leovegas_se,2026-10-28T05:59:01Z,1.21,4.4
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,fa400409de3b36b41d7f8316d636197e,2026-10-28T14:50:00Z,Jakub Mensik,Adrian Mannarino,pmu_fr,2026-10-28T05:59:46Z,1.17,4.1
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,fa400409de3b36b41d7f8316d636197e,2026-10-28T14:50:00Z,Jakub Mensik,Adrian Mannarino,unibet_nl,2026-10-28T05:59:47Z,1.21,4.4
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,fa400409de3b36b41d7f8316d636197e,2026-10-28T14:50:00Z,Jakub Mensik,Adrian Mannarino,betonlineag,2026-10-28T05:59:24Z,1.19,4.79
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,fa400409de3b36b41d7f8316d636197e,2026-10-28T14:50:00Z,Jakub Mensik,Adrian Mannarino,betanysports,2026-10-28T05:59:46Z,1.2,4.2
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,484a0fff5b3739c2bbc79cafff73007c,2026-10-28T16:30:00Z,Jurij Rodionov,Nikoloz Basilashvili,leovegas_se,2026-10-28T05:59:01Z,2.18,1.68
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,484a0fff5b3739c2bbc79cafff73007c,2026-10-28T16:30:00Z,Jurij Rodionov,Nikoloz Basilashvili,pmu_fr,2026-10-28T05:59:46Z,2.08,1.62
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,484a0fff5b3739c2bbc79cafff73007c,2026-10-28T16:30:00Z,Jurij Rodionov,Nikoloz Basilashvili,matchbook,2026-10-28T05:59:45Z,2.36,1.73
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,484a0fff5b3739c2bbc79cafff73007c,2026-10-28T16:30:00Z,Jurij Rodionov,Nikoloz Basilashvili,betfair_ex_eu,2026-10-28T05:59:45Z,2.36,1.73
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,484a0fff5b3739c2bbc79cafff73007c,2026-10-28T16:30:00Z,Jurij Rodionov,Nikoloz Basilashvili,unibet_nl,2026-10-28T05:59:47Z,2.18,1.68
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,484a0fff5b3739c2bbc79cafff73007c,2026-10-28T16:30:00Z,Jurij Rodionov,Nikoloz Basilashvili,unibet_se,2026-10-28T05:59:01Z,2.18,1.68
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,484a0fff5b3739c2bbc79cafff73007c,2026-10-28T16:30:00Z,Jurij Rodionov,Nikoloz Basilashvili,winamax_fr,2026-10-28T05:59:47Z,2.1,1.64
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,484a0fff5b3739c2bbc79cafff73007c,2026-10-28T16:30:00Z,Jurij Rodionov,Nikoloz Basilashvili,winamax_de,2026-10-28T05:59:04Z,2.2,1.7
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,484a0fff5b3739c2bbc79cafff73007c,2026-10-28T16:30:00Z,Jurij Rodionov,Nikoloz Basilashvili,onexbet,2026-10-28T05:59:46Z,2.18,1.72
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,484a0fff5b3739c2bbc79cafff73007c,2026-10-28T16:30:00Z,Jurij Rodionov,Nikoloz Basilashvili,marathonbet,2026-10-28T05:59:51Z,2.15,1.69
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T19:00:00Z,Learner Tien,Alex de Minaur,marathonbet,2026-10-28T05:59:51Z,1.93,1.86
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T19:00:00Z,Learner Tien,Alex de Minaur,betclic_fr,2026-10-28T05:59:35Z,1.89,1.84
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T19:00:00Z,Learner Tien,Alex de Minaur,betfair_ex_eu,2026-10-28T05:59:45Z,2.06,1.93
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T19:00:00Z,Learner Tien,Alex de Minaur,williamhill,2026-10-28T05:59:24Z,1.95,1.85
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T19:00:00Z,Learner Tien,Alex de Minaur,coolbet,2026-10-28T05:59:24Z,1.95,1.87
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T19:00:00Z,Learner Tien,Alex de Minaur,onexbet,2026-10-28T05:59:46Z,1.96,1.89
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T19:00:00Z,Learner Tien,Alex de Minaur,sport888,2026-10-28T06:00:07Z,1.95,1.85
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T19:00:00Z,Learner Tien,Alex de Minaur,winamax_fr,2026-10-28T05:59:47Z,1.88,1.84
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T19:00:00Z,Learner Tien,Alex de Minaur,winamax_de,2026-10-28T05:59:04Z,1.96,1.9
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T19:00:00Z,Learner Tien,Alex de Minaur,matchbook,2026-10-28T05:59:45Z,2.04,1.93
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T19:00:00Z,Learner Tien,Alex de Minaur,unibet_nl,2026-10-28T05:59:47Z,1.93,1.87
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T19:00:00Z,Learner Tien,Alex de Minaur,unibet_se,2026-10-28T05:59:01Z,1.93,1.87
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T19:00:00Z,Learner Tien,Alex de Minaur,pmu_fr,2026-10-28T05:59:46Z,1.85,1.79
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T19:00:00Z,Learner Tien,Alex de Minaur,leovegas_se,2026-10-28T05:59:01Z,1.93,1.87
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T19:00:00Z,Learner Tien,Alex de Minaur,pinnacle,2026-10-28T05:59:45Z,2.01,1.9
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T19:00:00Z,Learner Tien,Alex de Minaur,betonlineag,2026-10-28T05:59:24Z,1.96,1.86
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9249512284975eaacf64fcaced7e57b0,2026-10-28T19:00:00Z,Learner Tien,Alex de Minaur,betanysports,2026-10-28T05:59:46Z,2.05,1.8
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,3b65bc657a2d7391944d9e343c189c52,2026-10-29T12:00:00Z,Flavio Cobolli,Matteo Berrettini,coolbet,2026-10-28T05:59:24Z,1.95,1.87
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,3b65bc657a2d7391944d9e343c189c52,2026-10-29T12:00:00Z,Flavio Cobolli,Matteo Berrettini,sport888,2026-10-28T06:00:07Z,1.91,1.91
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,3b65bc657a2d7391944d9e343c189c52,2026-10-29T12:00:00Z,Flavio Cobolli,Matteo Berrettini,nordicbet,2026-10-28T05:59:01Z,1.94,1.84
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,3b65bc657a2d7391944d9e343c189c52,2026-10-29T12:00:00Z,Flavio Cobolli,Matteo Berrettini,unibet_fr,2026-10-28T05:59:01Z,1.85,1.76
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,3b65bc657a2d7391944d9e343c189c52,2026-10-29T12:00:00Z,Flavio Cobolli,Matteo Berrettini,betsson,2026-10-28T05:59:46Z,1.94,1.84
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,3b65bc657a2d7391944d9e343c189c52,2026-10-29T12:00:00Z,Flavio Cobolli,Matteo Berrettini,betfair_ex_eu,2026-10-28T05:59:46Z,1.97,1.92
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,3b65bc657a2d7391944d9e343c189c52,2026-10-29T12:00:00Z,Flavio Cobolli,Matteo Berrettini,williamhill,2026-10-28T05:59:24Z,1.91,1.91
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,3b65bc657a2d7391944d9e343c189c52,2026-10-29T12:00:00Z,Flavio Cobolli,Matteo Berrettini,marathonbet,2026-10-28T05:59:51Z,1.95,1.84
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,3b65bc657a2d7391944d9e343c189c52,2026-10-29T12:00:00Z,Flavio Cobolli,Matteo Berrettini,betclic_fr,2026-10-28T05:59:35Z,1.86,1.78
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,3b65bc657a2d7391944d9e343c189c52,2026-10-29T12:00:00Z,Flavio Cobolli,Matteo Berrettini,onexbet,2026-10-28T05:59:46Z,1.98,1.87
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,3b65bc657a2d7391944d9e343c189c52,2026-10-29T12:00:00Z,Flavio Cobolli,Matteo Berrettini,winamax_de,2026-10-28T05:59:04Z,1.98,1.88
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,3b65bc657a2d7391944d9e343c189c52,2026-10-29T12:00:00Z,Flavio Cobolli,Matteo Berrettini,winamax_fr,2026-10-28T05:59:47Z,1.9,1.82
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,3b65bc657a2d7391944d9e343c189c52,2026-10-29T12:00:00Z,Flavio Cobolli,Matteo Berrettini,tipico_de,2026-10-28T05:59:24Z,1.85,1.85
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9f79477cee7d1e998aa4b8a7beec9b28,2026-10-29T12:00:00Z,Tommy Paul,Luciano Darderi,unibet_fr,2026-10-28T05:59:01Z,1.22,3.45
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9f79477cee7d1e998aa4b8a7beec9b28,2026-10-29T12:00:00Z,Tommy Paul,Luciano Darderi,betclic_fr,2026-10-28T05:59:35Z,1.22,3.55
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9f79477cee7d1e998aa4b8a7beec9b28,2026-10-29T12:00:00Z,Tommy Paul,Luciano Darderi,betfair_ex_eu,2026-10-28T05:59:46Z,1.23,3.75
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9f79477cee7d1e998aa4b8a7beec9b28,2026-10-29T12:00:00Z,Tommy Paul,Luciano Darderi,nordicbet,2026-10-28T05:59:01Z,1.25,3.85
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9f79477cee7d1e998aa4b8a7beec9b28,2026-10-29T12:00:00Z,Tommy Paul,Luciano Darderi,betsson,2026-10-28T05:59:46Z,1.25,3.85
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9f79477cee7d1e998aa4b8a7beec9b28,2026-10-29T12:00:00Z,Tommy Paul,Luciano Darderi,williamhill,2026-10-28T05:59:24Z,1.29,3.6
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9f79477cee7d1e998aa4b8a7beec9b28,2026-10-29T12:00:00Z,Tommy Paul,Luciano Darderi,coolbet,2026-10-28T05:59:24Z,1.26,3.9
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9f79477cee7d1e998aa4b8a7beec9b28,2026-10-29T12:00:00Z,Tommy Paul,Luciano Darderi,sport888,2026-10-28T06:00:07Z,1.29,3.6
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9f79477cee7d1e998aa4b8a7beec9b28,2026-10-29T12:00:00Z,Tommy Paul,Luciano Darderi,tipico_de,2026-10-28T05:59:24Z,1.25,3.6
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9f79477cee7d1e998aa4b8a7beec9b28,2026-10-29T12:00:00Z,Tommy Paul,Luciano Darderi,onexbet,2026-10-28T05:59:46Z,1.27,3.96
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9f79477cee7d1e998aa4b8a7beec9b28,2026-10-29T12:00:00Z,Tommy Paul,Luciano Darderi,winamax_de,2026-10-28T05:59:04Z,1.27,4.0
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9f79477cee7d1e998aa4b8a7beec9b28,2026-10-29T12:00:00Z,Tommy Paul,Luciano Darderi,winamax_fr,2026-10-28T05:59:47Z,1.24,3.75
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9f79477cee7d1e998aa4b8a7beec9b28,2026-10-29T12:00:00Z,Tommy Paul,Luciano Darderi,marathonbet,2026-10-28T05:59:51Z,1.25,3.9
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9f79477cee7d1e998aa4b8a7beec9b28,2026-10-29T12:00:00Z,Tommy Paul,Luciano Darderi,unibet_nl,2026-10-28T05:59:47Z,1.26,3.9
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9f79477cee7d1e998aa4b8a7beec9b28,2026-10-29T12:00:00Z,Tommy Paul,Luciano Darderi,unibet_se,2026-10-28T05:59:01Z,1.26,3.9
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9f79477cee7d1e998aa4b8a7beec9b28,2026-10-29T12:00:00Z,Tommy Paul,Luciano Darderi,leovegas_se,2026-10-28T05:59:01Z,1.26,3.9
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9f79477cee7d1e998aa4b8a7beec9b28,2026-10-29T12:00:00Z,Tommy Paul,Luciano Darderi,pmu_fr,2026-10-28T05:59:46Z,1.21,3.65
+2026-10-28T06:00:04Z,tennis_atp_vienna_open,9f79477cee7d1e998aa4b8a7beec9b28,2026-10-29T12:00:00Z,Tommy Paul,Luciano Darderi,matchbook,2026-10-28T05:59:45Z,1.23,3.4
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T06:10:00Z,Aliaksandra Sasnovich,Diana Shnaider,onexbet,2026-10-28T05:59:45Z,3.67,1.29
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T06:10:00Z,Aliaksandra Sasnovich,Diana Shnaider,williamhill,2026-10-28T05:59:24Z,3.5,1.3
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T06:10:00Z,Aliaksandra Sasnovich,Diana Shnaider,betfair_ex_eu,2026-10-28T06:00:08Z,3.85,1.34
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T06:10:00Z,Aliaksandra Sasnovich,Diana Shnaider,nordicbet,2026-10-28T05:59:46Z,3.7,1.27
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T06:10:00Z,Aliaksandra Sasnovich,Diana Shnaider,winamax_fr,2026-10-28T05:59:47Z,3.7,1.24
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T06:10:00Z,Aliaksandra Sasnovich,Diana Shnaider,coolbet,2026-10-28T05:59:46Z,3.65,1.29
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T06:10:00Z,Aliaksandra Sasnovich,Diana Shnaider,winamax_de,2026-10-28T05:59:47Z,4.0,1.27
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T06:10:00Z,Aliaksandra Sasnovich,Diana Shnaider,marathonbet,2026-10-28T05:59:26Z,3.64,1.28
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T06:10:00Z,Aliaksandra Sasnovich,Diana Shnaider,matchbook,2026-10-28T06:00:07Z,3.85,1.34
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T06:10:00Z,Aliaksandra Sasnovich,Diana Shnaider,sport888,2026-10-28T05:59:45Z,3.5,1.3
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T06:10:00Z,Aliaksandra Sasnovich,Diana Shnaider,betsson,2026-10-28T05:59:46Z,3.7,1.27
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T06:10:00Z,Aliaksandra Sasnovich,Diana Shnaider,betclic_fr,2026-10-28T05:58:26Z,3.65,1.23
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T06:10:00Z,Aliaksandra Sasnovich,Diana Shnaider,pmu_fr,2026-10-28T05:59:46Z,3.4,1.24
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T06:10:00Z,Aliaksandra Sasnovich,Diana Shnaider,unibet_se,2026-10-28T05:59:46Z,3.6,1.29
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T06:10:00Z,Aliaksandra Sasnovich,Diana Shnaider,leovegas_se,2026-10-28T06:00:07Z,3.6,1.29
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T06:10:00Z,Aliaksandra Sasnovich,Diana Shnaider,unibet_nl,2026-10-28T05:59:45Z,3.6,1.29
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T06:10:00Z,Aliaksandra Sasnovich,Diana Shnaider,betonlineag,2026-10-28T06:00:07Z,3.68,1.3
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,858c932001cd6c4b11fd5d677df55fc1,2026-10-28T06:10:00Z,Aliaksandra Sasnovich,Diana Shnaider,betanysports,2026-10-28T06:00:08Z,3.5,1.31
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,a9fac6056a7fb978aceab5182f56271b,2026-10-28T08:00:00Z,Alexandra Eala,Talia Gibson,unibet_fr,2026-10-28T05:59:24Z,1.3,2.95
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,a9fac6056a7fb978aceab5182f56271b,2026-10-28T08:00:00Z,Alexandra Eala,Talia Gibson,betfair_ex_eu,2026-10-28T06:00:08Z,1.41,3.3
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,a9fac6056a7fb978aceab5182f56271b,2026-10-28T08:00:00Z,Alexandra Eala,Talia Gibson,onexbet,2026-10-28T05:59:45Z,1.34,3.29
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,a9fac6056a7fb978aceab5182f56271b,2026-10-28T08:00:00Z,Alexandra Eala,Talia Gibson,williamhill,2026-10-28T05:59:24Z,1.36,3.1
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,a9fac6056a7fb978aceab5182f56271b,2026-10-28T08:00:00Z,Alexandra Eala,Talia Gibson,marathonbet,2026-10-28T05:59:26Z,1.34,3.22
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,a9fac6056a7fb978aceab5182f56271b,2026-10-28T08:00:00Z,Alexandra Eala,Talia Gibson,sport888,2026-10-28T05:59:45Z,1.36,3.1
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,a9fac6056a7fb978aceab5182f56271b,2026-10-28T08:00:00Z,Alexandra Eala,Talia Gibson,betsson,2026-10-28T05:59:46Z,1.34,3.2
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,a9fac6056a7fb978aceab5182f56271b,2026-10-28T08:00:00Z,Alexandra Eala,Talia Gibson,nordicbet,2026-10-28T05:59:46Z,1.34,3.2
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,a9fac6056a7fb978aceab5182f56271b,2026-10-28T08:00:00Z,Alexandra Eala,Talia Gibson,coolbet,2026-10-28T05:59:46Z,1.34,3.3
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,a9fac6056a7fb978aceab5182f56271b,2026-10-28T08:00:00Z,Alexandra Eala,Talia Gibson,betclic_fr,2026-10-28T05:58:26Z,1.33,3.15
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,a9fac6056a7fb978aceab5182f56271b,2026-10-28T08:00:00Z,Alexandra Eala,Talia Gibson,matchbook,2026-10-28T06:00:07Z,1.42,3.3
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,a9fac6056a7fb978aceab5182f56271b,2026-10-28T08:00:00Z,Alexandra Eala,Talia Gibson,winamax_de,2026-10-28T05:59:47Z,1.36,3.35
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,a9fac6056a7fb978aceab5182f56271b,2026-10-28T08:00:00Z,Alexandra Eala,Talia Gibson,leovegas_se,2026-10-28T06:00:07Z,1.34,3.25
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,a9fac6056a7fb978aceab5182f56271b,2026-10-28T08:00:00Z,Alexandra Eala,Talia Gibson,pmu_fr,2026-10-28T05:59:46Z,1.29,3.1
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,a9fac6056a7fb978aceab5182f56271b,2026-10-28T08:00:00Z,Alexandra Eala,Talia Gibson,unibet_se,2026-10-28T05:59:46Z,1.34,3.25
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,a9fac6056a7fb978aceab5182f56271b,2026-10-28T08:00:00Z,Alexandra Eala,Talia Gibson,unibet_nl,2026-10-28T05:59:46Z,1.34,3.25
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,a9fac6056a7fb978aceab5182f56271b,2026-10-28T08:00:00Z,Alexandra Eala,Talia Gibson,winamax_fr,2026-10-28T05:59:47Z,1.33,3.1
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,a9fac6056a7fb978aceab5182f56271b,2026-10-28T08:00:00Z,Alexandra Eala,Talia Gibson,tipico_de,2026-10-28T05:59:46Z,1.3,3.2
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,a9fac6056a7fb978aceab5182f56271b,2026-10-28T08:00:00Z,Alexandra Eala,Talia Gibson,betonlineag,2026-10-28T06:00:07Z,1.34,3.37
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,a9fac6056a7fb978aceab5182f56271b,2026-10-28T08:00:00Z,Alexandra Eala,Talia Gibson,pinnacle,2026-10-28T06:00:07Z,1.38,3.31
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,a9fac6056a7fb978aceab5182f56271b,2026-10-28T08:00:00Z,Alexandra Eala,Talia Gibson,betanysports,2026-10-28T06:00:08Z,1.35,3.35
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,8cc69dee985efaaa4d02ce47ce9ae17a,2026-10-29T04:00:00Z,Alycia Parks,Kimberly Birrell,betfair_ex_eu,2026-10-28T06:00:08Z,2.48,1.65
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,8cc69dee985efaaa4d02ce47ce9ae17a,2026-10-29T04:00:00Z,Alycia Parks,Kimberly Birrell,onexbet,2026-10-28T05:59:45Z,2.41,1.58
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,8cc69dee985efaaa4d02ce47ce9ae17a,2026-10-29T04:00:00Z,Alycia Parks,Kimberly Birrell,marathonbet,2026-10-28T05:59:26Z,2.39,1.57
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,8cc69dee985efaaa4d02ce47ce9ae17a,2026-10-29T04:00:00Z,Alycia Parks,Kimberly Birrell,pinnacle,2026-10-28T06:00:07Z,2.47,1.61
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,8cc69dee985efaaa4d02ce47ce9ae17a,2026-10-29T04:00:00Z,Alycia Parks,Kimberly Birrell,betonlineag,2026-10-28T06:00:07Z,2.47,1.59
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,8cc69dee985efaaa4d02ce47ce9ae17a,2026-10-29T04:00:00Z,Alycia Parks,Kimberly Birrell,betanysports,2026-10-28T06:00:08Z,2.45,1.59
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,8cc69dee985efaaa4d02ce47ce9ae17a,2026-10-29T04:00:00Z,Alycia Parks,Kimberly Birrell,coolbet,2026-10-28T05:59:46Z,2.4,1.58
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,8cc69dee985efaaa4d02ce47ce9ae17a,2026-10-29T04:00:00Z,Alycia Parks,Kimberly Birrell,matchbook,2026-10-28T06:00:07Z,2.48,1.65
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T04:00:00Z,Elena Rybakina,Yulia Putintseva,onexbet,2026-10-28T05:59:45Z,1.13,6.15
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T04:00:00Z,Elena Rybakina,Yulia Putintseva,williamhill,2026-10-28T05:59:24Z,1.11,6.5
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T04:00:00Z,Elena Rybakina,Yulia Putintseva,betfair_ex_eu,2026-10-28T06:00:08Z,1.13,7.6
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T04:00:00Z,Elena Rybakina,Yulia Putintseva,nordicbet,2026-10-28T05:59:46Z,1.12,6.0
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T04:00:00Z,Elena Rybakina,Yulia Putintseva,winamax_fr,2026-10-28T05:59:47Z,1.09,6.25
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T04:00:00Z,Elena Rybakina,Yulia Putintseva,coolbet,2026-10-28T05:59:46Z,1.12,6.4
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T04:00:00Z,Elena Rybakina,Yulia Putintseva,winamax_de,2026-10-28T05:59:47Z,1.11,7.25
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T04:00:00Z,Elena Rybakina,Yulia Putintseva,marathonbet,2026-10-28T05:59:26Z,1.12,6.1
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T04:00:00Z,Elena Rybakina,Yulia Putintseva,sport888,2026-10-28T05:59:45Z,1.11,6.5
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T04:00:00Z,Elena Rybakina,Yulia Putintseva,betsson,2026-10-28T05:59:46Z,1.12,6.0
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T04:00:00Z,Elena Rybakina,Yulia Putintseva,matchbook,2026-10-28T06:00:07Z,1.13,7.6
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T04:00:00Z,Elena Rybakina,Yulia Putintseva,pinnacle,2026-10-28T06:00:07Z,1.11,7.31
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T04:00:00Z,Elena Rybakina,Yulia Putintseva,betonlineag,2026-10-28T06:00:07Z,1.12,6.59
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T04:00:00Z,Elena Rybakina,Yulia Putintseva,betanysports,2026-10-28T06:00:08Z,1.11,6.45
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T04:00:00Z,Elena Rybakina,Yulia Putintseva,leovegas_se,2026-10-28T06:00:07Z,1.14,5.8
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T04:00:00Z,Elena Rybakina,Yulia Putintseva,pmu_fr,2026-10-28T05:59:46Z,1.1,5.3
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T04:00:00Z,Elena Rybakina,Yulia Putintseva,unibet_se,2026-10-28T05:59:46Z,1.14,5.8
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,1fa60410ca17efcd43616ab025a3b0e4,2026-10-29T04:00:00Z,Elena Rybakina,Yulia Putintseva,unibet_nl,2026-10-28T05:59:46Z,1.14,5.8
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T04:00:00Z,Leylah Fernandez,Elise Mertens,unibet_fr,2026-10-28T05:59:24Z,1.8,1.81
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T04:00:00Z,Leylah Fernandez,Elise Mertens,onexbet,2026-10-28T05:59:45Z,1.96,1.87
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T04:00:00Z,Leylah Fernandez,Elise Mertens,williamhill,2026-10-28T05:59:24Z,2.0,1.8
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T04:00:00Z,Leylah Fernandez,Elise Mertens,betfair_ex_eu,2026-10-28T06:00:08Z,2.08,1.88
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T04:00:00Z,Leylah Fernandez,Elise Mertens,nordicbet,2026-10-28T05:59:46Z,1.88,1.89
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T04:00:00Z,Leylah Fernandez,Elise Mertens,winamax_fr,2026-10-28T05:59:47Z,1.86,1.86
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T04:00:00Z,Leylah Fernandez,Elise Mertens,coolbet,2026-10-28T05:59:46Z,1.92,1.89
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T04:00:00Z,Leylah Fernandez,Elise Mertens,winamax_de,2026-10-28T05:59:47Z,1.92,1.94
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T04:00:00Z,Leylah Fernandez,Elise Mertens,marathonbet,2026-10-28T05:59:26Z,1.94,1.85
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T04:00:00Z,Leylah Fernandez,Elise Mertens,sport888,2026-10-28T05:59:45Z,2.0,1.8
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T04:00:00Z,Leylah Fernandez,Elise Mertens,betsson,2026-10-28T05:59:46Z,1.88,1.89
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T04:00:00Z,Leylah Fernandez,Elise Mertens,betclic_fr,2026-10-28T05:58:26Z,1.81,1.82
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T04:00:00Z,Leylah Fernandez,Elise Mertens,matchbook,2026-10-28T06:00:07Z,2.08,1.88
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T04:00:00Z,Leylah Fernandez,Elise Mertens,tipico_de,2026-10-28T05:59:46Z,1.8,1.9
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T04:00:00Z,Leylah Fernandez,Elise Mertens,betonlineag,2026-10-28T06:00:07Z,2.02,1.82
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T04:00:00Z,Leylah Fernandez,Elise Mertens,pinnacle,2026-10-28T06:00:07Z,2.05,1.85
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T04:00:00Z,Leylah Fernandez,Elise Mertens,betanysports,2026-10-28T06:00:08Z,1.91,1.83
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T04:00:00Z,Leylah Fernandez,Elise Mertens,pmu_fr,2026-10-28T05:59:46Z,1.88,1.76
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T04:00:00Z,Leylah Fernandez,Elise Mertens,unibet_se,2026-10-28T05:59:46Z,1.96,1.83
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T04:00:00Z,Leylah Fernandez,Elise Mertens,unibet_nl,2026-10-28T05:59:46Z,1.96,1.83
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,0148c3d6327ac9f98ddf4b277bfc8a3e,2026-10-29T04:00:00Z,Leylah Fernandez,Elise Mertens,leovegas_se,2026-10-28T06:00:07Z,1.96,1.83
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T04:00:00Z,Naomi Osaka,Mia Pohánková,winamax_de,2026-10-28T05:59:47Z,1.26,4.1
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T04:00:00Z,Naomi Osaka,Mia Pohánková,betsson,2026-10-28T05:59:46Z,1.26,3.7
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T04:00:00Z,Naomi Osaka,Mia Pohánková,unibet_fr,2026-10-28T05:59:24Z,1.23,3.35
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T04:00:00Z,Naomi Osaka,Mia Pohánková,winamax_fr,2026-10-28T05:59:47Z,1.23,3.8
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T04:00:00Z,Naomi Osaka,Mia Pohánková,betfair_ex_eu,2026-10-28T06:00:08Z,1.27,4.3
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T04:00:00Z,Naomi Osaka,Mia Pohánková,nordicbet,2026-10-28T05:59:46Z,1.26,3.7
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T04:00:00Z,Naomi Osaka,Mia Pohánková,williamhill,2026-10-28T05:59:24Z,1.25,4.0
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T04:00:00Z,Naomi Osaka,Mia Pohánková,sport888,2026-10-28T05:59:45Z,1.25,4.0
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T04:00:00Z,Naomi Osaka,Mia Pohánková,onexbet,2026-10-28T05:59:45Z,1.27,3.83
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T04:00:00Z,Naomi Osaka,Mia Pohánková,coolbet,2026-10-28T05:59:46Z,1.26,3.9
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T04:00:00Z,Naomi Osaka,Mia Pohánková,matchbook,2026-10-28T06:00:07Z,1.27,4.3
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T04:00:00Z,Naomi Osaka,Mia Pohánková,betclic_fr,2026-10-28T05:58:26Z,1.24,3.45
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T04:00:00Z,Naomi Osaka,Mia Pohánková,marathonbet,2026-10-28T05:59:26Z,1.26,3.8
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T04:00:00Z,Naomi Osaka,Mia Pohánková,pmu_fr,2026-10-28T05:59:46Z,1.23,3.45
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T04:00:00Z,Naomi Osaka,Mia Pohánková,unibet_se,2026-10-28T05:59:46Z,1.29,3.65
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T04:00:00Z,Naomi Osaka,Mia Pohánková,leovegas_se,2026-10-28T06:00:07Z,1.29,3.65
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T04:00:00Z,Naomi Osaka,Mia Pohánková,unibet_nl,2026-10-28T05:59:46Z,1.29,3.65
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T04:00:00Z,Naomi Osaka,Mia Pohánková,tipico_de,2026-10-28T05:59:46Z,1.22,3.8
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T04:00:00Z,Naomi Osaka,Mia Pohánková,betonlineag,2026-10-28T06:00:07Z,1.26,4.1
+2026-10-28T06:00:04Z,tennis_wta_pan_pacific_open,d04e7e6ce329fccbd0b365240f807cca,2026-10-29T04:00:00Z,Naomi Osaka,Mia Pohánková,pinnacle,2026-10-28T06:00:07Z,1.25,4.31
