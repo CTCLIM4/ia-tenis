@@ -115,3 +115,25 @@ def test_summary_without_audit_rows_since_first_snapshot(snapshot_dir, tmp_path)
     _audit(timestamp="2026-09-01T08:00:00").to_csv(audit, index=False)
     r = clv.summary(snapshot_dir, audit, 8, n_boot=50)
     assert r["audit_rows"] == 0 and r["slope"] is None
+
+
+class TestReadyForBets:
+    def test_false_on_missing_or_empty_tracking(self):
+        assert clv.ready_for_bets(None) is False
+        assert clv.ready_for_bets({}) is False
+        assert clv.ready_for_bets({"picks": 0, "clv_ci": (0.01, 0.05)}) is False
+
+    def test_false_below_min_sample_even_with_positive_ci(self):
+        tracking = {"picks": 43, "clv_ci": (0.003, 0.059)}
+        assert clv.ready_for_bets(tracking) is False
+        assert clv.ready_for_bets(tracking, min_sample=43) is True
+
+    def test_false_when_ci_touches_or_crosses_zero(self):
+        tracking = {"picks": 200, "clv_ci": (-0.01, 0.05)}
+        assert clv.ready_for_bets(tracking) is False
+        tracking = {"picks": 200, "clv_ci": (0.0, 0.05)}
+        assert clv.ready_for_bets(tracking) is False
+
+    def test_true_once_sample_and_ci_both_clear(self):
+        tracking = {"picks": 150, "clv_ci": (0.004, 0.06)}
+        assert clv.ready_for_bets(tracking) is True

@@ -196,8 +196,8 @@ class TestRun:
         self.sent = {}
         monkeypatch.setattr(
             workflow, "send_picks_email",
-            lambda picks, vpn, signals=None, tracking=None: self.sent.update(
-                picks=picks, vpn=vpn, signals=signals, tracking=tracking) or True,
+            lambda picks, vpn, signals=None, tracking=None, clv_alert=False: self.sent.update(
+                picks=picks, vpn=vpn, signals=signals, tracking=tracking, clv_alert=clv_alert) or True,
         )
         self.pushed = {}
         monkeypatch.setattr(
@@ -495,7 +495,7 @@ class TestRunLogIntegrity:
         monkeypatch.setattr(workflow, "discover_matches", lambda *a, **kw: [result.match])
         monkeypatch.setattr(workflow, "evaluate_matches", lambda matches, models: [result])
         monkeypatch.setattr(workflow, "track_vpn_usage", lambda: {})
-        monkeypatch.setattr(workflow, "send_picks_email", lambda *a: True)
+        monkeypatch.setattr(workflow, "send_picks_email", lambda *a, **kw: True)
         monkeypatch.setattr(workflow, "commit_and_push", lambda *a: True)
         monkeypatch.setattr(workflow, "log_prediction_audit", lambda *a, **kw: None)
         backups = []
@@ -610,6 +610,30 @@ class TestClvTracking:
         monkeypatch.setattr(clv_report, "summary", boom)
         assert _REAL_CLV_TRACKING() is None
         assert "corrupt snapshot" in capsys.readouterr().out
+
+    def test_email_gets_clv_alert_flag(self, monkeypatch):
+        import scripts.clv_report as clv_report
+        monkeypatch.setattr(workflow, "_clv_tracking", lambda: {"picks": 150, "clv_ci": (0.01, 0.05)})
+        t = TestRun()
+        t._wire_common(monkeypatch, [])
+        workflow.run()
+        assert t.sent["clv_alert"] is True
+
+    def test_email_clv_alert_false_below_threshold(self, monkeypatch):
+        monkeypatch.setattr(workflow, "_clv_tracking", lambda: {"picks": 43, "clv_ci": (0.003, 0.059)})
+        t = TestRun()
+        t._wire_common(monkeypatch, [])
+        workflow.run()
+        assert t.sent["clv_alert"] is False
+
+    def test_clv_alert_failure_never_breaks_the_run(self, monkeypatch, capsys):
+        import scripts.clv_report as clv_report
+
+        def boom(tracking):
+            raise ValueError("bad tracking shape")
+        monkeypatch.setattr(clv_report, "ready_for_bets", boom)
+        assert workflow._clv_alert({"picks": 150, "clv_ci": (0.01, 0.05)}) is False
+        assert "bad tracking shape" in capsys.readouterr().out
 
 
 class TestTelegram:

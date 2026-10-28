@@ -173,3 +173,28 @@ class TestTrackingPanels:
         monkeypatch.setattr(notifier.smtplib, "SMTP", _FakeSMTP)
         notifier.send_picks_email([], SAMPLE_VPN_OK, signals=[self.SIGNAL])
         assert sent["msg"]["Subject"] == "ia-tenis: 0 pick(s) del dia, 1 senal(es) en seguimiento"
+
+    def test_no_clv_banner_by_default(self):
+        html = notifier.build_email_html(SAMPLE_PICKS, SAMPLE_VPN_OK)
+        assert "CLV con muestra suficiente" not in html
+
+    def test_clv_alert_shows_banner(self):
+        html = notifier.build_email_html(SAMPLE_PICKS, SAMPLE_VPN_OK, clv_alert=True)
+        assert "CLV con muestra suficiente" in html
+
+    def test_clv_alert_prefixes_subject(self, monkeypatch):
+        for k, v in ALL_ENV_VARS.items():
+            monkeypatch.setenv(k, v)
+        sent = {}
+
+        class _FakeSMTP:
+            def __init__(self, *a, **kw): pass
+            def __enter__(self): return self
+            def __exit__(self, *a): return False
+            def starttls(self): pass
+            def login(self, *a): pass
+            def send_message(self, msg): sent["msg"] = msg
+
+        monkeypatch.setattr(notifier.smtplib, "SMTP", _FakeSMTP)
+        notifier.send_picks_email(SAMPLE_PICKS, SAMPLE_VPN_OK, clv_alert=True)
+        assert sent["msg"]["Subject"].startswith("ALERTA CLV: muestra suficiente")

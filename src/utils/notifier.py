@@ -116,13 +116,25 @@ def _tracking_html(tracking: dict | None) -> str:
     return f"{_PANEL}<strong>Seguimiento de CLV</strong><br>{snap}<br>{clv}</div>"
 
 
+_CLV_ALERT_BANNER = (
+    '<div style="margin-top:16px;padding:10px;background:#fff3cd;border:2px solid #e67e22;'
+    'font-family:Arial,sans-serif;font-size:14px;">'
+    "<strong>CLV con muestra suficiente</strong><br>"
+    "Los picks de la regla de produccion acumularon suficientes partidos con un CLV cuyo "
+    "intervalo de confianza del 95% esta por encima de cero. Revisar scripts/clv_report.py "
+    "antes de decidir si hay base para reactivar apuestas reales en algun tour."
+    "</div>"
+)
+
+
 def build_email_html(
     selected_picks: list[dict], vpn_status: dict,
-    signals: list[dict] | None = None, tracking: dict | None = None,
+    signals: list[dict] | None = None, tracking: dict | None = None, clv_alert: bool = False,
 ) -> str:
     return f"""
     <html><body style="font-family:Arial,sans-serif;">
       <h2>Picks del dia — ia-tenis</h2>
+      {_CLV_ALERT_BANNER if clv_alert else ""}
       {_picks_table_html(selected_picks)}
       {_signals_html(signals or [])}
       {_tracking_html(tracking)}
@@ -133,7 +145,7 @@ def build_email_html(
 
 def send_picks_email(
     selected_picks: list[dict], vpn_status: dict,
-    signals: list[dict] | None = None, tracking: dict | None = None,
+    signals: list[dict] | None = None, tracking: dict | None = None, clv_alert: bool = False,
 ) -> bool:
     """Send the daily picks summary by email.
 
@@ -150,11 +162,13 @@ def send_picks_email(
     subject = f"ia-tenis: {len(selected_picks)} pick(s) del dia"
     if signals:
         subject += f", {len(signals)} senal(es) en seguimiento"
+    if clv_alert:
+        subject = "ALERTA CLV: muestra suficiente -- " + subject
     msg["Subject"] = subject
     msg["From"] = os.environ["EMAIL_SENDER"]
     msg["To"] = os.environ["EMAIL_RECEIVER"]
     msg.set_content("Ver esta notificacion en un cliente de correo compatible con HTML.")
-    msg.add_alternative(build_email_html(selected_picks, vpn_status, signals, tracking), subtype="html")
+    msg.add_alternative(build_email_html(selected_picks, vpn_status, signals, tracking, clv_alert), subtype="html")
 
     try:
         with smtplib.SMTP(os.environ["SMTP_SERVER"], int(os.environ["SMTP_PORT"]), timeout=15) as smtp:

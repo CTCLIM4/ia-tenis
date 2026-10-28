@@ -179,6 +179,19 @@ def _clv_tracking() -> dict | None:
         return None
 
 
+def _clv_alert(tracking: dict | None) -> bool:
+    """True once scripts.clv_report.ready_for_bets() says the CLV sample is
+    large enough with a CI clearly above zero -- a prompt to go look, never
+    an auto-reenable of AUTO_LOG_EXCLUDED_TOURS. Never lets a reporting
+    problem break the daily run."""
+    try:
+        from scripts.clv_report import ready_for_bets
+        return ready_for_bets(tracking)
+    except Exception as e:
+        print(f"  Aviso: no se pudo evaluar el umbral de CLV ({e}).")
+        return False
+
+
 def run(
     dry_run: bool = False, retrain: bool = False, live_tournament_mode: bool = False,
     tour: str = "both", days_ahead: int = 1, push: bool = True, telegram: bool = True,
@@ -291,7 +304,11 @@ def run(
     print(f"\nVPN: {vpn_status}")
 
     if not dry_run:
-        send_picks_email(selected, vpn_status, signals, _clv_tracking())
+        tracking = _clv_tracking()
+        clv_alert = _clv_alert(tracking)
+        if clv_alert:
+            print("  CLV: muestra suficiente y CI por encima de cero -- revisar si hay base para apostar.")
+        send_picks_email(selected, vpn_status, signals, tracking, clv_alert)
         if telegram:
             # Predictions only (no picks/odds/edges), see src/utils/telegram.py.
             send_telegram_predictions([_prediction_row(r) for r in results if r.elo_ok and not r.low_sample],

@@ -55,6 +55,30 @@ SNAPSHOT_DIR = _ROOT / "data" / "odds_snapshots"
 AUDIT_LOG = _ROOT / "data" / "prediction_audit_log.csv"
 DEFAULT_MAX_CLOSE_GAP_HOURS = 8.0
 
+# The first real sample (2026-10-28, N=43) gave a CLV CI of +0.3%..+5.9% --
+# positive, but a lower bound that close to zero is easy to get from noise
+# alone (the WTA real log showed -25.7% ROI off just 33 bets the same way).
+# This is the bar for flagging it as worth a human look, not for
+# auto-reenabling AUTO_LOG_EXCLUDED_TOURS in scripts/daily_workflow.py --
+# that still needs a deliberate decision backed by market_edge_backtest.py.
+MIN_CLV_SAMPLE_FOR_ALERT = 150
+
+
+def ready_for_bets(tracking: dict | None, min_sample: int = MIN_CLV_SAMPLE_FOR_ALERT) -> bool:
+    """True once the production rule's CLV sample (summary()'s "picks"/
+    "clv_ci") is at least `min_sample` and its 95% CI sits entirely above
+    zero. False on any missing/incomplete tracking dict -- never raises, so
+    a caller can pass summary()'s result (or a stub) straight through."""
+    if not tracking or not tracking.get("picks"):
+        return False
+    if tracking["picks"] < min_sample:
+        return False
+    ci = tracking.get("clv_ci")
+    if not ci:
+        return False
+    lo, _hi = ci
+    return lo > 0
+
 
 def load_snapshots(snapshot_dir: Path) -> tuple[pd.DataFrame, pd.Series]:
     files = sorted(p for p in snapshot_dir.glob("*.csv") if p.name != "runs.csv")
